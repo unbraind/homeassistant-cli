@@ -4,3 +4,6 @@ export * from "./registries.js";
 export * from "./statistics.js";
 export * from "./lists.js";
 export * from "./system.js";
+export * from "./conversation.js";
+export * from "./search.js";
+export * from "./tts.js";

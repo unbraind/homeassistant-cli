@@ -568,6 +568,118 @@ hassio backups --download backup_slug -o backup.tar      # Download backup
 hassio backups -d backup_slug                            # Delete backup
 ```
 
+## Conversation & Voice Assistant Commands
+
+#### `conversation`
+Interact with Home Assistant conversation/voice assistants.
+
+```bash
+hassio conversation [options]
+
+Options:
+  --agents                    List available conversation agents
+  -t, --text <text>           Process text through conversation
+  -a, --agent-id <agentId>    Agent ID to use
+  -c, --conversation-id <id>  Conversation ID for context
+
+# Examples
+hassio conversation --agents                    # List agents
+hassio conversation -t "turn on living room light"
+hassio conversation -t "what time is it" -a homeassistant
+```
+
+#### `ask`
+Ask Home Assistant a question (shortcut for conversation).
+
+```bash
+hassio ask <text> [options]
+
+Options:
+  -a, --agent-id <agentId>    Agent ID to use
+
+# Examples
+hassio ask "what time is it"
+hassio ask "turn on all lights" -a homeassistant
+```
+
+## Search Commands
+
+#### `search`
+Search Home Assistant entities using the API.
+
+```bash
+hassio search <query> [options]
+
+Options:
+  -d, --domain <domain>  Filter by domain
+  -a, --area <area>      Filter by area
+  -s, --state <state>    Filter by state
+  --quick                Use quick local search (no API)
+  --count                Only return count
+
+# Examples
+hassio search "living room"
+hassio search "light" -d light --quick
+hassio search "sensor" --count
+```
+
+#### `find`
+Quick search for entities by name/ID pattern.
+
+```bash
+hassio find <pattern> [options]
+
+Options:
+  -d, --domain <domain>  Filter by domain
+  -s, --state <state>    Filter by state
+  --count                Only return count
+
+# Examples
+hassio find "living"
+hassio find "temp" -d sensor
+hassio find "battery" --count
+```
+
+## Text-to-Speech Commands
+
+#### `tts`
+Text-to-Speech operations.
+
+```bash
+hassio tts [options]
+
+Options:
+  --engines              List available TTS engines
+  -m, --message <text>   Message to speak
+  -e, --engine <id>      TTS engine ID
+  -p, --player <entity>  Media player entity ID
+  -l, --language <lang>  Language code
+  --clear-cache          Clear TTS cache
+
+# Examples
+hassio tts --engines
+hassio tts -m "Hello world" -p media_player.living_room
+hassio tts -m "Test" -e tts.cloud -l en
+hassio tts --clear-cache
+```
+
+#### `say`
+Speak text through a media player (shortcut for TTS).
+
+```bash
+hassio say <message> -p <player> [options]
+
+Required:
+  -p, --player <entity>  Media player entity ID
+
+Options:
+  -e, --engine <id>      TTS engine ID
+
+# Examples
+hassio say "The front door is open" -p media_player.kitchen
+hassio say "Welcome home" -p media_player.living_room -e tts.cloud
+```
+
 ## Exit Codes
 
 | Code | Meaning |

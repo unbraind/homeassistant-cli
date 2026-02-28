@@ -392,6 +392,52 @@ hassio backups --download backup_slug -o backup.tar
 hassio backups -r backup_slug
 ```
 
+### Workflow 7: Voice Assistant / Conversation
+
+```bash
+# 1. List available conversation agents
+hassio conversation --agents
+
+# 2. Ask a question
+hassio ask "what time is it"
+
+# 3. Control devices via voice
+hassio ask "turn on living room light"
+
+# 4. Multi-turn conversation
+hassio conversation -t "turn on the lights" -c "conv-123"
+hassio conversation -t "also close the blinds" -c "conv-123"
+```
+
+### Workflow 8: Text-to-Speech
+
+```bash
+# 1. List TTS engines
+hassio tts --engines
+
+# 2. Speak a message
+hassio say "The front door is open" -p media_player.kitchen
+
+# 3. Use specific engine
+hassio say "Welcome home" -p media_player.living_room -e tts.cloud
+```
+
+### Workflow 9: Entity Search
+
+```bash
+# 1. Search entities
+hassio search "living room"
+
+# 2. Quick local search (faster, no API)
+hassio find "temp" --quick
+
+# 3. Search with filters
+hassio search "sensor" -d sensor --count
+
+# 4. Find by pattern
+hassio find "battery" -d sensor
+```
+
 ## Best Practices for Agents
 
 ### 1. Use TOON Format

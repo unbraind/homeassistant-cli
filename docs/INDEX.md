@@ -150,6 +150,18 @@ Configuration is loaded in priority order (later overrides earlier):
 | `query <expression>` | Query using simple expressions |
 | `batch` | Execute service calls in batch |
 | `inspect <entity-id>` | Deep inspect entity with history |
+| `search <query>` | Search entities via API |
+| `find <pattern>` | Quick search by name/ID pattern |
+| `ask <text>` | Ask voice assistant a question |
+
+### Conversation & Voice Commands
+
+| Command | Description |
+|---------|-------------|
+| `conversation` | Interact with voice assistants |
+| `ask <text>` | Shortcut for conversation (ask question) |
+| `tts` | Text-to-Speech operations |
+| `say <message>` | Speak text through media player |
 
 ## LLM/Agent Features
 

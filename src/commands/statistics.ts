@@ -53,20 +53,24 @@ export function createStatisticsCommand(): Command {
       
       const types = options.types ? options.types.split(",") as ("change" | "last_reset" | "max" | "mean" | "min" | "state" | "sum")[] : undefined;
       
-      result = await client.getStatisticsDuringPeriod({
+      const periodOptions: { startTime: string; endTime: string; statisticIds: string[]; period?: "5minute" | "hour" | "day" | "week" | "month"; types?: ("change" | "last_reset" | "max" | "mean" | "min" | "state" | "sum")[] } = {
         startTime: options.startTime,
         endTime: options.endTime,
         statisticIds: entityIds,
-        period: options.period,
-        types,
-      });
+      };
+      if (options.period) periodOptions.period = options.period;
+      if (types) periodOptions.types = types;
+      
+      result = await client.getStatisticsDuringPeriod(periodOptions);
     } else {
-      result = await client.getStatistics({
+      const statsOptions: { statisticIds?: string[]; startTime?: string; endTime?: string; period?: "5minute" | "hour" | "day" | "week" | "month" } = {
         statisticIds: entityIds,
-        startTime: options.startTime,
-        endTime: options.endTime,
-        period: options.period,
-      });
+      };
+      if (options.startTime) statsOptions.startTime = options.startTime;
+      if (options.endTime) statsOptions.endTime = options.endTime;
+      if (options.period) statsOptions.period = options.period;
+      
+      result = await client.getStatistics(statsOptions);
     }
 
     console.log(formatOutput(result, format));

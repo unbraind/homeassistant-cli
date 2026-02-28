@@ -31,7 +31,6 @@ import {
   createBatchCommand,
   createQueryCommand,
   createDiscoverCommand,
-  createInspectCommand,
   createRegistriesCommand,
   createStatisticsCommand,
   createTodoCommand,
@@ -41,7 +40,14 @@ import {
   createZonesCommand,
   createAnalyticsCommand,
   createBackupsCommand,
+  createConversationCommand,
+  createAskCommand,
+  createSearchCommand,
+  createFindCommand,
+  createTtsCommand,
+  createSayCommand,
 } from "./commands/index.js";
+import { createInspectCommand } from "./commands/inspect.js";
 
 const program = new Command();
 
@@ -139,5 +145,17 @@ program.addCommand(createPersonsCommand());
 program.addCommand(createZonesCommand());
 program.addCommand(createAnalyticsCommand());
 program.addCommand(createBackupsCommand());
+
+// Conversation & Voice
+program.addCommand(createConversationCommand());
+program.addCommand(createAskCommand());
+
+// Search
+program.addCommand(createSearchCommand());
+program.addCommand(createFindCommand());
+
+// TTS (Text-to-Speech)
+program.addCommand(createTtsCommand());
+program.addCommand(createSayCommand());
 
 program.parse();

@@ -95,16 +95,18 @@ export function createBackupsCommand(): Command {
     const format = getFormat(globalOpts);
 
     if (options.create) {
-      const backup = await client.createBackup(options.create, {
-        compressed: options.compressed,
-        password: options.password,
-      });
+      const backupOptions: { compressed?: boolean; password?: string } = {};
+      if (options.compressed !== undefined) backupOptions.compressed = options.compressed;
+      if (options.password) backupOptions.password = options.password;
+      const backup = await client.createBackup(options.create, backupOptions);
       console.log(formatOutput({ created: backup }, format));
       return;
     }
 
     if (options.restore) {
-      await client.restoreBackup(options.restore, { password: options.password });
+      const restoreOptions: { password?: string } = {};
+      if (options.password) restoreOptions.password = options.password;
+      await client.restoreBackup(options.restore, restoreOptions);
       console.log(formatOutput({ restored: options.restore }, format));
       return;
     }

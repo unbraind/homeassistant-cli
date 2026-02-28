@@ -281,6 +281,48 @@ hassio calendar-events calendar.home \
 hassio camera camera.front_door -o snapshot.jpg
 ```
 
+### Voice Assistant & Conversation
+
+```bash
+# Ask a question
+hassio ask "what time is it"
+
+# Control devices via voice
+hassio ask "turn on living room light"
+
+# List conversation agents
+hassio conversation --agents
+
+# Multi-turn conversation
+hassio conversation -t "turn on lights" -c "conv-123"
+```
+
+### Text-to-Speech
+
+```bash
+# List TTS engines
+hassio tts --engines
+
+# Speak a message
+hassio say "The front door is open" -p media_player.kitchen
+
+# Use specific engine
+hassio say "Welcome home" -p media_player.living_room -e tts.cloud
+```
+
+### Search
+
+```bash
+# Search entities
+hassio search "living room"
+
+# Quick local search
+hassio find "temp" --quick
+
+# Search with filters
+hassio search "sensor" -d sensor --count
+```
+
 ## Development
 
 > **Note:** This project uses [Bun](https://bun.sh) as the primary package manager and runtime.
