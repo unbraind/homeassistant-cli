@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test coverage
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment files - NEVER commit these!
+.env
+.env.*
+*.env
+
+# Home Assistant CLI config - NEVER commit credentials!
+.hassio-cli/
+hassio-config.json
+settings.json
+credentials.json
+
+# Temporary files
+tmp/
+temp/
+*.tmp
