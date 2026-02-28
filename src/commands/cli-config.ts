@@ -4,25 +4,25 @@ import type { OutputFormat } from "../types/index.js";
 
 export function createConfigSetCommand(): Command {
   const command = new Command("set")
-    .description("Set CLI configuration options")
-    .option("-u, --url <url>", "Home Assistant URL")
-    .option("-t, --token <token>", "Long-lived access token")
-    .option("-f, --format <format>", "Default output format (toon, json, json-compact, yaml, table)")
-    .option("--timeout <ms>", "Request timeout in milliseconds");
+    .description("Set CLI configuration options permanently")
+    .option("--ha-url <url>", "Home Assistant URL")
+    .option("--ha-token <token>", "Long-lived access token")
+    .option("--default-format <format>", "Default output format (toon, json, json-compact, yaml, table)")
+    .option("--default-timeout <ms>", "Request timeout in milliseconds");
 
   command.action(
-    async (options: {
-      url?: string;
-      token?: string;
-      format?: OutputFormat;
-      timeout?: string;
+    (options: {
+      haUrl?: string;
+      haToken?: string;
+      defaultFormat?: OutputFormat;
+      defaultTimeout?: string;
     }) => {
       const config: Record<string, unknown> = {};
 
-      if (options.url) config["url"] = options.url;
-      if (options.token) config["token"] = options.token;
-      if (options.format) config["outputFormat"] = options.format;
-      if (options.timeout) config["timeout"] = parseInt(options.timeout, 10);
+      if (options.haUrl) config["url"] = options.haUrl.replace(/\/$/, "");
+      if (options.haToken) config["token"] = options.haToken;
+      if (options.defaultFormat) config["outputFormat"] = options.defaultFormat;
+      if (options.defaultTimeout) config["timeout"] = parseInt(options.defaultTimeout, 10);
 
       if (Object.keys(config).length === 0) {
         console.error("No configuration options provided. Use --help for usage.");
@@ -30,7 +30,9 @@ export function createConfigSetCommand(): Command {
       }
 
       saveConfig(config);
-      console.log(`Configuration saved to ${getConfigPath()}`);
+      console.log(`✅ Configuration saved to ${getConfigPath()}`);
+      console.log("Current configuration:");
+      console.log(JSON.stringify(config, null, 2));
     }
   );
 
@@ -39,17 +41,19 @@ export function createConfigSetCommand(): Command {
 
 export function createConfigGetCommand(): Command {
   const command = new Command("get")
-    .description("Get current CLI configuration (without sensitive data)")
-    .action(() => {
+    .description("Get current CLI configuration (token masked for security)")
+    .option("--show-token", "Show the full token (use with caution)")
+    .action((options: { showToken?: boolean }) => {
       try {
         const config = getConfig();
         const safeConfig = {
           url: config.url,
           outputFormat: config.outputFormat,
           timeout: config.timeout,
-          token: config.token ? "***" : undefined,
+          token: options.showToken ? config.token : (config.token ? "*** (set)" : "NOT SET"),
         };
         console.log(JSON.stringify(safeConfig, null, 2));
+        console.log(`\n📁 Config file: ${getConfigPath()}`);
       } catch (error) {
         console.error(
           "Configuration not complete:",
@@ -232,5 +236,54 @@ export function createValidateCommand(): Command {
         console.error(error instanceof Error ? error.message : String(error));
         process.exit(1);
       }
+    });
+}
+
+export function createResetCommand(): Command {
+  return new Command("reset")
+    .description("Reset all configuration (clear saved settings)")
+    .option("--force", "Skip confirmation prompt")
+    .action(async (options: { force?: boolean }) => {
+      const { resetConfig, configExists, getConfigPath } = await import("../config/index.js");
+      
+      if (!configExists()) {
+        console.log("No configuration file found. Nothing to reset.");
+        return;
+      }
+
+      if (!options.force) {
+        console.log("⚠️  This will delete all saved configuration including your token.");
+        console.log(`📁 Config file: ${getConfigPath()}`);
+        console.log("\nRun with --force to confirm.");
+        process.exit(1);
+      }
+
+      try {
+        resetConfig();
+        console.log("✅ Configuration reset successfully.");
+        console.log("Run 'hassio settings wizard' or 'hassio settings init' to reconfigure.");
+      } catch (error) {
+        console.error("❌ Failed to reset configuration:");
+        console.error(error instanceof Error ? error.message : String(error));
+        process.exit(1);
+      }
+    });
+}
+
+export function createListCommand(): Command {
+  return new Command("list")
+    .description("List all available configuration options")
+    .action(() => {
+      console.log("Available configuration options:\n");
+      console.log("  url             Home Assistant URL (e.g., http://192.168.1.100:8123)");
+      console.log("  token           Long-lived access token from Home Assistant");
+      console.log("  outputFormat    Default output format (toon, json, json-compact, yaml, table)");
+      console.log("  timeout         Request timeout in milliseconds (default: 30000)");
+      console.log("\nEnvironment variables:");
+      console.log("  HASSIO_URL      Home Assistant URL");
+      console.log("  HASSIO_TOKEN    Long-lived access token");
+      console.log("  HASSIO_FORMAT   Default output format");
+      console.log("  HASSIO_TIMEOUT  Request timeout in milliseconds");
+      console.log(`\nConfig file: ${getConfigPath()}`);
     });
 }

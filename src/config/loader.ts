@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync, unlinkSync, rmSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import type { Config, OutputFormat } from "../types/index.js";
@@ -83,17 +83,33 @@ export function getConfig(options?: {
   };
 }
 
-export function saveConfig(config: Partial<ConfigFile>, path?: string): void {
-  const configPath = path ?? CONFIG_FILE;
-
+function ensureConfigDir(): void {
   if (!existsSync(CONFIG_DIR)) {
     mkdirSync(CONFIG_DIR, { recursive: true });
   }
+}
+
+export function saveConfig(config: Partial<ConfigFile>, path?: string): void {
+  const configPath = path ?? CONFIG_FILE;
+  ensureConfigDir();
 
   const existing = loadConfigFile(configPath);
   const merged = { ...existing, ...config };
 
   writeFileSync(configPath, JSON.stringify(merged, null, 2), "utf-8");
+}
+
+export function resetConfig(): void {
+  if (existsSync(CONFIG_FILE)) {
+    unlinkSync(CONFIG_FILE);
+  }
+  if (existsSync(CONFIG_DIR)) {
+    rmSync(CONFIG_DIR, { recursive: true });
+  }
+}
+
+export function configExists(): boolean {
+  return existsSync(CONFIG_FILE);
 }
 
 export function getConfigPath(): string {

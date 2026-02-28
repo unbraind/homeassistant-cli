@@ -280,20 +280,29 @@ Set configuration options.
 hassio settings set [options]
 
 Options:
-  -u, --url <url>          Home Assistant URL
-  -t, --token <token>      Access token
-  -f, --format <format>    Output format
-  --timeout <ms>           Timeout
+  --ha-url <url>             Home Assistant URL
+  --ha-token <token>         Long-lived access token
+  --default-format <format>  Output format (toon, json, json-compact, yaml, table)
+  --default-timeout <ms>     Request timeout
 
 # Example
-hassio settings set --url "http://192.168.1.100:8123" --token "xyz"
+hassio settings set --ha-url "http://192.168.1.100:8123" --ha-token "xyz"
+hassio settings set --default-format json
+hassio settings set --default-timeout 60000
 ```
 
 #### `settings get`
-View current configuration (token masked).
+View current configuration (token masked by default).
 
 ```bash
+hassio settings get [options]
+
+Options:
+  --show-token   Show the full token (use with caution)
+
+# Example
 hassio settings get
+hassio settings get --show-token
 ```
 
 #### `settings path`
@@ -301,6 +310,26 @@ Show configuration file path.
 
 ```bash
 hassio settings path
+```
+
+#### `settings reset`
+Reset all configuration (clear saved settings).
+
+```bash
+hassio settings reset [options]
+
+Options:
+  --force   Skip confirmation prompt
+
+# Example
+hassio settings reset --force
+```
+
+#### `settings list`
+List all available configuration options.
+
+```bash
+hassio settings list
 ```
 
 ## LLM/Agent Optimized Commands

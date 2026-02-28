@@ -68,10 +68,33 @@ hassio status
 
 ```bash
 # Set configuration
-hassio settings set --url "http://homeassistant.local:8123" --token "your-token"
+hassio settings set --ha-url "http://192.168.1.100:8123" --ha-token "your-token"
+
+# Set individual options
+hassio settings set --default-format json
+hassio settings set --default-timeout 60000
 
 # Validate
 hassio settings validate
+```
+
+## Configuration Management
+
+```bash
+# View current configuration (token masked)
+hassio settings get
+
+# View configuration with token (be careful!)
+hassio settings get --show-token
+
+# List all configuration options
+hassio settings list
+
+# Show config file path
+hassio settings path
+
+# Reset all configuration
+hassio settings reset --force
 ```
 
 ## Getting Your Token

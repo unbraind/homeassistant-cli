@@ -27,6 +27,8 @@ import {
   createWizardCommand,
   createInitCommand,
   createValidateCommand,
+  createResetCommand,
+  createListCommand,
   createEntitiesCommand,
   createBatchCommand,
   createQueryCommand,
@@ -120,6 +122,8 @@ settingsCmd.addCommand(createConfigPathCommand());
 settingsCmd.addCommand(createWizardCommand());
 settingsCmd.addCommand(createInitCommand());
 settingsCmd.addCommand(createValidateCommand());
+settingsCmd.addCommand(createResetCommand());
+settingsCmd.addCommand(createListCommand());
 program.addCommand(settingsCmd);
 
 // LLM/Agent optimized commands
