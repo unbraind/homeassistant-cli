@@ -4,9 +4,9 @@ Complete documentation for the Home Assistant CLI tool.
 
 ## Table of Contents
 
-- [README](./README.md) - Installation and quick start
+- [README](../README.md) - Installation and quick start
 - [API Reference](./API.md) - Complete command reference
-- [LLM Integration](./LLM_INTEGRATION.md) - Agent/LLM optimized features
+- [LLM Integration Guide](./LLM_INTEGRATION.md) - Agent/LLM optimized features
 
 ## Quick Start
 
@@ -94,14 +94,16 @@ Configuration is loaded in priority order (later overrides earlier):
 | `fire-event <event-type>` | Fire an event |
 | `render-template <template>` | Render a template |
 | `handle-intent <name>` | Handle an intent |
+| `check-config` | Validate configuration |
 
-### History & Logs
+### History, Logs & Statistics
 
 | Command | Description |
 |---------|-------------|
 | `history -e <entities>` | Get entity history |
 | `logbook` | Get logbook entries |
 | `error-log` | Get error log |
+| `statistics` | Query historical statistics |
 
 ### Calendar & Media
 
@@ -110,6 +112,34 @@ Configuration is loaded in priority order (later overrides earlier):
 | `calendars` | List calendars |
 | `calendar-events <entity-id>` | Get calendar events |
 | `camera <entity-id>` | Get camera image |
+
+### Registry Commands
+
+| Command | Description |
+|---------|-------------|
+| `registries --entities` | Entity registry |
+| `registries --devices` | Device registry |
+| `registries --areas` | Area registry |
+| `registries --floors` | Floor registry |
+| `registries --labels` | Label registry |
+| `registries --categories` | Category registry |
+
+### List Management
+
+| Command | Description |
+|---------|-------------|
+| `todo` | Manage todo lists |
+| `shopping-list` | Manage shopping list |
+| `notifications` | Persistent notifications |
+
+### System Commands
+
+| Command | Description |
+|---------|-------------|
+| `persons` | List persons |
+| `zones` | List zones |
+| `analytics` | System analytics |
+| `backups` | Backup management |
 
 ### LLM/Agent Optimized Commands
 
@@ -130,30 +160,68 @@ The CLI is optimized for use by LLMs and AI agents:
 - **Batch Operations**: Execute multiple operations efficiently
 - **Structured Output**: Predictable, parseable formats
 - **Entity Discovery**: Comprehensive entity exploration
+- **Registry Access**: Query entity/device/area metadata
+- **Statistics**: Historical data and analytics
+- **List Management**: Todo lists, shopping list, notifications
 
 See [LLM Integration Guide](./LLM_INTEGRATION.md) for detailed examples.
+
+## API Coverage
+
+### Core REST API
+✅ Status and configuration  
+✅ Entity states (GET/POST/DELETE)  
+✅ Services and events  
+✅ History and logbook  
+✅ Templates and intents  
+✅ Calendars and cameras  
+
+### Extended API
+✅ Entity Registry  
+✅ Device Registry  
+✅ Area Registry  
+✅ Floor Registry  
+✅ Label Registry  
+✅ Category Registry  
+✅ Statistics API  
+✅ Todo Lists  
+✅ Shopping List  
+✅ Persistent Notifications  
+✅ Persons  
+✅ Zones  
+✅ Analytics  
+✅ Backups  
 
 ## Project Structure
 
 ```
 homeassistant-cli/
 ├── src/
-│   ├── api/           # Home Assistant API client
-│   ├── commands/      # CLI command implementations
-│   │   ├── core.ts    # Core API commands
-│   │   ├── services.ts # Service/event commands
-│   │   ├── history.ts # History/log commands
-│   │   ├── media.ts   # Calendar/camera commands
+│   ├── api/              # Home Assistant API clients
+│   │   ├── client.ts     # Core API client
+│   │   ├── registries.ts # Registry API client
+│   │   ├── statistics.ts # Statistics API client
+│   │   ├── lists.ts      # Lists API client
+│   │   └── system.ts     # System API client
+│   ├── commands/         # CLI command implementations
+│   │   ├── core.ts       # Core API commands
+│   │   ├── services.ts   # Service/event commands
+│   │   ├── history.ts    # History/log commands
+│   │   ├── media.ts      # Calendar/camera commands
 │   │   ├── cli-config.ts # Configuration commands
-│   │   └── llm.ts     # LLM-optimized commands
-│   ├── config/        # Configuration management
-│   ├── formatters/    # Output formatters
-│   ├── types/         # TypeScript definitions
-│   ├── cli.ts         # CLI entry point
-│   └── index.ts       # Library exports
-├── tests/             # Test files
-├── docs/              # Documentation
-└── dist/              # Compiled output
+│   │   ├── llm.ts        # LLM-optimized commands
+│   │   ├── registries.ts # Registry commands
+│   │   ├── statistics.ts # Statistics commands
+│   │   ├── lists.ts      # List commands
+│   │   └── system.ts     # System commands
+│   ├── config/           # Configuration management
+│   ├── formatters/       # Output formatters
+│   ├── types/            # TypeScript definitions
+│   ├── cli.ts            # CLI entry point
+│   └── index.ts          # Library exports
+├── tests/                # Test files
+├── docs/                 # Documentation
+└── dist/                 # Compiled output
 ```
 
 ## Development
@@ -185,12 +253,17 @@ bun run typecheck
 bun run dev -- <command>
 ```
 
+### Test Coverage
+
+Current coverage: **94.42%** with 125 tests passing across 10 test files.
+
 ## Security
 
 - Never commit tokens to version control
 - Config file is excluded from git via `.gitignore`
 - Use environment variables in CI/CD
 - Token is masked in configuration display
+- Config file should have 600 permissions (owner read/write only)
 
 ## Related Resources
 

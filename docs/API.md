@@ -1,6 +1,8 @@
-# API Reference
+# Home Assistant CLI - Complete API Reference
 
-Complete reference for all Home Assistant CLI commands and their options.
+## Overview
+
+This document provides a comprehensive reference for all Home Assistant CLI commands and their options. The CLI provides full coverage of the Home Assistant REST API with agent/LLM-optimized features.
 
 ## Global Options
 
@@ -8,373 +10,293 @@ These options can be used with any command:
 
 | Option | Environment Variable | Description | Default |
 |--------|---------------------|-------------|---------|
-| `-u, --url <url>` | `HASSIO_URL` | Home Assistant URL | - |
-| `-t, --token <token>` | `HASSIO_TOKEN` | Long-lived access token | - |
+| `-u, --url <url>` | `HASSIO_URL` | Home Assistant URL | From config |
+| `-t, --token <token>` | `HASSIO_TOKEN` | Long-lived access token | From config |
 | `-f, --format <format>` | `HASSIO_FORMAT` | Output format | `toon` |
 | `--timeout <ms>` | `HASSIO_TIMEOUT` | Request timeout (ms) | `30000` |
 | `-c, --config <path>` | `HASSIO_CONFIG` | Config file path | `~/.hassio-cli/settings.json` |
 
+**Configuration Priority:**
+1. CLI options (highest priority)
+2. Environment variables
+3. Config file (lowest priority)
+
+## Output Formats
+
+### TOON (Default) - Token-Efficient
+
+TOON (Token-Oriented Object Notation) provides ~40% token reduction vs JSON:
+
+```
+states[4]{entity_id,state,last_changed,attributes}:
+  light.living_room,on,2024-01-01T00:00:00Z,"{...}"
+  switch.kitchen,off,2024-01-01T01:00:00Z,"{}"
+```
+
+### Other Formats
+
+- `json` - Pretty-printed JSON
+- `json-compact` - Minified JSON
+- `yaml` - YAML format
+- `table` - ASCII table format
+
 ## Core API Commands
 
-### status
+### Status & Configuration
 
+#### `status`
 Check if the Home Assistant API is running.
 
 ```bash
 hassio status
+# Output: message: API running.
 ```
 
-**Response:**
-```
-message: API running.
-```
-
-### config
-
+#### `config`
 Get the current Home Assistant configuration.
 
 ```bash
 hassio config
 ```
 
-**Response Fields:**
-- `components` - List of loaded components
-- `config_dir` - Configuration directory path
-- `elevation` - Elevation in meters
-- `latitude` - Latitude coordinate
-- `longitude` - Longitude coordinate
-- `location_name` - Location name
-- `time_zone` - Time zone
-- `unit_system` - Unit system configuration
-- `version` - Home Assistant version
+Returns: components, config_dir, elevation, latitude, location_name, longitude, time_zone, unit_system, version
 
-### components
-
+#### `components`
 Get list of loaded components.
 
 ```bash
 hassio components
 ```
 
-### events
-
+#### `events`
 Get list of available events and their listener counts.
 
 ```bash
 hassio events
 ```
 
-### services
-
+#### `services`
 Get list of available services organized by domain.
 
 ```bash
 hassio services
 ```
 
-## State Commands
+## State Management
 
-### states
-
+#### `states`
 Get entity states.
 
 ```bash
-# Get all states
+# All states
 hassio states
 
-# Get specific entity
+# Specific entity
 hassio states light.living_room
 ```
 
-### set-state
-
+#### `set-state`
 Set or update an entity state.
 
 ```bash
 hassio set-state <entity-id> <state> [-a, --attributes <json>]
-```
 
-**Arguments:**
-- `entity-id` - Entity identifier (required)
-- `state` - State value (required)
-
-**Options:**
-- `-a, --attributes <json>` - JSON attributes
-
-**Example:**
-```bash
+# Example
 hassio set-state sensor.my_sensor 42 -a '{"unit":"°C"}'
 ```
 
-### delete-state
-
+#### `delete-state`
 Delete an entity state.
 
 ```bash
 hassio delete-state <entity-id>
 ```
 
-## Service Commands
+## Service Calls
 
-### call-service
-
+#### `call-service`
 Call a Home Assistant service.
 
 ```bash
 hassio call-service <domain> <service> [options]
-```
 
-**Arguments:**
-- `domain` - Service domain (light, switch, etc.)
-- `service` - Service name (turn_on, turn_off, etc.)
+Options:
+  -e, --entity-id <entity>  Target entity
+  -d, --data <json>         JSON data
+  -r, --return-response     Return response data
 
-**Options:**
-- `-e, --entity-id <entity>` - Target entity
-- `-d, --data <json>` - JSON data
-- `-r, --return-response` - Return response data
-
-**Examples:**
-```bash
-# Turn on light
+# Examples
 hassio call-service light turn_on -e light.living_room
-
-# Set brightness and color
-hassio call-service light turn_on -e light.living_room \
-    -d '{"brightness":200,"rgb_color":[255,0,0]}'
-
-# Get weather forecast with response
-hassio call-service weather get_forecasts \
-    -e weather.home \
-    -d '{"type":"daily"}' \
-    -r
+hassio call-service light turn_on -e light.living_room -d '{"brightness":200,"rgb_color":[255,0,0]}'
+hassio call-service weather get_forecasts -e weather.home -d '{"type":"daily"}' -r
 ```
 
-### fire-event
-
+#### `fire-event`
 Fire a Home Assistant event.
 
 ```bash
 hassio fire-event <event-type> [-d, --data <json>]
-```
 
-**Example:**
-```bash
+# Example
 hassio fire-event MY_EVENT -d '{"action":"test"}'
 ```
 
-### render-template
-
+#### `render-template`
 Render a Home Assistant Jinja2 template.
 
 ```bash
 hassio render-template <template> [-f, --file <path>]
-```
 
-**Examples:**
-```bash
-# Inline template
+# Examples
 hassio render-template "{{ states('sensor.temperature') }}"
-
-# From file
-hassio render-template "" --file template.jinja
+hassio render-template "" -f template.jinja
 ```
 
-### handle-intent
-
+#### `handle-intent`
 Handle a Home Assistant intent.
 
 ```bash
 hassio handle-intent <name> [-d, --data <json>]
-```
 
-**Example:**
-```bash
+# Example
 hassio handle-intent SetTimer -d '{"seconds":"30"}'
 ```
 
-## History & Logs
-
-### history
-
-Get state history for entities.
-
-```bash
-hassio history -e <entities> [options]
-```
-
-**Required Options:**
-- `-e, --entity-id <entities>` - Entity ID(s), comma-separated
-
-**Optional Options:**
-- `-s, --start-time <timestamp>` - Start time (ISO format)
-- `-t, --end-time <timestamp>` - End time (ISO format)
-- `-m, --minimal-response` - Minimal response format
-- `--no-attributes` - Exclude attributes
-- `--significant-only` - Only significant changes
-
-**Examples:**
-```bash
-# History for one entity (last 24h)
-hassio history -e sensor.temperature
-
-# Multiple entities with time range
-hassio history -e sensor.temp1,sensor.temp2 \
-    -s "2024-01-01T00:00:00Z" \
-    -t "2024-01-07T00:00:00Z"
-
-# Minimal response
-hassio history -e sensor.temperature -m --no-attributes
-```
-
-### logbook
-
-Get logbook entries.
-
-```bash
-hassio logbook [options]
-```
-
-**Options:**
-- `-e, --entity-id <entity>` - Filter by entity
-- `-s, --start-time <timestamp>` - Start time
-- `-t, --end-time <timestamp>` - End time
-
-### error-log
-
-Get the Home Assistant error log.
-
-```bash
-hassio error-log
-```
-
-## Calendar Commands
-
-### calendars
-
-Get list of calendar entities.
-
-```bash
-hassio calendars
-```
-
-### calendar-events
-
-Get events from a calendar.
-
-```bash
-hassio calendar-events <entity-id> -s <start> -e <end>
-```
-
-**Required Options:**
-- `-s, --start <datetime>` - Start datetime (ISO format)
-- `-e, --end <datetime>` - End datetime (ISO format)
-
-**Example:**
-```bash
-hassio calendar-events calendar.home \
-    -s "2024-01-01T00:00:00Z" \
-    -e "2024-01-31T23:59:59Z"
-```
-
-## Camera Commands
-
-### camera
-
-Get camera image.
-
-```bash
-hassio camera <entity-id> [-o, --output <file>]
-```
-
-**Options:**
-- `-o, --output <file>` - Output file (default: stdout)
-
-**Examples:**
-```bash
-# Save to file
-hassio camera camera.front_door -o snapshot.jpg
-
-# Pipe to command
-hassio camera camera.front_door | convert - -resize 50% small.jpg
-```
-
-## Configuration Commands
-
-### check-config
-
+#### `check-config`
 Validate Home Assistant configuration.
 
 ```bash
 hassio check-config
 ```
 
+## History & Logs
+
+#### `history`
+Get state history for entities.
+
+```bash
+hassio history -e <entities> [options]
+
+Required:
+  -e, --entity-id <entities>  Entity ID(s), comma-separated
+
+Options:
+  -s, --start-time <timestamp>  Start time (ISO format)
+  -t, --end-time <timestamp>    End time (ISO format)
+  -m, --minimal-response        Minimal response format
+  --no-attributes               Exclude attributes
+  --significant-only            Only significant changes
+
+# Examples
+hassio history -e sensor.temperature
+hassio history -e sensor.temp1,sensor.temp2 -s "2024-01-01T00:00:00Z" -t "2024-01-07T00:00:00Z"
+hassio history -e sensor.temperature -m --no-attributes
+```
+
+#### `logbook`
+Get logbook entries.
+
+```bash
+hassio logbook [options]
+
+Options:
+  -e, --entity-id <entity>    Filter by entity
+  -s, --start-time <timestamp>  Start time
+  -t, --end-time <timestamp>    End time
+```
+
+#### `error-log`
+Get the Home Assistant error log.
+
+```bash
+hassio error-log
+```
+
+## Calendar & Media
+
+#### `calendars`
+Get list of calendar entities.
+
+```bash
+hassio calendars
+```
+
+#### `calendar-events`
+Get events from a calendar.
+
+```bash
+hassio calendar-events <entity-id> -s <start> -e <end>
+
+Required:
+  -s, --start <datetime>  Start datetime (ISO format)
+  -e, --end <datetime>    End datetime (ISO format)
+
+# Example
+hassio calendar-events calendar.home -s "2024-01-01T00:00:00Z" -e "2024-01-31T23:59:59Z"
+```
+
+#### `camera`
+Get camera image.
+
+```bash
+hassio camera <entity-id> [-o, --output <file>]
+
+# Examples
+hassio camera camera.front_door -o snapshot.jpg
+hassio camera camera.front_door | convert - -resize 50% small.jpg
+```
+
 ## Settings Commands
 
-### settings wizard
-
+#### `settings wizard`
 Interactive setup wizard.
 
 ```bash
 hassio settings wizard [--skip-test]
 ```
 
-Guides you through:
-- Setting Home Assistant URL
-- Creating access token
-- Choosing output format
-- Testing connection
+Guides through URL, token, output format, and connection testing.
 
-### settings init
-
+#### `settings init`
 Initialize from environment variables.
 
 ```bash
 hassio settings init
 ```
 
-Reads from:
-- `HASSIO_URL`
-- `HASSIO_TOKEN`
-- `HASSIO_FORMAT`
-- `HASSIO_TIMEOUT`
+Reads from: `HASSIO_URL`, `HASSIO_TOKEN`, `HASSIO_FORMAT`, `HASSIO_TIMEOUT`
 
-### settings validate
-
+#### `settings validate`
 Validate configuration and test connection.
 
 ```bash
 hassio settings validate
 ```
 
-### settings set
-
+#### `settings set`
 Set configuration options.
 
 ```bash
 hassio settings set [options]
-```
 
-**Options:**
-- `-u, --url <url>` - Home Assistant URL
-- `-t, --token <token>` - Access token
-- `-f, --format <format>` - Output format
-- `--timeout <ms>` - Timeout
+Options:
+  -u, --url <url>          Home Assistant URL
+  -t, --token <token>      Access token
+  -f, --format <format>    Output format
+  --timeout <ms>           Timeout
 
-**Example:**
-```bash
+# Example
 hassio settings set --url "http://192.168.1.100:8123" --token "xyz"
 ```
 
-### settings get
-
+#### `settings get`
 View current configuration (token masked).
 
 ```bash
 hassio settings get
 ```
 
-### settings path
-
+#### `settings path`
 Show configuration file path.
 
 ```bash
@@ -383,199 +305,267 @@ hassio settings path
 
 ## LLM/Agent Optimized Commands
 
-### entities
+### Entity Management
 
+#### `entities`
 List and filter entities with advanced options.
 
 ```bash
 hassio entities [options]
-```
 
-**Options:**
-- `-d, --domain <domain>` - Filter by domain
-- `-s, --state <state>` - Filter by state
-- `-p, --pattern <pattern>` - Filter by entity_id pattern
-- `-a, --attributes <attrs>` - Include specific attributes (comma-separated)
-- `--count` - Return count only
-- `--domains` - Group and count by domain
+Options:
+  -d, --domain <domain>      Filter by domain
+  -s, --state <state>        Filter by state
+  -p, --pattern <pattern>    Filter by entity_id pattern
+  -a, --attributes <attrs>   Include specific attributes (comma-separated)
+  --count                    Return count only
+  --domains                  Group and count by domain
 
-**Examples:**
-```bash
-# All lights that are on
-hassio entities -d light -s on
-
-# Count only
-hassio entities --count
-
-# Group by domain
-hassio entities --domains
-
-# Select specific attributes
+# Examples
+hassio entities -d light -s on      # Lights that are on
+hassio entities --count             # Count only
+hassio entities --domains           # Group by domain
 hassio entities -d sensor -a unit_of_measurement,device_class
 ```
 
-### query
-
+#### `query`
 Query entities using simple expressions.
 
 ```bash
 hassio query <expression> [--summary]
-```
 
-**Query Syntax:**
-- `domain:<name>` - Filter by domain
-- `state:<value>` - Filter by state
-- `name:<pattern>` - Filter by entity_id substring
-- `attributes:<name>` - Has attribute
-- `attributes:<name>=<value>` - Attribute equals value
+Query Syntax:
+  domain:<name>                     Filter by domain
+  state:<value>                     Filter by state
+  name:<pattern>                    Filter by entity_id substring
+  attributes:<name>                 Has attribute
+  attributes:<name>=<value>         Attribute equals value
 
-**Examples:**
-```bash
-# Basic domain filter
+# Examples
 hassio query "domain:light"
-
-# Multiple conditions
 hassio query "domain:light state:on"
-
-# By name pattern
 hassio query "name:living_room"
-
-# With attributes
 hassio query "domain:sensor attributes:unit_of_measurement=°C"
-
-# Summary only
 hassio query "domain:binary_sensor" --summary
 ```
 
-### discover
-
+#### `discover`
 Discover and categorize entities.
 
 ```bash
 hassio discover [options]
+
+Options:
+  --domains      List domains with counts
+  --unavailable  List unavailable entities
+
+# Examples
+hassio discover                    # Full overview
+hassio discover --domains          # Domain breakdown
+hassio discover --unavailable      # Find problems
 ```
 
-**Options:**
-- `--domains` - List domains with counts
-- `--unavailable` - List unavailable entities
-
-**Examples:**
-```bash
-# Full overview
-hassio discover
-
-# Domain breakdown
-hassio discover --domains
-
-# Find problems
-hassio discover --unavailable
-```
-
-### batch
-
-Execute service calls in batch.
-
-```bash
-hassio batch -d <domain> -s <service> -e <entities> [--data <json>]
-```
-
-**Required Options:**
-- `-d, --domain <domain>` - Service domain
-- `-s, --service <service>` - Service name
-- `-e, --entities <entities>` - Comma-separated entity IDs
-
-**Optional Options:**
-- `--data <json>` - JSON data for service
-
-**Examples:**
-```bash
-# Turn off multiple lights
-hassio batch -d light -s turn_off \
-    -e light.living_room,light.kitchen,light.bedroom
-
-# Set brightness
-hassio batch -d light -s turn_on \
-    -e light.living_room,light.kitchen \
-    --data '{"brightness": 200}'
-```
-
-### inspect
-
+#### `inspect`
 Deep inspect an entity.
 
 ```bash
 hassio inspect <entity-id> [options]
-```
 
-**Options:**
-- `--history` - Include recent history
-- `-l, --limit <n>` - History entries limit (default: 10)
+Options:
+  --history      Include recent history
+  -l, --limit <n>  History entries limit (default: 10)
 
-**Examples:**
-```bash
-# Basic inspection
+# Examples
 hassio inspect light.living_room
-
-# With history
 hassio inspect sensor.temperature --history
-
-# Limited history
 hassio inspect sensor.temperature --history -l 5
 ```
 
-## Output Formats
+#### `batch`
+Execute service calls in batch.
 
-### TOON (Default)
+```bash
+hassio batch -d <domain> -s <service> -e <entities> [--data <json>]
 
-Token-efficient format for LLMs.
+Required:
+  -d, --domain <domain>      Service domain
+  -s, --service <service>    Service name
+  -e, --entities <entities>  Comma-separated entity IDs
 
-```
-states[2]{entity_id,state,last_changed}:
-  light.living_room,on,2024-01-01T00:00:00Z
-  switch.kitchen,off,2024-01-01T01:00:00Z
-```
+Optional:
+  --data <json>              JSON data for service
 
-### JSON
-
-Pretty-printed JSON.
-
-```json
-[
-  {
-    "entity_id": "light.living_room",
-    "state": "on",
-    "last_changed": "2024-01-01T00:00:00Z"
-  }
-]
+# Examples
+hassio batch -d light -s turn_off -e light.living_room,light.kitchen,light.bedroom
+hassio batch -d light -s turn_on -e light.living_room,light.kitchen --data '{"brightness": 200}'
 ```
 
-### JSON Compact
+## Registry Commands
 
-Minified JSON.
+#### `registries`
+Query Home Assistant registries.
 
-```json
-[{"entity_id":"light.living_room","state":"on"}]
+```bash
+hassio registries [options]
+
+Options:
+  --entities      List entity registry
+  --devices       List device registry
+  --areas         List area registry
+  --floors        List floor registry
+  --labels        List label registry
+  --categories    List category registry
+  -d, --domain <domain>      Filter by domain
+  --device-id <id>           Filter by device ID
+  --area-id <id>             Filter by area ID
+  --count                    Only return count
+
+# Examples
+hassio registries --entities --count                    # Count entities
+hassio registries --devices --area-id area_living_room  # Devices in area
+hassio registries --areas                               # List areas
 ```
 
-### YAML
+## Statistics Commands
 
-YAML format.
+#### `statistics`
+Query Home Assistant statistics data.
 
-```yaml
-- entity_id: light.living_room
-  state: on
-  last_changed: "2024-01-01T00:00:00Z"
+```bash
+hassio statistics [options]
+
+Options:
+  -e, --entity-id <entities>  Entity ID(s), comma-separated (required)
+  -s, --start-time <timestamp>  Start time (ISO format)
+  -t, --end-time <timestamp>    End time (ISO format)
+  -p, --period <period>         Period (5minute, hour, day, week, month)
+  --types <types>               Statistics types (comma-separated)
+  --during-period               Query during a specific period
+
+# Examples
+hassio statistics -e sensor.temperature -p hour
+hassio statistics -e sensor.temperature,sensor.humidity -s "2024-01-01T00:00:00Z" -t "2024-01-02T00:00:00Z"
+hassio statistics -e sensor.energy -p day --types mean,max,min
 ```
 
-### Table
+## List Management
 
-ASCII table format.
+### Todo Lists
 
+#### `todo`
+Manage todo lists.
+
+```bash
+hassio todo [options]
+
+Options:
+  --lists              List all todo lists
+  -e, --entity-id <entity>  Get items from a specific list
+  --count              Only return count
+
+# Examples
+hassio todo --lists                    # List all todo lists
+hassio todo -e todo.shopping           # Get shopping list items
+hassio todo --lists --count            # Count todo lists
 ```
-Entity ID           | State | Last Changed
---------------------+-------+-------------------------
-light.living_room   | on    | 2024-01-01T00:00:00Z
-switch.kitchen      | off   | 2024-01-01T01:00:00Z
+
+### Shopping List
+
+#### `shopping-list`
+Manage shopping list.
+
+```bash
+hassio shopping-list [options]
+
+Options:
+  --list               List all items
+  --pending            Show only pending items
+  --completed          Show only completed items
+  -a, --add <name>     Add a new item
+  -u, --update <id>    Update an item
+  -n, --name <name>    New name for update
+  --complete           Mark as complete
+  --incomplete         Mark as incomplete
+  -d, --delete <id>    Delete an item
+  --clear-completed    Clear all completed items
+  --count              Only return count
+
+# Examples
+hassio shopping-list --list                      # List all items
+hassio shopping-list --pending                   # Show pending
+hassio shopping-list -a "Milk"                   # Add item
+hassio shopping-list -u item_id --complete       # Mark complete
+hassio shopping-list -d item_id                  # Delete item
+hassio shopping-list --clear-completed           # Clear completed
+```
+
+### Notifications
+
+#### `notifications`
+Manage persistent notifications.
+
+```bash
+hassio notifications [options]
+
+Options:
+  --list               List all notifications
+  -d, --dismiss <id>   Dismiss a notification
+  --count              Only return count
+
+# Examples
+hassio notifications --list              # List notifications
+hassio notifications -d notification_1   # Dismiss notification
+```
+
+## System Commands
+
+#### `persons`
+List all persons.
+
+```bash
+hassio persons [--count]
+```
+
+#### `zones`
+List all zones.
+
+```bash
+hassio zones [--count]
+```
+
+#### `analytics`
+Get Home Assistant analytics data.
+
+```bash
+hassio analytics
+```
+
+Returns: active_integrations, addons, energy, homeassistant, installation_type, integration_count, state_count, uuid, version
+
+#### `backups`
+Manage Home Assistant backups.
+
+```bash
+hassio backups [options]
+
+Options:
+  --list               List all backups
+  -c, --create <name>  Create a new backup
+  -r, --restore <id>   Restore a backup
+  -d, --delete <id>    Delete a backup
+  --download <id>      Download a backup
+  -o, --output <file>  Output file for download
+  --compressed         Create compressed backup (default: true)
+  --password <password>  Password for backup
+  --count              Only return count
+
+# Examples
+hassio backups --list                                    # List backups
+hassio backups -c "Daily Backup"                         # Create backup
+hassio backups -c "Secure Backup" --password "secret"    # Create encrypted backup
+hassio backups -r backup_slug --password "secret"        # Restore backup
+hassio backups --download backup_slug -o backup.tar      # Download backup
+hassio backups -d backup_slug                            # Delete backup
 ```
 
 ## Exit Codes
@@ -587,14 +577,41 @@ switch.kitchen      | off   | 2024-01-01T01:00:00Z
 
 ## Error Handling
 
-Error messages include:
-- Clear problem description
-- Suggested fix
-- HTTP status code (for API errors)
+The CLI provides structured error output with clear problem descriptions and suggested fixes.
 
-**Example:**
+**Connection Error Example:**
 ```
-❌ Configuration not complete: Home Assistant URL is required. 
-Set HASSIO_URL environment variable, add 'url' to ~/.hassio-cli/settings.json, 
-or use --url option.
+❌ Failed to connect to Home Assistant at http://192.168.1.100:8123.
+   Please check the URL and ensure Home Assistant is running.
 ```
+
+**API Error Example:**
+```
+❌ API request failed: 401 - Unauthorized
+   Status: 401
+```
+
+**Configuration Error Example:**
+```
+❌ Configuration not complete: Home Assistant URL is required.
+   Set HASSIO_URL environment variable, add 'url' to ~/.hassio-cli/settings.json,
+   or use --url option.
+```
+
+## Security Notes
+
+- **Never commit tokens** to version control
+- Config file is excluded from git via `.gitignore`
+- Token is masked in `settings get` output
+- Use environment variables for CI/CD pipelines
+- Config file permissions should be 600 (readable only by owner)
+
+## Performance Tips
+
+- Use TOON format (default) for minimal token usage
+- Use `--count` instead of counting lines
+- Use `--summary` for statistics
+- Use `--minimal-response` with history for faster queries
+- Use `--no-attributes` when you don't need attributes
+- Batch operations instead of individual calls
+- Filter using query parameters when possible

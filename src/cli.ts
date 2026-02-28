@@ -32,6 +32,15 @@ import {
   createQueryCommand,
   createDiscoverCommand,
   createInspectCommand,
+  createRegistriesCommand,
+  createStatisticsCommand,
+  createTodoCommand,
+  createShoppingListCommand,
+  createNotificationsCommand,
+  createPersonsCommand,
+  createZonesCommand,
+  createAnalyticsCommand,
+  createBackupsCommand,
 } from "./commands/index.js";
 
 const program = new Command();
@@ -67,26 +76,36 @@ program
       .default(undefined)
   );
 
+// Core API commands
 program.addCommand(createStatusCommand());
 program.addCommand(createConfigCommand());
 program.addCommand(createComponentsCommand());
 program.addCommand(createEventsCommand());
 program.addCommand(createServicesCommand());
+
+// State commands
 program.addCommand(createStatesCommand());
 program.addCommand(createSetStateCommand());
 program.addCommand(createDeleteStateCommand());
+
+// Service commands
 program.addCommand(createCallServiceCommand());
 program.addCommand(createFireEventCommand());
 program.addCommand(createRenderTemplateCommand());
 program.addCommand(createCheckConfigCommand());
 program.addCommand(createHandleIntentCommand());
+
+// History & Logs
 program.addCommand(createHistoryCommand());
 program.addCommand(createLogbookCommand());
 program.addCommand(createErrorLogCommand());
+
+// Calendar & Media
 program.addCommand(createCalendarsCommand());
 program.addCommand(createCalendarEventsCommand());
 program.addCommand(createCameraCommand());
 
+// Settings commands
 const settingsCmd = new Command("settings")
   .description("Configuration management commands");
 settingsCmd.addCommand(createConfigSetCommand());
@@ -97,10 +116,28 @@ settingsCmd.addCommand(createInitCommand());
 settingsCmd.addCommand(createValidateCommand());
 program.addCommand(settingsCmd);
 
+// LLM/Agent optimized commands
 program.addCommand(createEntitiesCommand());
 program.addCommand(createBatchCommand());
 program.addCommand(createQueryCommand());
 program.addCommand(createDiscoverCommand());
 program.addCommand(createInspectCommand());
+
+// Registries
+program.addCommand(createRegistriesCommand());
+
+// Statistics
+program.addCommand(createStatisticsCommand());
+
+// Lists (Todo, Shopping, Notifications)
+program.addCommand(createTodoCommand());
+program.addCommand(createShoppingListCommand());
+program.addCommand(createNotificationsCommand());
+
+// System (Persons, Zones, Analytics, Backups)
+program.addCommand(createPersonsCommand());
+program.addCommand(createZonesCommand());
+program.addCommand(createAnalyticsCommand());
+program.addCommand(createBackupsCommand());
 
 program.parse();

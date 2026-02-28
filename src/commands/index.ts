@@ -4,3 +4,7 @@ export * from "./history.js";
 export * from "./media.js";
 export * from "./cli-config.js";
 export * from "./llm.js";
+export * from "./registries.js";
+export * from "./statistics.js";
+export * from "./lists.js";
+export * from "./system.js";

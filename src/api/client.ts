@@ -34,15 +34,15 @@ export class HomeAssistantConnectionError extends Error {
 }
 
 export class HomeAssistantClient {
-  private readonly baseUrl: string;
-  private readonly token: string;
+  protected readonly baseUrl: string;
+  protected readonly token: string;
 
   constructor(config: Config) {
     this.baseUrl = config.url;
     this.token = config.token;
   }
 
-  private async request<T>(
+  protected async request<T>(
     method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH",
     path: string,
     body?: unknown
@@ -70,7 +70,6 @@ export class HomeAssistantClient {
       }
       
       const response = await request(url, requestOptions);
-
       const responseText = await response.body.text();
 
       if (response.statusCode >= 400) {

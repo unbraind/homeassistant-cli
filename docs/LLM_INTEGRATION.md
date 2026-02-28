@@ -8,7 +8,11 @@ This guide covers features and best practices for using Home Assistant CLI with 
 - **Structured Responses**: Clear headers with field names and predictable data layouts
 - **Query Language**: Simple expression syntax for filtering entities
 - **Batch Operations**: Execute multiple operations in a single command
-- **Comprehensive Discovery**: Explore all entities and their states efficiently
+- **Comprehensive Discovery**: Explore all entities, registries, and statistics efficiently
+- **Full API Coverage**: Access to all Home Assistant API endpoints
+- **Registry Access**: Query entity, device, area, floor, label, and category registries
+- **Statistics**: Access historical data and analytics
+- **List Management**: Manage todo lists, shopping lists, and notifications
 
 ## TOON Format Explained
 
@@ -148,6 +152,153 @@ hassio inspect sensor.temperature --history
 hassio inspect sensor.temperature --history -l 5
 ```
 
+## Registry Queries
+
+### Entity Registry
+
+Access entity metadata and configuration:
+
+```bash
+# List all registered entities
+hassio registries --entities
+
+# Count entities
+hassio registries --entities --count
+
+# Filter by domain
+hassio registries --entities -d light
+
+# Filter by device
+hassio registries --entities --device-id device_123
+```
+
+**Use Cases**:
+- Find disabled entities
+- See entity names vs original names
+- Check which integration provides each entity
+- View entity categories and labels
+
+### Device Registry
+
+Access device information:
+
+```bash
+# List all devices
+hassio registries --devices
+
+# Filter by area
+hassio registries --devices --area-id area_living_room
+
+# Count devices
+hassio registries --devices --count
+```
+
+**Use Cases**:
+- List all devices by manufacturer
+- Find devices without an area
+- Check firmware versions
+
+### Area Registry
+
+Access area (room) information:
+
+```bash
+# List all areas
+hassio registries --areas
+
+# Count areas
+hassio registries --areas --count
+```
+
+### Other Registries
+
+```bash
+# Floor registry
+hassio registries --floors
+
+# Label registry
+hassio registries --labels
+
+# Category registry
+hassio registries --categories
+
+# All registries
+hassio registries
+```
+
+## Statistics and Analytics
+
+### Statistics
+
+Query historical statistics data:
+
+```bash
+# Get statistics for an entity
+hassio statistics -e sensor.temperature -p hour
+
+# Get statistics for multiple entities
+hassio statistics -e sensor.temp1,sensor.temp2 -p day
+
+# Get statistics during a period
+hassio statistics -e sensor.energy --during-period \
+  -s "2024-01-01T00:00:00Z" -t "2024-01-31T23:59:59Z" \
+  -p day --types mean,max,min
+
+# Available periods: 5minute, hour, day, week, month
+# Available types: change, last_reset, max, mean, min, state, sum
+```
+
+### Analytics
+
+Get Home Assistant system analytics:
+
+```bash
+hassio analytics
+```
+
+Returns: active integrations, component count, installation type, version, etc.
+
+## List Management
+
+### Todo Lists
+
+```bash
+# List all todo lists
+hassio todo --lists
+
+# Get items from a specific list
+hassio todo -e todo.shopping
+```
+
+### Shopping List
+
+```bash
+# List all items
+hassio shopping-list --list
+
+# Show only pending items
+hassio shopping-list --pending
+
+# Add item
+hassio shopping-list -a "Milk"
+
+# Mark as complete
+hassio shopping-list -u item_id --complete
+
+# Clear completed items
+hassio shopping-list --clear-completed
+```
+
+### Notifications
+
+```bash
+# List notifications
+hassio notifications --list
+
+# Dismiss notification
+hassio notifications -d notification_id
+```
+
 ## Agent Workflow Examples
 
 ### Workflow 1: Turn On Evening Lights
@@ -177,6 +328,9 @@ hassio error-log | tail -20
 
 # 4. Check config validity
 hassio check-config
+
+# 5. Get analytics
+hassio analytics
 ```
 
 ### Workflow 3: Temperature Monitoring
@@ -190,16 +344,52 @@ hassio query "domain:sensor attributes:unit_of_measurement=°C"
 
 # 3. Check specific sensor history
 hassio inspect sensor.living_room_temperature --history
+
+# 4. Get temperature statistics
+hassio statistics -e sensor.temperature -p hour --types mean,max,min
 ```
 
-### Workflow 4: Media Control
+### Workflow 4: Device Management
+
+```bash
+# 1. Get all devices
+hassio registries --devices
+
+# 2. Get entities for a specific device
+hassio registries --entities --device-id device_123
+
+# 3. Find devices in an area
+hassio registries --devices --area-id area_living_room
+
+# 4. List all areas
+hassio registries --areas
+```
+
+### Workflow 5: Media Control
 
 ```bash
 # 1. Find all media players
 hassio entities -d media_player
 
 # 2. Stop all playing media
-hassio batch -d media_player -s media_stop -e $(hassio entities -d media_player -s playing --format json-compact | jq -r '.[].entity_id' | tr '\n' ',')
+hassio batch -d media_player -s media_stop \
+  -e $(hassio entities -d media_player -s playing --format json-compact | jq -r '.[].entity_id' | tr '\n' ',')
+```
+
+### Workflow 6: Backup Management
+
+```bash
+# 1. List existing backups
+hassio backups --list
+
+# 2. Create new backup
+hassio backups -c "Pre-Update Backup"
+
+# 3. Download backup
+hassio backups --download backup_slug -o backup.tar
+
+# 4. Restore if needed
+hassio backups -r backup_slug
 ```
 
 ## Best Practices for Agents
@@ -212,7 +402,7 @@ Always use TOON format (default) for minimal token usage:
 # Default is TOON
 hassio entities
 
-# Only use JSON if you need nested data
+# Only use JSON if you need nested data parsing
 hassio states sensor.temperature --format json
 ```
 
@@ -261,6 +451,27 @@ hassio call-service light turn_off -e light.c
 hassio query "domain:binary_sensor" --summary
 ```
 
+### 6. Registry Queries for Metadata
+
+Use registries when you need configuration metadata:
+
+```bash
+# Get entity configuration
+hassio registries --entities -d light
+
+# Check for disabled entities
+hassio registries --entities | grep "disabled"
+```
+
+### 7. Statistics for Historical Data
+
+Use statistics for time-series analysis:
+
+```bash
+# Get daily averages
+hassio statistics -e sensor.temperature -p day --types mean
+```
+
 ## Template Integration
 
 Render Home Assistant templates for dynamic queries:
@@ -288,6 +499,10 @@ hassio status
 
 # Validation helps catch issues early
 hassio settings validate
+
+# 404 errors indicate endpoint not available
+hassio persons
+# Error: 404 - Not Found (person integration not enabled)
 ```
 
 ## Tips for LLM Integration
@@ -298,6 +513,10 @@ hassio settings validate
 4. **Validate before actions**: Check states before changing them
 5. **Monitor with history**: Use `--history` for context
 6. **Handle errors gracefully**: Check exit codes and error messages
+7. **Use registries for metadata**: When you need configuration info
+8. **Use statistics for trends**: When analyzing historical data
+9. **Count first**: Before fetching full lists
+10. **Check availability**: Not all endpoints available in all installations
 
 ## Example Agent Implementation
 
@@ -340,6 +559,15 @@ def turn_on_living_room_lights():
         "-s", "turn_on",
         "-e", entity_ids
     ])
+
+# Example: Get system health
+def get_system_health():
+    return {
+        "status": hassio_command(["status"]),
+        "config": hassio_command(["check-config"]),
+        "discovery": hassio_command(["discover"]),
+        "analytics": hassio_command(["analytics"]),
+    }
 ```
 
 ## Performance Tips
@@ -351,6 +579,8 @@ def turn_on_living_room_lights():
 - **Use `--no-attributes`** when you don't need attributes
 - **Batch operations** instead of individual calls
 - **Filter on server** using query parameters when possible
+- **Cache registry data** - it changes infrequently
+- **Use statistics** instead of history for aggregated data
 
 ## Security Considerations
 
@@ -358,3 +588,30 @@ def turn_on_living_room_lights():
 - Use environment variables for CI/CD
 - Never log full tokens
 - Validate inputs before executing commands
+- Check which integrations are enabled before querying specific endpoints
+- Be careful with backup operations - they can be destructive
+
+## Troubleshooting
+
+### 404 Errors
+
+Some endpoints return 404 if the corresponding integration is not enabled:
+- `persons` - Requires person integration
+- `zones` - Requires zone integration
+- `registries` - Requires config integration
+- `backups` - Requires backup/supervisor
+- `analytics` - Requires analytics
+
+### Timeout Errors
+
+For large installations, increase timeout:
+```bash
+hassio --timeout 60000 discover
+```
+
+### Authentication Errors
+
+Verify token is correct and not expired:
+```bash
+hassio settings validate
+```
