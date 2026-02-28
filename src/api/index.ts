@@ -7,3 +7,4 @@ export * from "./system.js";
 export * from "./conversation.js";
 export * from "./search.js";
 export * from "./tts.js";
+export * from "./automation.js";

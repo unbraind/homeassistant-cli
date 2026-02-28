@@ -61,7 +61,8 @@ describe("TtsApiClient", () => {
         mockResponse({ context: { id: "123" } })
       );
       await client.speak("media_player.living_room", "Hello");
-      const callBody = JSON.parse(mockRequest.mock.calls[0]?.[1] as string);
+      const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
+      const callBody = callOptions?.body ? JSON.parse(callOptions.body) : {};
       expect(callBody.entity_id).toBe("media_player.living_room");
       expect(callBody.message).toBe("Hello");
     });

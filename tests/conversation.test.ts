@@ -70,7 +70,8 @@ describe("ConversationApiClient", () => {
         })
       );
       await client.processConversation("test", { agentId: "custom-agent" });
-      const callBody = JSON.parse(mockRequest.mock.calls[0]?.[1] as string);
+      const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
+      const callBody = callOptions?.body ? JSON.parse(callOptions.body) : {};
       expect(callBody.agent_id).toBe("custom-agent");
     });
   });

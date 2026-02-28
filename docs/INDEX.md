@@ -163,6 +163,21 @@ Configuration is loaded in priority order (later overrides earlier):
 | `tts` | Text-to-Speech operations |
 | `say <message>` | Speak text through media player |
 
+### Automation Commands
+
+| Command | Description |
+|---------|-------------|
+| `automations` | Manage automations (list, trigger, toggle, reload) |
+| `scripts` | Manage scripts (list, run, reload) |
+| `scenes` | Manage scenes (list, apply, reload) |
+
+### LLM/Agent Helper Commands
+
+| Command | Description |
+|---------|-------------|
+| `schema` | Export CLI schema for LLM consumption |
+| `action <intent>` | Intelligent action helper for LLMs |
+
 ## LLM/Agent Features
 
 The CLI is optimized for use by LLMs and AI agents:
@@ -203,6 +218,11 @@ See [LLM Integration Guide](./LLM_INTEGRATION.md) for detailed examples.
 ✅ Zones  
 ✅ Analytics  
 ✅ Backups  
+✅ Automations  
+✅ Scripts  
+✅ Scenes  
+✅ LLM Schema Export  
+✅ Intelligent Action Helper  
 
 ## Project Structure
 

@@ -48,6 +48,11 @@ import {
   createFindCommand,
   createTtsCommand,
   createSayCommand,
+  createAutomationsCommand,
+  createScriptsCommand,
+  createScenesCommand,
+  createSchemaCommand,
+  createActionCommand,
 } from "./commands/index.js";
 import { createInspectCommand } from "./commands/inspect.js";
 
@@ -161,5 +166,14 @@ program.addCommand(createFindCommand());
 // TTS (Text-to-Speech)
 program.addCommand(createTtsCommand());
 program.addCommand(createSayCommand());
+
+// Automation, Scripts, Scenes
+program.addCommand(createAutomationsCommand());
+program.addCommand(createScriptsCommand());
+program.addCommand(createScenesCommand());
+
+// LLM Schema and Actions
+program.addCommand(createSchemaCommand());
+program.addCommand(createActionCommand());
 
 program.parse();

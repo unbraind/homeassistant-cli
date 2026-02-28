@@ -709,6 +709,107 @@ hassio say "The front door is open" -p media_player.kitchen
 hassio say "Welcome home" -p media_player.living_room -e tts.cloud
 ```
 
+## Automation Commands
+
+#### `automations`
+Manage Home Assistant automations.
+
+```bash
+hassio automations [options]
+
+Options:
+  --list               List all automations
+  --on <entity>        Turn on automation
+  --off <entity>       Turn off automation
+  --toggle <entity>    Toggle automation
+  --trigger <entity>   Trigger automation
+  --reload             Reload all automations
+  --count              Only return count
+
+# Examples
+hassio automations --list                    # List all automations
+hassio automations --count                   # Count automations
+hassio automations --trigger automation.morning_lights
+hassio automations --toggle automation.evening_mode
+hassio automations --reload                  # Reload all automations
+```
+
+#### `scripts`
+Manage Home Assistant scripts.
+
+```bash
+hassio scripts [options]
+
+Options:
+  --list               List all scripts
+  --run <entity>       Execute a script
+  -d, --data <json>    JSON variables for script
+  --reload             Reload all scripts
+  --count              Only return count
+
+# Examples
+hassio scripts --list                        # List all scripts
+hassio scripts --run script.good_morning    # Execute script
+hassio scripts --run script.set_mode -d '{"mode":"party"}'
+hassio scripts --reload                      # Reload all scripts
+```
+
+#### `scenes`
+Manage Home Assistant scenes.
+
+```bash
+hassio scenes [options]
+
+Options:
+  --list               List all scenes
+  --apply <entity>     Apply a scene
+  --reload             Reload all scenes
+  --count              Only return count
+
+# Examples
+hassio scenes --list                         # List all scenes
+hassio scenes --apply scene.movie_night    # Apply scene
+hassio scenes --reload                       # Reload all scenes
+```
+
+## LLM/Agent Helper Commands
+
+#### `schema`
+Export CLI schema for LLM/agent consumption.
+
+```bash
+hassio schema [options]
+
+Options:
+  --commands           Export command schema
+  --services           Export service schema from HA
+  --entities           Export entity schema summary
+  --full               Export full schema (all of the above)
+
+# Examples
+hassio schema --commands                     # Get command schema
+hassio schema --services                     # Get service schema
+hassio schema --full                         # Get full schema
+```
+
+#### `action`
+Intelligent action helper for LLMs.
+
+```bash
+hassio action <intent> [options]
+
+Arguments:
+  <intent>             Natural language intent (e.g., 'turn on living room lights')
+
+Options:
+  --dry-run            Show what would be done without executing
+
+# Examples
+hassio action "turn on living room lights" --dry-run
+hassio action "toggle kitchen switch"
+hassio action "activate movie scene"
+```
+
 ## Exit Codes
 
 | Code | Meaning |
