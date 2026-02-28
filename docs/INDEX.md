@@ -136,10 +136,10 @@ Configuration is loaded in priority order (later overrides earlier):
 
 | Command | Description |
 |---------|-------------|
-| `persons` | List persons |
-| `zones` | List zones |
+| `persons` | List persons (from entity states) |
+| `zones` | List zones (from entity states) |
 | `analytics` | System analytics |
-| `backups` | Backup management |
+| `backups` | Backup management (via service calls) |
 
 ### LLM/Agent Optimized Commands
 

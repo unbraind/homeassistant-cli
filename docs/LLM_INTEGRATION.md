@@ -641,12 +641,12 @@ def get_system_health():
 
 ### 404 Errors
 
-Some endpoints return 404 if the corresponding integration is not enabled:
-- `persons` - Requires person integration
-- `zones` - Requires zone integration
-- `registries` - Requires config integration
-- `backups` - Requires backup/supervisor
-- `analytics` - Requires analytics
+Some endpoints return 404 if the corresponding integration is not enabled or the REST API endpoint is not available:
+- `persons` - Now uses entity states (always available)
+- `zones` - Now uses entity states (always available)
+- `registries` - May not be available via REST API; falls back to entity states for areas
+- `backups` - Requires Hass.io/Supervisor; uses service calls
+- `analytics` - May require analytics to be enabled in Home Assistant
 
 ### Timeout Errors
 

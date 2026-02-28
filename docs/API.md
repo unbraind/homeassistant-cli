@@ -549,18 +549,22 @@ hassio notifications -d notification_1   # Dismiss notification
 ## System Commands
 
 #### `persons`
-List all persons.
+List all persons (from entity states).
 
 ```bash
 hassio persons [--count]
 ```
 
+Returns: entity_id, state, friendly_name, device_trackers, user_id
+
 #### `zones`
-List all zones.
+List all zones (from entity states).
 
 ```bash
 hassio zones [--count]
 ```
+
+Returns: entity_id, state, friendly_name, latitude, longitude, radius, passive
 
 #### `analytics`
 Get Home Assistant analytics data.
@@ -572,30 +576,24 @@ hassio analytics
 Returns: active_integrations, addons, energy, homeassistant, installation_type, integration_count, state_count, uuid, version
 
 #### `backups`
-Manage Home Assistant backups.
+Manage Home Assistant backups (via service calls).
 
 ```bash
 hassio backups [options]
 
 Options:
-  --list               List all backups
   -c, --create <name>  Create a new backup
   -r, --restore <id>   Restore a backup
-  -d, --delete <id>    Delete a backup
-  --download <id>      Download a backup
-  -o, --output <file>  Output file for download
   --compressed         Create compressed backup (default: true)
   --password <password>  Password for backup
-  --count              Only return count
 
 # Examples
-hassio backups --list                                    # List backups
 hassio backups -c "Daily Backup"                         # Create backup
 hassio backups -c "Secure Backup" --password "secret"    # Create encrypted backup
 hassio backups -r backup_slug --password "secret"        # Restore backup
-hassio backups --download backup_slug -o backup.tar      # Download backup
-hassio backups -d backup_slug                            # Delete backup
 ```
+
+Note: Backup management requires Hass.io/Supervisor. For full backup management, use the Home Assistant UI.
 
 ## Conversation & Voice Assistant Commands
 

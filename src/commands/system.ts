@@ -1,13 +1,17 @@
 import { Command } from "commander";
 import { getConfig } from "../config/index.js";
-import { SystemApiClient } from "../api/index.js";
+import { HomeAssistantClient, SystemApiClient, HomeAssistantApiError } from "../api/index.js";
 import { formatOutput } from "../formatters/index.js";
-import type { OutputFormat } from "../types/index.js";
-import { writeFileSync } from "node:fs";
+import type { OutputFormat, HaState } from "../types/index.js";
 
 function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
   const config = getConfig(options);
   return new SystemApiClient(config);
+}
+
+function getBaseClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
+  const config = getConfig(options);
+  return new HomeAssistantClient(config);
 }
 
 function getFormat(options: { format?: OutputFormat }): OutputFormat {
@@ -17,14 +21,23 @@ function getFormat(options: { format?: OutputFormat }): OutputFormat {
 
 export function createPersonsCommand(): Command {
   return new Command("persons")
-    .description("List all persons")
+    .description("List all persons (from entity states)")
     .option("--count", "Only return count")
     .action(async (options: { count?: boolean }, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
-      const client = getClient(globalOpts);
+      const client = getBaseClient(globalOpts);
       const format = getFormat(globalOpts);
 
-      const persons = await client.getPersons();
+      const states = await client.getStates();
+      const persons = states
+        .filter((s: HaState) => s.entity_id.startsWith("person."))
+        .map((s: HaState) => ({
+          entity_id: s.entity_id,
+          state: s.state,
+          friendly_name: s.attributes.friendly_name || s.entity_id,
+          device_trackers: s.attributes.device_trackers || [],
+          user_id: s.attributes.user_id || null,
+        }));
 
       if (options.count) {
         console.log(formatOutput({ persons_count: persons.length }, format));
@@ -36,14 +49,25 @@ export function createPersonsCommand(): Command {
 
 export function createZonesCommand(): Command {
   return new Command("zones")
-    .description("List all zones")
+    .description("List all zones (from entity states)")
     .option("--count", "Only return count")
     .action(async (options: { count?: boolean }, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
-      const client = getClient(globalOpts);
+      const client = getBaseClient(globalOpts);
       const format = getFormat(globalOpts);
 
-      const zones = await client.getZones();
+      const states = await client.getStates();
+      const zones = states
+        .filter((s: HaState) => s.entity_id.startsWith("zone."))
+        .map((s: HaState) => ({
+          entity_id: s.entity_id,
+          state: s.state,
+          friendly_name: s.attributes.friendly_name || s.entity_id,
+          latitude: s.attributes.latitude,
+          longitude: s.attributes.longitude,
+          radius: s.attributes.radius,
+          passive: s.attributes.passive || false,
+        }));
 
       if (options.count) {
         console.log(formatOutput({ zones_count: zones.length }, format));
@@ -61,14 +85,24 @@ export function createAnalyticsCommand(): Command {
       const client = getClient(globalOpts);
       const format = getFormat(globalOpts);
 
-      const analytics = await client.getAnalytics();
-      console.log(formatOutput(analytics, format));
+      try {
+        const analytics = await client.getAnalytics();
+        console.log(formatOutput(analytics, format));
+      } catch (error) {
+        if (error instanceof HomeAssistantApiError && error.statusCode === 404) {
+          console.log(formatOutput({ 
+            message: "Analytics endpoint not available. Enable analytics in Home Assistant settings." 
+          }, format));
+        } else {
+          throw error;
+        }
+      }
     });
 }
 
 export function createBackupsCommand(): Command {
   const command = new Command("backups")
-    .description("Manage Home Assistant backups")
+    .description("Manage Home Assistant backups (via hassio service calls)")
     .option("--list", "List all backups")
     .option("-c, --create <name>", "Create a new backup")
     .option("-r, --restore <id>", "Restore a backup")
@@ -91,52 +125,52 @@ export function createBackupsCommand(): Command {
     count?: boolean;
   }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
-    const client = getClient(globalOpts);
+    const client = getBaseClient(globalOpts);
     const format = getFormat(globalOpts);
 
     if (options.create) {
-      const backupOptions: { compressed?: boolean; password?: string } = {};
-      if (options.compressed !== undefined) backupOptions.compressed = options.compressed;
-      if (options.password) backupOptions.password = options.password;
-      const backup = await client.createBackup(options.create, backupOptions);
-      console.log(formatOutput({ created: backup }, format));
-      return;
-    }
-
-    if (options.restore) {
-      const restoreOptions: { password?: string } = {};
-      if (options.password) restoreOptions.password = options.password;
-      await client.restoreBackup(options.restore, restoreOptions);
-      console.log(formatOutput({ restored: options.restore }, format));
-      return;
-    }
-
-    if (options.delete) {
-      await client.deleteBackup(options.delete);
-      console.log(formatOutput({ deleted: options.delete }, format));
-      return;
-    }
-
-    if (options.download) {
-      const buffer = await client.downloadBackup(options.download);
-      if (options.output) {
-        writeFileSync(options.output, buffer);
-        console.log(formatOutput({ downloaded: options.output, size: buffer.length }, format));
-      } else {
-        // Output to stdout as binary
-        process.stdout.write(buffer);
+      const data: Record<string, unknown> = { name: options.create };
+      if (options.compressed !== undefined) data.compressed = options.compressed;
+      if (options.password) data.password = options.password;
+      
+      try {
+        await client.callService("hassio", "backup_full", data);
+        console.log(formatOutput({ created: true, name: options.create }, format));
+      } catch (error) {
+        if (error instanceof HomeAssistantApiError && error.statusCode === 404) {
+          console.log(formatOutput({ 
+            message: "Backup service not available. Ensure Hass.io/Supervisor is installed." 
+          }, format));
+        } else {
+          throw error;
+        }
       }
       return;
     }
 
-    // Default: list backups
-    const backups = await client.getBackups();
-
-    if (options.count) {
-      console.log(formatOutput({ backups_count: backups.length }, format));
-    } else {
-      console.log(formatOutput({ backups }, format));
+    if (options.restore) {
+      const data: Record<string, unknown> = { slug: options.restore };
+      if (options.password) data.password = options.password;
+      
+      try {
+        await client.callService("hassio", "restore_full", data);
+        console.log(formatOutput({ restored: options.restore }, format));
+      } catch (error) {
+        if (error instanceof HomeAssistantApiError && error.statusCode === 404) {
+          console.log(formatOutput({ 
+            message: "Restore service not available. Ensure Hass.io/Supervisor is installed." 
+          }, format));
+        } else {
+          throw error;
+        }
+      }
+      return;
     }
+
+    console.log(formatOutput({ 
+      message: "Backup management requires Hass.io/Supervisor. Use 'hassio call-service hassio backup_full' to create backups.",
+      hint: "For full backup management, use the Home Assistant UI or Supervisor API directly."
+    }, format));
   });
 
   return command;
