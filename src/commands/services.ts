@@ -109,7 +109,7 @@ export function createRenderTemplateCommand(): Command {
 export function createCheckConfigCommand(): Command {
   return new Command("check-config")
     .description("Validate the Home Assistant configuration")
-    .action(async (options, cmd) => {
+    .action(async (_options, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
       const client = getClient(globalOpts);
       const format = getFormat(globalOpts);

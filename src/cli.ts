@@ -24,6 +24,14 @@ import {
   createConfigSetCommand,
   createConfigGetCommand,
   createConfigPathCommand,
+  createWizardCommand,
+  createInitCommand,
+  createValidateCommand,
+  createEntitiesCommand,
+  createBatchCommand,
+  createQueryCommand,
+  createDiscoverCommand,
+  createInspectCommand,
 } from "./commands/index.js";
 
 const program = new Command();
@@ -50,10 +58,12 @@ program
   )
   .addOption(
     new Option("--timeout <ms>", "Request timeout in milliseconds")
+      .env("HASSIO_TIMEOUT")
       .default(30000)
   )
   .addOption(
     new Option("-c, --config <path>", "Path to config file")
+      .env("HASSIO_CONFIG")
       .default(undefined)
   );
 
@@ -76,8 +86,21 @@ program.addCommand(createErrorLogCommand());
 program.addCommand(createCalendarsCommand());
 program.addCommand(createCalendarEventsCommand());
 program.addCommand(createCameraCommand());
-program.addCommand(createConfigSetCommand());
-program.addCommand(createConfigGetCommand());
-program.addCommand(createConfigPathCommand());
+
+const settingsCmd = new Command("settings")
+  .description("Configuration management commands");
+settingsCmd.addCommand(createConfigSetCommand());
+settingsCmd.addCommand(createConfigGetCommand());
+settingsCmd.addCommand(createConfigPathCommand());
+settingsCmd.addCommand(createWizardCommand());
+settingsCmd.addCommand(createInitCommand());
+settingsCmd.addCommand(createValidateCommand());
+program.addCommand(settingsCmd);
+
+program.addCommand(createEntitiesCommand());
+program.addCommand(createBatchCommand());
+program.addCommand(createQueryCommand());
+program.addCommand(createDiscoverCommand());
+program.addCommand(createInspectCommand());
 
 program.parse();

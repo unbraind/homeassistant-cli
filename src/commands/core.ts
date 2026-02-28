@@ -17,7 +17,7 @@ function getFormat(options: { format?: OutputFormat }): OutputFormat {
 export function createStatusCommand(): Command {
   return new Command("status")
     .description("Check if the Home Assistant API is running")
-    .action(async (options, cmd) => {
+    .action(async (_options, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
       const client = getClient(globalOpts);
       const format = getFormat(globalOpts);
@@ -29,7 +29,7 @@ export function createStatusCommand(): Command {
 export function createConfigCommand(): Command {
   return new Command("config")
     .description("Get the current Home Assistant configuration")
-    .action(async (options, cmd) => {
+    .action(async (_options, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
       const client = getClient(globalOpts);
       const format = getFormat(globalOpts);
@@ -41,7 +41,7 @@ export function createConfigCommand(): Command {
 export function createComponentsCommand(): Command {
   return new Command("components")
     .description("Get list of loaded components")
-    .action(async (options, cmd) => {
+    .action(async (_options, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
       const client = getClient(globalOpts);
       const format = getFormat(globalOpts);
@@ -53,7 +53,7 @@ export function createComponentsCommand(): Command {
 export function createEventsCommand(): Command {
   return new Command("events")
     .description("Get list of available events")
-    .action(async (options, cmd) => {
+    .action(async (_options, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
       const client = getClient(globalOpts);
       const format = getFormat(globalOpts);
@@ -65,7 +65,7 @@ export function createEventsCommand(): Command {
 export function createServicesCommand(): Command {
   return new Command("services")
     .description("Get list of available services")
-    .action(async (options, cmd) => {
+    .action(async (_options, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
       const client = getClient(globalOpts);
       const format = getFormat(globalOpts);
@@ -79,7 +79,7 @@ export function createStatesCommand(): Command {
     .description("Get entity states")
     .argument("[entity-id]", "Specific entity ID to get state for");
 
-  command.action(async (entityId: string | undefined, options, cmd) => {
+  command.action(async (entityId: string | undefined, _options, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
     const client = getClient(globalOpts);
     const format = getFormat(globalOpts);
@@ -127,7 +127,7 @@ export function createDeleteStateCommand(): Command {
     .description("Delete an entity state")
     .argument("<entity-id>", "Entity ID to delete");
 
-  command.action(async (entityId: string, options, cmd) => {
+  command.action(async (entityId: string, _options, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
     const client = getClient(globalOpts);
     const format = getFormat(globalOpts);

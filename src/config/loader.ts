@@ -37,19 +37,19 @@ export function getConfig(options?: {
 
   const url =
     options?.url ??
-    process.env.HASSIO_URL ??
-    process.env.HOMEASSISTANT_URL ??
+    process.env["HASSIO_URL"] ??
+    process.env["HOMEASSISTANT_URL"] ??
     fileConfig.url;
 
   const token =
     options?.token ??
-    process.env.HASSIO_TOKEN ??
-    process.env.HOMEASSISTANT_TOKEN ??
+    process.env["HASSIO_TOKEN"] ??
+    process.env["HOMEASSISTANT_TOKEN"] ??
     fileConfig.token;
 
   const outputFormat =
     options?.format ??
-    (process.env.HASSIO_FORMAT as OutputFormat) ??
+    (process.env["HASSIO_FORMAT"] as OutputFormat) ??
     fileConfig.outputFormat ??
     "toon";
 

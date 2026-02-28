@@ -70,7 +70,7 @@ export function createLogbookCommand(): Command {
 export function createErrorLogCommand(): Command {
   return new Command("error-log")
     .description("Get the Home Assistant error log")
-    .action(async (options, cmd) => {
+    .action(async (_options, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
       const client = getClient(globalOpts);
       const result = await client.getErrorLog();

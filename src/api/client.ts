@@ -26,19 +26,24 @@ export class HomeAssistantApiError extends Error {
   }
 }
 
+export class HomeAssistantConnectionError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "HomeAssistantConnectionError";
+  }
+}
+
 export class HomeAssistantClient {
   private readonly baseUrl: string;
   private readonly token: string;
-  private readonly timeout: number;
 
   constructor(config: Config) {
     this.baseUrl = config.url;
     this.token = config.token;
-    this.timeout = config.timeout;
   }
 
   private async request<T>(
-    method: string,
+    method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH",
     path: string,
     body?: unknown
   ): Promise<T> {
@@ -48,28 +53,58 @@ export class HomeAssistantClient {
       "Content-Type": "application/json",
     };
 
-    const response = await request(url, {
-      method,
-      headers,
-      body: body ? JSON.stringify(body) : undefined,
-      throwOnError: true,
-    });
+    try {
+      const requestOptions: {
+        method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
+        headers: Record<string, string>;
+        body?: string;
+        throwOnError: false;
+      } = {
+        method,
+        headers,
+        throwOnError: false,
+      };
+      
+      if (body) {
+        requestOptions.body = JSON.stringify(body);
+      }
+      
+      const response = await request(url, requestOptions);
 
-    const responseText = await response.body.text();
+      const responseText = await response.body.text();
 
-    if (response.statusCode >= 400) {
-      throw new HomeAssistantApiError(
-        `API request failed: ${response.statusCode}`,
-        response.statusCode,
-        responseText
-      );
+      if (response.statusCode >= 400) {
+        throw new HomeAssistantApiError(
+          `API request failed: ${response.statusCode} - ${responseText}`,
+          response.statusCode,
+          responseText
+        );
+      }
+
+      if (!responseText || responseText.trim() === "") {
+        return undefined as T;
+      }
+
+      return JSON.parse(responseText) as T;
+    } catch (error) {
+      if (error instanceof HomeAssistantApiError) {
+        throw error;
+      }
+      
+      if (error instanceof Error && (
+        error.message.includes("ECONNREFUSED") ||
+        error.message.includes("ENOTFOUND") ||
+        error.message.includes("ETIMEDOUT") ||
+        error.message.includes("fetch failed")
+      )) {
+        throw new HomeAssistantConnectionError(
+          `Failed to connect to Home Assistant at ${this.baseUrl}. ` +
+          `Please check the URL and ensure Home Assistant is running.`
+        );
+      }
+      
+      throw error;
     }
-
-    if (!responseText || responseText.trim() === "") {
-      return undefined as T;
-    }
-
-    return JSON.parse(responseText) as T;
   }
 
   async getStatus(): Promise<HaApiStatus> {

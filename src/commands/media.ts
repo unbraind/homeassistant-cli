@@ -18,7 +18,7 @@ function getFormat(options: { format?: OutputFormat }): OutputFormat {
 export function createCalendarsCommand(): Command {
   return new Command("calendars")
     .description("Get list of calendar entities")
-    .action(async (options, cmd) => {
+    .action(async (_options, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
       const client = getClient(globalOpts);
       const format = getFormat(globalOpts);

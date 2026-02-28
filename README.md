@@ -10,9 +10,11 @@ Agent-optimized CLI tool for interacting with the Home Assistant API. Designed f
 - **Full Home Assistant API Coverage** - States, services, events, history, logbook, calendars, cameras, templates, and more
 - **Agent-Optimized Output** - Default TOON format for ~40% token reduction vs JSON
 - **Multiple Output Formats** - TOON, JSON, JSON-compact, YAML, and table
+- **Interactive Setup Wizard** - Easy first-time configuration
 - **Flexible Configuration** - Environment variables, config file, or CLI options
+- **LLM-Optimized Commands** - Query language, batch operations, entity discovery
 - **Full TypeScript Support** - Complete type safety throughout
-- **Comprehensive Testing** - 96+ tests with high coverage
+- **Comprehensive Testing** - High test coverage
 
 ## Installation
 
@@ -39,41 +41,56 @@ bun run build
 
 ## Quick Start
 
-1. **Get your token**: In Home Assistant, go to Profile > Long-Lived Access Tokens > Create Token
+### Option 1: Interactive Setup (Recommended)
 
-2. **Configure authentication**:
+```bash
+# Run the setup wizard
+hassio settings wizard
 
-   ```bash
-   # Option 1: Config file (recommended)
-   hassio config-set --url "http://homeassistant.local:8123" --token "your-token"
+# Test connection
+hassio status
+```
 
-   # Option 2: Environment variables
-   export HASSIO_URL="http://homeassistant.local:8123"
-   export HASSIO_TOKEN="your-token"
-   ```
+### Option 2: Environment Variables
 
-3. **Start using**:
+```bash
+export HASSIO_URL="http://homeassistant.local:8123"
+export HASSIO_TOKEN="your-long-lived-access-token"
 
-   ```bash
-   # Check connection
-   hassio status
+# Initialize from environment
+hassio settings init
 
-   # Get all entity states
-   hassio states
+# Or use directly without saving
+hassio status
+```
 
-   # Control a light
-   hassio call-service light turn_on -e light.living_room
-   ```
+### Option 3: Manual Configuration
+
+```bash
+# Set configuration
+hassio settings set --url "http://homeassistant.local:8123" --token "your-token"
+
+# Validate
+hassio settings validate
+```
+
+## Getting Your Token
+
+1. Open Home Assistant in your browser
+2. Click your profile (bottom left)
+3. Scroll to "Long-Lived Access Tokens"
+4. Click "Create Token"
+5. Copy the token immediately (it won't be shown again)
 
 ## Output Formats
 
-### TOON (Default)
+### TOON (Default) - Optimized for LLMs
 
-Token-efficient format designed for LLMs - ~40% fewer tokens than JSON:
+Token-efficient format - ~40% fewer tokens than JSON:
 
 ```
 states[2]{entity_id,state,last_changed,attributes}:
-  light.living_room,on,2024-01-01T00:00:00Z,"{""brightness"":255}"
+  light.living_room,on,2024-01-01T00:00:00Z,"{ ""brightness"":255}"
   switch.kitchen,off,2024-01-01T01:00:00Z,"{}"
 ```
 
@@ -86,82 +103,189 @@ hassio states --format yaml          # YAML
 hassio states --format table         # ASCII table
 ```
 
-## Commands
+## Core Commands
 
-| Command | Description |
-|---------|-------------|
-| `status` | Check API status |
-| `config` | Get HA configuration |
-| `components` | List loaded components |
-| `events` | List available events |
-| `services` | List available services |
-| `states [entity]` | Get entity states |
-| `set-state <id> <state>` | Set entity state |
-| `delete-state <id>` | Delete entity state |
-| `call-service <domain> <service>` | Call a service |
-| `fire-event <type>` | Fire an event |
-| `render-template <template>` | Render Jinja2 template |
-| `history -e <entities>` | Get state history |
-| `logbook` | Get logbook entries |
-| `error-log` | Get error log |
-| `calendars` | List calendars |
-| `calendar-events <id>` | Get calendar events |
-| `camera <id>` | Get camera image |
-| `check-config` | Validate HA config |
-
-## Examples
+### Basic Operations
 
 ```bash
-# Get specific entity
-hassio states sensor.temperature
+# Check connection
+hassio status
 
-# Turn on light with options
+# Get entity states
+hassio states                    # All entities
+hassio states light.living_room  # Specific entity
+
+# Control devices
+hassio call-service light turn_on -e light.living_room
 hassio call-service light turn_on -e light.living_room -d '{"brightness":200}'
 
-# Get history for time range
-hassio history -e sensor.temperature -s "2024-01-01T00:00:00Z" -t "2024-01-02T00:00:00Z"
+# Call services
+hassio call-service climate set_temperature -e climate.living_room -d '{"temperature":22}'
+```
 
-# Render a template
-hassio render-template "Temperature: {{ states('sensor.temperature') }}°C"
+### History & Logs
 
-# Get calendar events
-hassio calendar-events calendar.home -s "2024-01-01T00:00:00Z" -e "2024-01-31T23:59:59Z"
+```bash
+# Get history
+hassio history -e sensor.temperature
+hassio history -e sensor.temp1,sensor.temp2 -s "2024-01-01T00:00:00Z"
+
+# View logs
+hassio logbook
+hassio error-log
+```
+
+### Configuration
+
+```bash
+# Validate HA configuration
+hassio check-config
+
+# Render templates
+hassio render-template "{{ states('sensor.temperature') }}"
+```
+
+## LLM-Optimized Commands
+
+### Entity Discovery
+
+```bash
+# Discover all entities
+hassio discover
+
+# Get domain statistics
+hassio discover --domains
+
+# Find unavailable entities
+hassio discover --unavailable
+```
+
+### Entity Filtering
+
+```bash
+# Filter by domain
+hassio entities -d light
+
+# Filter by state
+hassio entities -d light -s on
+
+# Filter by pattern
+hassio entities -p living_room
+
+# Get count only
+hassio entities --count
+
+# Group by domain
+hassio entities --domains
+```
+
+### Query Language
+
+```bash
+# Query with expressions
+hassio query "domain:light state:on"
+hassio query "domain:sensor attributes:unit_of_measurement=°C"
+hassio query "name:living" --summary
+```
+
+### Batch Operations
+
+```bash
+# Turn off multiple lights
+hassio batch -d light -s turn_off -e light.living_room,light.kitchen,light.bedroom
+
+# Set brightness on multiple lights
+hassio batch -d light -s turn_on -e light.living_room,light.kitchen --data '{"brightness":200}'
+```
+
+### Deep Inspection
+
+```bash
+# Inspect entity
+hassio inspect light.living_room
+
+# With history
+hassio inspect sensor.temperature --history
 ```
 
 ## Configuration
 
+### Priority Order
+
+Configuration is loaded in this order (later overrides earlier):
+
+1. Config file (`~/.hassio-cli/settings.json`)
+2. Environment variables
+3. CLI options
+
 ### Environment Variables
 
-| Variable | Description |
-|----------|-------------|
-| `HASSIO_URL` | Home Assistant URL |
-| `HASSIO_TOKEN` | Long-lived access token |
-| `HASSIO_FORMAT` | Output format (default: toon) |
-| `HASSIO_TIMEOUT` | Request timeout in ms (default: 30000) |
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `HASSIO_URL` | Home Assistant URL | - |
+| `HASSIO_TOKEN` | Long-lived access token | - |
+| `HASSIO_FORMAT` | Output format | `toon` |
+| `HASSIO_TIMEOUT` | Request timeout (ms) | `30000` |
 
-### Config File
+### Settings Commands
 
 ```bash
-# Set configuration
-hassio config-set --url "http://homeassistant.local:8123" --token "your-token"
+# Interactive wizard
+hassio settings wizard
 
-# View current config
-hassio config-get
+# Initialize from environment
+hassio settings init
+
+# Validate configuration
+hassio settings validate
+
+# Set options
+hassio settings set --url "http://..." --token "..."
+
+# View configuration (token masked)
+hassio settings get
 
 # Show config path
-hassio config-path
+hassio settings path
 ```
 
-Config file location: `~/.hassio-cli/settings.json`
+## Examples
+
+### Home Automation Workflows
+
+```bash
+# Turn on all lights in living room
+hassio query "domain:light name:living state:off"
+hassio batch -d light -s turn_on -e light.living_room_ceiling,light.living_room_lamp
+
+# Check temperature sensors
+hassio query "domain:sensor attributes:unit_of_measurement=°C" --summary
+hassio query "domain:sensor attributes:unit_of_measurement=°C"
+
+# Find and fix unavailable entities
+hassio discover --unavailable
+```
+
+### Calendar & Media
+
+```bash
+# List calendars
+hassio calendars
+
+# Get events
+hassio calendar-events calendar.home \
+    -s "2024-01-01T00:00:00Z" \
+    -e "2024-01-31T23:59:59Z"
+
+# Get camera snapshot
+hassio camera camera.front_door -o snapshot.jpg
+```
 
 ## Development
 
-> **Note:** This project uses [Bun](https://bun.sh) as the primary package manager and runtime. Please use Bun instead of npm.
+> **Note:** This project uses [Bun](https://bun.sh) as the primary package manager and runtime.
 
 ```bash
-# Install Bun (if not already installed)
-curl -fsSL https://bun.sh/install | bash
-
 # Install dependencies
 bun install
 
@@ -170,8 +294,6 @@ bun run dev -- status
 
 # Run tests
 bun test
-
-# Run tests with coverage
 bun run test:coverage
 
 # Build
@@ -179,18 +301,23 @@ bun run build
 
 # Type check
 bun run typecheck
+
+# Lint
+bun run lint
 ```
 
 ## Documentation
 
-- [API Reference](docs/API.md) - Complete command documentation
+- [API Reference](docs/API.md) - Complete command reference
 - [Documentation Index](docs/INDEX.md) - All documentation
+- [LLM Integration](docs/LLM_INTEGRATION.md) - Agent/LLM guide
 
 ## Security
 
-- Never commit tokens to version control
-- Use environment variables or config files for credentials
+- **Never commit tokens** to version control
 - Config file is excluded from git via `.gitignore`
+- Token is masked in `settings get` output
+- Use environment variables for CI/CD pipelines
 
 ## License
 
