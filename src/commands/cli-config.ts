@@ -25,13 +25,12 @@ export function createConfigSetCommand(): Command {
       if (options.defaultTimeout) config["timeout"] = parseInt(options.defaultTimeout, 10);
 
       if (Object.keys(config).length === 0) {
-        console.error("No configuration options provided. Use --help for usage.");
+        console.error("ERROR: No configuration options provided");
         process.exit(1);
       }
 
       saveConfig(config);
-      console.log(`✅ Configuration saved to ${getConfigPath()}`);
-      console.log("Current configuration:");
+      console.log(`saved:${getConfigPath()}`);
       console.log(JSON.stringify(config, null, 2));
     }
   );
@@ -50,15 +49,11 @@ export function createConfigGetCommand(): Command {
           url: config.url,
           outputFormat: config.outputFormat,
           timeout: config.timeout,
-          token: options.showToken ? config.token : (config.token ? "*** (set)" : "NOT SET"),
+          token: options.showToken ? config.token : (config.token ? "***" : "NOT_SET"),
         };
         console.log(JSON.stringify(safeConfig, null, 2));
-        console.log(`\n📁 Config file: ${getConfigPath()}`);
       } catch (error) {
-        console.error(
-          "Configuration not complete:",
-          error instanceof Error ? error.message : String(error)
-        );
+        console.error("ERROR:", error instanceof Error ? error.message : String(error));
         process.exit(1);
       }
     }
@@ -93,41 +88,33 @@ export function createWizardCommand(): Command {
         });
       };
 
-      console.log("\n🏠 Home Assistant CLI Setup Wizard\n");
-      console.log("This wizard will help you configure the CLI to connect to your Home Assistant instance.\n");
+      console.log("\nSETUP WIZARD\n");
 
       try {
-        const url = await question("Home Assistant URL (e.g., http://192.168.1.100:8123): ");
+        const url = await question("Home Assistant URL: ");
         if (!url) {
-          console.error("❌ URL is required");
+          console.error("ERROR: URL is required");
           process.exit(1);
         }
 
         const normalizedUrl = url.replace(/\/$/, "");
 
-        console.log("\nTo get your access token:");
-        console.log("1. Open Home Assistant in your browser");
-        console.log("2. Go to your Profile (bottom left)");
-        console.log("3. Scroll down to 'Long-Lived Access Tokens'");
-        console.log("4. Click 'Create Token' and copy the token\n");
+        console.log("\nToken Instructions:");
+        console.log("1. Open Home Assistant in browser");
+        console.log("2. Go to Profile > Long-Lived Access Tokens");
+        console.log("3. Click 'Create Token' and copy\n");
 
         const token = await question("Long-Lived Access Token: ");
         if (!token) {
-          console.error("❌ Token is required");
+          console.error("ERROR: Token is required");
           process.exit(1);
         }
 
-        console.log("\nAvailable output formats:");
-        console.log("  - toon (default): Token-efficient, optimized for LLMs");
-        console.log("  - json: Pretty-printed JSON");
-        console.log("  - json-compact: Minified JSON");
-        console.log("  - yaml: YAML format");
-        console.log("  - table: Human-readable table\n");
-
-        const formatInput = await question("Default output format [toon]: ");
+        console.log("\nFormats: toon, json, json-compact, yaml, table");
+        const formatInput = await question("Default format [toon]: ");
         const format = (formatInput || "toon") as OutputFormat;
 
-        const timeoutInput = await question("Request timeout in ms [30000]: ");
+        const timeoutInput = await question("Timeout in ms [30000]: ");
         const timeout = parseInt(timeoutInput || "30000", 10);
 
         const config = {
@@ -138,34 +125,31 @@ export function createWizardCommand(): Command {
         };
 
         saveConfig(config);
-
-        console.log(`\n✅ Configuration saved to ${getConfigPath()}`);
+        console.log(`\nsaved:${getConfigPath()}`);
 
         if (!options.skipTest) {
-          console.log("\n🧪 Testing connection...");
+          console.log("\nTesting connection...");
           
           const { HomeAssistantClient } = await import("../api/index.js");
           const client = new HomeAssistantClient(config);
           
           try {
             const status = await client.getStatus();
-            console.log(`✅ Connection successful: ${status.message}`);
-            
             const haConfig = await client.getConfig();
-            console.log(`📍 Location: ${haConfig.location_name}`);
-            console.log(`🔧 Version: ${haConfig.version}`);
-            console.log(`🌍 Timezone: ${haConfig.time_zone}`);
+            
+            console.log(`status:${status.message}`);
+            console.log(`version:${haConfig.version}`);
+            console.log(`location:${haConfig.location_name}`);
           } catch (error) {
-            console.error("\n❌ Connection test failed:");
+            console.error("\nERROR: Connection test failed");
             console.error(error instanceof Error ? error.message : String(error));
-            console.error("\nYour configuration has been saved, but the connection test failed.");
-            console.error("Please verify your URL and token are correct.");
+            console.error("\nConfiguration saved but connection failed. Verify URL and token.");
           }
         }
 
-        console.log("\n🎉 Setup complete! Try running: hassio status");
+        console.log("\nSetup complete. Run: hassio status");
       } catch (error) {
-        console.error("\n❌ Error during setup:", error instanceof Error ? error.message : String(error));
+        console.error("\nERROR:", error instanceof Error ? error.message : String(error));
         process.exit(1);
       } finally {
         rl.close();
@@ -183,8 +167,8 @@ export function createInitCommand(): Command {
       const timeoutStr = process.env["HASSIO_TIMEOUT"];
 
       if (!url && !token) {
-        console.error("❌ No HASSIO_URL or HASSIO_TOKEN environment variables found.");
-        console.error("Run 'hassio wizard' for interactive setup or set environment variables.");
+        console.error("ERROR: No HASSIO_URL or HASSIO_TOKEN environment variables found");
+        console.error("Run 'hassio settings wizard' for interactive setup");
         process.exit(1);
       }
 
@@ -195,8 +179,7 @@ export function createInitCommand(): Command {
       if (timeoutStr) config["timeout"] = parseInt(timeoutStr, 10);
 
       saveConfig(config);
-      console.log(`✅ Configuration initialized from environment variables`);
-      console.log(`📁 Saved to: ${getConfigPath()}`);
+      console.log(`saved:${getConfigPath()}`);
     });
 }
 
@@ -204,35 +187,30 @@ export function createValidateCommand(): Command {
   return new Command("validate")
     .description("Validate current configuration and test connection")
     .action(async () => {
-      console.log("🔍 Validating configuration...\n");
-
       try {
         const config = getConfig();
         
-        console.log("Configuration:");
-        console.log(`  URL: ${config.url}`);
-        console.log(`  Output Format: ${config.outputFormat}`);
-        console.log(`  Timeout: ${config.timeout}ms`);
-        console.log(`  Token: ${config.token ? "*** (set)" : "NOT SET"}`);
-        
-        console.log("\n🧪 Testing connection...");
+        console.log("config:");
+        console.log(`  url: ${config.url}`);
+        console.log(`  format: ${config.outputFormat}`);
+        console.log(`  timeout: ${config.timeout}ms`);
+        console.log(`  token: ${config.token ? "***" : "NOT_SET"}`);
         
         const { HomeAssistantClient } = await import("../api/index.js");
         const client = new HomeAssistantClient(config);
         
         const status = await client.getStatus();
-        console.log(`✅ API Status: ${status.message}`);
-        
         const haConfig = await client.getConfig();
-        console.log(`✅ HA Version: ${haConfig.version}`);
-        console.log(`✅ Location: ${haConfig.location_name}`);
-        
         const states = await client.getStates();
-        console.log(`✅ Entities: ${states.length}`);
         
-        console.log("\n✅ All tests passed! Configuration is valid.");
+        console.log("\ntest:");
+        console.log(`  api: ${status.message}`);
+        console.log(`  version: ${haConfig.version}`);
+        console.log(`  location: ${haConfig.location_name}`);
+        console.log(`  entities: ${states.length}`);
+        console.log("\nstatus: VALID");
       } catch (error) {
-        console.error("\n❌ Validation failed:");
+        console.error("\nERROR: Validation failed");
         console.error(error instanceof Error ? error.message : String(error));
         process.exit(1);
       }
@@ -247,24 +225,21 @@ export function createResetCommand(): Command {
       const { resetConfig, configExists, getConfigPath } = await import("../config/index.js");
       
       if (!configExists()) {
-        console.log("No configuration file found. Nothing to reset.");
+        console.log("status: NO_CONFIG");
         return;
       }
 
       if (!options.force) {
-        console.log("⚠️  This will delete all saved configuration including your token.");
-        console.log(`📁 Config file: ${getConfigPath()}`);
-        console.log("\nRun with --force to confirm.");
+        console.log(`WARNING: This will delete ${getConfigPath()}`);
+        console.log("Run with --force to confirm");
         process.exit(1);
       }
 
       try {
         resetConfig();
-        console.log("✅ Configuration reset successfully.");
-        console.log("Run 'hassio settings wizard' or 'hassio settings init' to reconfigure.");
+        console.log("status: RESET");
       } catch (error) {
-        console.error("❌ Failed to reset configuration:");
-        console.error(error instanceof Error ? error.message : String(error));
+        console.error("ERROR:", error instanceof Error ? error.message : String(error));
         process.exit(1);
       }
     });
@@ -274,16 +249,16 @@ export function createListCommand(): Command {
   return new Command("list")
     .description("List all available configuration options")
     .action(() => {
-      console.log("Available configuration options:\n");
-      console.log("  url             Home Assistant URL (e.g., http://192.168.1.100:8123)");
-      console.log("  token           Long-lived access token from Home Assistant");
-      console.log("  outputFormat    Default output format (toon, json, json-compact, yaml, table)");
-      console.log("  timeout         Request timeout in milliseconds (default: 30000)");
-      console.log("\nEnvironment variables:");
-      console.log("  HASSIO_URL      Home Assistant URL");
-      console.log("  HASSIO_TOKEN    Long-lived access token");
-      console.log("  HASSIO_FORMAT   Default output format");
-      console.log("  HASSIO_TIMEOUT  Request timeout in milliseconds");
-      console.log(`\nConfig file: ${getConfigPath()}`);
+      console.log("config_options:");
+      console.log("  url: Home Assistant URL");
+      console.log("  token: Long-lived access token");
+      console.log("  outputFormat: toon|json|json-compact|yaml|table");
+      console.log("  timeout: Request timeout in ms (default: 30000)");
+      console.log("\nenv_vars:");
+      console.log("  HASSIO_URL: Home Assistant URL");
+      console.log("  HASSIO_TOKEN: Long-lived access token");
+      console.log("  HASSIO_FORMAT: Default output format");
+      console.log("  HASSIO_TIMEOUT: Request timeout in ms");
+      console.log(`\nconfig_file: ${getConfigPath()}`);
     });
 }

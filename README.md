@@ -3,12 +3,12 @@
 [![npm version](https://img.shields.io/npm/v/homeassistant-cli.svg)](https://www.npmjs.com/package/homeassistant-cli)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Agent-optimized CLI tool for interacting with the Home Assistant API. Designed for LLM/agent usage with TOON format as the default output for maximum token efficiency.
+Agent-optimized CLI tool for Home Assistant with token-efficient output. Default TOON format provides ~40% token reduction vs JSON. Optimized for LLM/agent consumption with structured, minimal output.
 
 ## Features
 
 - **Full Home Assistant API Coverage** - States, services, events, history, logbook, calendars, cameras, templates, and more
-- **Agent-Optimized Output** - Default TOON format for ~40% token reduction vs JSON
+- **Token-Efficient Output** - Default TOON format saves ~40% tokens vs JSON, no emojis/decorations
 - **Multiple Output Formats** - TOON, JSON, JSON-compact, YAML, and table
 - **Interactive Setup Wizard** - Easy first-time configuration
 - **Flexible Configuration** - Environment variables, config file, or CLI options
