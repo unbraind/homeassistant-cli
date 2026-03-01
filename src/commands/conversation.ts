@@ -18,9 +18,9 @@ export function createConversationCommand(): Command {
   const command = new Command("conversation")
     .description("Interact with Home Assistant conversation/voice assistants")
     .option("--agents", "List available conversation agents")
-    .option("-t, --text <text>", "Process text through conversation")
+    .option("--text <text>", "Process text through conversation")
     .option("-a, --agent-id <agentId>", "Agent ID to use")
-    .option("-c, --conversation-id <id>", "Conversation ID for context");
+    .option("--conversation-id <id>", "Conversation ID for context");
 
   command.action(async (options: {
     agents?: boolean;

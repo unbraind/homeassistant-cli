@@ -131,8 +131,8 @@ export function createRegistriesCommand(): Command {
           const states = await baseClient.getStates();
           const areasFromStates = [...new Set(
             states
-              .filter((s: HaState) => s.attributes.area_id)
-              .map((s: HaState) => s.attributes.area_id)
+              .filter((s: HaState) => s.attributes["area_id"])
+              .map((s: HaState) => s.attributes["area_id"])
           )];
           console.log(formatOutput({ 
             area_registry: areasFromStates.map(id => ({ area_id: id })),

@@ -19,7 +19,7 @@ export function createHistoryCommand(): Command {
     .description("Get state history for entities")
     .requiredOption("-e, --entity-id <entities>", "Entity ID(s), comma-separated")
     .option("-s, --start-time <timestamp>", "Start time (ISO format)")
-    .option("-t, --end-time <timestamp>", "End time (ISO format)")
+    .option("--end-time <timestamp>", "End time (ISO format)")
     .option("-m, --minimal-response", "Use minimal response format", false)
     .option("--no-attributes", "Exclude attributes from response", false)
     .option("--significant-only", "Only significant changes", false);
@@ -49,7 +49,7 @@ export function createLogbookCommand(): Command {
     .description("Get logbook entries")
     .option("-e, --entity-id <entity>", "Filter by entity ID")
     .option("-s, --start-time <timestamp>", "Start time (ISO format)")
-    .option("-t, --end-time <timestamp>", "End time (ISO format)");
+    .option("--end-time <timestamp>", "End time (ISO format)");
 
   command.action(async (options, cmd) => {
     const globalOpts = cmd.optsWithGlobals();

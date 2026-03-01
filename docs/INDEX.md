@@ -178,6 +178,15 @@ Configuration is loaded in priority order (later overrides earlier):
 | `schema` | Export CLI schema for LLM consumption |
 | `action <intent>` | Intelligent action helper for LLMs |
 
+### Extended Commands
+
+| Command | Description |
+|---------|-------------|
+| `energy` | Get energy dashboard preferences |
+| `weather [entity-id]` | Get weather forecasts |
+| `health` | Get system health information |
+| `info` | Get comprehensive system summary |
+
 ## LLM/Agent Features
 
 The CLI is optimized for use by LLMs and AI agents:

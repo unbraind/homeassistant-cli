@@ -808,6 +808,58 @@ hassio action "toggle kitchen switch"
 hassio action "activate movie scene"
 ```
 
+## Extended Commands
+
+#### `energy`
+Get Home Assistant energy dashboard preferences.
+
+```bash
+hassio energy
+```
+
+Returns energy dashboard configuration including device consumption, grid consumption, and production settings.
+
+#### `weather`
+Get weather forecasts from weather entities.
+
+```bash
+hassio weather [entity-id] [options]
+
+Options:
+  --type <type>        Forecast type (daily, hourly, twice_daily), default: daily
+  --list               List all weather entities
+  --count              Only return count
+
+# Examples
+hassio weather --list                      # List all weather entities
+hassio weather weather.home --type daily   # Get daily forecast
+hassio weather weather.home --type hourly  # Get hourly forecast
+```
+
+#### `health`
+Get Home Assistant system health information.
+
+```bash
+hassio health
+```
+
+Returns system health data including Python version, installation type, timezone, and other system information.
+
+#### `info`
+Get comprehensive system information summary.
+
+```bash
+hassio info
+```
+
+Returns a consolidated summary including:
+- API status
+- Version
+- Location name
+- Timezone
+- Entity statistics (total, domains, unavailable count)
+- Top domains by entity count
+
 ## Exit Codes
 
 | Code | Meaning |

@@ -19,7 +19,7 @@ export function createStatisticsCommand(): Command {
     .description("Query Home Assistant statistics data")
     .option("-e, --entity-id <entities>", "Entity ID(s), comma-separated")
     .option("-s, --start-time <timestamp>", "Start time (ISO format)")
-    .option("-t, --end-time <timestamp>", "End time (ISO format)")
+    .option("--end-time <timestamp>", "End time (ISO format)")
     .option("-p, --period <period>", "Period (5minute, hour, day, week, month)", "hour")
     .option("--types <types>", "Statistics types (comma-separated: change,last_reset,max,mean,min,state,sum)")
     .option("--during-period", "Query during a specific period", false);

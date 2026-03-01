@@ -59,7 +59,7 @@ export function createShoppingListCommand(): Command {
     .option("--pending", "Show only pending items")
     .option("--completed", "Show only completed items")
     .option("-a, --add <name>", "Add a new item")
-    .option("-u, --update <id>", "Update an item (requires --name or --complete)")
+    .option("--update <id>", "Update an item (requires --name or --complete)")
     .option("-n, --name <name>", "New name for update")
     .option("--complete", "Mark item as complete")
     .option("--incomplete", "Mark item as incomplete")

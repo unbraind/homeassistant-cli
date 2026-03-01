@@ -53,6 +53,10 @@ import {
   createScenesCommand,
   createSchemaCommand,
   createActionCommand,
+  createEnergyCommand,
+  createWeatherCommand,
+  createHealthCommand,
+  createInfoCommand,
 } from "./commands/index.js";
 import { createInspectCommand } from "./commands/inspect.js";
 
@@ -175,5 +179,11 @@ program.addCommand(createScenesCommand());
 // LLM Schema and Actions
 program.addCommand(createSchemaCommand());
 program.addCommand(createActionCommand());
+
+// Extended Commands (Energy, Weather, Health, Info)
+program.addCommand(createEnergyCommand());
+program.addCommand(createWeatherCommand());
+program.addCommand(createHealthCommand());
+program.addCommand(createInfoCommand());
 
 program.parse();

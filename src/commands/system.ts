@@ -34,9 +34,9 @@ export function createPersonsCommand(): Command {
         .map((s: HaState) => ({
           entity_id: s.entity_id,
           state: s.state,
-          friendly_name: s.attributes.friendly_name || s.entity_id,
-          device_trackers: s.attributes.device_trackers || [],
-          user_id: s.attributes.user_id || null,
+          friendly_name: s.attributes["friendly_name"] || s.entity_id,
+          device_trackers: s.attributes["device_trackers"] || [],
+          user_id: s.attributes["user_id"] || null,
         }));
 
       if (options.count) {
@@ -62,11 +62,11 @@ export function createZonesCommand(): Command {
         .map((s: HaState) => ({
           entity_id: s.entity_id,
           state: s.state,
-          friendly_name: s.attributes.friendly_name || s.entity_id,
-          latitude: s.attributes.latitude,
-          longitude: s.attributes.longitude,
-          radius: s.attributes.radius,
-          passive: s.attributes.passive || false,
+          friendly_name: s.attributes["friendly_name"] || s.entity_id,
+          latitude: s.attributes["latitude"],
+          longitude: s.attributes["longitude"],
+          radius: s.attributes["radius"],
+          passive: s.attributes["passive"] || false,
         }));
 
       if (options.count) {
@@ -104,7 +104,7 @@ export function createBackupsCommand(): Command {
   const command = new Command("backups")
     .description("Manage Home Assistant backups (via hassio service calls)")
     .option("--list", "List all backups")
-    .option("-c, --create <name>", "Create a new backup")
+    .option("--create <name>", "Create a new backup")
     .option("-r, --restore <id>", "Restore a backup")
     .option("-d, --delete <id>", "Delete a backup")
     .option("--download <id>", "Download a backup")
@@ -130,8 +130,8 @@ export function createBackupsCommand(): Command {
 
     if (options.create) {
       const data: Record<string, unknown> = { name: options.create };
-      if (options.compressed !== undefined) data.compressed = options.compressed;
-      if (options.password) data.password = options.password;
+      if (options.compressed !== undefined) data["compressed"] = options.compressed;
+      if (options.password) data["password"] = options.password;
       
       try {
         await client.callService("hassio", "backup_full", data);
@@ -150,7 +150,7 @@ export function createBackupsCommand(): Command {
 
     if (options.restore) {
       const data: Record<string, unknown> = { slug: options.restore };
-      if (options.password) data.password = options.password;
+      if (options.password) data["password"] = options.password;
       
       try {
         await client.callService("hassio", "restore_full", data);

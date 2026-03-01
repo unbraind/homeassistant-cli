@@ -85,7 +85,7 @@ export function createRenderTemplateCommand(): Command {
   const command = new Command("render-template")
     .description("Render a Home Assistant template")
     .argument("<template>", "Template string to render")
-    .option("-f, --file <path>", "Read template from file");
+    .option("--file <path>", "Read template from file");
 
   command.action(
     async (templateArg: string, options: { file?: string }, cmd) => {
