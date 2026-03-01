@@ -45,6 +45,30 @@ describe("SearchApiClient", () => {
       expect(result).toHaveLength(1);
       expect(result[0]?.entity_id).toBe("light.living_room");
     });
+
+    it("should fall back to local state search when /search endpoint is unavailable", async () => {
+      mockRequest
+        .mockResolvedValueOnce(
+          mockResponse({ message: "404: Not Found" }, 404)
+        )
+        .mockResolvedValueOnce(
+          mockResponse([
+            {
+              entity_id: "light.living_room",
+              state: "on",
+              attributes: { friendly_name: "Living Room" },
+              last_changed: "2024-01-01T00:00:00Z",
+              last_updated: "2024-01-01T00:00:00Z",
+            },
+          ])
+        );
+
+      const result = await client.search("living");
+      expect(result).toHaveLength(1);
+      expect(result[0]?.entity_id).toBe("light.living_room");
+      expect(result[0]?.platform).toBe("state_fallback");
+      expect(mockRequest).toHaveBeenCalledTimes(2);
+    });
   });
 
   describe("quickSearch", () => {

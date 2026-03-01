@@ -1,8 +1,15 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { writeFileSync, mkdirSync, rmSync, existsSync } from "node:fs";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { statSync, writeFileSync, mkdirSync, rmSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
-import { getConfig, saveConfig } from "../src/config/loader.js";
+import {
+  configExists,
+  getConfig,
+  getConfigPath,
+  getConfigSnapshot,
+  resetConfig,
+  saveConfig,
+} from "../src/config/loader.js";
 
 describe("Config Loader", () => {
   let tempDir: string;
@@ -137,6 +144,35 @@ describe("Config Loader", () => {
       const config = getConfig({ configPath });
       expect(config.timeout).toBe(45000);
     });
+
+    it("should use HASSIO_CONFIG path when no explicit path is provided", () => {
+      writeFileSync(
+        configPath,
+        JSON.stringify({
+          url: "http://hassio-config-env:8123",
+          token: "token-from-env-path",
+        })
+      );
+      process.env.HASSIO_CONFIG = configPath;
+
+      const config = getConfig();
+      expect(config.url).toBe("http://hassio-config-env:8123");
+      expect(config.token).toBe("token-from-env-path");
+    });
+
+    it("should throw on invalid timeout values", () => {
+      process.env.HASSIO_TIMEOUT = "0";
+      process.env.HASSIO_URL = "http://localhost:8123";
+      process.env.HASSIO_TOKEN = "test-token";
+      expect(() => getConfig({ configPath })).toThrow("Invalid timeout");
+    });
+
+    it("should throw on invalid format values", () => {
+      process.env.HASSIO_FORMAT = "invalid-format";
+      process.env.HASSIO_URL = "http://localhost:8123";
+      process.env.HASSIO_TOKEN = "test-token";
+      expect(() => getConfig({ configPath })).toThrow("Invalid output format");
+    });
   });
 
   describe("saveConfig", () => {
@@ -167,6 +203,33 @@ describe("Config Loader", () => {
       expect(config.url).toBe("http://original:8123");
       expect(config.token).toBe("original-token");
       expect(config.outputFormat).toBe("yaml");
+    });
+
+    it("should save custom path with restrictive permissions", () => {
+      const nestedPath = join(tempDir, "nested", "custom-settings.json");
+      saveConfig({ url: "http://secure-url:8123", token: "secure-token" }, nestedPath);
+      const stats = statSync(nestedPath);
+      expect((stats.mode & 0o777)).toBe(0o600);
+      expect(existsSync(nestedPath)).toBe(true);
+    });
+  });
+
+  describe("config helpers", () => {
+    it("should return snapshot without requiring URL/token", () => {
+      const snapshot = getConfigSnapshot({ configPath });
+      expect(snapshot.outputFormat).toBe("toon");
+      expect(snapshot.timeout).toBe(30000);
+      expect(snapshot.url).toBeUndefined();
+      expect(snapshot.token).toBeUndefined();
+    });
+
+    it("should report and reset config at explicit path", () => {
+      saveConfig({ url: "http://reset-url:8123", token: "reset-token" }, configPath);
+      expect(configExists(configPath)).toBe(true);
+      expect(getConfigPath(configPath)).toBe(configPath);
+
+      resetConfig(configPath);
+      expect(configExists(configPath)).toBe(false);
     });
   });
 });

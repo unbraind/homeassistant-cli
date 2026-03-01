@@ -199,6 +199,7 @@ The CLI is optimized for use by LLMs and AI agents:
 - **Registry Access**: Query entity/device/area metadata
 - **Statistics**: Historical data and analytics
 - **List Management**: Todo lists, shopping list, notifications
+- **Search Fallback**: Automatically uses local entity-state search if `/api/search` is unavailable
 
 See [LLM Integration Guide](./LLM_INTEGRATION.md) for detailed examples.
 
@@ -296,7 +297,8 @@ bun run dev -- <command>
 
 ### Test Coverage
 
-Current coverage: **94.42%** with 125 tests passing across 10 test files.
+Current test run: **166 tests passing across 16 test files**.
+Latest coverage run (v8): **32.77% statements / 82.26% branches / 69.58% functions / 32.77% lines**.
 
 ## Security
 

@@ -3,6 +3,7 @@ export * from "./services.js";
 export * from "./history.js";
 export * from "./media.js";
 export * from "./cli-config.js";
+export * from "./settings-wizard.js";
 export * from "./llm.js";
 export * from "./inspect.js";
 export * from "./registries.js";

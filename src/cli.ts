@@ -83,17 +83,14 @@ program
       "Output format"
     )
       .choices(["toon", "json", "json-compact", "yaml", "table"])
-      .default("toon")
   )
   .addOption(
     new Option("--timeout <ms>", "Request timeout in milliseconds")
       .env("HASSIO_TIMEOUT")
-      .default(30000)
   )
   .addOption(
     new Option("-c, --config <path>", "Path to config file")
       .env("HASSIO_CONFIG")
-      .default(undefined)
   );
 
 // Core API commands

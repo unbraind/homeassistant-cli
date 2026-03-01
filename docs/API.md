@@ -265,6 +265,7 @@ hassio settings init
 ```
 
 Reads from: `HASSIO_URL`, `HASSIO_TOKEN`, `HASSIO_FORMAT`, `HASSIO_TIMEOUT`
+Also respects `HASSIO_CONFIG` for custom config file path.
 
 #### `settings validate`
 Validate configuration and test connection.
@@ -708,6 +709,8 @@ hassio search "light" -d light --quick
 hassio search "sensor" --count
 ```
 
+If `/api/search` is unavailable on your Home Assistant instance, this command automatically falls back to local entity-state search.
+
 #### `find`
 Quick search for entities by name/ID pattern.
 
@@ -953,8 +956,9 @@ The CLI provides structured error output with clear problem descriptions and sug
 - **Never commit tokens** to version control
 - Config file is excluded from git via `.gitignore`
 - Token is masked in `settings get` output
+- `settings get` includes the resolved config path to avoid ambiguity
 - Use environment variables for CI/CD pipelines
-- Config file permissions should be 600 (readable only by owner)
+- Config file is written with `600` permissions (owner read/write only)
 
 ## Performance Tips
 

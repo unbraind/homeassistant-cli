@@ -11,8 +11,9 @@ Agent-optimized CLI tool for Home Assistant with token-efficient output. Default
 - **Token-Efficient Output** - Default TOON format saves ~40% tokens vs JSON, no emojis/decorations
 - **Multiple Output Formats** - TOON, JSON, JSON-compact, YAML, and table
 - **Interactive Setup Wizard** - Easy first-time configuration
-- **Flexible Configuration** - Environment variables, config file, or CLI options
+- **Flexible Configuration** - Environment variables, config file, custom `--config` path, or CLI options
 - **LLM-Optimized Commands** - Query language, batch operations, entity discovery
+- **Search Endpoint Fallback** - Falls back to local entity-state search when `/api/search` is unavailable
 - **Full TypeScript Support** - Complete type safety throughout
 - **Comprehensive Testing** - High test coverage
 
@@ -249,6 +250,7 @@ Configuration is loaded in this order (later overrides earlier):
 | `HASSIO_TOKEN` | Long-lived access token | - |
 | `HASSIO_FORMAT` | Output format | `toon` |
 | `HASSIO_TIMEOUT` | Request timeout (ms) | `30000` |
+| `HASSIO_CONFIG` | Custom config file path | `~/.hassio-cli/settings.json` |
 
 ### Settings Commands
 
@@ -271,6 +273,8 @@ hassio settings get
 # Show config path
 hassio settings path
 ```
+
+Settings files are written with `0600` permissions (owner read/write only).
 
 ## Examples
 
@@ -382,6 +386,7 @@ bun run lint
 - **Never commit tokens** to version control
 - Config file is excluded from git via `.gitignore`
 - Token is masked in `settings get` output
+- Config file is written with `0600` permissions
 - Use environment variables for CI/CD pipelines
 
 ## License

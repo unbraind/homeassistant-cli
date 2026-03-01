@@ -429,7 +429,7 @@ hassio say "Welcome home" -p media_player.living_room -e tts.cloud
 hassio search "living room"
 
 # 2. Quick local search (faster, no API)
-hassio find "temp" --quick
+hassio search "temp" --quick
 
 # 3. Search with filters
 hassio search "sensor" -d sensor --count
@@ -437,6 +437,8 @@ hassio search "sensor" -d sensor --count
 # 4. Find by pattern
 hassio find "battery" -d sensor
 ```
+
+`hassio search` automatically falls back to local entity-state search when `/api/search` is unavailable.
 
 ## Best Practices for Agents
 
