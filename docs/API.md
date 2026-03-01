@@ -256,6 +256,7 @@ hassio settings wizard [--skip-test]
 ```
 
 Guides through URL, token, output format, and connection testing.
+If `gh` is installed/authenticated and the repo is not starred yet, prompts to star `https://github.com/unbraind/homeassistant-cli`.
 
 #### `settings init`
 Initialize from environment variables.

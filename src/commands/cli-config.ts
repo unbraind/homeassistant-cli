@@ -1,6 +1,7 @@
 import { Command } from "commander";
 import { getConfig, getConfigPath, getConfigSnapshot, saveConfig } from "../config/index.js";
 import { withExit } from "../utils/exit.js";
+import { maybePromptToStarRepo } from "../utils/github-star.js";
 import type { OutputFormat } from "../types/index.js";
 
 const VALID_FORMATS: OutputFormat[] = ["toon", "json", "json-compact", "yaml", "table"];
@@ -55,6 +56,7 @@ export function createConfigSetCommand(): Command {
     .option("--default-timeout <ms>", "Request timeout in milliseconds");
 
   command.action(withExit(async (options: SettingsSetOptions, cmd) => {
+    await maybePromptToStarRepo();
     const configPath = getConfigPathFromCommand(cmd as Command);
     const config: Record<string, unknown> = {};
 
@@ -94,6 +96,7 @@ export function createConfigGetCommand(): Command {
     .option("--show-token", "Show the full token (use with caution)");
 
   command.action(withExit(async (options: { showToken?: boolean }, cmd) => {
+    await maybePromptToStarRepo();
     const configPath = getConfigPathFromCommand(cmd as Command);
     const config = getConfigSnapshot(withConfigPath(configPath));
 
@@ -115,6 +118,7 @@ export function createConfigPathCommand(): Command {
   return new Command("path")
     .description("Show the path to the configuration file")
     .action(withExit(async (_options, cmd) => {
+      await maybePromptToStarRepo();
       const configPath = getConfigPathFromCommand(cmd as Command);
       console.log(getConfigPath(configPath));
     }));
@@ -124,6 +128,7 @@ export function createInitCommand(): Command {
   return new Command("init")
     .description("Quick initialization with environment variables")
     .action(withExit(async (_options, cmd) => {
+      await maybePromptToStarRepo();
       const configPath = getConfigPathFromCommand(cmd as Command);
       const snapshot = getConfigSnapshot(withConfigPath(configPath));
 
@@ -149,6 +154,7 @@ export function createValidateCommand(): Command {
     .description("Validate current configuration and test connection")
     .action(withExit(async (_options, cmd) => {
       try {
+        await maybePromptToStarRepo();
         const configPath = getConfigPathFromCommand(cmd as Command);
         const config = getConfig(withConfigPath(configPath));
 
@@ -180,6 +186,7 @@ export function createResetCommand(): Command {
     .description("Reset all configuration (clear saved settings)")
     .option("--force", "Skip confirmation prompt")
     .action(withExit(async (options: { force?: boolean }, cmd) => {
+      await maybePromptToStarRepo();
       const configPath = getConfigPathFromCommand(cmd as Command);
       const { resetConfig, configExists } = await import("../config/index.js");
 
@@ -208,6 +215,7 @@ export function createListCommand(): Command {
   return new Command("list")
     .description("List all available configuration options")
     .action(withExit(async (_options, cmd) => {
+      await maybePromptToStarRepo();
       const configPath = getConfigPathFromCommand(cmd as Command);
       console.log("config_options:");
       console.log("  url: Home Assistant URL");

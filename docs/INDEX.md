@@ -56,6 +56,8 @@ Configuration is loaded in priority order (later overrides earlier):
 | `settings get` | View current configuration (token masked) |
 | `settings path` | Show configuration file path |
 
+`settings` commands may prompt to star `https://github.com/unbraind/homeassistant-cli` when `gh` is installed, authenticated, and the repo is not starred yet.
+
 ## Output Formats
 
 | Format | Description | Best For |

@@ -12,6 +12,7 @@ Agent-optimized CLI tool for Home Assistant with token-efficient output. Default
 - **Multiple Output Formats** - TOON, JSON, JSON-compact, YAML, and table
 - **Interactive Setup Wizard** - Easy first-time configuration
 - **Flexible Configuration** - Environment variables, config file, custom `--config` path, or CLI options
+- **GitHub Star Prompt** - Setup/settings commands can prompt to star the repo via `gh` (when available and logged in)
 - **LLM-Optimized Commands** - Query language, batch operations, entity discovery
 - **Search Endpoint Fallback** - Falls back to local entity-state search when `/api/search` is unavailable
 - **Full TypeScript Support** - Complete type safety throughout
@@ -97,6 +98,8 @@ hassio settings path
 # Reset all configuration
 hassio settings reset --force
 ```
+
+If `gh` is installed and authenticated, `hassio settings ...` commands will ask you to star `unbraind/homeassistant-cli` until it is starred.
 
 ## Getting Your Token
 

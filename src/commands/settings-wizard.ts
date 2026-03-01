@@ -1,6 +1,7 @@
 import { Command } from "commander";
 import { getConfigPath, getConfigSnapshot, saveConfig } from "../config/index.js";
 import { withExit } from "../utils/exit.js";
+import { maybePromptToStarRepo } from "../utils/github-star.js";
 import type { OutputFormat } from "../types/index.js";
 
 const VALID_FORMATS: OutputFormat[] = ["toon", "json", "json-compact", "yaml", "table"];
@@ -44,6 +45,7 @@ export function createWizardCommand(): Command {
     .description("Interactive setup wizard for first-time configuration")
     .option("--skip-test", "Skip connection test after configuration")
     .action(withExit(async (options: { skipTest?: boolean }, cmd) => {
+      await maybePromptToStarRepo();
       const readline = await import("node:readline");
       const configPath = getConfigPathFromCommand(cmd as Command);
       const existing = getConfigSnapshot(withConfigPath(configPath));
