@@ -1,4 +1,5 @@
 import type { HaState, HaService, HaEvent, HaConfig } from "../types/api.js";
+import { getServiceNames } from "../utils/services.js";
 
 function truncate(str: string, maxLen: number): string {
   if (str.length <= maxLen) return str;
@@ -62,7 +63,7 @@ export function formatServicesTable(services: HaService[]): string {
   const rows = services.map((s) =>
     [
       pad(truncate(s.domain, widths.domain), widths.domain),
-      pad(truncate(s.services.join(", "), widths.services), widths.services),
+      pad(truncate(getServiceNames(s.services).join(", "), widths.services), widths.services),
     ].join(" | ")
   );
 

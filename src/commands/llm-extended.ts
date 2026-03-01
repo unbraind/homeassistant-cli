@@ -4,6 +4,7 @@ import { HomeAssistantClient } from "../api/index.js";
 import { formatOutput } from "../formatters/index.js";
 import { withExit } from "../utils/exit.js";
 import type { OutputFormat, HaState, HaService } from "../types/index.js";
+import { getServiceNames } from "../utils/services.js";
 
 function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
   const config = getConfig(options);
@@ -49,7 +50,7 @@ export function createSchemaCommand(): Command {
       if (showServices) {
         const services = await client.getServices();
         result["services"] = services.reduce((acc: Record<string, string[]>, s: HaService) => {
-          acc[s.domain] = s.services;
+          acc[s.domain] = getServiceNames(s.services);
           return acc;
         }, {});
       }

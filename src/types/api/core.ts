@@ -47,8 +47,22 @@ export interface HaEvent {
 
 export interface HaService {
   domain: string;
-  services: string[];
+  services: HaServiceList;
 }
+
+export interface HaServiceDefinition {
+  name?: string;
+  description?: string;
+  target?: Record<string, unknown>;
+  fields?: Record<string, unknown>;
+  response?: {
+    optional?: boolean;
+  };
+  [key: string]: unknown;
+}
+
+export type HaServiceMap = Record<string, HaServiceDefinition>;
+export type HaServiceList = string[] | HaServiceMap;
 
 export interface HaServiceCallResult {
   context: {

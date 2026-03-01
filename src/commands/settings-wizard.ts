@@ -73,6 +73,22 @@ export function createWizardCommand(): Command {
         }
       };
 
+      const promptSecretRequired = async (prompt: string, fallback?: string): Promise<string> => {
+        while (true) {
+          const withHint = fallback
+            ? `${prompt} [saved token available; press Enter to keep]: `
+            : `${prompt}: `;
+          const value = await question(withHint);
+          if (value) {
+            return value;
+          }
+          if (fallback) {
+            return fallback;
+          }
+          console.error("ERROR: Value is required");
+        }
+      };
+
       console.log("\nSETUP WIZARD\n");
 
       try {
@@ -87,7 +103,7 @@ export function createWizardCommand(): Command {
         console.log("2. Go to Profile > Long-Lived Access Tokens");
         console.log("3. Click 'Create Token' and copy\n");
 
-        const token = await promptRequired("Long-Lived Access Token", existing.token);
+        const token = await promptSecretRequired("Long-Lived Access Token", existing.token);
 
         console.log("\nFormats: toon, json, json-compact, yaml, table");
         const formatInput = await question(`Default format [${existing.outputFormat ?? "toon"}]: `);

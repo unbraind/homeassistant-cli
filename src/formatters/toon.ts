@@ -1,4 +1,5 @@
 import type { HaState, HaService, HaEvent, HaConfig, HaHistoryState, HaLogbookEntry, HaCalendar, HaCalendarEvent } from "../types/api.js";
+import { getServiceNames } from "../utils/services.js";
 
 function escapeToonValue(value: unknown): string {
   if (value === null || value === undefined) {
@@ -120,7 +121,7 @@ export function formatServicesToon(services: HaService[]): string {
 
   const lines = [`services[${services.length}]{domain,services}:`];
   for (const s of services) {
-    const servicesStr = s.services.join("|");
+    const servicesStr = getServiceNames(s.services).join("|");
     lines.push(`  ${s.domain},${servicesStr}`);
   }
   return lines.join("\n");

@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document provides a comprehensive reference for all Home Assistant CLI commands and their options. The CLI provides full coverage of the Home Assistant REST API with agent/LLM-optimized features.
+This document provides a comprehensive reference for Home Assistant CLI commands and their options. The CLI provides broad REST API coverage with agent/LLM-optimized features.
 
 ## Global Options
 
@@ -80,7 +80,17 @@ Get list of available services organized by domain.
 
 ```bash
 hassio services
+hassio services --domain light
+hassio services --service turn_on
+hassio services --count
+hassio services --flat
 ```
+
+Options:
+- `-d, --domain <domain>`: filter by domain.
+- `-s, --service <name>`: filter by service name.
+- `--count`: show domain + service counts only.
+- `--flat`: flatten to one row per `{domain, service}` including `field_count` and `has_response`.
 
 ## State Management
 

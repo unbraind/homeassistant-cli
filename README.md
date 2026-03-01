@@ -7,7 +7,7 @@ Agent-optimized CLI tool for Home Assistant with token-efficient output. Default
 
 ## Features
 
-- **Full Home Assistant API Coverage** - States, services, events, history, logbook, calendars, cameras, templates, and more
+- **Broad Home Assistant API Coverage** - States, services, events, history, logbook, calendars, cameras, templates, and more
 - **Token-Efficient Output** - Default TOON format saves ~40% tokens vs JSON, no emojis/decorations
 - **Multiple Output Formats** - TOON, JSON, JSON-compact, YAML, and table
 - **Interactive Setup Wizard** - Easy first-time configuration
@@ -15,6 +15,7 @@ Agent-optimized CLI tool for Home Assistant with token-efficient output. Default
 - **GitHub Star Prompt** - Setup/settings commands can prompt to star the repo via `gh` (when available and logged in)
 - **LLM-Optimized Commands** - Query language, batch operations, entity discovery
 - **Search Endpoint Fallback** - Falls back to local entity-state search when `/api/search` is unavailable
+- **Service Schema Intelligence** - Supports modern object-style `/api/services` payloads with filter/flat/count modes
 - **Full TypeScript Support** - Complete type safety throughout
 - **Comprehensive Testing** - High test coverage
 
@@ -148,6 +149,10 @@ hassio call-service light turn_on -e light.living_room -d '{"brightness":200}'
 
 # Call services
 hassio call-service climate set_temperature -e climate.living_room -d '{"temperature":22}'
+
+# Explore service schema (agent-friendly)
+hassio services --count
+hassio services --domain light --flat
 ```
 
 ### History & Logs

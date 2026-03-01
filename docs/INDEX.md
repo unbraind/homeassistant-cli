@@ -7,6 +7,7 @@ Complete documentation for the Home Assistant CLI tool.
 - [README](../README.md) - Installation and quick start
 - [API Reference](./API.md) - Complete command reference
 - [LLM Integration Guide](./LLM_INTEGRATION.md) - Agent/LLM optimized features
+- [API Research (2026-03-01)](./API_RESEARCH_2026-03-01.md) - Live endpoint findings and CLI enhancements
 
 ## Quick Start
 
@@ -78,7 +79,7 @@ Configuration is loaded in priority order (later overrides earlier):
 | `config` | Get Home Assistant configuration |
 | `components` | List loaded components |
 | `events` | List available events |
-| `services` | List available services |
+| `services` | List/filter service schema (`--domain`, `--service`, `--count`, `--flat`) |
 
 ### State Management
 
@@ -299,8 +300,8 @@ bun run dev -- <command>
 
 ### Test Coverage
 
-Current test run: **166 tests passing across 16 test files**.
-Latest coverage run (v8): **32.77% statements / 82.26% branches / 69.58% functions / 32.77% lines**.
+Current test run: **181 tests passing across 19 test files**.
+Latest coverage run (v8): **35.70% statements / 81.81% branches / 68.72% functions / 35.70% lines**.
 
 ## Security
 

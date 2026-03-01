@@ -125,6 +125,14 @@ describe("TOON Formatter", () => {
       expect(result).toContain("services[1]{domain,services}:");
       expect(result).toContain("light,turn_on|turn_off|toggle");
     });
+
+    it("should format object-style services", () => {
+      const services: HaService[] = [
+        { domain: "light", services: { turn_on: { fields: {} }, turn_off: { fields: {} } } },
+      ];
+      const result = formatServicesToon(services);
+      expect(result).toContain("light,turn_on|turn_off");
+    });
   });
 
   describe("formatEventsToon", () => {

@@ -68,6 +68,14 @@ describe("Table Formatter", () => {
       expect(result).toContain("light");
       expect(result).toContain("switch");
     });
+
+    it("should format object-style services as table", () => {
+      const services: HaService[] = [
+        { domain: "light", services: { turn_on: { fields: {} }, turn_off: { fields: {} } } },
+      ];
+      const result = formatServicesTable(services);
+      expect(result).toContain("turn_on, turn_off");
+    });
   });
 
   describe("formatEventsTable", () => {

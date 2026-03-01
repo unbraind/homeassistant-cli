@@ -59,6 +59,27 @@ describe("LLM Extended Commands", () => {
       expect(result).toContain("status");
       expect(result).toContain("call-service");
     });
+
+    it("should export object-style service schema", async () => {
+      mockRequest.mockResolvedValueOnce(
+        mockResponse([
+          { domain: "light", services: { turn_on: { fields: {} }, turn_off: { fields: {} } } },
+        ])
+      );
+
+      const cmd = createSchemaCommand();
+      const output: string[] = [];
+      const originalLog = console.log;
+      console.log = (msg: string) => output.push(msg);
+
+      await cmd.parseAsync(["node", "test", "--services"], { from: "user" });
+
+      console.log = originalLog;
+      const result = output.join("\n");
+      expect(result).toContain("services:");
+      expect(result).toContain("light");
+      expect(result).toContain("turn_on");
+    });
   });
 
   describe("createActionCommand", () => {

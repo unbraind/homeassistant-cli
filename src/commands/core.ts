@@ -1,9 +1,10 @@
 import { Command } from "commander";
 import { getConfig } from "../config/index.js";
 import { HomeAssistantClient } from "../api/index.js";
-import { formatOutput, formatStates } from "../formatters/index.js";
+import { formatOutput, formatServices, formatStates } from "../formatters/index.js";
 import type { OutputFormat } from "../types/index.js";
 import { withExit } from "../utils/exit.js";
+import { flattenServices, getServiceNames } from "../utils/services.js";
 
 function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
   const config = getConfig(options);
@@ -66,12 +67,53 @@ export function createEventsCommand(): Command {
 export function createServicesCommand(): Command {
   return new Command("services")
     .description("Get list of available services")
-    .action(withExit(async (_options, cmd) => {
+    .option("-d, --domain <domain>", "Filter by service domain (e.g., light)")
+    .option("-s, --service <name>", "Filter by service name (e.g., turn_on)")
+    .option("--count", "Return summary counts only")
+    .option("--flat", "Flatten to one row per domain/service (LLM-friendly)")
+    .action(withExit(async (options: {
+      domain?: string;
+      service?: string;
+      count?: boolean;
+      flat?: boolean;
+    }, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
       const client = getClient(globalOpts);
       const format = getFormat(globalOpts);
-      const result = await client.getServices();
-      console.log(formatOutput(result, format));
+      const services = await client.getServices();
+
+      const filtered = services.filter((serviceDomain) => {
+        if (options.domain && serviceDomain.domain !== options.domain) {
+          return false;
+        }
+        if (options.service) {
+          return getServiceNames(serviceDomain.services).includes(options.service);
+        }
+        return true;
+      });
+
+      if (options.count) {
+        const byDomain = filtered
+          .map((serviceDomain) => ({
+            domain: serviceDomain.domain,
+            service_count: getServiceNames(serviceDomain.services).length,
+          }))
+          .sort((a, b) => b.service_count - a.service_count);
+        const totalServices = byDomain.reduce((acc, row) => acc + row.service_count, 0);
+        console.log(formatOutput({
+          domains: byDomain.length,
+          total_services: totalServices,
+          by_domain: byDomain,
+        }, format));
+        return;
+      }
+
+      if (options.flat) {
+        console.log(formatOutput(flattenServices(filtered), format));
+        return;
+      }
+
+      console.log(formatServices(filtered, format));
     }));
 }
 
