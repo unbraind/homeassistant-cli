@@ -295,4 +295,24 @@ export class HomeAssistantClient {
   ): Promise<unknown> {
     return this.request("POST", "/intent/handle", { name, data });
   }
+
+  async restartHomeAssistant(): Promise<void> {
+    await this.callService("homeassistant", "restart");
+  }
+
+  async stopHomeAssistant(): Promise<void> {
+    await this.callService("homeassistant", "stop");
+  }
+
+  async savePersistentStates(): Promise<void> {
+    await this.callService("homeassistant", "save_persistent_states");
+  }
+
+  async reloadCoreConfig(): Promise<void> {
+    await this.callService("homeassistant", "reload_core_config");
+  }
+
+  async reloadAll(): Promise<void> {
+    await this.callService("homeassistant", "reload_all");
+  }
 }

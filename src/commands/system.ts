@@ -19,6 +19,32 @@ function getFormat(options: { format?: OutputFormat }): OutputFormat {
   return config.outputFormat;
 }
 
+export function createRestartCommand(): Command {
+  return new Command("restart")
+    .description("Restart Home Assistant")
+    .action(async (_options, cmd) => {
+      const globalOpts = cmd.optsWithGlobals();
+      const client = getBaseClient(globalOpts);
+      const format = getFormat(globalOpts);
+
+      await client.restartHomeAssistant();
+      console.log(formatOutput({ status: "restarting", message: "Home Assistant is restarting" }, format));
+    });
+}
+
+export function createStopCommand(): Command {
+  return new Command("stop")
+    .description("Stop Home Assistant")
+    .action(async (_options, cmd) => {
+      const globalOpts = cmd.optsWithGlobals();
+      const client = getBaseClient(globalOpts);
+      const format = getFormat(globalOpts);
+
+      await client.stopHomeAssistant();
+      console.log(formatOutput({ status: "stopping", message: "Home Assistant is stopping" }, format));
+    });
+}
+
 export function createPersonsCommand(): Command {
   return new Command("persons")
     .description("List all persons (from entity states)")

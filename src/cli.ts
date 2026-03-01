@@ -57,6 +57,9 @@ import {
   createWeatherCommand,
   createHealthCommand,
   createInfoCommand,
+  createRestartCommand,
+  createStopCommand,
+  createNotifyCommand,
 } from "./commands/index.js";
 import { createInspectCommand } from "./commands/inspect.js";
 
@@ -185,6 +188,10 @@ program.addCommand(createEnergyCommand());
 program.addCommand(createWeatherCommand());
 program.addCommand(createHealthCommand());
 program.addCommand(createInfoCommand());
+
+program.addCommand(createRestartCommand());
+program.addCommand(createStopCommand());
+program.addCommand(createNotifyCommand());
 
 program.parseAsync().catch((err) => {
   console.error("Error:", err.message);

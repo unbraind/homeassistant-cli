@@ -15,3 +15,4 @@ export * from "./tts.js";
 export * from "./automation.js";
 export * from "./llm-extended.js";
 export * from "./extended.js";
+export * from "./notify.js";

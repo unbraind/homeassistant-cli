@@ -488,13 +488,24 @@ Manage todo lists.
 hassio todo [options]
 
 Options:
-  --lists              List all todo lists
+  --lists                    List all todo lists
   -e, --entity-id <entity>  Get items from a specific list
-  --count              Only return count
+  -a, --add <summary>     Add a new todo item (requires --entity-id)
+  --update <uid>           Update a todo item (requires --entity-id)
+  --remove <uid>           Remove a todo item (requires --entity-id)
+  -n, --name <summary>   New summary for update
+  --description <desc>    Description for add/update
+  --due <date>           Due date (ISO format) for add/update
+  --complete             Mark item as completed
+  --incomplete           Mark item as needing action
+  --count               Only return count
 
 # Examples
 hassio todo --lists                    # List all todo lists
 hassio todo -e todo.shopping           # Get shopping list items
+hassio todo -e todo.shopping -a "Milk"  # Add item to list
+hassio todo -e todo.shopping --update <uid> --complete  # Mark complete
+hassio todo -e todo.shopping --remove <uid>  # Remove item
 hassio todo --lists --count            # Count todo lists
 ```
 
@@ -537,16 +548,63 @@ Manage persistent notifications.
 hassio notifications [options]
 
 Options:
-  --list               List all notifications
-  -d, --dismiss <id>   Dismiss a notification
-  --count              Only return count
+  --list                    List all notifications
+  -c, --create <message>    Create a notification
+  -t, --title <title>       Title for notification
+  --id <notification-id>    Notification ID
+  -d, --dismiss <id>        Dismiss a notification
+  --dismiss-all             Dismiss all notifications
+  --count                   Only return count
 
 # Examples
-hassio notifications --list              # List notifications
-hassio notifications -d notification_1   # Dismiss notification
+hassio notifications --list                   # List notifications
+hassio notifications -c "Alert!" -t "Warning" # Create notification
+hassio notifications -d notification_1        # Dismiss notification
+hassio notifications --dismiss-all            # Dismiss all
+```
+
+#### `notify`
+Send notifications through Home Assistant notify services.
+
+```bash
+hassio notify <service> -m <message> [options]
+
+Arguments:
+  <service>                  Notification service (e.g., 'mobile_app_phone', 'email')
+
+Required:
+  -m, --message <message>    Notification message
+
+Options:
+  -t, --title <title>        Notification title
+  --target <target>          Notification target (comma-separated)
+  -d, --data <json>          Additional data as JSON string
+
+# Examples
+hassio notify mobile_app_phone -m "Front door opened"
+hassio notify email -m "Alert!" -t "Warning" --target "user@example.com"
+hassio notify mobile_app_phone -m "Test" -d '{"sound":"default"}'
 ```
 
 ## System Commands
+
+#### `restart`
+Restart Home Assistant.
+
+```bash
+hassio restart
+```
+
+This sends the `homeassistant.restart` service call to restart Home Assistant.
+
+#### `stop`
+Stop Home Assistant.
+
+```bash
+hassio stop
+```
+
+This sends the `homeassistant.stop` service call to stop Home Assistant.
 
 #### `persons`
 List all persons (from entity states).
