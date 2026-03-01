@@ -31,6 +31,20 @@ function parseTimeout(value?: string): number | undefined {
   return timeout;
 }
 
+function parseBoolean(value?: string): boolean | undefined {
+  if (!value) {
+    return undefined;
+  }
+  const normalized = value.trim().toLowerCase();
+  if (["1", "true", "yes", "on", "y"].includes(normalized)) {
+    return true;
+  }
+  if (["0", "false", "no", "off", "n"].includes(normalized)) {
+    return false;
+  }
+  throw new Error(`Invalid boolean '${value}'. Use yes/no or true/false.`);
+}
+
 function getConfigPathFromCommand(cmd: Command): string | undefined {
   const globalOpts = cmd.optsWithGlobals() as GlobalOptions;
   return globalOpts.config;
@@ -111,12 +125,17 @@ export function createWizardCommand(): Command {
 
         const timeoutInput = await question(`Timeout in ms [${existing.timeout ?? 30000}]: `);
         const timeout = parseTimeout(timeoutInput || String(existing.timeout ?? 30000)) ?? 30000;
+        const readOnlyInput = await question(
+          `Enable read-only safety mode (blocks write commands) [${existing.readOnly ? "yes" : "no"}]: `
+        );
+        const readOnly = parseBoolean(readOnlyInput || (existing.readOnly ? "yes" : "no")) ?? false;
 
         const config = {
           url: normalizedUrl,
           token,
           outputFormat: format,
           timeout,
+          readOnly,
         };
 
         saveConfig(config, configPath);
@@ -135,6 +154,7 @@ export function createWizardCommand(): Command {
             console.log(`status:${status.message}`);
             console.log(`version:${haConfig.version}`);
             console.log(`location:${haConfig.location_name}`);
+            console.log(`read_only:${readOnly}`);
           } catch (error) {
             console.error("\nERROR: Connection test failed");
             console.error(error instanceof Error ? error.message : String(error));

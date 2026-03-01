@@ -15,6 +15,7 @@ interface SettingsSetOptions {
   haToken?: string;
   defaultFormat?: string;
   defaultTimeout?: string;
+  readOnly?: string;
 }
 
 function getConfigPathFromCommand(cmd: Command): string | undefined {
@@ -47,13 +48,30 @@ function parseTimeout(value?: string): number | undefined {
   return timeout;
 }
 
+function parseBoolean(value?: string): boolean | undefined {
+  if (!value) {
+    return undefined;
+  }
+
+  const normalized = value.trim().toLowerCase();
+  if (["1", "true", "yes", "on"].includes(normalized)) {
+    return true;
+  }
+  if (["0", "false", "no", "off"].includes(normalized)) {
+    return false;
+  }
+
+  throw new Error(`Invalid boolean '${value}'. Valid values: true|false`);
+}
+
 export function createConfigSetCommand(): Command {
   const command = new Command("set")
     .description("Set CLI configuration options permanently")
     .option("--ha-url <url>", "Home Assistant URL")
     .option("--ha-token <token>", "Long-lived access token")
     .option("--default-format <format>", "Default output format (toon, json, json-compact, yaml, table)")
-    .option("--default-timeout <ms>", "Request timeout in milliseconds");
+    .option("--default-timeout <ms>", "Request timeout in milliseconds")
+    .option("--read-only <boolean>", "Enable safety mode that blocks write operations (true|false)");
 
   command.action(withExit(async (options: SettingsSetOptions, cmd) => {
     await maybePromptToStarRepo();
@@ -75,6 +93,11 @@ export function createConfigSetCommand(): Command {
     const timeout = parseTimeout(options.defaultTimeout);
     if (timeout !== undefined) {
       config["timeout"] = timeout;
+    }
+
+    const readOnly = parseBoolean(options.readOnly);
+    if (readOnly !== undefined) {
+      config["readOnly"] = readOnly;
     }
 
     if (Object.keys(config).length === 0) {
@@ -105,6 +128,7 @@ export function createConfigGetCommand(): Command {
       url: config.url ?? "NOT_SET",
       outputFormat: config.outputFormat ?? "toon",
       timeout: config.timeout ?? 30000,
+      readOnly: config.readOnly ?? false,
       token: options.showToken ? (config.token ?? "NOT_SET") : (config.token ? "***" : "NOT_SET"),
     };
 
@@ -143,6 +167,7 @@ export function createInitCommand(): Command {
       if (snapshot.token) config["token"] = snapshot.token;
       if (snapshot.outputFormat) config["outputFormat"] = snapshot.outputFormat;
       if (snapshot.timeout) config["timeout"] = snapshot.timeout;
+      if (snapshot.readOnly !== undefined) config["readOnly"] = snapshot.readOnly;
 
       saveConfig(config, configPath);
       console.log(`saved:${getConfigPath(configPath)}`);
@@ -222,11 +247,13 @@ export function createListCommand(): Command {
       console.log("  token: Long-lived access token");
       console.log("  outputFormat: toon|json|json-compact|yaml|table");
       console.log("  timeout: Request timeout in ms (default: 30000)");
+      console.log("  readOnly: true|false (default: false)");
       console.log("\nenv_vars:");
       console.log("  HASSIO_URL: Home Assistant URL");
       console.log("  HASSIO_TOKEN: Long-lived access token");
       console.log("  HASSIO_FORMAT: Default output format");
       console.log("  HASSIO_TIMEOUT: Request timeout in ms");
+      console.log("  HASSIO_READONLY: Block all write operations when true");
       console.log("  HASSIO_CONFIG: Config file path override");
       console.log(`\nconfig_file: ${getConfigPath(configPath)}`);
     }));

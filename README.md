@@ -12,6 +12,7 @@ Agent-optimized CLI tool for Home Assistant with token-efficient output. Default
 - **Multiple Output Formats** - TOON, JSON, JSON-compact, YAML, and table
 - **Interactive Setup Wizard** - Easy first-time configuration
 - **Flexible Configuration** - Environment variables, config file, custom `--config` path, or CLI options
+- **Read-Only Safety Mode** - Block all state-changing API calls with `--read-only` or `HASSIO_READONLY=true`
 - **GitHub Star Prompt** - Setup/settings commands can prompt to star the repo via `gh` (when available and logged in)
 - **LLM-Optimized Commands** - Query language, batch operations, entity discovery
 - **Search Endpoint Fallback** - Falls back to local entity-state search when `/api/search` is unavailable
@@ -76,6 +77,7 @@ hassio settings set --ha-url "http://192.168.1.100:8123" --ha-token "your-token"
 # Set individual options
 hassio settings set --default-format json
 hassio settings set --default-timeout 60000
+hassio settings set --read-only true
 
 # Validate
 hassio settings validate
@@ -86,6 +88,10 @@ hassio settings validate
 ```bash
 # View current configuration (token masked)
 hassio settings get
+
+# Enable or disable read-only safety mode
+hassio settings set --read-only true
+hassio settings set --read-only false
 
 # View configuration with token (be careful!)
 hassio settings get --show-token
@@ -258,6 +264,7 @@ Configuration is loaded in this order (later overrides earlier):
 | `HASSIO_TOKEN` | Long-lived access token | - |
 | `HASSIO_FORMAT` | Output format | `toon` |
 | `HASSIO_TIMEOUT` | Request timeout (ms) | `30000` |
+| `HASSIO_READONLY` | Block write operations (`true`/`false`) | `false` |
 | `HASSIO_CONFIG` | Custom config file path | `~/.hassio-cli/settings.json` |
 
 ### Settings Commands

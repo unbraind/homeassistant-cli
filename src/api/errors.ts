@@ -15,3 +15,10 @@ export class HomeAssistantConnectionError extends Error {
     this.name = "HomeAssistantConnectionError";
   }
 }
+
+export class HomeAssistantReadOnlyError extends Error {
+  constructor(method: string, path: string) {
+    super(`Read-only mode blocked ${method} /api${path}. Disable read-only mode to allow write operations.`);
+    this.name = "HomeAssistantReadOnlyError";
+  }
+}

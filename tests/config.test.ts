@@ -27,6 +27,7 @@ describe("Config Loader", () => {
     delete process.env.HOMEASSISTANT_TOKEN;
     delete process.env.HASSIO_FORMAT;
     delete process.env.HASSIO_TIMEOUT;
+    delete process.env.HASSIO_READONLY;
   });
 
   afterEach(() => {
@@ -109,6 +110,7 @@ describe("Config Loader", () => {
       expect(config.token).toBe("file-token");
       expect(config.outputFormat).toBe("json");
       expect(config.timeout).toBe(60000);
+      expect(config.readOnly).toBe(false);
     });
 
     it("should use default output format as toon", () => {
@@ -129,6 +131,15 @@ describe("Config Loader", () => {
       expect(config.timeout).toBe(30000);
     });
 
+    it("should use default readOnly as false", () => {
+      const config = getConfig({
+        url: "http://localhost:8123",
+        token: "test-token",
+        configPath,
+      });
+      expect(config.readOnly).toBe(false);
+    });
+
     it("should use format from environment variable", () => {
       process.env.HASSIO_FORMAT = "json";
       process.env.HASSIO_URL = "http://localhost:8123";
@@ -143,6 +154,14 @@ describe("Config Loader", () => {
       process.env.HASSIO_TOKEN = "test-token";
       const config = getConfig({ configPath });
       expect(config.timeout).toBe(45000);
+    });
+
+    it("should use readOnly from environment variable", () => {
+      process.env.HASSIO_READONLY = "true";
+      process.env.HASSIO_URL = "http://localhost:8123";
+      process.env.HASSIO_TOKEN = "test-token";
+      const config = getConfig({ configPath });
+      expect(config.readOnly).toBe(true);
     });
 
     it("should use HASSIO_CONFIG path when no explicit path is provided", () => {
@@ -172,6 +191,13 @@ describe("Config Loader", () => {
       process.env.HASSIO_URL = "http://localhost:8123";
       process.env.HASSIO_TOKEN = "test-token";
       expect(() => getConfig({ configPath })).toThrow("Invalid output format");
+    });
+
+    it("should throw on invalid boolean values", () => {
+      process.env.HASSIO_READONLY = "maybe";
+      process.env.HASSIO_URL = "http://localhost:8123";
+      process.env.HASSIO_TOKEN = "test-token";
+      expect(() => getConfig({ configPath })).toThrow("Invalid boolean value");
     });
   });
 
@@ -219,6 +245,7 @@ describe("Config Loader", () => {
       const snapshot = getConfigSnapshot({ configPath });
       expect(snapshot.outputFormat).toBe("toon");
       expect(snapshot.timeout).toBe(30000);
+      expect(snapshot.readOnly).toBe(false);
       expect(snapshot.url).toBeUndefined();
       expect(snapshot.token).toBeUndefined();
     });

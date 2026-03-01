@@ -44,6 +44,7 @@ Configuration is loaded in priority order (later overrides earlier):
 | `HASSIO_TOKEN` | Long-lived access token | - |
 | `HASSIO_FORMAT` | Output format | `toon` |
 | `HASSIO_TIMEOUT` | Request timeout (ms) | `30000` |
+| `HASSIO_READONLY` | Block write operations (`true`/`false`) | `false` |
 | `HASSIO_CONFIG` | Config file path | `~/.hassio-cli/settings.json` |
 
 ### Configuration Commands

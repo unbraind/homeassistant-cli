@@ -5,6 +5,7 @@ export interface Config {
   token: string;
   outputFormat: OutputFormat;
   timeout: number;
+  readOnly: boolean;
 }
 
 export interface CliOptions {

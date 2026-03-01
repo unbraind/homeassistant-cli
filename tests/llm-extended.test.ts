@@ -10,6 +10,7 @@ vi.mock("../src/config/loader.js", () => ({
     token: "test-token",
     outputFormat: "toon",
     timeout: 30000,
+      readOnly: false,
   })),
 }));
 

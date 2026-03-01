@@ -13,9 +13,9 @@ import type {
   HaState,
 } from "../types/api.js";
 import { BaseClient } from "./base.js";
-import { HomeAssistantApiError, HomeAssistantConnectionError } from "./errors.js";
+import { HomeAssistantApiError, HomeAssistantConnectionError, HomeAssistantReadOnlyError } from "./errors.js";
 
-export { HomeAssistantApiError, HomeAssistantConnectionError };
+export { HomeAssistantApiError, HomeAssistantConnectionError, HomeAssistantReadOnlyError };
 
 export class HomeAssistantClient extends BaseClient {
   async getStatus(): Promise<HaApiStatus> {

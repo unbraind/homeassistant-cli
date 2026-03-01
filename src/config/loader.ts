@@ -12,6 +12,7 @@ interface ConfigFile {
   token?: string;
   outputFormat?: OutputFormat;
   timeout?: number;
+  readOnly?: boolean;
 }
 
 function resolveConfigPath(path?: string): string {
@@ -58,11 +59,32 @@ function parseTimeout(timeout?: number | string): number | undefined {
   return parsed;
 }
 
+function parseBoolean(value?: boolean | string): boolean | undefined {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  if (typeof value === "boolean") {
+    return value;
+  }
+
+  const normalized = value.trim().toLowerCase();
+  if (["1", "true", "yes", "on"].includes(normalized)) {
+    return true;
+  }
+  if (["0", "false", "no", "off"].includes(normalized)) {
+    return false;
+  }
+
+  throw new Error(`Invalid boolean value: '${value}'. Use true/false.`);
+}
+
 export function getConfig(options?: {
   url?: string;
   token?: string;
   format?: OutputFormat;
   timeout?: number;
+  readOnly?: boolean | string;
   configPath?: string;
   config?: string;
 }): Config {
@@ -95,6 +117,13 @@ export function getConfig(options?: {
     30000
   );
 
+  const readOnly = parseBoolean(
+    options?.readOnly ??
+    process.env["HASSIO_READONLY"] ??
+    fileConfig.readOnly ??
+    false
+  );
+
   if (!url) {
     throw new Error(
       "Home Assistant URL is required. Set HASSIO_URL environment variable, " +
@@ -114,6 +143,7 @@ export function getConfig(options?: {
     token,
     outputFormat: outputFormat ?? "toon",
     timeout: timeout ?? 30000,
+    readOnly: readOnly ?? false,
   };
 }
 
@@ -122,6 +152,7 @@ export function getConfigSnapshot(options?: {
   token?: string;
   format?: OutputFormat;
   timeout?: number;
+  readOnly?: boolean | string;
   configPath?: string;
   config?: string;
 }): Partial<Config> {
@@ -166,6 +197,16 @@ export function getConfigSnapshot(options?: {
   );
   if (timeout !== undefined) {
     snapshot.timeout = timeout;
+  }
+
+  const readOnly = parseBoolean(
+    options?.readOnly ??
+    process.env["HASSIO_READONLY"] ??
+    fileConfig.readOnly ??
+    false
+  );
+  if (readOnly !== undefined) {
+    snapshot.readOnly = readOnly;
   }
 
   return snapshot;

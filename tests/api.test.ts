@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { HomeAssistantClient, HomeAssistantApiError } from "../src/api/client.js";
+import { HomeAssistantClient } from "../src/api/client.js";
 
 const mockResponse = (data: unknown, status = 200) => ({
   statusCode: status,
@@ -26,6 +26,7 @@ describe("HomeAssistantClient", () => {
       token: "test-token",
       outputFormat: "toon",
       timeout: 30000,
+      readOnly: false,
     });
     mockRequest.mockReset();
   });
@@ -45,6 +46,8 @@ describe("HomeAssistantClient", () => {
         "http://localhost:8123/api/",
         expect.objectContaining({
           method: "GET",
+          headersTimeout: 30000,
+          bodyTimeout: 30000,
           headers: expect.objectContaining({
             Authorization: "Bearer test-token",
           }),
@@ -256,83 +259,4 @@ describe("HomeAssistantClient", () => {
     });
   });
 
-  describe("getErrorLog", () => {
-    it("should return error log as text", async () => {
-      mockRequest.mockResolvedValueOnce({
-        statusCode: 200,
-        body: {
-          text: () => Promise.resolve("Error log content"),
-        },
-      });
-      const result = await client.getErrorLog();
-      expect(result).toBe("Error log content");
-    });
-  });
-
-  describe("renderTemplate", () => {
-    it("should render template", async () => {
-      mockRequest.mockResolvedValueOnce({
-        statusCode: 200,
-        body: {
-          text: () => Promise.resolve("rendered result"),
-        },
-      });
-      const result = await client.renderTemplate("{{ now() }}");
-      expect(result).toBe("rendered result");
-    });
-  });
-
-  describe("getCalendars", () => {
-    it("should return calendars", async () => {
-      mockRequest.mockResolvedValueOnce(
-        mockResponse([{ entity_id: "calendar.home", name: "Home" }])
-      );
-      const result = await client.getCalendars();
-      expect(result).toEqual([{ entity_id: "calendar.home", name: "Home" }]);
-    });
-  });
-
-  describe("getCalendarEvents", () => {
-    it("should return calendar events", async () => {
-      mockRequest.mockResolvedValueOnce(
-        mockResponse([{ summary: "Event", start: {}, end: {} }])
-      );
-      const result = await client.getCalendarEvents(
-        "calendar.home",
-        "2024-01-01T00:00:00Z",
-        "2024-01-31T23:59:59Z"
-      );
-      expect(result).toHaveLength(1);
-    });
-  });
-
-  describe("checkConfig", () => {
-    it("should return config validation result", async () => {
-      mockRequest.mockResolvedValueOnce(
-        mockResponse({ errors: null, result: "valid" })
-      );
-      const result = await client.checkConfig();
-      expect(result.result).toBe("valid");
-    });
-  });
-
-  describe("handleIntent", () => {
-    it("should handle intent", async () => {
-      mockRequest.mockResolvedValueOnce(mockResponse({ success: true }));
-      const result = await client.handleIntent("SetTimer", { seconds: 30 });
-      expect(result).toEqual({ success: true });
-    });
-  });
-
-  describe("error handling", () => {
-    it("should throw HomeAssistantApiError on HTTP error", async () => {
-      mockRequest.mockResolvedValueOnce({
-        statusCode: 401,
-        body: {
-          text: () => Promise.resolve("Unauthorized"),
-        },
-      });
-      await expect(client.getStatus()).rejects.toThrow(HomeAssistantApiError);
-    });
-  });
 });

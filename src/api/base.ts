@@ -1,5 +1,5 @@
 import { request } from "undici";
-import { HomeAssistantApiError, HomeAssistantConnectionError } from "./errors.js";
+import { HomeAssistantApiError, HomeAssistantConnectionError, HomeAssistantReadOnlyError } from "./errors.js";
 import type { Config } from "../types/options.js";
 
 export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
@@ -7,10 +7,20 @@ export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 export abstract class BaseClient {
   protected readonly baseUrl: string;
   protected readonly token: string;
+  protected readonly timeout: number;
+  protected readonly readOnly: boolean;
 
   constructor(config: Config) {
     this.baseUrl = config.url;
     this.token = config.token;
+    this.timeout = config.timeout;
+    this.readOnly = config.readOnly;
+  }
+
+  private assertMethodAllowed(method: HttpMethod, path: string): void {
+    if (this.readOnly && method !== "GET") {
+      throw new HomeAssistantReadOnlyError(method, path);
+    }
   }
 
   protected async request<T>(
@@ -18,6 +28,7 @@ export abstract class BaseClient {
     path: string,
     body?: unknown
   ): Promise<T> {
+    this.assertMethodAllowed(method, path);
     const url = `${this.baseUrl}/api${path}`;
     const headers: Record<string, string> = {
       Authorization: `Bearer ${this.token}`,
@@ -31,10 +42,14 @@ export abstract class BaseClient {
         headers: Record<string, string>;
         body?: string;
         throwOnError: boolean;
+        headersTimeout: number;
+        bodyTimeout: number;
       } = {
         method,
         headers,
         throwOnError: false,
+        headersTimeout: this.timeout,
+        bodyTimeout: this.timeout,
       };
       if (bodyContent) {
         requestOptions.body = bodyContent;
@@ -79,18 +94,23 @@ export abstract class BaseClient {
   }
 
   protected async requestText(path: string, body?: unknown): Promise<string> {
+    this.assertMethodAllowed(body ? "POST" : "GET", path);
     const url = `${this.baseUrl}/api${path}`;
     const bodyContent = body ? JSON.stringify(body) : null;
     const requestOptions: {
       method: "GET" | "POST";
       headers: Record<string, string>;
       body?: string;
+      headersTimeout: number;
+      bodyTimeout: number;
     } = {
       method: body ? "POST" : "GET",
       headers: {
         Authorization: `Bearer ${this.token}`,
         "Content-Type": "application/json",
       },
+      headersTimeout: this.timeout,
+      bodyTimeout: this.timeout,
     };
     if (bodyContent) {
       requestOptions.body = bodyContent;
@@ -102,12 +122,15 @@ export abstract class BaseClient {
   }
 
   protected async requestBuffer(path: string): Promise<Buffer> {
+    this.assertMethodAllowed("GET", path);
     const url = `${this.baseUrl}/api${path}`;
     const response = await request(url, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${this.token}`,
       },
+      headersTimeout: this.timeout,
+      bodyTimeout: this.timeout,
     });
 
     const arrayBuffer = await response.body.arrayBuffer();

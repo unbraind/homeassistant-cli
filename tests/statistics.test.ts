@@ -25,6 +25,7 @@ describe("StatisticsApiClient", () => {
       token: "test-token",
       outputFormat: "toon",
       timeout: 30000,
+      readOnly: false,
     });
     mockRequest.mockReset();
   });

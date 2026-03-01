@@ -89,6 +89,10 @@ program
       .env("HASSIO_TIMEOUT")
   )
   .addOption(
+    new Option("--read-only", "Block all state-changing API calls")
+      .env("HASSIO_READONLY")
+  )
+  .addOption(
     new Option("-c, --config <path>", "Path to config file")
       .env("HASSIO_CONFIG")
   );

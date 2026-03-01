@@ -14,6 +14,7 @@ These options can be used with any command:
 | `-t, --token <token>` | `HASSIO_TOKEN` | Long-lived access token | From config |
 | `-f, --format <format>` | `HASSIO_FORMAT` | Output format | `toon` |
 | `--timeout <ms>` | `HASSIO_TIMEOUT` | Request timeout (ms) | `30000` |
+| `--read-only` | `HASSIO_READONLY` | Block state-changing API calls | `false` |
 | `-c, --config <path>` | `HASSIO_CONFIG` | Config file path | `~/.hassio-cli/settings.json` |
 
 **Configuration Priority:**
@@ -275,7 +276,7 @@ Initialize from environment variables.
 hassio settings init
 ```
 
-Reads from: `HASSIO_URL`, `HASSIO_TOKEN`, `HASSIO_FORMAT`, `HASSIO_TIMEOUT`
+Reads from: `HASSIO_URL`, `HASSIO_TOKEN`, `HASSIO_FORMAT`, `HASSIO_TIMEOUT`, `HASSIO_READONLY`
 Also respects `HASSIO_CONFIG` for custom config file path.
 
 #### `settings validate`
@@ -301,6 +302,7 @@ Options:
 hassio settings set --ha-url "http://192.168.1.100:8123" --ha-token "xyz"
 hassio settings set --default-format json
 hassio settings set --default-timeout 60000
+hassio settings set --read-only true
 ```
 
 #### `settings get`
