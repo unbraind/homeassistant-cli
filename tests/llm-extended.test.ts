@@ -2,6 +2,8 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { createSchemaCommand, createActionCommand } from "../src/commands/llm-extended.js";
 import { Command } from "commander";
 
+const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
+
 vi.mock("../src/config/loader.js", () => ({
   getConfig: vi.fn(() => ({
     url: "http://localhost:8123",
@@ -30,6 +32,7 @@ const mockResponse = (data: unknown, status = 200) => ({
 describe("LLM Extended Commands", () => {
   beforeEach(() => {
     mockRequest.mockReset();
+    exitSpy.mockClear();
   });
 
   afterEach(() => {

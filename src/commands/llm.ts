@@ -2,6 +2,7 @@ import { Command } from "commander";
 import { getConfig } from "../config/index.js";
 import { HomeAssistantClient } from "../api/index.js";
 import { formatOutput, formatStates } from "../formatters/index.js";
+import { withExit } from "../utils/exit.js";
 import type { OutputFormat, HaState } from "../types/index.js";
 
 function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
@@ -24,7 +25,7 @@ export function createEntitiesCommand(): Command {
     .option("--count", "Only return count, not full list")
     .option("--domains", "Group and count by domain");
 
-  command.action(async (options: {
+  command.action(withExit(async (options: {
     domain?: string;
     state?: string;
     pattern?: string;
@@ -93,7 +94,7 @@ export function createEntitiesCommand(): Command {
     }
 
     console.log(formatStates(filtered, format));
-  });
+  }));
 
   return command;
 }
@@ -106,7 +107,7 @@ export function createBatchCommand(): Command {
     .requiredOption("-e, --entities <entities>", "Comma-separated entity IDs")
     .option("--data <json>", "JSON data to pass to each service call");
 
-  command.action(async (options: {
+  command.action(withExit(async (options: {
     domain: string;
     service: string;
     entities: string;
@@ -141,7 +142,7 @@ export function createBatchCommand(): Command {
       failed: results.filter(r => !r.success).length,
       results,
     }, format));
-  });
+  }));
 
   return command;
 }
@@ -152,7 +153,7 @@ export function createQueryCommand(): Command {
     .argument("<expression>", "Query expression (e.g., 'domain:light state:on', 'domain:sensor attributes:unit_of_measurement=C')")
     .option("--summary", "Return summary statistics only");
 
-  command.action(async (expression: string, options: { summary?: boolean }, cmd) => {
+  command.action(withExit(async (expression: string, options: { summary?: boolean }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
     const client = getClient(globalOpts);
     const format = getFormat(globalOpts);
@@ -205,7 +206,7 @@ export function createQueryCommand(): Command {
     } else {
       console.log(formatStates(filtered, format));
     }
-  });
+  }));
 
   return command;
 }
@@ -217,7 +218,7 @@ export function createDiscoverCommand(): Command {
     .option("--unavailable", "List unavailable entities")
     .option("--by-area", "Group by area (requires area registry access)");
 
-  command.action(async (options: {
+  command.action(withExit(async (options: {
     domains?: boolean;
     unavailable?: boolean;
     byArea?: boolean;
@@ -280,7 +281,7 @@ export function createDiscoverCommand(): Command {
         .slice(0, 10)
         .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {}),
     }, format));
-  });
+  }));
 
   return command;
 }

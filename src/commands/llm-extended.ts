@@ -2,6 +2,7 @@ import { Command } from "commander";
 import { getConfig } from "../config/index.js";
 import { HomeAssistantClient } from "../api/index.js";
 import { formatOutput } from "../formatters/index.js";
+import { withExit } from "../utils/exit.js";
 import type { OutputFormat, HaState, HaService } from "../types/index.js";
 
 function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
@@ -22,7 +23,7 @@ export function createSchemaCommand(): Command {
     .option("--entities", "Export entity schema summary")
     .option("--full", "Export full schema (all of the above)");
 
-  command.action(async (options: {
+  command.action(withExit(async (options: {
     commands?: boolean;
     services?: boolean;
     entities?: boolean;
@@ -66,7 +67,7 @@ export function createSchemaCommand(): Command {
     }
 
     console.log(formatOutput(result, format));
-  });
+  }));
 
   return command;
 }
@@ -137,7 +138,7 @@ export function createActionCommand(): Command {
     .argument("<intent>", "Natural language intent (e.g., 'turn on living room lights')")
     .option("--dry-run", "Show what would be done without executing");
 
-  command.action(async (intent: string, options: { dryRun?: boolean }, cmd) => {
+  command.action(withExit(async (intent: string, options: { dryRun?: boolean }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
     const client = getClient(globalOpts);
     const format = getFormat(globalOpts);
@@ -197,7 +198,7 @@ export function createActionCommand(): Command {
       suggestions: uniqueSuggestions,
       hint: "Use 'call-service' command with suggested service and entity",
     }, format));
-  });
+  }));
 
   return command;
 }

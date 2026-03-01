@@ -3,6 +3,7 @@ import { writeFileSync } from "node:fs";
 import { getConfig } from "../config/index.js";
 import { HomeAssistantClient } from "../api/index.js";
 import { formatCalendars, formatCalendarEvents } from "../formatters/index.js";
+import { withExit } from "../utils/exit.js";
 import type { OutputFormat } from "../types/index.js";
 
 function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
@@ -18,13 +19,13 @@ function getFormat(options: { format?: OutputFormat }): OutputFormat {
 export function createCalendarsCommand(): Command {
   return new Command("calendars")
     .description("Get list of calendar entities")
-    .action(async (_options, cmd) => {
+    .action(withExit(async (_options, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
       const client = getClient(globalOpts);
       const format = getFormat(globalOpts);
       const result = await client.getCalendars();
       console.log(formatCalendars(result, format));
-    });
+    }));
 }
 
 export function createCalendarEventsCommand(): Command {
@@ -35,7 +36,7 @@ export function createCalendarEventsCommand(): Command {
     .requiredOption("-e, --end <datetime>", "End datetime (ISO format)");
 
   command.action(
-    async (entityId: string, options: { start: string; end: string }, cmd) => {
+    withExit(async (entityId: string, options: { start: string; end: string }, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
       const client = getClient(globalOpts);
       const format = getFormat(globalOpts);
@@ -46,7 +47,7 @@ export function createCalendarEventsCommand(): Command {
         options.end
       );
       console.log(formatCalendarEvents(result, format));
-    }
+    })
   );
 
   return command;
@@ -59,7 +60,7 @@ export function createCameraCommand(): Command {
     .option("-o, --output <file>", "Output file path");
 
   command.action(
-    async (entityId: string, options: { output?: string }, cmd) => {
+    withExit(async (entityId: string, options: { output?: string }, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
       const client = getClient(globalOpts);
 
@@ -71,7 +72,7 @@ export function createCameraCommand(): Command {
       } else {
         process.stdout.write(buffer);
       }
-    }
+    })
   );
 
   return command;

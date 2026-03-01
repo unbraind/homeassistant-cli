@@ -2,6 +2,7 @@ import { Command } from "commander";
 import { getConfig } from "../config/index.js";
 import { HomeAssistantClient } from "../api/index.js";
 import { formatHistory, formatLogbook } from "../formatters/index.js";
+import { withExit } from "../utils/exit.js";
 import type { OutputFormat } from "../types/index.js";
 
 function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
@@ -24,7 +25,7 @@ export function createHistoryCommand(): Command {
     .option("--no-attributes", "Exclude attributes from response", false)
     .option("--significant-only", "Only significant changes", false);
 
-  command.action(async (options, cmd) => {
+  command.action(withExit(async (options, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
     const client = getClient(globalOpts);
     const format = getFormat(globalOpts);
@@ -39,7 +40,7 @@ export function createHistoryCommand(): Command {
       significantChangesOnly: options.significantOnly,
     });
     console.log(formatHistory(result, format));
-  });
+  }));
 
   return command;
 }
@@ -51,7 +52,7 @@ export function createLogbookCommand(): Command {
     .option("-s, --start-time <timestamp>", "Start time (ISO format)")
     .option("--end-time <timestamp>", "End time (ISO format)");
 
-  command.action(async (options, cmd) => {
+  command.action(withExit(async (options, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
     const client = getClient(globalOpts);
     const format = getFormat(globalOpts);
@@ -62,7 +63,7 @@ export function createLogbookCommand(): Command {
       endTime: options.endTime,
     });
     console.log(formatLogbook(result, format));
-  });
+  }));
 
   return command;
 }
@@ -70,10 +71,10 @@ export function createLogbookCommand(): Command {
 export function createErrorLogCommand(): Command {
   return new Command("error-log")
     .description("Get the Home Assistant error log")
-    .action(async (_options, cmd) => {
+    .action(withExit(async (_options, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
       const client = getClient(globalOpts);
       const result = await client.getErrorLog();
       console.log(result);
-    });
+    }));
 }

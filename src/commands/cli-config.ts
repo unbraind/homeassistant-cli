@@ -1,5 +1,6 @@
 import { Command } from "commander";
 import { getConfig, saveConfig, getConfigPath } from "../config/index.js";
+import { withExit } from "../utils/exit.js";
 import type { OutputFormat } from "../types/index.js";
 
 export function createConfigSetCommand(): Command {
@@ -11,7 +12,7 @@ export function createConfigSetCommand(): Command {
     .option("--default-timeout <ms>", "Request timeout in milliseconds");
 
   command.action(
-    (options: {
+    withExit(async (options: {
       haUrl?: string;
       haToken?: string;
       defaultFormat?: OutputFormat;
@@ -32,7 +33,7 @@ export function createConfigSetCommand(): Command {
       saveConfig(config);
       console.log(`saved:${getConfigPath()}`);
       console.log(JSON.stringify(config, null, 2));
-    }
+    })
   );
 
   return command;
@@ -41,23 +42,22 @@ export function createConfigSetCommand(): Command {
 export function createConfigGetCommand(): Command {
   const command = new Command("get")
     .description("Get current CLI configuration (token masked for security)")
-    .option("--show-token", "Show the full token (use with caution)")
-    .action((options: { showToken?: boolean }) => {
-      try {
-        const config = getConfig();
-        const safeConfig = {
-          url: config.url,
-          outputFormat: config.outputFormat,
-          timeout: config.timeout,
-          token: options.showToken ? config.token : (config.token ? "***" : "NOT_SET"),
-        };
-        console.log(JSON.stringify(safeConfig, null, 2));
-      } catch (error) {
-        console.error("ERROR:", error instanceof Error ? error.message : String(error));
-        process.exit(1);
-      }
+    .option("--show-token", "Show the full token (use with caution");
+  command.action(withExit(async (options: { showToken?: boolean }) => {
+    try {
+      const config = getConfig();
+      const safeConfig = {
+        url: config.url,
+        outputFormat: config.outputFormat,
+        timeout: config.timeout,
+        token: options.showToken ? config.token : (config.token ? "***" : "NOT_SET"),
+      };
+      console.log(JSON.stringify(safeConfig, null, 2));
+    } catch (error) {
+      console.error("ERROR:", error instanceof Error ? error.message : String(error));
+      process.exit(1);
     }
-  );
+  }));
 
   return command;
 }
@@ -65,16 +65,16 @@ export function createConfigGetCommand(): Command {
 export function createConfigPathCommand(): Command {
   return new Command("path")
     .description("Show the path to the configuration file")
-    .action(() => {
+    .action(withExit(async () => {
       console.log(getConfigPath());
-    });
+    }));
 }
 
 export function createWizardCommand(): Command {
   return new Command("wizard")
     .description("Interactive setup wizard for first-time configuration")
     .option("--skip-test", "Skip connection test after configuration")
-    .action(async (options: { skipTest?: boolean }) => {
+    .action(withExit(async (options: { skipTest?: boolean }) => {
       const readline = await import("node:readline");
       
       const rl = readline.createInterface({
@@ -154,13 +154,13 @@ export function createWizardCommand(): Command {
       } finally {
         rl.close();
       }
-    });
+    }));
 }
 
 export function createInitCommand(): Command {
   return new Command("init")
     .description("Quick initialization with environment variables")
-    .action(async () => {
+    .action(withExit(async () => {
       const url = process.env["HASSIO_URL"];
       const token = process.env["HASSIO_TOKEN"];
       const format = process.env["HASSIO_FORMAT"] as OutputFormat | undefined;
@@ -180,13 +180,13 @@ export function createInitCommand(): Command {
 
       saveConfig(config);
       console.log(`saved:${getConfigPath()}`);
-    });
+    }));
 }
 
 export function createValidateCommand(): Command {
   return new Command("validate")
     .description("Validate current configuration and test connection")
-    .action(async () => {
+    .action(withExit(async () => {
       try {
         const config = getConfig();
         
@@ -210,14 +210,14 @@ entities: ${states.length}`);
         console.error(error instanceof Error ? error.message : String(error));
         process.exit(1);
       }
-    });
+    }));
 }
 
 export function createResetCommand(): Command {
   return new Command("reset")
     .description("Reset all configuration (clear saved settings)")
     .option("--force", "Skip confirmation prompt")
-    .action(async (options: { force?: boolean }) => {
+    .action(withExit(async (options: { force?: boolean }) => {
       const { resetConfig, configExists, getConfigPath } = await import("../config/index.js");
       
       if (!configExists()) {
@@ -238,13 +238,13 @@ export function createResetCommand(): Command {
         console.error("ERROR:", error instanceof Error ? error.message : String(error));
         process.exit(1);
       }
-    });
+    }));
 }
 
 export function createListCommand(): Command {
   return new Command("list")
     .description("List all available configuration options")
-    .action(() => {
+    .action(withExit(async () => {
       console.log("config_options:");
       console.log("  url: Home Assistant URL");
       console.log("  token: Long-lived access token");
@@ -256,5 +256,5 @@ export function createListCommand(): Command {
       console.log("  HASSIO_FORMAT: Default output format");
       console.log("  HASSIO_TIMEOUT: Request timeout in ms");
       console.log(`\nconfig_file: ${getConfigPath()}`);
-    });
+    }));
 }

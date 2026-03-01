@@ -2,6 +2,7 @@ import { Command } from "commander";
 import { getConfig } from "../config/index.js";
 import { AutomationApiClient } from "../api/automation.js";
 import { formatOutput } from "../formatters/index.js";
+import { withExit } from "../utils/exit.js";
 import type { OutputFormat } from "../types/index.js";
 
 function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
@@ -25,7 +26,7 @@ export function createAutomationsCommand(): Command {
     .option("--reload", "Reload all automations")
     .option("--count", "Only return count");
 
-  command.action(async (options: {
+  command.action(withExit(async (options: {
     list?: boolean;
     on?: string;
     off?: string;
@@ -83,7 +84,7 @@ export function createAutomationsCommand(): Command {
     }));
 
     console.log(formatOutput({ automations: result }, format));
-  });
+  }));
 
   return command;
 }
@@ -97,7 +98,7 @@ export function createScriptsCommand(): Command {
     .option("--reload", "Reload all scripts")
     .option("--count", "Only return count");
 
-  command.action(async (options: {
+  command.action(withExit(async (options: {
     list?: boolean;
     run?: string;
     data?: string;
@@ -136,7 +137,7 @@ export function createScriptsCommand(): Command {
     }));
 
     console.log(formatOutput({ scripts: result }, format));
-  });
+  }));
 
   return command;
 }
@@ -149,7 +150,7 @@ export function createScenesCommand(): Command {
     .option("--reload", "Reload all scenes")
     .option("--count", "Only return count");
 
-  command.action(async (options: {
+  command.action(withExit(async (options: {
     list?: boolean;
     apply?: string;
     reload?: boolean;
@@ -184,7 +185,7 @@ export function createScenesCommand(): Command {
     }));
 
     console.log(formatOutput({ scenes: result }, format));
-  });
+  }));
 
   return command;
 }

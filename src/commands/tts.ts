@@ -2,6 +2,7 @@ import { Command } from "commander";
 import { getConfig } from "../config/index.js";
 import { TtsApiClient } from "../api/tts.js";
 import { formatOutput } from "../formatters/index.js";
+import { withExit } from "../utils/exit.js";
 import type { OutputFormat } from "../types/index.js";
 
 function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
@@ -24,7 +25,7 @@ export function createTtsCommand(): Command {
     .option("-l, --language <lang>", "Language code")
     .option("--clear-cache", "Clear TTS cache");
 
-  command.action(async (options: {
+  command.action(withExit(async (options: {
     engines?: boolean;
     message?: string;
     engine?: string;
@@ -74,7 +75,7 @@ export function createTtsCommand(): Command {
     }
 
     command.help();
-  });
+  }));
 
   return command;
 }
@@ -86,7 +87,7 @@ export function createSayCommand(): Command {
     .requiredOption("-p, --player <entity>", "Media player entity ID")
     .option("-e, --engine <engine>", "TTS engine ID");
 
-  command.action(async (message: string, options: { player: string; engine?: string }, cmd) => {
+  command.action(withExit(async (message: string, options: { player: string; engine?: string }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
     const client = getClient(globalOpts);
     const format = getFormat(globalOpts);
@@ -100,7 +101,7 @@ export function createSayCommand(): Command {
       message: "Spoken",
       player: options.player,
     }, format));
-  });
+  }));
 
   return command;
 }

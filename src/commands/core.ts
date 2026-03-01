@@ -3,6 +3,7 @@ import { getConfig } from "../config/index.js";
 import { HomeAssistantClient } from "../api/index.js";
 import { formatOutput, formatStates } from "../formatters/index.js";
 import type { OutputFormat } from "../types/index.js";
+import { withExit } from "../utils/exit.js";
 
 function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
   const config = getConfig(options);
@@ -17,61 +18,61 @@ function getFormat(options: { format?: OutputFormat }): OutputFormat {
 export function createStatusCommand(): Command {
   return new Command("status")
     .description("Check if the Home Assistant API is running")
-    .action(async (_options, cmd) => {
+    .action(withExit(async (_options, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
       const client = getClient(globalOpts);
       const format = getFormat(globalOpts);
       const result = await client.getStatus();
       console.log(formatOutput(result, format));
-    });
+    }));
 }
 
 export function createConfigCommand(): Command {
   return new Command("config")
     .description("Get the current Home Assistant configuration")
-    .action(async (_options, cmd) => {
+    .action(withExit(async (_options, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
       const client = getClient(globalOpts);
       const format = getFormat(globalOpts);
       const result = await client.getConfig();
       console.log(formatOutput(result, format));
-    });
+    }));
 }
 
 export function createComponentsCommand(): Command {
   return new Command("components")
     .description("Get list of loaded components")
-    .action(async (_options, cmd) => {
+    .action(withExit(async (_options, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
       const client = getClient(globalOpts);
       const format = getFormat(globalOpts);
       const result = await client.getComponents();
       console.log(formatOutput(result, format));
-    });
+    }));
 }
 
 export function createEventsCommand(): Command {
   return new Command("events")
     .description("Get list of available events")
-    .action(async (_options, cmd) => {
+    .action(withExit(async (_options, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
       const client = getClient(globalOpts);
       const format = getFormat(globalOpts);
       const result = await client.getEvents();
       console.log(formatOutput(result, format));
-    });
+    }));
 }
 
 export function createServicesCommand(): Command {
   return new Command("services")
     .description("Get list of available services")
-    .action(async (_options, cmd) => {
+    .action(withExit(async (_options, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
       const client = getClient(globalOpts);
       const format = getFormat(globalOpts);
       const result = await client.getServices();
       console.log(formatOutput(result, format));
-    });
+    }));
 }
 
 export function createStatesCommand(): Command {
@@ -79,7 +80,7 @@ export function createStatesCommand(): Command {
     .description("Get entity states")
     .argument("[entity-id]", "Specific entity ID to get state for");
 
-  command.action(async (entityId: string | undefined, _options, cmd) => {
+  command.action(withExit(async (entityId: string | undefined, _options, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
     const client = getClient(globalOpts);
     const format = getFormat(globalOpts);
@@ -91,7 +92,7 @@ export function createStatesCommand(): Command {
       const result = await client.getStates();
       console.log(formatStates(result, format));
     }
-  });
+  }));
 
   return command;
 }
@@ -104,7 +105,7 @@ export function createSetStateCommand(): Command {
     .option("-a, --attributes <json>", "JSON attributes to set");
 
   command.action(
-    async (entityId: string, state: string, options: { attributes?: string }, cmd) => {
+    withExit(async (entityId: string, state: string, options: { attributes?: string }, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
       const client = getClient(globalOpts);
       const format = getFormat(globalOpts);
@@ -116,7 +117,7 @@ export function createSetStateCommand(): Command {
 
       const result = await client.setState(entityId, state, attributes);
       console.log(formatOutput(result, format));
-    }
+    })
   );
 
   return command;
@@ -127,14 +128,14 @@ export function createDeleteStateCommand(): Command {
     .description("Delete an entity state")
     .argument("<entity-id>", "Entity ID to delete");
 
-  command.action(async (entityId: string, _options, cmd) => {
+  command.action(withExit(async (entityId: string, _options, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
     const client = getClient(globalOpts);
     const format = getFormat(globalOpts);
 
     await client.deleteState(entityId);
     console.log(formatOutput({ success: true, entity_id: entityId }, format));
-  });
+  }));
 
   return command;
 }

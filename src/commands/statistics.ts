@@ -2,6 +2,7 @@ import { Command } from "commander";
 import { getConfig } from "../config/index.js";
 import { StatisticsApiClient } from "../api/index.js";
 import { formatOutput } from "../formatters/index.js";
+import { withExit } from "../utils/exit.js";
 import type { OutputFormat } from "../types/index.js";
 
 function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
@@ -24,7 +25,7 @@ export function createStatisticsCommand(): Command {
     .option("--types <types>", "Statistics types (comma-separated: change,last_reset,max,mean,min,state,sum)")
     .option("--during-period", "Query during a specific period", false);
 
-  command.action(async (options: {
+  command.action(withExit(async (options: {
     entityId?: string;
     startTime?: string;
     endTime?: string;
@@ -74,7 +75,7 @@ export function createStatisticsCommand(): Command {
     }
 
     console.log(formatOutput(result, format));
-  });
+  }));
 
   return command;
 }

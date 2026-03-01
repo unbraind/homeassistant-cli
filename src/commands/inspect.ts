@@ -2,6 +2,7 @@ import { Command } from "commander";
 import { getConfig } from "../config/index.js";
 import { HomeAssistantClient } from "../api/index.js";
 import { formatOutput } from "../formatters/index.js";
+import { withExit } from "../utils/exit.js";
 import type { OutputFormat } from "../types/index.js";
 
 function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
@@ -21,7 +22,7 @@ export function createInspectCommand(): Command {
     .option("--history", "Include recent history")
     .option("-l, --limit <n>", "History entries limit", "10");
 
-  command.action(async (entityId: string, options: { history?: boolean; limit?: string }, cmd) => {
+  command.action(withExit(async (entityId: string, options: { history?: boolean; limit?: string }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
     const client = getClient(globalOpts);
     const format = getFormat(globalOpts);
@@ -57,7 +58,7 @@ export function createInspectCommand(): Command {
     }
 
     console.log(formatOutput(result, format));
-  });
+  }));
 
   return command;
 }
@@ -66,7 +67,7 @@ export function createSummaryCommand(): Command {
   const command = new Command("summary")
     .description("Get a summary of all entities by domain and state");
 
-  command.action(async (_options, cmd) => {
+  command.action(withExit(async (_options, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
     const client = getClient(globalOpts);
     const format = getFormat(globalOpts);
@@ -93,7 +94,7 @@ export function createSummaryCommand(): Command {
       by_state: byState,
       unavailable_count: unavailable,
     }, format));
-  });
+  }));
 
   return command;
 }

@@ -4,6 +4,7 @@ import type {
   HaTodoItem,
   HaShoppingListItem,
   HaPersistentNotification,
+  HaServiceCallResult,
 } from "../types/api.js";
 import { HomeAssistantClient } from "./client.js";
 

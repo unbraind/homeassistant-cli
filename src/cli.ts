@@ -193,7 +193,7 @@ program.addCommand(createRestartCommand());
 program.addCommand(createStopCommand());
 program.addCommand(createNotifyCommand());
 
-program.parseAsync().catch((err) => {
+program.parseAsync(process.argv).catch((err) => {
   console.error("Error:", err.message);
   process.exit(1);
 });

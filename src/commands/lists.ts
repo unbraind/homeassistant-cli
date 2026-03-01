@@ -2,6 +2,7 @@ import { Command } from "commander";
 import { getConfig } from "../config/index.js";
 import { ListsApiClient, HomeAssistantApiError } from "../api/index.js";
 import { formatOutput } from "../formatters/index.js";
+import { withExit } from "../utils/exit.js";
 import type { OutputFormat } from "../types/index.js";
 
 function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
@@ -29,7 +30,7 @@ export function createTodoCommand(): Command {
     .option("--incomplete", "Mark item as needing action")
     .option("--count", "Only return count");
 
-  command.action(async (options: {
+  command.action(withExit(async (options: {
     lists?: boolean;
     entityId?: string;
     add?: string;
@@ -54,12 +55,12 @@ export function createTodoCommand(): Command {
 
     if (options.update && options.entityId) {
       const status = options.complete ? "completed" as const : options.incomplete ? "needs_action" as const : undefined;
-      await client.updateTodoItem(options.entityId, options.update, {
-        summary: options.name,
-        description: options.description,
-        due: options.due,
-        status,
-      });
+      const updates: { summary?: string; description?: string; due?: string; status?: "needs_action" | "completed" } = {};
+      if (options.name) updates.summary = options.name;
+      if (options.description) updates.description = options.description;
+      if (options.due) updates.due = options.due;
+      if (status) updates.status = status;
+      await client.updateTodoItem(options.entityId, options.update, updates);
       console.log(formatOutput({ updated: options.update, entity_id: options.entityId }, format));
       return;
     }
@@ -90,27 +91,7 @@ export function createTodoCommand(): Command {
       }
       return;
     }
-
-    if (options.entityId) {
-      try {
-        const items = await client.getTodoItems(options.entityId);
-        if (options.count) {
-          console.log(formatOutput({ todo_items_count: items.length }, format));
-        } else {
-          console.log(formatOutput({ todo_items: items }, format));
-        }
-      } catch (error) {
-        if (error instanceof HomeAssistantApiError && error.statusCode === 404) {
-          console.log(formatOutput({ 
-            message: "Todo endpoint not available. Ensure todo integration is configured.",
-            entity_id: options.entityId
-          }, format));
-        } else {
-          throw error;
-        }
-      }
-    }
-  });
+  }));
 
   return command;
 }
@@ -130,7 +111,7 @@ export function createShoppingListCommand(): Command {
     .option("--clear-completed", "Clear all completed items")
     .option("--count", "Only return count");
 
-  command.action(async (options: {
+  command.action(withExit(async (options: {
     list?: boolean;
     pending?: boolean;
     completed?: boolean;
@@ -187,7 +168,7 @@ export function createShoppingListCommand(): Command {
     } else {
       console.log(formatOutput({ shopping_list: filtered }, format));
     }
-  });
+  }));
 
   return command;
 }
@@ -203,7 +184,7 @@ export function createNotificationsCommand(): Command {
     .option("--dismiss-all", "Dismiss all notifications")
     .option("--count", "Only return count");
 
-  command.action(async (options: {
+  command.action(withExit(async (options: {
     list?: boolean;
     create?: string;
     title?: string;
@@ -217,10 +198,10 @@ export function createNotificationsCommand(): Command {
     const format = getFormat(globalOpts);
 
     if (options.create) {
-      await client.createNotification(options.create, {
-        title: options.title,
-        notificationId: options.id,
-      });
+      const notifOptions: { title?: string; notificationId?: string } = {};
+      if (options.title) notifOptions.title = options.title;
+      if (options.id) notifOptions.notificationId = options.id;
+      await client.createNotification(options.create, notifOptions);
       console.log(formatOutput({ created: true, message: options.create }, format));
       return;
     }
@@ -267,7 +248,7 @@ export function createNotificationsCommand(): Command {
         throw error;
       }
     }
-  });
+  }));
 
   return command;
 }

@@ -1,4 +1,3 @@
-import { request } from "undici";
 import type {
   HaApiStatus,
   HaCalendar,
@@ -13,99 +12,12 @@ import type {
   HaServiceCallResult,
   HaState,
 } from "../types/api.js";
-import type { Config } from "../types/options.js";
+import { BaseClient } from "./base.js";
+import { HomeAssistantApiError, HomeAssistantConnectionError } from "./errors.js";
 
-export class HomeAssistantApiError extends Error {
-  constructor(
-    message: string,
-    public readonly statusCode: number,
-    public readonly body: string
-  ) {
-    super(message);
-    this.name = "HomeAssistantApiError";
-  }
-}
+export { HomeAssistantApiError, HomeAssistantConnectionError };
 
-export class HomeAssistantConnectionError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "HomeAssistantConnectionError";
-  }
-}
-
-export class HomeAssistantClient {
-  protected readonly baseUrl: string;
-  protected readonly token: string;
-
-  constructor(config: Config) {
-    this.baseUrl = config.url;
-    this.token = config.token;
-  }
-
-  protected async request<T>(
-    method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH",
-    path: string,
-    body?: unknown
-  ): Promise<T> {
-    const url = `${this.baseUrl}/api${path}`;
-    const headers: Record<string, string> = {
-      Authorization: `Bearer ${this.token}`,
-      "Content-Type": "application/json",
-    };
-
-    try {
-      const requestOptions: {
-        method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
-        headers: Record<string, string>;
-        body?: string;
-        throwOnError: false;
-      } = {
-        method,
-        headers,
-        throwOnError: false,
-      };
-      
-      if (body) {
-        requestOptions.body = JSON.stringify(body);
-      }
-      
-      const response = await request(url, requestOptions);
-      const responseText = await response.body.text();
-
-      if (response.statusCode >= 400) {
-        throw new HomeAssistantApiError(
-          `API request failed: ${response.statusCode} - ${responseText}`,
-          response.statusCode,
-          responseText
-        );
-      }
-
-      if (!responseText || responseText.trim() === "") {
-        return undefined as T;
-      }
-
-      return JSON.parse(responseText) as T;
-    } catch (error) {
-      if (error instanceof HomeAssistantApiError) {
-        throw error;
-      }
-      
-      if (error instanceof Error && (
-        error.message.includes("ECONNREFUSED") ||
-        error.message.includes("ENOTFOUND") ||
-        error.message.includes("ETIMEDOUT") ||
-        error.message.includes("fetch failed")
-      )) {
-        throw new HomeAssistantConnectionError(
-          `Failed to connect to Home Assistant at ${this.baseUrl}. ` +
-          `Please check the URL and ensure Home Assistant is running.`
-        );
-      }
-      
-      throw error;
-    }
-  }
-
+export class HomeAssistantClient extends BaseClient {
   async getStatus(): Promise<HaApiStatus> {
     return this.request<HaApiStatus>("GET", "/");
   }
@@ -181,24 +93,15 @@ export class HomeAssistantClient {
     significantChangesOnly?: boolean;
   }): Promise<HaHistoryResponse> {
     const params = new URLSearchParams();
-
     const entities = Array.isArray(options.entityId)
       ? options.entityId.join(",")
       : options.entityId;
     params.set("filter_entity_id", entities);
 
-    if (options.endTime) {
-      params.set("end_time", options.endTime);
-    }
-    if (options.minimalResponse) {
-      params.set("minimal_response", "");
-    }
-    if (options.noAttributes) {
-      params.set("no_attributes", "");
-    }
-    if (options.significantChangesOnly) {
-      params.set("significant_changes_only", "");
-    }
+    if (options.endTime) params.set("end_time", options.endTime);
+    if (options.minimalResponse) params.set("minimal_response", "");
+    if (options.noAttributes) params.set("no_attributes", "");
+    if (options.significantChangesOnly) params.set("significant_changes_only", "");
 
     const timePath = options.startTime ? `/${options.startTime}` : "";
     return this.request<HaHistoryResponse>(
@@ -213,13 +116,8 @@ export class HomeAssistantClient {
     endTime?: string;
   }): Promise<HaLogbookEntry[]> {
     const params = new URLSearchParams();
-
-    if (options?.entityId) {
-      params.set("entity", options.entityId);
-    }
-    if (options?.endTime) {
-      params.set("end_time", options.endTime);
-    }
+    if (options?.entityId) params.set("entity", options.entityId);
+    if (options?.endTime) params.set("end_time", options.endTime);
 
     const timePath = options?.startTime ? `/${options.startTime}` : "";
     const query = params.toString() ? `?${params.toString()}` : "";
@@ -228,29 +126,11 @@ export class HomeAssistantClient {
   }
 
   async getErrorLog(): Promise<string> {
-    const url = `${this.baseUrl}/api/error_log`;
-    const response = await request(url, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${this.token}`,
-      },
-    });
-
-    return response.body.text() as Promise<string>;
+    return this.requestText("/error_log");
   }
 
   async renderTemplate(template: string): Promise<string> {
-    const url = `${this.baseUrl}/api/template`;
-    const response = await request(url, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${this.token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ template }),
-    });
-
-    return response.body.text() as Promise<string>;
+    return this.requestText("/template", { template });
   }
 
   async getCalendars(): Promise<HaCalendar[]> {
@@ -270,23 +150,11 @@ export class HomeAssistantClient {
   }
 
   async getCameraImage(entityId: string): Promise<Buffer> {
-    const url = `${this.baseUrl}/api/camera_proxy/${entityId}?time=${Date.now()}`;
-    const response = await request(url, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${this.token}`,
-      },
-    });
-
-    const arrayBuffer = await response.body.arrayBuffer();
-    return Buffer.from(arrayBuffer);
+    return this.requestBuffer(`/camera_proxy/${entityId}?time=${Date.now()}`);
   }
 
   async checkConfig(): Promise<HaCheckConfigResult> {
-    return this.request<HaCheckConfigResult>(
-      "POST",
-      "/config/core/check_config"
-    );
+    return this.request<HaCheckConfigResult>("POST", "/config/core/check_config");
   }
 
   async handleIntent(

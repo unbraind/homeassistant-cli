@@ -2,6 +2,7 @@ import { Command } from "commander";
 import { getConfig } from "../config/index.js";
 import { HomeAssistantClient } from "../api/index.js";
 import { formatOutput } from "../formatters/index.js";
+import { withExit } from "../utils/exit.js";
 import type { OutputFormat } from "../types/index.js";
 
 function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
@@ -24,7 +25,7 @@ export function createCallServiceCommand(): Command {
     .option("-r, --return-response", "Return response data from service", false);
 
   command.action(
-    async (
+    withExit(async (
       domain: string,
       service: string,
       options: { entityId?: string; data?: string; returnResponse?: boolean },
@@ -50,7 +51,7 @@ export function createCallServiceCommand(): Command {
         options.returnResponse
       );
       console.log(formatOutput(result, format));
-    }
+    })
   );
 
   return command;
@@ -63,7 +64,7 @@ export function createFireEventCommand(): Command {
     .option("-d, --data <json>", "JSON event data");
 
   command.action(
-    async (eventType: string, options: { data?: string }, cmd) => {
+    withExit(async (eventType: string, options: { data?: string }, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
       const client = getClient(globalOpts);
       const format = getFormat(globalOpts);
@@ -75,7 +76,7 @@ export function createFireEventCommand(): Command {
 
       const result = await client.fireEvent(eventType, eventData);
       console.log(formatOutput(result, format));
-    }
+    })
   );
 
   return command;
@@ -88,7 +89,7 @@ export function createRenderTemplateCommand(): Command {
     .option("--file <path>", "Read template from file");
 
   command.action(
-    async (templateArg: string, options: { file?: string }, cmd) => {
+    withExit(async (templateArg: string, options: { file?: string }, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
       const client = getClient(globalOpts);
 
@@ -100,7 +101,7 @@ export function createRenderTemplateCommand(): Command {
 
       const result = await client.renderTemplate(template);
       console.log(result);
-    }
+    })
   );
 
   return command;
@@ -109,13 +110,13 @@ export function createRenderTemplateCommand(): Command {
 export function createCheckConfigCommand(): Command {
   return new Command("check-config")
     .description("Validate the Home Assistant configuration")
-    .action(async (_options, cmd) => {
+    .action(withExit(async (_options, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
       const client = getClient(globalOpts);
       const format = getFormat(globalOpts);
       const result = await client.checkConfig();
       console.log(formatOutput(result, format));
-    });
+    }));
 }
 
 export function createHandleIntentCommand(): Command {
@@ -124,7 +125,7 @@ export function createHandleIntentCommand(): Command {
     .argument("<name>", "Intent name")
     .option("-d, --data <json>", "JSON intent data");
 
-  command.action(async (name: string, options: { data?: string }, cmd) => {
+  command.action(withExit(async (name: string, options: { data?: string }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
     const client = getClient(globalOpts);
     const format = getFormat(globalOpts);
@@ -136,7 +137,7 @@ export function createHandleIntentCommand(): Command {
 
     const result = await client.handleIntent(name, data);
     console.log(formatOutput(result, format));
-  });
+  }));
 
   return command;
 }

@@ -2,6 +2,7 @@ import { Command } from "commander";
 import { getConfig } from "../config/index.js";
 import { SearchApiClient } from "../api/search.js";
 import { formatOutput, formatStates } from "../formatters/index.js";
+import { withExit } from "../utils/exit.js";
 import type { OutputFormat } from "../types/index.js";
 
 function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
@@ -24,7 +25,7 @@ export function createSearchCommand(): Command {
     .option("--quick", "Use quick local search (no API)")
     .option("--count", "Only return count");
 
-  command.action(async (query: string, options: {
+  command.action(withExit(async (query: string, options: {
     domain?: string;
     area?: string;
     state?: string;
@@ -63,7 +64,7 @@ export function createSearchCommand(): Command {
     }
 
     console.log(formatOutput({ results }, format));
-  });
+  }));
 
   return command;
 }
@@ -76,7 +77,7 @@ export function createFindCommand(): Command {
     .option("-s, --state <state>", "Filter by state")
     .option("--count", "Only return count");
 
-  command.action(async (pattern: string, options: {
+  command.action(withExit(async (pattern: string, options: {
     domain?: string;
     state?: string;
     count?: boolean;
@@ -100,7 +101,7 @@ export function createFindCommand(): Command {
     }
 
     console.log(formatStates(results, format));
-  });
+  }));
 
   return command;
 }

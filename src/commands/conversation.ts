@@ -2,6 +2,7 @@ import { Command } from "commander";
 import { getConfig } from "../config/index.js";
 import { ConversationApiClient } from "../api/conversation.js";
 import { formatOutput } from "../formatters/index.js";
+import { withExit } from "../utils/exit.js";
 import type { OutputFormat } from "../types/index.js";
 
 function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
@@ -22,7 +23,7 @@ export function createConversationCommand(): Command {
     .option("-a, --agent-id <agentId>", "Agent ID to use")
     .option("--conversation-id <id>", "Conversation ID for context");
 
-  command.action(async (options: {
+  command.action(withExit(async (options: {
     agents?: boolean;
     text?: string;
     agentId?: string;
@@ -57,7 +58,7 @@ export function createConversationCommand(): Command {
     }
 
     command.help();
-  });
+  }));
 
   return command;
 }
@@ -68,7 +69,7 @@ export function createAskCommand(): Command {
     .argument("<text>", "Question or command to process")
     .option("-a, --agent-id <agentId>", "Agent ID to use");
 
-  command.action(async (text: string, options: { agentId?: string }, cmd) => {
+  command.action(withExit(async (text: string, options: { agentId?: string }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
     const client = getClient(globalOpts);
     const format = getFormat(globalOpts);
@@ -81,7 +82,7 @@ export function createAskCommand(): Command {
       response: result.response.speech.plain.speech,
       conversation_id: result.conversation_id,
     }, format));
-  });
+  }));
 
   return command;
 }

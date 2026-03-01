@@ -1,12 +1,13 @@
 import { Command } from "commander";
 import { getConfig } from "../config/index.js";
-import { HomeAssistantClient } from "../api/index.js";
+import { ListsApiClient } from "../api/lists.js";
 import { formatOutput } from "../formatters/index.js";
+import { withExit } from "../utils/exit.js";
 import type { OutputFormat } from "../types/index.js";
 
 function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
   const config = getConfig(options);
-  return new HomeAssistantClient(config);
+  return new ListsApiClient(config);
 }
 
 function getFormat(options: { format?: OutputFormat }): OutputFormat {
@@ -22,7 +23,7 @@ export function createNotifyCommand(): Command {
     .option("-t, --title <title>", "Notification title")
     .option("--target <target>", "Notification target (can be comma-separated)")
     .option("-d, --data <json>", "Additional data as JSON string")
-    .action(async (service: string, options: {
+    .action(withExit(async (service: string, options: {
       message: string;
       title?: string;
       target?: string;
@@ -44,18 +45,19 @@ export function createNotifyCommand(): Command {
 
       const target = options.target?.split(",").map(t => t.trim());
       
-      await client.sendNotification(service, options.message, {
-        title: options.title,
-        target: target,
-        data: parsedData,
-      });
+      const notifOptions: { title?: string; target?: string | string[]; data?: Record<string, unknown> } = {};
+      if (options.title) notifOptions.title = options.title;
+      if (target) notifOptions.target = target;
+      if (parsedData) notifOptions.data = parsedData;
+      
+      await client.sendNotification(service, options.message, notifOptions);
 
       console.log(formatOutput({ 
         sent: true, 
         service: `notify.${service}`,
         message: options.message 
       }, format));
-    });
+    }));
 
   return command;
 }

@@ -2,6 +2,7 @@ import { Command } from "commander";
 import { getConfig } from "../config/index.js";
 import { RegistryApiClient, HomeAssistantClient, HomeAssistantApiError } from "../api/index.js";
 import { formatOutput } from "../formatters/index.js";
+import { withExit } from "../utils/exit.js";
 import type { OutputFormat, HaState } from "../types/index.js";
 
 function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
@@ -40,7 +41,7 @@ export function createRegistriesCommand(): Command {
     .option("--area-id <id>", "Filter by area ID (for devices/entities)")
     .option("--count", "Only return count");
 
-  command.action(async (options: {
+  command.action(withExit(async (options: {
     entities?: boolean;
     devices?: boolean;
     areas?: boolean;
@@ -203,7 +204,7 @@ export function createRegistriesCommand(): Command {
         }
       }
     }
-  });
+  }));
 
   return command;
 }

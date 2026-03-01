@@ -2,6 +2,7 @@ import { Command } from "commander";
 import { getConfig } from "../config/index.js";
 import { ExtendedApiClient, HomeAssistantApiError } from "../api/index.js";
 import { formatOutput } from "../formatters/index.js";
+import { withExit } from "../utils/exit.js";
 import type { OutputFormat } from "../types/index.js";
 
 function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
@@ -17,7 +18,7 @@ function getFormat(options: { format?: OutputFormat }): OutputFormat {
 export function createEnergyCommand(): Command {
   const command = new Command("energy")
     .description("Get Home Assistant energy dashboard preferences")
-    .action(async (_options, cmd) => {
+    .action(withExit(async (_options, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
       const client = getClient(globalOpts);
       const format = getFormat(globalOpts);
@@ -34,7 +35,7 @@ export function createEnergyCommand(): Command {
           throw error;
         }
       }
-    });
+    }));
 
   return command;
 }
@@ -47,7 +48,7 @@ export function createWeatherCommand(): Command {
     .option("--list", "List all weather entities")
     .option("--count", "Only return count");
 
-  command.action(async (entityId: string | undefined, options: {
+  command.action(withExit(async (entityId: string | undefined, options: {
     type?: "daily" | "hourly" | "twice_daily";
     list?: boolean;
     count?: boolean;
@@ -90,7 +91,7 @@ export function createWeatherCommand(): Command {
         throw error;
       }
     }
-  });
+  }));
 
   return command;
 }
@@ -98,7 +99,7 @@ export function createWeatherCommand(): Command {
 export function createHealthCommand(): Command {
   const command = new Command("health")
     .description("Get Home Assistant system health information")
-    .action(async (_options, cmd) => {
+    .action(withExit(async (_options, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
       const client = getClient(globalOpts);
       const format = getFormat(globalOpts);
@@ -115,7 +116,7 @@ export function createHealthCommand(): Command {
           throw error;
         }
       }
-    });
+    }));
 
   return command;
 }
@@ -123,7 +124,7 @@ export function createHealthCommand(): Command {
 export function createInfoCommand(): Command {
   const command = new Command("info")
     .description("Get comprehensive system information summary")
-    .action(async (_options, cmd) => {
+    .action(withExit(async (_options, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
       const format = getFormat(globalOpts);
 
@@ -165,7 +166,7 @@ export function createInfoCommand(): Command {
       };
 
       console.log(formatOutput(info, format));
-    });
+    }));
 
   return command;
 }
