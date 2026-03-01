@@ -14,6 +14,17 @@ export interface HaConfig {
   };
   version: string;
   whitelist_external_dirs: string[];
+  country?: string;
+  language?: string;
+  state?: string;
+  installation_type?: string;
+  config_source?: string;
+  safe_mode?: boolean;
+  recovery_mode?: boolean;
+  internal_url?: string | null;
+  external_url?: string | null;
+  radius?: number;
+  debug?: boolean;
 }
 
 export interface HaState {

@@ -125,7 +125,6 @@ export function createInfoCommand(): Command {
     .description("Get comprehensive system information summary")
     .action(async (_options, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
-      const client = getClient(globalOpts);
       const format = getFormat(globalOpts);
 
       const { HomeAssistantClient } = await import("../api/index.js");
@@ -153,7 +152,7 @@ export function createInfoCommand(): Command {
         country: config.country,
         language: config.language,
         state: config.state,
-        installation_type: (config as Record<string, unknown>).installation_type,
+        installation_type: config.installation_type,
         entities: {
           total: states.length,
           domains: Object.keys(domains).length,
