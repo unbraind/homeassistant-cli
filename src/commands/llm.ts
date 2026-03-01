@@ -268,14 +268,17 @@ export function createDiscoverCommand(): Command {
     const unavailable = states.filter((s: HaState) => s.state === "unavailable").length;
 
     console.log(formatOutput({
-      total_entities: total,
+      entities: total,
       domains: Object.keys(byDomain).length,
+      unavailable,
       top_domains: Object.entries(byDomain)
         .sort(([,a], [,b]) => (b as number) - (a as number))
         .slice(0, 10)
         .map(([name, count]) => ({ name, count })),
-      state_summary: byState,
-      unavailable_count: unavailable,
+      states: Object.entries(byState)
+        .sort(([,a], [,b]) => (b as number) - (a as number))
+        .slice(0, 10)
+        .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {}),
     }, format));
   });
 

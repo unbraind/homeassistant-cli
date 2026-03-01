@@ -190,12 +190,6 @@ export function createValidateCommand(): Command {
       try {
         const config = getConfig();
         
-        console.log("config:");
-        console.log(`  url: ${config.url}`);
-        console.log(`  format: ${config.outputFormat}`);
-        console.log(`  timeout: ${config.timeout}ms`);
-        console.log(`  token: ${config.token ? "***" : "NOT_SET"}`);
-        
         const { HomeAssistantClient } = await import("../api/index.js");
         const client = new HomeAssistantClient(config);
         
@@ -203,12 +197,14 @@ export function createValidateCommand(): Command {
         const haConfig = await client.getConfig();
         const states = await client.getStates();
         
-        console.log("\ntest:");
-        console.log(`  api: ${status.message}`);
-        console.log(`  version: ${haConfig.version}`);
-        console.log(`  location: ${haConfig.location_name}`);
-        console.log(`  entities: ${states.length}`);
-        console.log("\nstatus: VALID");
+        console.log(`status: VALID
+url: ${config.url}
+format: ${config.outputFormat}
+timeout: ${config.timeout}ms
+api: ${status.message}
+version: ${haConfig.version}
+location: ${haConfig.location_name}
+entities: ${states.length}`);
       } catch (error) {
         console.error("\nERROR: Validation failed");
         console.error(error instanceof Error ? error.message : String(error));
