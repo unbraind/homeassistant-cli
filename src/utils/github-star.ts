@@ -110,8 +110,8 @@ async function starRepo(exec: ExecFn): Promise<boolean> {
 export async function maybePromptToStarRepo(deps?: StarPromptDeps): Promise<void> {
   const exec = deps?.exec ?? execGh;
   const prompt = deps?.prompt ?? promptInTerminal;
-  const log = deps?.log ?? console.log;
-  const warn = deps?.warn ?? console.warn;
+  const log = deps?.log ?? console.error;
+  const warn = deps?.warn ?? console.error;
   const isInteractive = deps?.isInteractive ?? (Boolean(process.stdin.isTTY) && Boolean(process.stdout.isTTY));
 
   const status = await getGitHubStarStatus(exec);

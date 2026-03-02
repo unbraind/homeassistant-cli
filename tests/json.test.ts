@@ -32,6 +32,12 @@ describe("JSON Formatter", () => {
       const result = formatJson(data, true);
       expect(result).toBe("[1,2,3]");
     });
+
+    it("should serialize undefined as null", () => {
+      const result = formatJson(undefined, true);
+      expect(result).toBe("null");
+      expect(JSON.parse(result)).toBeNull();
+    });
   });
 
   describe("formatStatesJson", () => {

@@ -69,6 +69,7 @@ Configuration is loaded in priority order (later overrides earlier):
 | JSON-compact | Minified JSON | Data transmission |
 | YAML | YAML format | Configuration files |
 | Table | ASCII table | Terminal display |
+| Markdown | Markdown table format | Docs, PR comments, reports |
 
 ## Command Categories
 
@@ -144,6 +145,16 @@ Configuration is loaded in priority order (later overrides earlier):
 | `zones` | List zones (from entity states) |
 | `analytics` | System analytics |
 | `backups` | Backup management (via service calls) |
+
+### WebSocket & Supervisor
+
+| Command | Description |
+|---------|-------------|
+| `websocket` / `ws` | Full WebSocket API passthrough (`call`, `subscribe`, `--connect-test`) |
+| `supervisor api` | Raw Supervisor proxy passthrough |
+| `supervisor addons` | Add-on list/info/start/stop/restart |
+| `supervisor host` | Host reboot/shutdown |
+| `supervisor logs` | Fetch supervisor logs |
 
 ### LLM/Agent Optimized Commands
 

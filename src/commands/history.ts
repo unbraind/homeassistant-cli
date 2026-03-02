@@ -1,7 +1,7 @@
 import { Command } from "commander";
 import { getConfig } from "../config/index.js";
 import { HomeAssistantClient } from "../api/index.js";
-import { formatHistory, formatLogbook } from "../formatters/index.js";
+import { formatHistory, formatLogbook, formatOutput } from "../formatters/index.js";
 import { withExit } from "../utils/exit.js";
 import type { OutputFormat } from "../types/index.js";
 
@@ -74,7 +74,8 @@ export function createErrorLogCommand(): Command {
     .action(withExit(async (_options, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
       const client = getClient(globalOpts);
+      const format = getFormat(globalOpts);
       const result = await client.getErrorLog();
-      console.log(result);
+      console.log(formatOutput({ error_log: result }, format));
     }));
 }

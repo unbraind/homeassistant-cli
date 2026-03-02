@@ -5,7 +5,7 @@ import type { Config, OutputFormat } from "../types/index.js";
 
 const CONFIG_DIR = join(homedir(), ".hassio-cli");
 const CONFIG_FILE = join(CONFIG_DIR, "settings.json");
-const VALID_OUTPUT_FORMATS: OutputFormat[] = ["toon", "json", "json-compact", "yaml", "table"];
+const VALID_OUTPUT_FORMATS: OutputFormat[] = ["toon", "json", "json-compact", "yaml", "table", "markdown"];
 
 interface ConfigFile {
   url?: string;

@@ -9,3 +9,5 @@ export * from "./search.js";
 export * from "./tts.js";
 export * from "./automation.js";
 export * from "./extended.js";
+export * from "./supervisor.js";
+export * from "./websocket.js";

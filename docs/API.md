@@ -300,7 +300,7 @@ hassio settings set [options]
 Options:
   --ha-url <url>             Home Assistant URL
   --ha-token <token>         Long-lived access token
-  --default-format <format>  Output format (toon, json, json-compact, yaml, table)
+  --default-format <format>  Output format (toon, json, json-compact, yaml, table, markdown)
   --default-timeout <ms>     Request timeout
 
 # Example
@@ -896,6 +896,54 @@ Options:
 hassio action "turn on living room lights" --dry-run
 hassio action "toggle kitchen switch"
 hassio action "activate movie scene"
+```
+
+## WebSocket Commands
+
+#### `websocket` / `ws`
+Access Home Assistant WebSocket API with full passthrough support.
+
+```bash
+hassio websocket --connect-test
+hassio ws call -T get_states
+hassio ws call -T config/device_registry/list -d '{"area_id":"kitchen"}'
+hassio ws subscribe --event-type state_changed --wait-ms 10000 --max-events 20
+```
+
+## Supervisor Commands
+
+#### `supervisor api`
+Raw supervisor proxy passthrough.
+
+```bash
+hassio supervisor api -m GET -p /addons
+hassio supervisor api -m POST -p /addons/core_ssh/start
+```
+
+#### `supervisor addons`
+Add-on operations.
+
+```bash
+hassio supervisor addons --list
+hassio supervisor addons --info core_ssh
+hassio supervisor addons --start core_ssh
+hassio supervisor addons --stop core_ssh
+hassio supervisor addons --restart core_ssh
+```
+
+#### `supervisor host`
+Host-level operations.
+
+```bash
+hassio supervisor host --reboot
+hassio supervisor host --shutdown
+```
+
+#### `supervisor logs`
+Fetch supervisor logs.
+
+```bash
+hassio supervisor logs
 ```
 
 ## Extended Commands

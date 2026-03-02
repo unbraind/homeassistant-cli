@@ -14,6 +14,7 @@ import * as toon from "./toon.js";
 import * as json from "./json.js";
 import * as yaml from "./yaml.js";
 import * as table from "./table.js";
+import * as markdown from "./markdown.js";
 
 export type { OutputFormat };
 
@@ -32,6 +33,8 @@ export function formatOutput(
       return yaml.formatYaml(data);
     case "table":
       return typeof data === "string" ? data : json.formatJson(data, false);
+    case "markdown":
+      return markdown.formatMarkdown(data);
     default:
       return toon.formatToon(data);
   }
@@ -52,6 +55,8 @@ export function formatStates(
       return yaml.formatStatesYaml(states);
     case "table":
       return table.formatStatesTable(states);
+    case "markdown":
+      return markdown.formatStatesMarkdown(states);
     default:
       return toon.formatStatesToon(states);
   }
@@ -72,6 +77,8 @@ export function formatServices(
       return yaml.formatServicesYaml(services);
     case "table":
       return table.formatServicesTable(services);
+    case "markdown":
+      return markdown.formatServicesMarkdown(services);
     default:
       return toon.formatServicesToon(services);
   }
@@ -92,6 +99,8 @@ export function formatEvents(
       return yaml.formatEventsYaml(events);
     case "table":
       return table.formatEventsTable(events);
+    case "markdown":
+      return markdown.formatEventsMarkdown(events);
     default:
       return toon.formatEventsToon(events);
   }
@@ -112,6 +121,8 @@ export function formatConfig(
       return yaml.formatConfigYaml(config);
     case "table":
       return table.formatConfigTable(config);
+    case "markdown":
+      return markdown.formatConfigMarkdown(config);
     default:
       return toon.formatConfigToon(config);
   }

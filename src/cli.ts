@@ -60,6 +60,8 @@ import {
   createRestartCommand,
   createStopCommand,
   createNotifyCommand,
+  createSupervisorCommand,
+  createWebsocketCommand,
 } from "./commands/index.js";
 import { createInspectCommand } from "./commands/inspect.js";
 
@@ -82,7 +84,7 @@ program
       "-f, --format <format>",
       "Output format"
     )
-      .choices(["toon", "json", "json-compact", "yaml", "table"])
+      .choices(["toon", "json", "json-compact", "yaml", "table", "markdown"])
   )
   .addOption(
     new Option("--timeout <ms>", "Request timeout in milliseconds")
@@ -193,6 +195,8 @@ program.addCommand(createInfoCommand());
 program.addCommand(createRestartCommand());
 program.addCommand(createStopCommand());
 program.addCommand(createNotifyCommand());
+program.addCommand(createSupervisorCommand());
+program.addCommand(createWebsocketCommand());
 
 program.parseAsync(process.argv).catch((err) => {
   console.error("Error:", err.message);

@@ -93,7 +93,7 @@ function getCommandSchema(): Record<string, unknown> {
     global_options: [
       { name: "url", description: "Home Assistant URL", env: "HASSIO_URL" },
       { name: "token", description: "Long-lived access token", env: "HASSIO_TOKEN" },
-      { name: "format", description: "Output format", choices: ["toon", "json", "json-compact", "yaml", "table"], default: "toon" },
+      { name: "format", description: "Output format", choices: ["toon", "json", "json-compact", "yaml", "table", "markdown"], default: "toon" },
       { name: "timeout", description: "Request timeout in ms", default: 30000 },
     ],
     commands: {
@@ -130,6 +130,8 @@ function getCommandSchema(): Record<string, unknown> {
       "shopping-list": { description: "Manage shopping list", options: ["--list", "--pending", "--completed", "-a, --add <name>", "-u, --update <id>", "--complete", "--incomplete", "-d, --delete <id>", "--clear-completed", "--count"] },
       notifications: { description: "Manage notifications", options: ["--list", "-d, --dismiss <id>", "--count"] },
       backups: { description: "Manage backups", options: ["--list", "-c, --create <name>", "-r, --restore <id>", "-d, --delete <id>", "--download <id>", "-o, --output <file>", "--count"] },
+      supervisor: { description: "Access supervisor API", subcommands: ["api", "addons", "host", "logs"] },
+      websocket: { description: "Access websocket API", aliases: ["ws"], subcommands: ["call", "subscribe"], options: ["--connect-test"] },
       settings: { description: "Configuration management", subcommands: ["wizard", "init", "validate", "set", "get", "path", "reset", "list"] },
     },
     query_syntax: {
@@ -144,6 +146,7 @@ function getCommandSchema(): Record<string, unknown> {
       "json-compact": "Minified JSON",
       yaml: "YAML format",
       table: "ASCII table",
+      markdown: "Markdown table format",
     },
   };
 }

@@ -1,4 +1,4 @@
-export type OutputFormat = "toon" | "json" | "json-compact" | "yaml" | "table";
+export type OutputFormat = "toon" | "json" | "json-compact" | "yaml" | "table" | "markdown";
 
 export interface Config {
   url: string;

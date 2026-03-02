@@ -92,6 +92,7 @@ export function createRenderTemplateCommand(): Command {
     withExit(async (templateArg: string, options: { file?: string }, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
       const client = getClient(globalOpts);
+      const format = getFormat(globalOpts);
 
       let template = templateArg;
       if (options.file) {
@@ -100,7 +101,7 @@ export function createRenderTemplateCommand(): Command {
       }
 
       const result = await client.renderTemplate(template);
-      console.log(result);
+      console.log(formatOutput({ result }, format));
     })
   );
 

@@ -9,7 +9,7 @@ Agent-optimized CLI tool for Home Assistant with token-efficient output. Default
 
 - **Broad Home Assistant API Coverage** - States, services, events, history, logbook, calendars, cameras, templates, and more
 - **Token-Efficient Output** - Default TOON format saves ~40% tokens vs JSON, no emojis/decorations
-- **Multiple Output Formats** - TOON, JSON, JSON-compact, YAML, and table
+- **Multiple Output Formats** - TOON, JSON, JSON-compact, YAML, table, and markdown
 - **Interactive Setup Wizard** - Easy first-time configuration
 - **Flexible Configuration** - Environment variables, config file, custom `--config` path, or CLI options
 - **Read-Only Safety Mode** - Block all state-changing API calls with `--read-only` or `HASSIO_READONLY=true`
@@ -17,6 +17,8 @@ Agent-optimized CLI tool for Home Assistant with token-efficient output. Default
 - **LLM-Optimized Commands** - Query language, batch operations, entity discovery
 - **Search Endpoint Fallback** - Falls back to local entity-state search when `/api/search` is unavailable
 - **Service Schema Intelligence** - Supports modern object-style `/api/services` payloads with filter/flat/count modes
+- **WebSocket API Coverage** - Generic `websocket`/`ws` passthrough for all WS command types
+- **Supervisor API Coverage** - Generic `supervisor api` passthrough + common shortcuts (addons, host, logs)
 - **Full TypeScript Support** - Complete type safety throughout
 - **Comprehensive Testing** - High test coverage
 
@@ -141,6 +143,7 @@ hassio states --format json          # Pretty JSON
 hassio states --format json-compact  # Minified JSON
 hassio states --format yaml          # YAML
 hassio states --format table         # ASCII table
+hassio states --format markdown      # Markdown table
 ```
 
 ## Core Commands
@@ -373,6 +376,26 @@ hassio search "temp" --quick
 
 # Search with filters
 hassio search "sensor" -d sensor --count
+```
+
+### WebSocket & Supervisor
+
+```bash
+# WebSocket connectivity/auth check
+hassio websocket --connect-test
+
+# Generic WS command
+hassio ws call -T get_states
+
+# Capture WS events for 10s
+hassio ws subscribe --event-type state_changed --wait-ms 10000 --max-events 20
+
+# Supervisor shortcuts
+hassio supervisor addons --list
+hassio supervisor logs
+
+# Full supervisor endpoint passthrough
+hassio supervisor api -m GET -p /addons
 ```
 
 ## Development

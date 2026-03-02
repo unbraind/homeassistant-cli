@@ -4,7 +4,7 @@ import { withExit } from "../utils/exit.js";
 import { maybePromptToStarRepo } from "../utils/github-star.js";
 import type { OutputFormat } from "../types/index.js";
 
-const VALID_FORMATS: OutputFormat[] = ["toon", "json", "json-compact", "yaml", "table"];
+const VALID_FORMATS: OutputFormat[] = ["toon", "json", "json-compact", "yaml", "table", "markdown"];
 
 interface GlobalOptions {
   config?: string;
@@ -143,7 +143,7 @@ export function createWizardCommand(): Command {
           console.log("2. Go to Profile > Long-Lived Access Tokens");
           console.log("3. Click 'Create Token' and copy\n");
           token = await promptSecretRequired("Long-Lived Access Token", existing.token);
-          console.log("\nFormats: toon, json, json-compact, yaml, table");
+          console.log("\nFormats: toon, json, json-compact, yaml, table, markdown");
           format = parseFormat(await question(`Default format [${existing.outputFormat ?? "toon"}]: `) || existing.outputFormat || "toon") ?? "toon";
           timeout = parseTimeout(await question(`Timeout in ms [${existing.timeout ?? 30000}]: `) || String(existing.timeout ?? 30000)) ?? 30000;
           readOnly = parseBoolean(await question(

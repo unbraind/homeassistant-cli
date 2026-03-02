@@ -2,7 +2,7 @@ import { Command } from "commander";
 import { writeFileSync } from "node:fs";
 import { getConfig } from "../config/index.js";
 import { HomeAssistantClient } from "../api/index.js";
-import { formatCalendars, formatCalendarEvents } from "../formatters/index.js";
+import { formatCalendars, formatCalendarEvents, formatOutput } from "../formatters/index.js";
 import { withExit } from "../utils/exit.js";
 import type { OutputFormat } from "../types/index.js";
 
@@ -63,12 +63,13 @@ export function createCameraCommand(): Command {
     withExit(async (entityId: string, options: { output?: string }, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
       const client = getClient(globalOpts);
+      const format = getFormat(globalOpts);
 
       const buffer = await client.getCameraImage(entityId);
 
       if (options.output) {
         writeFileSync(options.output, buffer);
-        console.log(`Image saved to ${options.output}`);
+        console.log(formatOutput({ saved: true, path: options.output, bytes: buffer.length }, format));
       } else {
         process.stdout.write(buffer);
       }

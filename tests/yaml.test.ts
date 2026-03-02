@@ -1,63 +1,59 @@
 import { describe, it, expect } from "vitest";
 import { formatYaml } from "../src/formatters/yaml.js";
+import { parse } from "yaml";
 import type { HaState } from "../src/types/api.js";
 
 describe("YAML Formatter", () => {
   describe("formatYaml", () => {
     it("should format null value", () => {
-      expect(formatYaml(null)).toBe("null");
+      expect(parse(formatYaml(null))).toBeNull();
     });
 
     it("should format boolean values", () => {
-      expect(formatYaml(true)).toBe("true");
-      expect(formatYaml(false)).toBe("false");
+      expect(parse(formatYaml(true))).toBe(true);
+      expect(parse(formatYaml(false))).toBe(false);
     });
 
     it("should format numbers", () => {
-      expect(formatYaml(42)).toBe("42");
-      expect(formatYaml(3.14)).toBe("3.14");
+      expect(parse(formatYaml(42))).toBe(42);
+      expect(parse(formatYaml(3.14))).toBe(3.14);
     });
 
     it("should format simple strings", () => {
-      expect(formatYaml("hello")).toBe("hello");
+      expect(parse(formatYaml("hello"))).toBe("hello");
     });
 
     it("should quote strings with colons", () => {
-      expect(formatYaml("http://localhost")).toBe('"http://localhost"');
+      expect(parse(formatYaml("http://localhost"))).toBe("http://localhost");
     });
 
     it("should quote strings with newlines", () => {
-      expect(formatYaml("hello\nworld")).toBe('"hello\nworld"');
+      expect(parse(formatYaml("hello\nworld"))).toBe("hello\nworld");
     });
 
     it("should quote empty strings", () => {
-      expect(formatYaml("")).toBe('""');
+      expect(parse(formatYaml(""))).toBe("");
     });
 
     it("should format empty array", () => {
-      expect(formatYaml([])).toBe("[]");
+      expect(parse(formatYaml([]))).toEqual([]);
     });
 
     it("should format array of primitives", () => {
       const result = formatYaml([1, 2, 3]);
-      expect(result).toContain("- 1");
-      expect(result).toContain("- 2");
-      expect(result).toContain("- 3");
+      expect(parse(result)).toEqual([1, 2, 3]);
     });
 
     it("should format simple object", () => {
       const data = { name: "test", value: 42 };
       const result = formatYaml(data);
-      expect(result).toContain("name: test");
-      expect(result).toContain("value: 42");
+      expect(parse(result)).toEqual(data);
     });
 
     it("should format nested object", () => {
       const data = { config: { url: "http://localhost", port: 8123 } };
       const result = formatYaml(data);
-      expect(result).toContain("config:");
-      expect(result).toContain('url: "http://localhost"');
-      expect(result).toContain("port: 8123");
+      expect(parse(result)).toEqual(data);
     });
 
     it("should format array of objects", () => {
@@ -71,8 +67,7 @@ describe("YAML Formatter", () => {
         },
       ];
       const result = formatYaml(states);
-      expect(result).toContain("entity_id: light.test");
-      expect(result).toContain("state: on");
+      expect(parse(result)).toEqual(states);
     });
   });
 });

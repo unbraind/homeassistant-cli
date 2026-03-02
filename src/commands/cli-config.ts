@@ -4,7 +4,7 @@ import { withExit } from "../utils/exit.js";
 import { maybePromptToStarRepo } from "../utils/github-star.js";
 import type { OutputFormat } from "../types/index.js";
 
-const VALID_FORMATS: OutputFormat[] = ["toon", "json", "json-compact", "yaml", "table"];
+const VALID_FORMATS: OutputFormat[] = ["toon", "json", "json-compact", "yaml", "table", "markdown"];
 
 interface GlobalOptions {
   config?: string;
@@ -69,7 +69,7 @@ export function createConfigSetCommand(): Command {
     .description("Set CLI configuration options permanently")
     .option("--ha-url <url>", "Home Assistant URL")
     .option("--ha-token <token>", "Long-lived access token")
-    .option("--default-format <format>", "Default output format (toon, json, json-compact, yaml, table)")
+    .option("--default-format <format>", "Default output format (toon, json, json-compact, yaml, table, markdown)")
     .option("--default-timeout <ms>", "Request timeout in milliseconds")
     .option("--read-only <boolean>", "Enable safety mode that blocks write operations (true|false)");
 
@@ -245,7 +245,7 @@ export function createListCommand(): Command {
       console.log("config_options:");
       console.log("  url: Home Assistant URL");
       console.log("  token: Long-lived access token");
-      console.log("  outputFormat: toon|json|json-compact|yaml|table");
+      console.log("  outputFormat: toon|json|json-compact|yaml|table|markdown");
       console.log("  timeout: Request timeout in ms (default: 30000)");
       console.log("  readOnly: true|false (default: false)");
       console.log("\nenv_vars:");
