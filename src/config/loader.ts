@@ -25,6 +25,10 @@ interface DataFile {
   lastValidatedAt?: string;
   lastVersion?: string;
   lastLocation?: string;
+  capabilitiesCache?: {
+    checkedAt: string;
+    report: unknown;
+  };
 }
 
 interface ConfigFiles {

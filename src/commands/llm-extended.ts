@@ -133,6 +133,7 @@ function getCommandSchema(): Record<string, unknown> {
       supervisor: { description: "Access supervisor API", subcommands: ["api", "addons", "host", "logs"] },
       websocket: { description: "Access websocket API", aliases: ["ws"], subcommands: ["call", "subscribe"], options: ["--connect-test"] },
       "config-entries": { description: "List/manage config entries", options: ["-d, --domain <domain>", "-s, --state <state>", "--source <source>", "--count", "--delete <entry-id>", "--yes"] },
+      capabilities: { description: "Probe/cache runtime capability matrix for this HA instance", options: ["--refresh", "--ttl <seconds>", "--count"] },
       settings: { description: "Configuration management", subcommands: ["wizard", "init", "validate", "set", "get", "path", "reset", "list"] },
     },
     query_syntax: {

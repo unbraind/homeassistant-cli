@@ -30,8 +30,8 @@ Add `--cursor` + `--limit` for entity-heavy installations so agents can page det
 4. Deterministic sort keys everywhere:
 Apply explicit stable ordering (`entity_id`, then timestamp) for all list-like outputs.
 
-5. Capability discovery endpoint:
-Add `hassio capabilities --format json` summarizing enabled APIs, supervisor availability, and permission scope.
+5. Capability discovery endpoint (implemented):
+Use `hassio capabilities --format json` to retrieve instance-specific API availability, supervisor status, and orchestration hints.
 
 ## TOON Format Explained
 

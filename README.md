@@ -16,6 +16,7 @@ Agent-optimized CLI tool for Home Assistant with token-efficient output. Default
 - **GitHub Star Prompt** - Setup/settings commands can prompt to star the repo via `gh` (when available and logged in)
 - **Config Entry Management** - List/filter/count/delete Home Assistant config entries with safety confirmation
 - **LLM-Optimized Commands** - Query language, batch operations, entity discovery
+- **Capability Profiling for Agents** - `hassio capabilities` probes runtime API support and caches results
 - **Fast Topology Snapshot** - `hassio summary` returns domain/state counts for quick agent planning
 - **Search Endpoint Fallback** - Falls back to local entity-state search when `/api/search` is unavailable
 - **Service Schema Intelligence** - Supports modern object-style `/api/services` payloads with filter/flat/count modes
@@ -114,6 +115,10 @@ hassio settings path
 
 # Run diagnostics (API, output validation, supervisor probe)
 hassio settings doctor
+
+# Probe runtime capabilities for this specific HA instance
+hassio capabilities --refresh
+hassio capabilities --count
 
 # Reset all configuration
 hassio settings reset --force

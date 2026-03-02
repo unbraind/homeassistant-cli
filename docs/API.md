@@ -910,6 +910,25 @@ hassio scenes --reload                       # Reload all scenes
 
 ## LLM/Agent Helper Commands
 
+#### `capabilities`
+Probe and cache instance-specific API capability metadata for agent planning.
+
+```bash
+hassio capabilities [options]
+
+Options:
+  --refresh            Ignore cache and run live probes
+  --ttl <seconds>      Cache TTL in seconds (default: 900)
+  --count              Return summary counts only
+
+# Examples
+hassio capabilities
+hassio capabilities --refresh
+hassio capabilities --count
+```
+
+Returns a capability matrix for REST, WebSocket, config-entries, supervisor access, and service-derived conversation/TTS support.
+
 #### `schema`
 Export CLI schema for LLM/agent consumption.
 

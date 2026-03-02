@@ -200,6 +200,7 @@ Configuration is loaded in priority order (later overrides earlier):
 
 | Command | Description |
 |---------|-------------|
+| `capabilities` | Probe/cache runtime capability matrix for agent planning |
 | `schema` | Export CLI schema for LLM consumption |
 | `action <intent>` | Intelligent action helper for LLMs |
 
@@ -225,6 +226,7 @@ The CLI is optimized for use by LLMs and AI agents:
 - **Statistics**: Historical data and analytics
 - **List Management**: Todo lists, shopping list, notifications
 - **Search Fallback**: Automatically uses local entity-state search if `/api/search` is unavailable
+- **Capability Matrix**: `hassio capabilities` exposes per-instance API availability and scope hints
 
 See [LLM Integration Guide](./LLM_INTEGRATION.md) for detailed examples.
 
