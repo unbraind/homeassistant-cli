@@ -1,5 +1,5 @@
 import { Command } from "commander";
-import { getConfigPath, getConfigSnapshot, saveConfig } from "../config/index.js";
+import { getAuthPath, getConfigPath, getConfigSnapshot, getDataPath, saveConfig, saveData } from "../config/index.js";
 import { withExit } from "../utils/exit.js";
 import { maybePromptToStarRepo } from "../utils/github-star.js";
 import type { OutputFormat } from "../types/index.js";
@@ -70,13 +70,18 @@ async function testConnection(config: {
   outputFormat: OutputFormat;
   timeout: number;
   readOnly: boolean;
-}): Promise<void> {
+}, configPath?: string): Promise<void> {
   console.log("\nTesting connection...");
   const { HomeAssistantClient } = await import("../api/index.js");
   const client = new HomeAssistantClient(config);
   try {
     const status = await client.getStatus();
     const haConfig = await client.getConfig();
+    saveData({
+      lastValidatedAt: new Date().toISOString(),
+      lastVersion: haConfig.version,
+      lastLocation: haConfig.location_name,
+    }, configPath);
     console.log(`status:${status.message}`);
     console.log(`version:${haConfig.version}`);
     console.log(`location:${haConfig.location_name}`);
@@ -169,10 +174,12 @@ export function createWizardCommand(): Command {
         };
 
         saveConfig(config, configPath);
-        console.log(`\nsaved:${getConfigPath(configPath)}`);
+        console.log(`\nsaved_settings:${getConfigPath(configPath)}`);
+        console.log(`saved_auth:${getAuthPath(configPath)}`);
+        console.log(`saved_data:${getDataPath(configPath)}`);
 
         if (!options.skipTest) {
-          await testConnection(config);
+          await testConnection(config, configPath);
         }
 
         console.log("\nSetup complete. Run: hassio status");

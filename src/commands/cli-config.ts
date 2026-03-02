@@ -1,5 +1,14 @@
 import { Command } from "commander";
-import { getConfig, getConfigPath, getConfigSnapshot, saveConfig } from "../config/index.js";
+import {
+  getAuthPath,
+  getConfig,
+  getConfigPath,
+  getConfigSnapshot,
+  getData,
+  getDataPath,
+  saveConfig,
+  saveData,
+} from "../config/index.js";
 import { withExit } from "../utils/exit.js";
 import { maybePromptToStarRepo } from "../utils/github-star.js";
 import type { OutputFormat } from "../types/index.js";
@@ -124,12 +133,15 @@ export function createConfigGetCommand(): Command {
     const config = getConfigSnapshot(withConfigPath(configPath));
 
     const safeConfig = {
-      configPath: getConfigPath(configPath),
+      settingsPath: getConfigPath(configPath),
+      authPath: getAuthPath(configPath),
+      dataPath: getDataPath(configPath),
       url: config.url ?? "NOT_SET",
       outputFormat: config.outputFormat ?? "toon",
       timeout: config.timeout ?? 30000,
       readOnly: config.readOnly ?? false,
       token: options.showToken ? (config.token ?? "NOT_SET") : (config.token ? "***" : "NOT_SET"),
+      runtime: getData(configPath),
     };
 
     console.log(JSON.stringify(safeConfig, null, 2));
@@ -140,11 +152,15 @@ export function createConfigGetCommand(): Command {
 
 export function createConfigPathCommand(): Command {
   return new Command("path")
-    .description("Show the path to the configuration file")
+    .description("Show settings/auth/data file paths")
     .action(withExit(async (_options, cmd) => {
       await maybePromptToStarRepo();
       const configPath = getConfigPathFromCommand(cmd as Command);
-      console.log(getConfigPath(configPath));
+      console.log(JSON.stringify({
+        settings: getConfigPath(configPath),
+        auth: getAuthPath(configPath),
+        data: getDataPath(configPath),
+      }, null, 2));
     }));
 }
 
@@ -189,6 +205,11 @@ export function createValidateCommand(): Command {
         const status = await client.getStatus();
         const haConfig = await client.getConfig();
         const states = await client.getStates();
+        saveData({
+          lastValidatedAt: new Date().toISOString(),
+          lastVersion: haConfig.version,
+          lastLocation: haConfig.location_name,
+        }, configPath);
 
         console.log(`status: VALID
 url: ${config.url}
@@ -255,6 +276,8 @@ export function createListCommand(): Command {
       console.log("  HASSIO_TIMEOUT: Request timeout in ms");
       console.log("  HASSIO_READONLY: Block all write operations when true");
       console.log("  HASSIO_CONFIG: Config file path override");
-      console.log(`\nconfig_file: ${getConfigPath(configPath)}`);
+      console.log(`\nsettings_file: ${getConfigPath(configPath)}`);
+      console.log(`auth_file: ${getAuthPath(configPath)}`);
+      console.log(`data_file: ${getDataPath(configPath)}`);
     }));
 }

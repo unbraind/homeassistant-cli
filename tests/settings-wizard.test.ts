@@ -2,8 +2,11 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
 vi.mock("../src/config/index.js", () => ({
   getConfigPath: vi.fn(() => "/tmp/hassio-wizard-test.json"),
+  getAuthPath: vi.fn(() => "/tmp/auth.json"),
+  getDataPath: vi.fn(() => "/tmp/data.json"),
   getConfigSnapshot: vi.fn(() => ({})),
   saveConfig: vi.fn(),
+  saveData: vi.fn(),
 }));
 
 vi.mock("../src/utils/github-star.js", () => ({
@@ -63,7 +66,7 @@ describe("settings wizard command", () => {
       },
       undefined
     );
-    expect(output.join("\n")).toContain("saved:/tmp/hassio-wizard-test.json");
+    expect(output.join("\n")).toContain("saved_settings:/tmp/hassio-wizard-test.json");
   });
 
   it("fails when required values are missing in non-interactive mode", async () => {

@@ -3,12 +3,16 @@ import { statSync, writeFileSync, mkdirSync, rmSync, existsSync } from "node:fs"
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import {
+  getAuthPath,
   configExists,
+  getData,
+  getDataPath,
   getConfig,
   getConfigPath,
   getConfigSnapshot,
   resetConfig,
   saveConfig,
+  saveData,
 } from "../src/config/loader.js";
 
 describe("Config Loader", () => {
@@ -100,11 +104,11 @@ describe("Config Loader", () => {
         configPath,
         JSON.stringify({
           url: "http://file-url:8123",
-          token: "file-token",
           outputFormat: "json",
           timeout: 60000,
         })
       );
+      saveConfig({ token: "file-token" }, configPath);
       const config = getConfig({ configPath });
       expect(config.url).toBe("http://file-url:8123");
       expect(config.token).toBe("file-token");
@@ -211,6 +215,7 @@ describe("Config Loader", () => {
         configPath
       );
       expect(existsSync(configPath)).toBe(true);
+      expect(existsSync(getAuthPath(configPath))).toBe(true);
       const config = getConfig({ configPath });
       expect(config.url).toBe("http://saved-url:8123");
       expect(config.token).toBe("saved-token");
@@ -221,9 +226,9 @@ describe("Config Loader", () => {
         configPath,
         JSON.stringify({
           url: "http://original:8123",
-          token: "original-token",
         })
       );
+      saveConfig({ token: "original-token" }, configPath);
       saveConfig({ outputFormat: "yaml" }, configPath);
       const config = getConfig({ configPath });
       expect(config.url).toBe("http://original:8123");
@@ -237,6 +242,7 @@ describe("Config Loader", () => {
       const stats = statSync(nestedPath);
       expect((stats.mode & 0o777)).toBe(0o600);
       expect(existsSync(nestedPath)).toBe(true);
+      expect(existsSync(getAuthPath(nestedPath))).toBe(true);
     });
   });
 
@@ -254,9 +260,20 @@ describe("Config Loader", () => {
       saveConfig({ url: "http://reset-url:8123", token: "reset-token" }, configPath);
       expect(configExists(configPath)).toBe(true);
       expect(getConfigPath(configPath)).toBe(configPath);
+      expect(getAuthPath(configPath)).toBe(join(tempDir, "auth.json"));
+      expect(getDataPath(configPath)).toBe(join(tempDir, "data.json"));
 
       resetConfig(configPath);
       expect(configExists(configPath)).toBe(false);
+    });
+
+    it("should save runtime metadata to data file", () => {
+      saveData({ lastVersion: "2026.3.0", lastLocation: "Home" }, configPath);
+      expect(getData(configPath)).toEqual({
+        lastVersion: "2026.3.0",
+        lastLocation: "Home",
+      });
+      expect(existsSync(getDataPath(configPath))).toBe(true);
     });
   });
 });

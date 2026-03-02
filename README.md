@@ -11,7 +11,7 @@ Agent-optimized CLI tool for Home Assistant with token-efficient output. Default
 - **Token-Efficient Output** - Default TOON format saves ~40% tokens vs JSON, no emojis/decorations
 - **Multiple Output Formats** - TOON, JSON, JSON-compact, YAML, table, and markdown
 - **Interactive Setup Wizard** - Easy first-time configuration
-- **Flexible Configuration** - Environment variables, config file, custom `--config` path, or CLI options
+- **Flexible Configuration** - Environment variables, secure global config files (`settings/auth/data`), custom `--config` path, or CLI options
 - **Read-Only Safety Mode** - Block all state-changing API calls with `--read-only` or `HASSIO_READONLY=true`
 - **GitHub Star Prompt** - Setup/settings commands can prompt to star the repo via `gh` (when available and logged in)
 - **LLM-Optimized Commands** - Query language, batch operations, entity discovery
@@ -107,7 +107,7 @@ hassio settings get --show-token
 # List all configuration options
 hassio settings list
 
-# Show config file path
+# Show settings/auth/data file paths
 hassio settings path
 
 # Reset all configuration
@@ -267,7 +267,7 @@ hassio inspect sensor.temperature --history
 
 Configuration is loaded in this order (later overrides earlier):
 
-1. Config file (`~/.hassio-cli/settings.json`)
+1. Config files (`~/.hassio-cli/settings.json`, `~/.hassio-cli/auth.json`, `~/.hassio-cli/data.json`)
 2. Environment variables
 3. CLI options
 
@@ -418,6 +418,7 @@ bun run dev -- status
 # Run tests
 bun test
 bun run test:coverage
+bun run test:e2e:live   # Requires HASSIO_URL + HASSIO_TOKEN
 
 # Build
 bun run build

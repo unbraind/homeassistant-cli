@@ -8,6 +8,7 @@ Complete documentation for the Home Assistant CLI tool.
 - [API Reference](./API.md) - Complete command reference
 - [LLM Integration Guide](./LLM_INTEGRATION.md) - Agent/LLM optimized features
 - [API Research (2026-03-01)](./API_RESEARCH_2026-03-01.md) - Live endpoint findings and CLI enhancements
+- [Live E2E Testing](./E2E_LIVE_TESTING.md) - End-to-end smoke testing against a real Home Assistant instance
 
 ## Quick Start
 
@@ -32,7 +33,7 @@ hassio settings validate
 
 Configuration is loaded in priority order (later overrides earlier):
 
-1. Config file (`~/.hassio-cli/settings.json`)
+1. Config files (`~/.hassio-cli/settings.json`, `~/.hassio-cli/auth.json`, `~/.hassio-cli/data.json`)
 2. Environment variables (`HASSIO_URL`, `HASSIO_TOKEN`, etc.)
 3. CLI options (`--url`, `--token`, `--format`)
 
@@ -56,7 +57,7 @@ Configuration is loaded in priority order (later overrides earlier):
 | `settings validate` | Validate configuration and test connection |
 | `settings set` | Set configuration options |
 | `settings get` | View current configuration (token masked) |
-| `settings path` | Show configuration file path |
+| `settings path` | Show settings/auth/data file paths |
 
 `settings` commands may prompt to star `https://github.com/unbraind/homeassistant-cli` when `gh` is installed, authenticated, and the repo is not starred yet.
 

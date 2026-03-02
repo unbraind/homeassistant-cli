@@ -12,6 +12,7 @@
     "start": "node dist/cli.js",
     "dev": "bun src/cli.ts",
     "test": "vitest run",
+    "test:e2e:live": "tsx tests/e2e-live.ts",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "lint": "eslint src tests",

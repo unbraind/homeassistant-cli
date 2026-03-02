@@ -15,12 +15,12 @@ These options can be used with any command:
 | `-f, --format <format>` | `HASSIO_FORMAT` | Output format | `toon` |
 | `--timeout <ms>` | `HASSIO_TIMEOUT` | Request timeout (ms) | `30000` |
 | `--read-only` | `HASSIO_READONLY` | Block state-changing API calls | `false` |
-| `-c, --config <path>` | `HASSIO_CONFIG` | Config file path | `~/.hassio-cli/settings.json` |
+| `-c, --config <path>` | `HASSIO_CONFIG` | Settings file path | `~/.hassio-cli/settings.json` |
 
 **Configuration Priority:**
 1. CLI options (highest priority)
 2. Environment variables
-3. Config file (lowest priority)
+3. Config files (lowest priority): `settings.json` + `auth.json`
 
 ## Output Formats
 
@@ -325,7 +325,7 @@ hassio settings get --show-token
 ```
 
 #### `settings path`
-Show configuration file path.
+Show settings/auth/data file paths.
 
 ```bash
 hassio settings path
@@ -1034,8 +1034,9 @@ The CLI provides structured error output with clear problem descriptions and sug
 ## Security Notes
 
 - **Never commit tokens** to version control
-- Config file is excluded from git via `.gitignore`
+- Config files are excluded from git via `.gitignore`
 - Token is masked in `settings get` output
+- Token is stored in `~/.hassio-cli/auth.json` (not in `settings.json`)
 - `settings get` includes the resolved config path to avoid ambiguity
 - Use environment variables for CI/CD pipelines
 - Config file is written with `600` permissions (owner read/write only)
