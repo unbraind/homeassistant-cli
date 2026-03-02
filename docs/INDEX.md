@@ -227,6 +227,7 @@ The CLI is optimized for use by LLMs and AI agents:
 - **List Management**: Todo lists, shopping list, notifications
 - **Search Fallback**: Automatically uses local entity-state search if `/api/search` is unavailable
 - **Capability Matrix**: `hassio capabilities` exposes per-instance API availability and scope hints
+- **Agent Plan Output**: `hassio capabilities --agent-plan` returns command recommendations and avoid-lists based on live capability probes
 
 See [LLM Integration Guide](./LLM_INTEGRATION.md) for detailed examples.
 

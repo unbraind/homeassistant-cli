@@ -17,6 +17,7 @@ Agent-optimized CLI tool for Home Assistant with token-efficient output. Default
 - **Config Entry Management** - List/filter/count/delete Home Assistant config entries with safety confirmation
 - **LLM-Optimized Commands** - Query language, batch operations, entity discovery
 - **Capability Profiling for Agents** - `hassio capabilities` probes runtime API support and caches results
+- **Agent Execution Planning** - `hassio capabilities --agent-plan` returns recommended and avoid command sets
 - **Fast Topology Snapshot** - `hassio summary` returns domain/state counts for quick agent planning
 - **Search Endpoint Fallback** - Falls back to local entity-state search when `/api/search` is unavailable
 - **Service Schema Intelligence** - Supports modern object-style `/api/services` payloads with filter/flat/count modes
@@ -123,6 +124,7 @@ hassio settings doctor
 # Probe runtime capabilities for this specific HA instance
 hassio capabilities --refresh
 hassio capabilities --count
+hassio capabilities --agent-plan
 
 # Reset all configuration
 hassio settings reset --force
@@ -445,7 +447,7 @@ bun install
 bun run dev -- status
 
 # Run tests
-bun test
+bun run test
 bun run test:coverage
 bun run test:e2e:live   # Requires HASSIO_URL + HASSIO_TOKEN
 

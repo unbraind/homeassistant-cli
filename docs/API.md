@@ -929,14 +929,17 @@ Options:
   --refresh            Ignore cache and run live probes
   --ttl <seconds>      Cache TTL in seconds (default: 900)
   --count              Return summary counts only
+  --agent-plan         Return an agent/LLM command plan derived from capabilities
 
 # Examples
 hassio capabilities
 hassio capabilities --refresh
 hassio capabilities --count
+hassio capabilities --agent-plan
 ```
 
 Returns a capability matrix for REST, WebSocket, config-entries, supervisor access, and service-derived conversation/TTS support.
+`--agent-plan` returns `recommended_commands`, `avoid_commands`, and `notes` for safer agent orchestration.
 
 #### `schema`
 Export CLI schema for LLM/agent consumption.

@@ -128,4 +128,42 @@ describe("capabilities command", () => {
     expect(parsed["service_count"]).toBe(3);
     expect(saveDataMock).toHaveBeenCalledTimes(1);
   });
+
+  it("returns an agent-plan payload", async () => {
+    const now = new Date().toISOString();
+    getDataMock.mockReturnValue({
+      capabilitiesCache: {
+        checkedAt: now,
+        report: {
+          checked_at: now,
+          api: { version: "2026.1.3", location: "Home", installation_type: "Home Assistant OS" },
+          counts: { entity_count: 2, service_domain_count: 2, service_count: 3 },
+          service_domains: ["conversation", "light"],
+          entity_domains: { light: 1, sensor: 1 },
+          capabilities: {
+            rest_api: { status: "available", endpoint: "/api/" },
+            websocket: { status: "available", endpoint: "/api/websocket" },
+            config_entries: { status: "available", endpoint: "/api/config/config_entries/entry" },
+            supervisor: { status: "unauthorized", endpoint: "/api/hassio/addons" },
+            conversation: { status: "available", endpoint: "/api/services/conversation/process" },
+            tts: { status: "unavailable", endpoint: "/api/services/tts" },
+          },
+          hints: [],
+        },
+      },
+    });
+
+    const cmd = createCapabilitiesCommand();
+    const output: string[] = [];
+    const originalLog = console.log;
+    console.log = (msg: string) => output.push(msg);
+
+    await cmd.parseAsync(["node", "test", "--agent-plan"], { from: "user" });
+    console.log = originalLog;
+
+    const parsed = JSON.parse(output.join("\n")) as { source: string; plan: { recommended_commands: string[]; avoid_commands: string[] } };
+    expect(parsed.source).toBe("cache");
+    expect(parsed.plan.recommended_commands).toContain("hassio ask \"<question>\" --format json");
+    expect(parsed.plan.avoid_commands).toContain("hassio supervisor addons --list");
+  });
 });

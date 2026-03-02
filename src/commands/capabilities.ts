@@ -7,6 +7,7 @@ import type { HaService, HaState, OutputFormat } from "../types/index.js";
 import { getServiceNames } from "../utils/services.js";
 import { withExit } from "../utils/exit.js";
 import { getConfigPathFromCommand, withConfigPath } from "./settings-utils.js";
+import { buildAgentPlan } from "./capabilities-agent-plan.js";
 
 type CapabilityStatus = "available" | "unavailable" | "unauthorized" | "error";
 
@@ -235,7 +236,8 @@ export function createCapabilitiesCommand(): Command {
     .option("--refresh", "Ignore cache and run live probe")
     .option("--ttl <seconds>", "Cache TTL in seconds (default: 900)")
     .option("--count", "Return only summary counts")
-    .action(withExit(async (options: { refresh?: boolean; ttl?: string; count?: boolean }, cmd) => {
+    .option("--agent-plan", "Return agent/LLM command recommendations from capability report")
+    .action(withExit(async (options: { refresh?: boolean; ttl?: string; count?: boolean; agentPlan?: boolean }, cmd) => {
       const configPath = getConfigPathFromCommand(cmd as Command);
       const globalOpts = (cmd as Command).optsWithGlobals() as {
         url?: string;
@@ -254,6 +256,14 @@ export function createCapabilitiesCommand(): Command {
         if (!isCapabilitiesReport(cached.report)) {
           throw new Error("Invalid cached capabilities report shape. Re-run with --refresh.");
         }
+        if (options.agentPlan) {
+          console.log(formatOutput({
+            source: "cache",
+            checked_at: cached.report.checked_at,
+            plan: buildAgentPlan(cached.report),
+          }, config.outputFormat));
+          return;
+        }
         if (options.count) {
           console.log(formatOutput(countSummary("cache", cached.report), config.outputFormat));
           return;
@@ -265,6 +275,10 @@ export function createCapabilitiesCommand(): Command {
       const report = await probeCapabilities(config);
       saveData({ capabilitiesCache: { checkedAt: report.checked_at, report } }, configPath);
 
+      if (options.agentPlan) {
+        console.log(formatOutput({ source: "live", checked_at: report.checked_at, plan: buildAgentPlan(report) }, config.outputFormat));
+        return;
+      }
       if (options.count) {
         console.log(formatOutput(countSummary("live", report), config.outputFormat));
         return;
