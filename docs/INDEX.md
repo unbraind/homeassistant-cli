@@ -58,7 +58,7 @@ Configuration is loaded in priority order (later overrides earlier):
 | `settings validate` | Validate configuration and test connection |
 | `settings doctor` | Agent-friendly diagnostics (API, output formats, supervisor probe) |
 | `settings set` | Set configuration options |
-| `settings get` | View current configuration (token masked) |
+| `settings get` | View current configuration (token masked, runtime summary by default) |
 | `settings path` | Show settings/auth/data file paths |
 
 `settings` commands may prompt to star `https://github.com/unbraind/homeassistant-cli` when `gh` is installed, authenticated, and the repo is not starred yet.
@@ -171,7 +171,7 @@ Configuration is loaded in priority order (later overrides earlier):
 |---------|-------------|
 | `entities` | List/filter entities with advanced options |
 | `discover` | Discover and categorize all entities |
-| `summary` | One-shot domain/state topology snapshot |
+| `summary` | One-shot domain/state topology snapshot (`--top-states`, `--full-states`) |
 | `query <expression>` | Query using simple expressions |
 | `batch` | Execute service calls in batch |
 | `inspect <entity-id>` | Deep inspect entity with history |

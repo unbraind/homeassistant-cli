@@ -108,5 +108,20 @@ describe("inspect and summary commands", () => {
     expect(parsed["total_entities"]).toBe(3);
     expect(parsed["domains"]).toBe(2);
     expect(parsed["unavailable_count"]).toBe(1);
+    expect(parsed["by_state_top"]).toBeTruthy();
+  });
+
+  it("returns full state distribution when requested", async () => {
+    const cmd = createSummaryCommand();
+    const output: string[] = [];
+    const originalLog = console.log;
+    console.log = (msg: string) => output.push(msg);
+
+    await cmd.parseAsync(["--full-states"], { from: "user" });
+
+    console.log = originalLog;
+    const parsed = JSON.parse(output.join("\n")) as Record<string, unknown>;
+    expect(parsed["by_state"]).toBeTruthy();
+    expect(parsed["by_state_other_count"]).toBeUndefined();
   });
 });

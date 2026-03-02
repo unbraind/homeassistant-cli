@@ -328,11 +328,14 @@ View current configuration (token masked by default).
 hassio settings get [options]
 
 Options:
-  --show-token   Show the full token (use with caution)
+  --show-token       Show the full token (use with caution)
+  --include-runtime  Include full runtime metadata from data.json
+  --runtime-summary  Include only runtime metadata summary (default)
 
 # Example
 hassio settings get
 hassio settings get --show-token
+hassio settings get --include-runtime
 ```
 
 #### `settings path`
@@ -448,13 +451,19 @@ hassio inspect sensor.temperature --history -l 5
 Get a compact summary of entities by domain and state.
 
 ```bash
-hassio summary
+hassio summary [options]
+
+Options:
+  --top-states <n>  Limit state distribution to top N entries (default: 20)
+  --full-states     Include complete state distribution without truncation
 
 # Returns:
 # - total_entities
 # - domains
 # - by_domain
-# - by_state
+# - by_state_top
+# - by_state (only with --full-states)
+# - by_state_other_count (only when truncated)
 # - unavailable_count
 ```
 

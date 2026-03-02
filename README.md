@@ -99,6 +99,7 @@ hassio settings validate
 ```bash
 # View current configuration (token masked)
 hassio settings get
+hassio settings get --runtime-summary
 
 # Enable or disable read-only safety mode
 hassio settings set --read-only true
@@ -106,6 +107,9 @@ hassio settings set --read-only false
 
 # View configuration with token (be careful!)
 hassio settings get --show-token
+
+# Include full runtime cache details (can be large)
+hassio settings get --include-runtime
 
 # List all configuration options
 hassio settings list
@@ -266,6 +270,8 @@ hassio batch -d light -s turn_on -e light.living_room,light.kitchen --data '{"br
 ```bash
 # One-shot environment summary for agents
 hassio summary
+hassio summary --top-states 15
+hassio summary --full-states
 
 # Inspect entity
 hassio inspect light.living_room

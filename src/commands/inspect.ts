@@ -65,9 +65,14 @@ export function createInspectCommand(): Command {
 
 export function createSummaryCommand(): Command {
   const command = new Command("summary")
-    .description("Get a summary of all entities by domain and state");
+    .description("Get a summary of all entities by domain and state")
+    .option("--top-states <n>", "Limit state distribution to top N entries (default: 20)", "20")
+    .option("--full-states", "Include complete state distribution without truncation");
 
-  command.action(withExit(async (_options, cmd) => {
+  command.action(withExit(async (
+    options: { topStates?: string; fullStates?: boolean },
+    cmd,
+  ) => {
     const globalOpts = cmd.optsWithGlobals();
     const client = getClient(globalOpts);
     const format = getFormat(globalOpts);
@@ -84,6 +89,18 @@ export function createSummaryCommand(): Command {
       acc[s.state] = (acc[s.state] || 0) + 1;
       return acc;
     }, {});
+    const sortedStates = Object.entries(byState)
+      .sort(([, leftCount], [, rightCount]) => rightCount - leftCount);
+    const parsedTopStates = parseInt(options.topStates || "20", 10);
+    const topStateLimit = Number.isFinite(parsedTopStates) && parsedTopStates > 0 ? parsedTopStates : 20;
+    const stateEntries = options.fullStates ? sortedStates : sortedStates.slice(0, topStateLimit);
+    const topStates = stateEntries.reduce<Record<string, number>>((acc, [state, count]) => {
+      acc[state] = count;
+      return acc;
+    }, {});
+    const otherStateCount = options.fullStates
+      ? 0
+      : sortedStates.slice(topStateLimit).reduce((acc, [, count]) => acc + count, 0);
 
     const unavailable = states.filter(s => s.state === "unavailable").length;
 
@@ -91,7 +108,9 @@ export function createSummaryCommand(): Command {
       total_entities: states.length,
       domains: Object.keys(byDomain).length,
       by_domain: byDomain,
-      by_state: byState,
+      by_state_top: topStates,
+      ...(options.fullStates ? { by_state: byState } : {}),
+      ...(otherStateCount > 0 ? { by_state_other_count: otherStateCount } : {}),
       unavailable_count: unavailable,
     }, format));
   }));

@@ -75,12 +75,30 @@ export function createConfigSetCommand(): Command {
 export function createConfigGetCommand(): Command {
   const command = new Command("get")
     .description("Get current CLI configuration (token masked for security)")
-    .option("--show-token", "Show the full token (use with caution)");
+    .option("--show-token", "Show the full token (use with caution)")
+    .option("--include-runtime", "Include full runtime metadata from data.json")
+    .option("--runtime-summary", "Include only runtime metadata summary (default)");
 
-  command.action(withExit(async (options: { showToken?: boolean }, cmd) => {
+  command.action(withExit(async (options: {
+    showToken?: boolean;
+    includeRuntime?: boolean;
+    runtimeSummary?: boolean;
+  }, cmd) => {
     await maybePromptToStarRepo();
     const configPath = getConfigPathFromCommand(cmd as Command);
     const config = getConfigSnapshot(withConfigPath(configPath));
+    const runtime = getData(configPath);
+
+    const summaryRuntime = {
+      lastValidatedAt: runtime.lastValidatedAt ?? null,
+      lastVersion: runtime.lastVersion ?? null,
+      lastLocation: runtime.lastLocation ?? null,
+      capabilitiesCache: runtime.capabilitiesCache
+        ? { checkedAt: runtime.capabilitiesCache.checkedAt }
+        : null,
+    };
+    const shouldIncludeFullRuntime = options.includeRuntime === true;
+    const shouldIncludeSummary = options.runtimeSummary === true || !shouldIncludeFullRuntime;
 
     const safeConfig = {
       settingsPath: getConfigPath(configPath),
@@ -91,7 +109,8 @@ export function createConfigGetCommand(): Command {
       timeout: config.timeout ?? 30000,
       readOnly: config.readOnly ?? false,
       token: options.showToken ? (config.token ?? "NOT_SET") : (config.token ? "***" : "NOT_SET"),
-      runtime: getData(configPath),
+      runtime: shouldIncludeFullRuntime ? runtime : undefined,
+      runtimeSummary: shouldIncludeSummary ? summaryRuntime : undefined,
     };
 
     console.log(JSON.stringify(safeConfig, null, 2));
