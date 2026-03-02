@@ -67,6 +67,7 @@ Get list of loaded components.
 
 ```bash
 hassio components
+hassio components --count
 ```
 
 #### `events`
@@ -74,6 +75,7 @@ Get list of available events and their listener counts.
 
 ```bash
 hassio events
+hassio events --count
 ```
 
 #### `services`
@@ -101,6 +103,7 @@ Get entity states.
 ```bash
 # All states
 hassio states
+hassio states --count
 
 # Specific entity
 hassio states light.living_room
@@ -264,10 +267,12 @@ Interactive setup wizard.
 
 ```bash
 hassio settings wizard [--skip-test]
+hassio settings wizard --non-interactive --ha-url <url> --ha-token <token> [options]
 ```
 
 Guides through URL, token, output format, and connection testing.
 If `gh` is installed/authenticated and the repo is not starred yet, prompts to star `https://github.com/unbraind/homeassistant-cli`.
+Use `--non-interactive` for agent/CI setup to avoid prompts.
 
 #### `settings init`
 Initialize from environment variables.
@@ -375,7 +380,7 @@ hassio entities -d sensor -a unit_of_measurement,device_class
 Query entities using simple expressions.
 
 ```bash
-hassio query <expression> [--summary]
+hassio query <expression> [--summary] [--limit <n>]
 
 Query Syntax:
   domain:<name>                     Filter by domain
@@ -390,6 +395,7 @@ hassio query "domain:light state:on"
 hassio query "name:living_room"
 hassio query "domain:sensor attributes:unit_of_measurement=°C"
 hassio query "domain:binary_sensor" --summary
+hassio query "domain:light state:on" --limit 20
 ```
 
 #### `discover`
@@ -401,6 +407,7 @@ hassio discover [options]
 Options:
   --domains      List domains with counts
   --unavailable  List unavailable entities
+  -l, --limit <n>  Limit returned rows
 
 # Examples
 hassio discover                    # Full overview
@@ -484,11 +491,14 @@ Options:
   -p, --period <period>         Period (5minute, hour, day, week, month)
   --types <types>               Statistics types (comma-separated)
   --during-period               Query during a specific period
+  --metadata                    Query statistics metadata
+  --count                       Return count-only summary
 
 # Examples
 hassio statistics -e sensor.temperature -p hour
 hassio statistics -e sensor.temperature,sensor.humidity -s "2024-01-01T00:00:00Z" -t "2024-01-02T00:00:00Z"
 hassio statistics -e sensor.energy -p day --types mean,max,min
+hassio statistics --metadata --count
 ```
 
 ## List Management
@@ -527,9 +537,11 @@ hassio todo --lists --count            # Count todo lists
 
 #### `shopping-list`
 Manage shopping list.
+Alias: `shopping`
 
 ```bash
 hassio shopping-list [options]
+hassio shopping [options]
 
 Options:
   --list               List all items
@@ -715,6 +727,7 @@ Options:
   -s, --state <state>    Filter by state
   --quick                Use quick local search (no API)
   --count                Only return count
+  -l, --limit <n>        Limit returned rows
 
 # Examples
 hassio search "living room"
@@ -751,6 +764,7 @@ hassio tts [options]
 
 Options:
   --engines              List available TTS engines
+  --list-engines         Alias for --engines
   -m, --message <text>   Message to speak
   -e, --engine <id>      TTS engine ID
   -p, --player <entity>  Media player entity ID
@@ -857,11 +871,13 @@ Options:
   --services           Export service schema from HA
   --entities           Export entity schema summary
   --full               Export full schema (all of the above)
+  --count              Return counts only
 
 # Examples
 hassio schema --commands                     # Get command schema
 hassio schema --services                     # Get service schema
 hassio schema --full                         # Get full schema
+hassio schema --services --count             # Domain/section counts
 ```
 
 #### `action`

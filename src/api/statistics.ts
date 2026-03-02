@@ -2,6 +2,7 @@ import type { Config } from "../types/options.js";
 import type {
   HaStatistics,
   HaStatisticsDuringPeriod,
+  HaStatisticMetadataItem,
 } from "../types/api.js";
 import { HomeAssistantClient } from "./client.js";
 
@@ -39,5 +40,9 @@ export class StatisticsApiClient extends HomeAssistantClient {
     if (options.period) body["period"] = options.period;
     if (options.types) body["types"] = options.types;
     return this.request<HaStatisticsDuringPeriod>("POST", "/statistics/during_period", body);
+  }
+
+  async getStatisticsMetadata(): Promise<HaStatisticMetadataItem[]> {
+    return this.request<HaStatisticMetadataItem[]>("GET", "/statistics/metadata");
   }
 }

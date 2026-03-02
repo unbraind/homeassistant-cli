@@ -98,6 +98,7 @@ export function createTodoCommand(): Command {
 
 export function createShoppingListCommand(): Command {
   const command = new Command("shopping-list")
+    .alias("shopping")
     .description("Manage shopping list")
     .option("--list", "List all items")
     .option("--pending", "Show only pending items")

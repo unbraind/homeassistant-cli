@@ -22,13 +22,15 @@ export function createSchemaCommand(): Command {
     .option("--commands", "Export command schema")
     .option("--services", "Export service schema from HA")
     .option("--entities", "Export entity schema summary")
-    .option("--full", "Export full schema (all of the above)");
+    .option("--full", "Export full schema (all of the above)")
+    .option("--count", "Only return section counts");
 
   command.action(withExit(async (options: {
     commands?: boolean;
     services?: boolean;
     entities?: boolean;
     full?: boolean;
+    count?: boolean;
   }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
     const format = getFormat(globalOpts);
@@ -65,6 +67,19 @@ export function createSchemaCommand(): Command {
         result["entity_domains"] = domainCounts;
         result["total_entities"] = states.length;
       }
+    }
+
+    if (options.count) {
+      const commandsSchema = result["commands"] as { commands?: Record<string, unknown> } | undefined;
+      const servicesSchema = result["services"] as Record<string, unknown> | undefined;
+      const entityDomains = result["entity_domains"] as Record<string, unknown> | undefined;
+      console.log(formatOutput({
+        command_count: commandsSchema?.commands ? Object.keys(commandsSchema.commands).length : 0,
+        service_domain_count: servicesSchema ? Object.keys(servicesSchema).length : 0,
+        entity_domain_count: entityDomains ? Object.keys(entityDomains).length : 0,
+        total_entities: result["total_entities"] ?? 0,
+      }, format));
+      return;
     }
 
     console.log(formatOutput(result, format));

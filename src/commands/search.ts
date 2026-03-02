@@ -23,7 +23,8 @@ export function createSearchCommand(): Command {
     .option("-a, --area <area>", "Filter by area")
     .option("-s, --state <state>", "Filter by state")
     .option("--quick", "Use quick local search (no API)")
-    .option("--count", "Only return count");
+    .option("--count", "Only return count")
+    .option("-l, --limit <n>", "Limit returned rows");
 
   command.action(withExit(async (query: string, options: {
     domain?: string;
@@ -31,13 +32,16 @@ export function createSearchCommand(): Command {
     state?: string;
     quick?: boolean;
     count?: boolean;
+    limit?: string;
   }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
     const client = getClient(globalOpts);
     const format = getFormat(globalOpts);
 
     if (options.quick) {
-      const results = await client.quickSearch(query);
+      const quickResults = await client.quickSearch(query);
+      const limit = options.limit ? parseInt(options.limit, 10) : undefined;
+      const results = limit && limit > 0 ? quickResults.slice(0, limit) : quickResults;
       if (options.count) {
         console.log(formatOutput({ count: results.length }, format));
       } else {
@@ -56,6 +60,10 @@ export function createSearchCommand(): Command {
     }
     if (options.state) {
       results = results.filter(r => r.state === options.state);
+    }
+    const limit = options.limit ? parseInt(options.limit, 10) : undefined;
+    if (limit && limit > 0) {
+      results = results.slice(0, limit);
     }
 
     if (options.count) {

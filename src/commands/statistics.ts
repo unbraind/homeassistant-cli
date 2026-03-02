@@ -1,6 +1,6 @@
 import { Command } from "commander";
 import { getConfig } from "../config/index.js";
-import { StatisticsApiClient } from "../api/index.js";
+import { HomeAssistantApiError, StatisticsApiClient } from "../api/index.js";
 import { formatOutput } from "../formatters/index.js";
 import { withExit } from "../utils/exit.js";
 import type { OutputFormat } from "../types/index.js";
@@ -23,7 +23,9 @@ export function createStatisticsCommand(): Command {
     .option("--end-time <timestamp>", "End time (ISO format)")
     .option("-p, --period <period>", "Period (5minute, hour, day, week, month)", "hour")
     .option("--types <types>", "Statistics types (comma-separated: change,last_reset,max,mean,min,state,sum)")
-    .option("--during-period", "Query during a specific period", false);
+    .option("--during-period", "Query during a specific period", false)
+    .option("--metadata", "Return statistics metadata")
+    .option("--count", "Only return count for metadata/results");
 
   command.action(withExit(async (options: {
     entityId?: string;
@@ -32,10 +34,33 @@ export function createStatisticsCommand(): Command {
     period?: "5minute" | "hour" | "day" | "week" | "month";
     types?: string;
     duringPeriod?: boolean;
+    metadata?: boolean;
+    count?: boolean;
   }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
     const client = getClient(globalOpts);
     const format = getFormat(globalOpts);
+
+    if (options.metadata) {
+      try {
+        const metadata = await client.getStatisticsMetadata();
+        if (options.count) {
+          console.log(formatOutput({ statistics_metadata_count: metadata.length }, format));
+        } else {
+          console.log(formatOutput({ statistics_metadata: metadata }, format));
+        }
+      } catch (error) {
+        if (error instanceof HomeAssistantApiError && error.statusCode === 404) {
+          console.log(formatOutput({
+            statistics_metadata: [],
+            message: "Statistics metadata endpoint not available on this Home Assistant instance.",
+          }, format));
+        } else {
+          throw error;
+        }
+      }
+      return;
+    }
 
     if (!options.entityId) {
       console.error("Entity ID(s) required. Use -e or --entity-id option.");
@@ -72,6 +97,15 @@ export function createStatisticsCommand(): Command {
       if (options.period) statsOptions.period = options.period;
       
       result = await client.getStatistics(statsOptions);
+    }
+
+    if (options.count) {
+      const count = Object.values(result).reduce(
+        (acc, rows) => acc + (Array.isArray(rows) ? rows.length : 0),
+        0
+      );
+      console.log(formatOutput({ statistics_rows: count, statistic_ids: Object.keys(result).length }, format));
+      return;
     }
 
     console.log(formatOutput(result, format));

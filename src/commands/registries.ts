@@ -31,11 +31,17 @@ export function createRegistriesCommand(): Command {
   const command = new Command("registries")
     .description("Query Home Assistant registries (entities, devices, areas, etc.)")
     .option("--entities", "List entity registry")
+    .option("--entity", "Alias for --entities")
     .option("--devices", "List device registry")
+    .option("--device", "Alias for --devices")
     .option("--areas", "List area registry (from states if registry unavailable)")
+    .option("--area", "Alias for --areas")
     .option("--floors", "List floor registry")
+    .option("--floor", "Alias for --floors")
     .option("--labels", "List label registry")
+    .option("--label", "Alias for --labels")
     .option("--categories", "List category registry")
+    .option("--category", "Alias for --categories")
     .option("-d, --domain <domain>", "Filter by domain (for entities)")
     .option("--device-id <id>", "Filter by device ID (for entities)")
     .option("--area-id <id>", "Filter by area ID (for devices/entities)")
@@ -43,11 +49,17 @@ export function createRegistriesCommand(): Command {
 
   command.action(withExit(async (options: {
     entities?: boolean;
+    entity?: boolean;
     devices?: boolean;
+    device?: boolean;
     areas?: boolean;
+    area?: boolean;
     floors?: boolean;
+    floor?: boolean;
     labels?: boolean;
+    label?: boolean;
     categories?: boolean;
+    category?: boolean;
     domain?: string;
     deviceId?: string;
     areaId?: string;
@@ -58,10 +70,15 @@ export function createRegistriesCommand(): Command {
     const baseClient = getBaseClient(globalOpts);
     const format = getFormat(globalOpts);
 
-    const showAll = !options.entities && !options.devices && !options.areas && 
-                    !options.floors && !options.labels && !options.categories;
+    const useEntities = options.entities || options.entity;
+    const useDevices = options.devices || options.device;
+    const useAreas = options.areas || options.area;
+    const useFloors = options.floors || options.floor;
+    const useLabels = options.labels || options.label;
+    const useCategories = options.categories || options.category;
+    const showAll = !useEntities && !useDevices && !useAreas && !useFloors && !useLabels && !useCategories;
 
-    if (showAll || options.entities) {
+    if (showAll || useEntities) {
       try {
         const entities = await client.getEntityRegistry();
         let filtered = entities;
@@ -93,7 +110,7 @@ export function createRegistriesCommand(): Command {
       }
     }
 
-    if (showAll || options.devices) {
+    if (showAll || useDevices) {
       try {
         const devices = await client.getDeviceRegistry();
         let filtered = devices;
@@ -119,7 +136,7 @@ export function createRegistriesCommand(): Command {
       }
     }
 
-    if (showAll || options.areas) {
+    if (showAll || useAreas) {
       try {
         const areas = await client.getAreaRegistry();
         if (options.count) {
@@ -145,7 +162,7 @@ export function createRegistriesCommand(): Command {
       }
     }
 
-    if (showAll || options.floors) {
+    if (showAll || useFloors) {
       try {
         const floors = await client.getFloorRegistry();
         if (options.count) {
@@ -165,7 +182,7 @@ export function createRegistriesCommand(): Command {
       }
     }
 
-    if (showAll || options.labels) {
+    if (showAll || useLabels) {
       try {
         const labels = await client.getLabelRegistry();
         if (options.count) {
@@ -185,7 +202,7 @@ export function createRegistriesCommand(): Command {
       }
     }
 
-    if (showAll || options.categories) {
+    if (showAll || useCategories) {
       try {
         const categories = await client.getCategoryRegistry();
         if (options.count) {

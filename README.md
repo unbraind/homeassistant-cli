@@ -51,6 +51,12 @@ bun run build
 # Run the setup wizard
 hassio settings wizard
 
+# Agent/CI setup (no prompts)
+hassio settings wizard --non-interactive \
+  --ha-url "http://homeassistant.local:8123" \
+  --ha-token "your-long-lived-access-token" \
+  --skip-test
+
 # Test connection
 hassio status
 ```
@@ -148,6 +154,7 @@ hassio status
 # Get entity states
 hassio states                    # All entities
 hassio states light.living_room  # Specific entity
+hassio states --count            # Count only
 
 # Control devices
 hassio call-service light turn_on -e light.living_room
@@ -193,6 +200,7 @@ hassio discover
 
 # Get domain statistics
 hassio discover --domains
+hassio discover --domains --limit 10
 
 # Find unavailable entities
 hassio discover --unavailable
@@ -222,6 +230,7 @@ hassio entities --domains
 ```bash
 # Query with expressions
 hassio query "domain:light state:on"
+hassio query "domain:light state:on" --limit 20
 hassio query "domain:sensor attributes:unit_of_measurement=°C"
 hassio query "name:living" --summary
 ```
@@ -357,9 +366,10 @@ hassio say "Welcome home" -p media_player.living_room -e tts.cloud
 ```bash
 # Search entities
 hassio search "living room"
+hassio search "living room" --limit 25
 
 # Quick local search
-hassio find "temp" --quick
+hassio search "temp" --quick
 
 # Search with filters
 hassio search "sensor" -d sensor --count

@@ -19,6 +19,7 @@ export function createTtsCommand(): Command {
   const command = new Command("tts")
     .description("Text-to-Speech operations")
     .option("--engines", "List available TTS engines")
+    .option("--list-engines", "Alias for --engines")
     .option("-m, --message <message>", "Message to speak")
     .option("-e, --engine <engine>", "TTS engine ID")
     .option("-p, --player <entity>", "Media player entity ID")
@@ -27,6 +28,7 @@ export function createTtsCommand(): Command {
 
   command.action(withExit(async (options: {
     engines?: boolean;
+    listEngines?: boolean;
     message?: string;
     engine?: string;
     player?: string;
@@ -37,7 +39,7 @@ export function createTtsCommand(): Command {
     const client = getClient(globalOpts);
     const format = getFormat(globalOpts);
 
-    if (options.engines) {
+    if (options.engines || options.listEngines) {
       try {
         const engines = await client.getTtsEngines();
         console.log(formatOutput({ tts_engines: engines }, format));

@@ -28,3 +28,12 @@ export interface HaStatisticDuringPeriodData {
   state?: number;
   sum?: number;
 }
+
+export interface HaStatisticMetadataItem {
+  statistic_id: string;
+  source?: string;
+  unit_of_measurement?: string;
+  has_mean?: boolean;
+  has_sum?: boolean;
+  name?: string;
+}

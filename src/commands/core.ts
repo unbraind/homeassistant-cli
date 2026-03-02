@@ -43,11 +43,16 @@ export function createConfigCommand(): Command {
 export function createComponentsCommand(): Command {
   return new Command("components")
     .description("Get list of loaded components")
-    .action(withExit(async (_options, cmd) => {
+    .option("--count", "Only return count")
+    .action(withExit(async (options: { count?: boolean }, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
       const client = getClient(globalOpts);
       const format = getFormat(globalOpts);
       const result = await client.getComponents();
+      if (options.count) {
+        console.log(formatOutput({ components_count: result.length }, format));
+        return;
+      }
       console.log(formatOutput(result, format));
     }));
 }
@@ -55,11 +60,16 @@ export function createComponentsCommand(): Command {
 export function createEventsCommand(): Command {
   return new Command("events")
     .description("Get list of available events")
-    .action(withExit(async (_options, cmd) => {
+    .option("--count", "Only return count")
+    .action(withExit(async (options: { count?: boolean }, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
       const client = getClient(globalOpts);
       const format = getFormat(globalOpts);
       const result = await client.getEvents();
+      if (options.count) {
+        console.log(formatOutput({ events_count: result.length }, format));
+        return;
+      }
       console.log(formatOutput(result, format));
     }));
 }
@@ -120,18 +130,27 @@ export function createServicesCommand(): Command {
 export function createStatesCommand(): Command {
   const command = new Command("states")
     .description("Get entity states")
+    .option("--count", "Only return count")
     .argument("[entity-id]", "Specific entity ID to get state for");
 
-  command.action(withExit(async (entityId: string | undefined, _options, cmd) => {
+  command.action(withExit(async (entityId: string | undefined, options: { count?: boolean }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
     const client = getClient(globalOpts);
     const format = getFormat(globalOpts);
 
     if (entityId) {
       const result = await client.getState(entityId);
+      if (options.count) {
+        console.log(formatOutput({ states_count: result ? 1 : 0 }, format));
+        return;
+      }
       console.log(formatOutput(result, format));
     } else {
       const result = await client.getStates();
+      if (options.count) {
+        console.log(formatOutput({ states_count: result.length }, format));
+        return;
+      }
       console.log(formatStates(result, format));
     }
   }));

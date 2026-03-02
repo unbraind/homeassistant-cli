@@ -151,9 +151,10 @@ export function createQueryCommand(): Command {
   const command = new Command("query")
     .description("Query entities using simple expressions (LLM-friendly)")
     .argument("<expression>", "Query expression (e.g., 'domain:light state:on', 'domain:sensor attributes:unit_of_measurement=C')")
-    .option("--summary", "Return summary statistics only");
+    .option("--summary", "Return summary statistics only")
+    .option("-l, --limit <n>", "Limit returned entities (non-summary mode)");
 
-  command.action(withExit(async (expression: string, options: { summary?: boolean }, cmd) => {
+  command.action(withExit(async (expression: string, options: { summary?: boolean; limit?: string }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
     const client = getClient(globalOpts);
     const format = getFormat(globalOpts);
@@ -204,7 +205,9 @@ export function createQueryCommand(): Command {
         by_domain: byDomain,
       }, format));
     } else {
-      console.log(formatStates(filtered, format));
+      const limit = options.limit ? parseInt(options.limit, 10) : undefined;
+      const limited = limit && limit > 0 ? filtered.slice(0, limit) : filtered;
+      console.log(formatStates(limited, format));
     }
   }));
 
@@ -216,12 +219,14 @@ export function createDiscoverCommand(): Command {
     .description("Discover and categorize all Home Assistant entities")
     .option("--domains", "List all domains with counts")
     .option("--unavailable", "List unavailable entities")
-    .option("--by-area", "Group by area (requires area registry access)");
+    .option("--by-area", "Group by area (requires area registry access)")
+    .option("-l, --limit <n>", "Limit returned rows for list views");
 
   command.action(withExit(async (options: {
     domains?: boolean;
     unavailable?: boolean;
     byArea?: boolean;
+    limit?: string;
   }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
     const client = getClient(globalOpts);
@@ -231,7 +236,9 @@ export function createDiscoverCommand(): Command {
 
     if (options.unavailable) {
       const unavailable = states.filter((s: HaState) => s.state === "unavailable" || s.state === "unknown");
-      console.log(formatStates(unavailable, format));
+      const limit = options.limit ? parseInt(options.limit, 10) : undefined;
+      const limited = limit && limit > 0 ? unavailable.slice(0, limit) : unavailable;
+      console.log(formatStates(limited, format));
       return;
     }
 
@@ -249,8 +256,9 @@ export function createDiscoverCommand(): Command {
       const result = Object.entries(domainStats)
         .map(([domain, stats]) => ({ domain, ...stats }))
         .sort((a, b) => b.count - a.count);
-
-      console.log(formatOutput(result, format));
+      const limit = options.limit ? parseInt(options.limit, 10) : undefined;
+      const limited = limit && limit > 0 ? result.slice(0, limit) : result;
+      console.log(formatOutput(limited, format));
       return;
     }
 

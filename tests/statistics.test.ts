@@ -108,4 +108,30 @@ describe("StatisticsApiClient", () => {
       expect(url).toContain("/statistics/during_period");
     });
   });
+
+  describe("getStatisticsMetadata", () => {
+    it("should return statistics metadata", async () => {
+      mockRequest.mockResolvedValueOnce(
+        mockResponse([
+          {
+            statistic_id: "sensor.energy",
+            source: "recorder",
+            unit_of_measurement: "kWh",
+            has_sum: true,
+            has_mean: false,
+          },
+        ])
+      );
+      const result = await client.getStatisticsMetadata();
+      expect(result).toHaveLength(1);
+      expect(result[0]?.statistic_id).toBe("sensor.energy");
+    });
+
+    it("should call metadata endpoint", async () => {
+      mockRequest.mockResolvedValueOnce(mockResponse([]));
+      await client.getStatisticsMetadata();
+      const url = mockRequest.mock.calls[0]?.[0] as string;
+      expect(url).toContain("/statistics/metadata");
+    });
+  });
 });
