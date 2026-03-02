@@ -59,26 +59,14 @@ describe("github-star", () => {
     expect(result).toBe("starred");
   });
 
-  it("should print tip in non-interactive mode when not starred", async () => {
+  it("should skip gh checks in non-interactive mode", async () => {
     const log = vi.fn();
-    const exec = createExecStub((key) => {
-      if (key === "--version") {
-        return { ok: true, stdout: "gh version 2", stderr: "" };
-      }
-      if (key === "auth status") {
-        return { ok: true, stdout: "logged in", stderr: "" };
-      }
-      if (key.includes("repo view unbraind/homeassistant-cli")) {
-        return { ok: true, stdout: "false\n", stderr: "" };
-      }
-      return { ok: true, stdout: "", stderr: "" };
-    });
+    const exec = vi.fn<ExecFn>().mockResolvedValue({ ok: true, stdout: "", stderr: "" });
 
     await maybePromptToStarRepo({ exec, log, isInteractive: false });
 
-    expect(log).toHaveBeenCalledWith(
-      "tip: You can support the project by starring https://github.com/unbraind/homeassistant-cli"
-    );
+    expect(exec).not.toHaveBeenCalled();
+    expect(log).not.toHaveBeenCalled();
   });
 
   it("should star repo when user accepts", async () => {

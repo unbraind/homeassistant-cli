@@ -2,6 +2,7 @@ import { execFile } from "node:child_process";
 import { createInterface } from "node:readline";
 
 const REPO = "unbraind/homeassistant-cli";
+const GH_TIMEOUT_MS = 3000;
 
 interface GhCommandResult {
   ok: boolean;
@@ -24,7 +25,7 @@ interface StarPromptDeps {
 
 function execGh(args: string[]): Promise<GhCommandResult> {
   return new Promise((resolve) => {
-    execFile("gh", args, { encoding: "utf8" }, (error, stdout, stderr) => {
+    execFile("gh", args, { encoding: "utf8", timeout: GH_TIMEOUT_MS }, (error, stdout, stderr) => {
       if (error) {
         resolve({
           ok: false,
@@ -114,13 +115,13 @@ export async function maybePromptToStarRepo(deps?: StarPromptDeps): Promise<void
   const warn = deps?.warn ?? console.error;
   const isInteractive = deps?.isInteractive ?? (Boolean(process.stdin.isTTY) && Boolean(process.stdout.isTTY));
 
-  const status = await getGitHubStarStatus(exec);
-  if (status !== "not_starred") {
+  // Never run gh checks in non-interactive contexts (CI/agents) to avoid hangs.
+  if (!isInteractive) {
     return;
   }
 
-  if (!isInteractive) {
-    log(`tip: You can support the project by starring https://github.com/${REPO}`);
+  const status = await getGitHubStarStatus(exec);
+  if (status !== "not_starred") {
     return;
   }
 

@@ -14,6 +14,25 @@ This guide covers features and best practices for using Home Assistant CLI with 
 - **Statistics**: Access historical data and analytics
 - **List Management**: Manage todo lists, shopping lists, and notifications
 
+## High-Impact Improvements for Agents/LLMs
+
+The current CLI is already agent-friendly, but these additions would increase reliability and orchestration quality:
+
+1. `--schema` per command:
+Expose strict JSON Schema for each command response (`hassio <cmd> --schema`) to reduce parser ambiguity in tools.
+
+2. Stable machine error envelope:
+Standardize failures to `{ code, message, hint, retriable }` across all commands and formats.
+
+3. Cursor-based pagination for large outputs:
+Add `--cursor` + `--limit` for entity-heavy installations so agents can page deterministically.
+
+4. Deterministic sort keys everywhere:
+Apply explicit stable ordering (`entity_id`, then timestamp) for all list-like outputs.
+
+5. Capability discovery endpoint:
+Add `hassio capabilities --format json` summarizing enabled APIs, supervisor availability, and permission scope.
+
 ## TOON Format Explained
 
 TOON (Token-Oriented Object Notation) is designed for LLM efficiency:
