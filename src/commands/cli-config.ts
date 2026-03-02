@@ -11,13 +11,7 @@ import {
 } from "../config/index.js";
 import { withExit } from "../utils/exit.js";
 import { maybePromptToStarRepo } from "../utils/github-star.js";
-import type { OutputFormat } from "../types/index.js";
-
-const VALID_FORMATS: OutputFormat[] = ["toon", "json", "json-compact", "yaml", "table", "markdown"];
-
-interface GlobalOptions {
-  config?: string;
-}
+import { getConfigPathFromCommand, parseBoolean, parseFormat, parseTimeout, withConfigPath } from "./settings-utils.js";
 
 interface SettingsSetOptions {
   haUrl?: string;
@@ -25,52 +19,6 @@ interface SettingsSetOptions {
   defaultFormat?: string;
   defaultTimeout?: string;
   readOnly?: string;
-}
-
-function getConfigPathFromCommand(cmd: Command): string | undefined {
-  const globalOpts = cmd.optsWithGlobals() as GlobalOptions;
-  return globalOpts.config;
-}
-
-function withConfigPath(configPath?: string): { configPath?: string } {
-  return configPath ? { configPath } : {};
-}
-
-function parseFormat(value?: string): OutputFormat | undefined {
-  if (!value) {
-    return undefined;
-  }
-  if (!VALID_FORMATS.includes(value as OutputFormat)) {
-    throw new Error(`Invalid format '${value}'. Valid values: ${VALID_FORMATS.join(", ")}`);
-  }
-  return value as OutputFormat;
-}
-
-function parseTimeout(value?: string): number | undefined {
-  if (!value) {
-    return undefined;
-  }
-  const timeout = parseInt(value, 10);
-  if (!Number.isFinite(timeout) || timeout <= 0) {
-    throw new Error(`Invalid timeout '${value}'. Must be a positive integer.`);
-  }
-  return timeout;
-}
-
-function parseBoolean(value?: string): boolean | undefined {
-  if (!value) {
-    return undefined;
-  }
-
-  const normalized = value.trim().toLowerCase();
-  if (["1", "true", "yes", "on"].includes(normalized)) {
-    return true;
-  }
-  if (["0", "false", "no", "off"].includes(normalized)) {
-    return false;
-  }
-
-  throw new Error(`Invalid boolean '${value}'. Valid values: true|false`);
 }
 
 export function createConfigSetCommand(): Command {

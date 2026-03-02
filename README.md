@@ -402,6 +402,7 @@ hassio supervisor logs
 
 # Full supervisor endpoint passthrough
 hassio supervisor api -m GET -p /addons
+hassio supervisor api -m GET --endpoint /addons
 ```
 
 ## Development

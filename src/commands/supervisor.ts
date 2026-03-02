@@ -36,21 +36,26 @@ function createSupervisorApiCommand(): Command {
   const cmd = new Command("api")
     .description("Raw supervisor proxy passthrough for full endpoint coverage")
     .requiredOption("-m, --method <method>", "HTTP method: GET|POST|PUT|PATCH|DELETE")
-    .requiredOption("-p, --path <path>", "Supervisor path, e.g. /addons or /addons/core_ssh/info")
+    .option("-p, --path <path>", "Supervisor path, e.g. /addons or /addons/core_ssh/info")
+    .option("--endpoint <path>", "Alias for --path")
     .option("-d, --data <json>", "JSON body for write methods");
 
-  cmd.action(withExit(async (options: { method: string; path: string; data?: string }, command) => {
+  cmd.action(withExit(async (options: { method: string; path?: string; endpoint?: string; data?: string }, command) => {
     const globalOpts = command.optsWithGlobals();
     const client = getClient(globalOpts);
     const format = getFormat(globalOpts);
     const method = options.method.toUpperCase() as HttpMethod;
+    const endpointPath = options.endpoint ?? options.path;
 
     const allowed: HttpMethod[] = ["GET", "POST", "PUT", "PATCH", "DELETE"];
     if (!allowed.includes(method)) {
       throw new Error(`Invalid method '${options.method}'. Use one of: ${allowed.join(", ")}`);
     }
+    if (!endpointPath) {
+      throw new Error("Supervisor path is required. Use --path or --endpoint.");
+    }
 
-    const result = await client.proxy(method, options.path, parseJson(options.data));
+    const result = await client.proxy(method, endpointPath, parseJson(options.data));
     console.log(formatOutput(result, format));
   }));
 

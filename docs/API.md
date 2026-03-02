@@ -920,6 +920,7 @@ Raw supervisor proxy passthrough.
 
 ```bash
 hassio supervisor api -m GET -p /addons
+hassio supervisor api -m GET --endpoint /addons
 hassio supervisor api -m POST -p /addons/core_ssh/start
 ```
 
