@@ -14,6 +14,7 @@ Agent-optimized CLI tool for Home Assistant with token-efficient output. Default
 - **Flexible Configuration** - Environment variables, secure global config files (`settings/auth/data`), custom `--config` path, or CLI options
 - **Read-Only Safety Mode** - Block all state-changing API calls with `--read-only` or `HASSIO_READONLY=true`
 - **GitHub Star Prompt** - Setup/settings commands can prompt to star the repo via `gh` (when available and logged in)
+- **Config Entry Management** - List/filter/count/delete Home Assistant config entries with safety confirmation
 - **LLM-Optimized Commands** - Query language, batch operations, entity discovery
 - **Fast Topology Snapshot** - `hassio summary` returns domain/state counts for quick agent planning
 - **Search Endpoint Fallback** - Falls back to local entity-state search when `/api/search` is unavailable
@@ -410,6 +411,11 @@ hassio supervisor logs
 # Full supervisor endpoint passthrough
 hassio supervisor api -m GET -p /addons
 hassio supervisor api -m GET --endpoint /addons
+
+# Config entries (integration instances)
+hassio config-entries --count
+hassio config-entries --domain mqtt
+hassio config-entries --delete <entry-id> --yes
 ```
 
 If supervisor commands return `401` or `404`, the CLI now reports actionable guidance:

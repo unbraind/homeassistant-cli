@@ -132,6 +132,7 @@ function getCommandSchema(): Record<string, unknown> {
       backups: { description: "Manage backups", options: ["--list", "-c, --create <name>", "-r, --restore <id>", "-d, --delete <id>", "--download <id>", "-o, --output <file>", "--count"] },
       supervisor: { description: "Access supervisor API", subcommands: ["api", "addons", "host", "logs"] },
       websocket: { description: "Access websocket API", aliases: ["ws"], subcommands: ["call", "subscribe"], options: ["--connect-test"] },
+      "config-entries": { description: "List/manage config entries", options: ["-d, --domain <domain>", "-s, --state <state>", "--source <source>", "--count", "--delete <entry-id>", "--yes"] },
       settings: { description: "Configuration management", subcommands: ["wizard", "init", "validate", "set", "get", "path", "reset", "list"] },
     },
     query_syntax: {

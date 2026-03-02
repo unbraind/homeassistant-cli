@@ -503,6 +503,29 @@ hassio registries --devices --area-id area_living_room  # Devices in area
 hassio registries --areas                               # List areas
 ```
 
+## Config Entry Commands
+
+#### `config-entries`
+List/manage Home Assistant config entries.
+
+```bash
+hassio config-entries [options]
+
+Options:
+  -d, --domain <domain>     Filter by integration domain
+  -s, --state <state>       Filter by entry state (e.g., loaded, setup_error)
+  --source <source>         Filter by source (e.g., import, user)
+  --count                   Return summary counts only
+  --delete <entry-id>       Delete config entry by entry_id
+  --yes                     Confirm destructive actions like --delete
+
+# Examples
+hassio config-entries --count
+hassio config-entries --domain mqtt
+hassio config-entries --state setup_error
+hassio config-entries --delete <entry-id> --yes
+```
+
 ## Statistics Commands
 
 #### `statistics`

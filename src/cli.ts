@@ -63,6 +63,7 @@ import {
   createNotifyCommand,
   createSupervisorCommand,
   createWebsocketCommand,
+  createConfigEntriesCommand,
 } from "./commands/index.js";
 import { createInspectCommand, createSummaryCommand } from "./commands/inspect.js";
 
@@ -200,6 +201,7 @@ program.addCommand(createStopCommand());
 program.addCommand(createNotifyCommand());
 program.addCommand(createSupervisorCommand());
 program.addCommand(createWebsocketCommand());
+program.addCommand(createConfigEntriesCommand());
 
 program.parseAsync(process.argv).catch((err) => {
   console.error("Error:", err.message);

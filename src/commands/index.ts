@@ -20,3 +20,4 @@ export * from "./extended.js";
 export * from "./notify.js";
 export * from "./supervisor.js";
 export * from "./websocket.js";
+export * from "./config-entries.js";

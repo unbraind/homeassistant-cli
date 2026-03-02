@@ -149,6 +149,12 @@ Configuration is loaded in priority order (later overrides earlier):
 | `analytics` | System analytics |
 | `backups` | Backup management (via service calls) |
 
+### Config Entry Commands
+
+| Command | Description |
+|---------|-------------|
+| `config-entries` | List/filter/count/delete integration config entries |
+
 ### WebSocket & Supervisor
 
 | Command | Description |
@@ -239,6 +245,7 @@ See [LLM Integration Guide](./LLM_INTEGRATION.md) for detailed examples.
 ✅ Floor Registry  
 ✅ Label Registry  
 ✅ Category Registry  
+✅ Config Entries  
 ✅ Statistics API  
 ✅ Todo Lists  
 ✅ Shopping List  

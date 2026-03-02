@@ -89,5 +89,8 @@ assert(typeof services["total_services"] === "number", "invalid services --count
 const entities = parseJson(run(["entities", "--count", "--format", "json"])) as Record<string, unknown>;
 assert(typeof entities["count"] === "number", "invalid entities --count JSON shape");
 
+const configEntries = parseJson(run(["config-entries", "--count", "--format", "json"])) as Record<string, unknown>;
+assert(typeof configEntries["count"] === "number", "invalid config-entries --count JSON shape");
+
 console.log("Live e2e smoke test passed");
 console.log(`config:${configPath}`);
