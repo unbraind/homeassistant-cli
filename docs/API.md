@@ -40,6 +40,7 @@ states[4]{entity_id,state,last_changed,attributes}:
 - `json-compact` - Minified JSON
 - `yaml` - YAML format
 - `table` - ASCII table format
+- `markdown` - Markdown table format
 
 ## Core API Commands
 
@@ -273,6 +274,24 @@ hassio settings wizard --non-interactive --ha-url <url> --ha-token <token> [opti
 Guides through URL, token, output format, and connection testing.
 If `gh` is installed/authenticated and the repo is not starred yet, prompts to star `https://github.com/unbraind/homeassistant-cli`.
 Use `--non-interactive` for agent/CI setup to avoid prompts.
+
+#### `capabilities`
+Probe and cache runtime capabilities for this Home Assistant instance.
+
+```bash
+hassio capabilities
+hassio capabilities --count
+hassio capabilities --refresh
+hassio capabilities --agent-plan
+hassio capabilities --agent-profile
+```
+
+Options:
+- `--refresh`: ignore cache and re-probe live endpoints.
+- `--ttl <seconds>`: cache freshness window (default `900`).
+- `--count`: compact capability/count summary for quick health checks.
+- `--agent-plan`: emit recommended and avoided commands for orchestration.
+- `--agent-profile`: emit a structured execution profile with preferred output mode, fast-path command set, and streaming readiness.
 
 #### `settings init`
 Initialize from environment variables.
@@ -930,16 +949,19 @@ Options:
   --ttl <seconds>      Cache TTL in seconds (default: 900)
   --count              Return summary counts only
   --agent-plan         Return an agent/LLM command plan derived from capabilities
+  --agent-profile      Return a stable execution profile for agents/LLMs
 
 # Examples
 hassio capabilities
 hassio capabilities --refresh
 hassio capabilities --count
 hassio capabilities --agent-plan
+hassio capabilities --agent-profile
 ```
 
 Returns a capability matrix for REST, WebSocket, config-entries, supervisor access, and service-derived conversation/TTS support.
 `--agent-plan` returns `recommended_commands`, `avoid_commands`, and `notes` for safer agent orchestration.
+`--agent-profile` returns `preferred_output_format`, per-capability statuses, `planning.fast_path`, and `planning.streaming_ready`.
 
 #### `schema`
 Export CLI schema for LLM/agent consumption.

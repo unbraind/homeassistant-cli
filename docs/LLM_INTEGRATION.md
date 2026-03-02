@@ -22,10 +22,17 @@ Use `hassio capabilities --format json` to retrieve instance-specific API availa
 2. Capability-driven execution planning (implemented):
 Use `hassio capabilities --agent-plan --format json` to get `recommended_commands`, `avoid_commands`, and `notes`.
 
-3. Cursor-based pagination (future):
+3. Structured execution profile (implemented):
+Use `hassio capabilities --agent-profile --format json` to get a stable profile with:
+- `preferred_output_format` (`toon`)
+- `capabilities` status matrix
+- `planning.fast_path` starter command sequence
+- `planning.streaming_ready` boolean
+
+4. Cursor-based pagination (future):
 Add `--cursor` + `--limit` for entity-heavy installations so agents can page deterministically.
 
-4. Stable machine error envelope (future):
+5. Stable machine error envelope (future):
 Standardize failures to `{ code, message, hint, retriable }` across all commands and formats.
 
 ## TOON Format Explained

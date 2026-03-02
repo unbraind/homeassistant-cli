@@ -8,6 +8,8 @@ import { getServiceNames } from "../utils/services.js";
 import { withExit } from "../utils/exit.js";
 import { getConfigPathFromCommand, withConfigPath } from "./settings-utils.js";
 import { buildAgentPlan } from "./capabilities-agent-plan.js";
+import { buildAgentProfile } from "./capabilities-agent-profile.js";
+import { countSummary } from "./capabilities-summary.js";
 
 type CapabilityStatus = "available" | "unavailable" | "unauthorized" | "error";
 
@@ -127,23 +129,6 @@ function cacheIsFresh(cache: CapabilitiesCache, ttlSeconds: number): boolean {
   return Date.now() - checkedAt <= ttlSeconds * 1000;
 }
 
-function countSummary(source: "cache" | "live", report: CapabilitiesReport): Record<string, unknown> {
-  const statuses = Object.values(report.capabilities).reduce((acc, probe) => {
-    acc[probe.status] = (acc[probe.status] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
-
-  return {
-    source,
-    checked_at: report.checked_at,
-    api_version: report.api.version,
-    entity_count: report.counts.entity_count,
-    service_domain_count: report.counts.service_domain_count,
-    service_count: report.counts.service_count,
-    capability_statuses: statuses,
-  };
-}
-
 async function probeCapabilities(config: { url: string; token: string; outputFormat: OutputFormat; timeout: number; readOnly: boolean }): Promise<CapabilitiesReport> {
   const client = new HomeAssistantClient(config);
   const [status, haConfig, services, states] = await Promise.all([
@@ -237,7 +222,8 @@ export function createCapabilitiesCommand(): Command {
     .option("--ttl <seconds>", "Cache TTL in seconds (default: 900)")
     .option("--count", "Return only summary counts")
     .option("--agent-plan", "Return agent/LLM command recommendations from capability report")
-    .action(withExit(async (options: { refresh?: boolean; ttl?: string; count?: boolean; agentPlan?: boolean }, cmd) => {
+    .option("--agent-profile", "Return structured execution profile for agents/LLMs")
+    .action(withExit(async (options: { refresh?: boolean; ttl?: string; count?: boolean; agentPlan?: boolean; agentProfile?: boolean }, cmd) => {
       const configPath = getConfigPathFromCommand(cmd as Command);
       const globalOpts = (cmd as Command).optsWithGlobals() as {
         url?: string;
@@ -256,12 +242,19 @@ export function createCapabilitiesCommand(): Command {
         if (!isCapabilitiesReport(cached.report)) {
           throw new Error("Invalid cached capabilities report shape. Re-run with --refresh.");
         }
-        if (options.agentPlan) {
-          console.log(formatOutput({
+        const plan = options.agentPlan || options.agentProfile ? buildAgentPlan(cached.report) : undefined;
+        if (plan) {
+          const payload: Record<string, unknown> = {
             source: "cache",
             checked_at: cached.report.checked_at,
-            plan: buildAgentPlan(cached.report),
-          }, config.outputFormat));
+          };
+          if (options.agentPlan) {
+            payload["plan"] = plan;
+          }
+          if (options.agentProfile) {
+            payload["profile"] = buildAgentProfile(cached.report, plan);
+          }
+          console.log(formatOutput(payload, config.outputFormat));
           return;
         }
         if (options.count) {
@@ -275,8 +268,19 @@ export function createCapabilitiesCommand(): Command {
       const report = await probeCapabilities(config);
       saveData({ capabilitiesCache: { checkedAt: report.checked_at, report } }, configPath);
 
-      if (options.agentPlan) {
-        console.log(formatOutput({ source: "live", checked_at: report.checked_at, plan: buildAgentPlan(report) }, config.outputFormat));
+      const plan = options.agentPlan || options.agentProfile ? buildAgentPlan(report) : undefined;
+      if (plan) {
+        const payload: Record<string, unknown> = {
+          source: "live",
+          checked_at: report.checked_at,
+        };
+        if (options.agentPlan) {
+          payload["plan"] = plan;
+        }
+        if (options.agentProfile) {
+          payload["profile"] = buildAgentProfile(report, plan);
+        }
+        console.log(formatOutput(payload, config.outputFormat));
         return;
       }
       if (options.count) {

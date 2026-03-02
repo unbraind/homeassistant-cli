@@ -16,9 +16,14 @@ const repoRoot = process.cwd();
 const cliPath = join(repoRoot, "dist", "cli.js");
 const configDir = mkdtempSync(join(tmpdir(), "hassio-cli-e2e-"));
 const configPath = join(configDir, "settings.json");
+const hasInstalledHassio = spawnSync("which", ["hassio"], { encoding: "utf8" }).status === 0;
 
 function run(args: string[], env?: NodeJS.ProcessEnv): string {
-  const result = spawnSync("node", [cliPath, "--config", configPath, ...args], {
+  const command = hasInstalledHassio ? "hassio" : "node";
+  const commandArgs = hasInstalledHassio
+    ? ["--config", configPath, ...args]
+    : [cliPath, "--config", configPath, ...args];
+  const result = spawnSync(command, commandArgs, {
     cwd: repoRoot,
     env: { ...process.env, ...env },
     encoding: "utf8",
@@ -92,5 +97,14 @@ assert(typeof entities["count"] === "number", "invalid entities --count JSON sha
 const configEntries = parseJson(run(["config-entries", "--count", "--format", "json"])) as Record<string, unknown>;
 assert(typeof configEntries["count"] === "number", "invalid config-entries --count JSON shape");
 
+const capabilitiesProfile = parseJson(run(["capabilities", "--refresh", "--agent-profile", "--format", "json"])) as Record<string, unknown>;
+assert(typeof capabilitiesProfile["source"] === "string", "invalid capabilities --agent-profile source");
+const profile = capabilitiesProfile["profile"] as Record<string, unknown> | undefined;
+assert(typeof profile?.["preferred_output_format"] === "string", "invalid capabilities --agent-profile output shape");
+
+const schemaCount = parseJson(run(["schema", "--count", "--full", "--format", "json"])) as Record<string, unknown>;
+assert(typeof schemaCount["command_count"] === "number", "invalid schema --count output shape");
+
 console.log("Live e2e smoke test passed");
+console.log(`binary:${hasInstalledHassio ? "hassio" : "node dist/cli.js"}`);
 console.log(`config:${configPath}`);
