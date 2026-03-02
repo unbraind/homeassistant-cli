@@ -24,6 +24,7 @@ import {
   createConfigSetCommand,
   createConfigGetCommand,
   createConfigPathCommand,
+  createDoctorCommand,
   createWizardCommand,
   createInitCommand,
   createValidateCommand,
@@ -137,6 +138,7 @@ settingsCmd.addCommand(createConfigPathCommand());
 settingsCmd.addCommand(createWizardCommand());
 settingsCmd.addCommand(createInitCommand());
 settingsCmd.addCommand(createValidateCommand());
+settingsCmd.addCommand(createDoctorCommand());
 settingsCmd.addCommand(createResetCommand());
 settingsCmd.addCommand(createListCommand());
 program.addCommand(settingsCmd);

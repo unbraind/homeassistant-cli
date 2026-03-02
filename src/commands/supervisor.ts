@@ -20,6 +20,25 @@ function parseJson(value?: string): Record<string, unknown> | undefined {
   return JSON.parse(value) as Record<string, unknown>;
 }
 
+async function runSupervisorAction<T>(action: () => Promise<T>): Promise<T> {
+  try {
+    return await action();
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (/401/.test(message)) {
+      throw new Error(
+        `${message}. Supervisor API requires Home Assistant OS/Supervised and a token with supervisor access.`
+      );
+    }
+    if (/404/.test(message)) {
+      throw new Error(
+        `${message}. Supervisor API is unavailable on this installation (common on Home Assistant Container/Core).`
+      );
+    }
+    throw error;
+  }
+}
+
 export function createSupervisorCommand(): Command {
   const cmd = new Command("supervisor")
     .description("Access Home Assistant Supervisor API proxy endpoints");
@@ -55,7 +74,7 @@ function createSupervisorApiCommand(): Command {
       throw new Error("Supervisor path is required. Use --path or --endpoint.");
     }
 
-    const result = await client.proxy(method, endpointPath, parseJson(options.data));
+    const result = await runSupervisorAction(() => client.proxy(method, endpointPath, parseJson(options.data)));
     console.log(formatOutput(result, format));
   }));
 
@@ -83,24 +102,24 @@ function createSupervisorAddonsCommand(): Command {
     const format = getFormat(globalOpts);
 
     if (options.info) {
-      console.log(formatOutput(await client.getAddonInfo(options.info), format));
+      console.log(formatOutput(await runSupervisorAction(() => client.getAddonInfo(options.info as string)), format));
       return;
     }
     if (options.start) {
-      console.log(formatOutput(await client.addonStart(options.start), format));
+      console.log(formatOutput(await runSupervisorAction(() => client.addonStart(options.start as string)), format));
       return;
     }
     if (options.stop) {
-      console.log(formatOutput(await client.addonStop(options.stop), format));
+      console.log(formatOutput(await runSupervisorAction(() => client.addonStop(options.stop as string)), format));
       return;
     }
     if (options.restart) {
-      console.log(formatOutput(await client.addonRestart(options.restart), format));
+      console.log(formatOutput(await runSupervisorAction(() => client.addonRestart(options.restart as string)), format));
       return;
     }
 
     if (options.list || (!options.info && !options.start && !options.stop && !options.restart)) {
-      console.log(formatOutput(await client.getAddons(), format));
+      console.log(formatOutput(await runSupervisorAction(() => client.getAddons()), format));
       return;
     }
   }));
@@ -120,12 +139,12 @@ function createSupervisorHostCommand(): Command {
     const format = getFormat(globalOpts);
 
     if (options.reboot) {
-      console.log(formatOutput(await client.hostReboot(), format));
+      console.log(formatOutput(await runSupervisorAction(() => client.hostReboot()), format));
       return;
     }
 
     if (options.shutdown) {
-      console.log(formatOutput(await client.hostShutdown(), format));
+      console.log(formatOutput(await runSupervisorAction(() => client.hostShutdown()), format));
       return;
     }
 
@@ -142,6 +161,6 @@ function createSupervisorLogsCommand(): Command {
       const globalOpts = command.optsWithGlobals();
       const client = getClient(globalOpts);
       const format = getFormat(globalOpts);
-      console.log(formatOutput(await client.getSupervisorLogs(), format));
+      console.log(formatOutput(await runSupervisorAction(() => client.getSupervisorLogs()), format));
     }));
 }

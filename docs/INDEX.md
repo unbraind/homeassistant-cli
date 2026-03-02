@@ -8,6 +8,7 @@ Complete documentation for the Home Assistant CLI tool.
 - [API Reference](./API.md) - Complete command reference
 - [LLM Integration Guide](./LLM_INTEGRATION.md) - Agent/LLM optimized features
 - [API Research (2026-03-01)](./API_RESEARCH_2026-03-01.md) - Live endpoint findings and CLI enhancements
+- [API Research (2026-03-02)](./API_RESEARCH_2026-03-02.md) - Updated live validation and diagnostics improvements
 - [Live E2E Testing](./E2E_LIVE_TESTING.md) - End-to-end smoke testing against a real Home Assistant instance
 
 ## Quick Start
@@ -55,6 +56,7 @@ Configuration is loaded in priority order (later overrides earlier):
 | `settings wizard` | Interactive setup wizard |
 | `settings init` | Initialize from environment variables |
 | `settings validate` | Validate configuration and test connection |
+| `settings doctor` | Agent-friendly diagnostics (API, output formats, supervisor probe) |
 | `settings set` | Set configuration options |
 | `settings get` | View current configuration (token masked) |
 | `settings path` | Show settings/auth/data file paths |

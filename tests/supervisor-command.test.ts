@@ -84,4 +84,13 @@ describe("supervisor command", () => {
     const parsed = JSON.parse(output.join("\n"));
     expect(parsed.result).toBe("ok");
   });
+
+  it("adds actionable guidance for unauthorized supervisor responses", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse({ message: "Unauthorized" }, 401));
+
+    const cmd = createSupervisorCommand();
+    await expect(cmd.parseAsync(["addons", "--list"], { from: "user" })).rejects.toThrow(
+      /Supervisor API requires Home Assistant OS\/Supervised/
+    );
+  });
 });

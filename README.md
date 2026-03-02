@@ -110,6 +110,9 @@ hassio settings list
 # Show settings/auth/data file paths
 hassio settings path
 
+# Run diagnostics (API, output validation, supervisor probe)
+hassio settings doctor
+
 # Reset all configuration
 hassio settings reset --force
 ```
@@ -404,6 +407,10 @@ hassio supervisor logs
 hassio supervisor api -m GET -p /addons
 hassio supervisor api -m GET --endpoint /addons
 ```
+
+If supervisor commands return `401` or `404`, the CLI now reports actionable guidance:
+- `401`: token/permissions issue for supervisor access
+- `404`: installation does not expose supervisor endpoints (common on Core/Container)
 
 ## Development
 

@@ -217,6 +217,12 @@ export function createListCommand(): Command {
       console.log("  outputFormat: toon|json|json-compact|yaml|table|markdown");
       console.log("  timeout: Request timeout in ms (default: 30000)");
       console.log("  readOnly: true|false (default: false)");
+      console.log("\nsettings_commands:");
+      console.log("  wizard: interactive/non-interactive setup");
+      console.log("  init: initialize from env vars");
+      console.log("  validate: validate config + HA connectivity");
+      console.log("  doctor: diagnostics report (API, output formats, supervisor)");
+      console.log("  get/path/set/reset/list");
       console.log("\nenv_vars:");
       console.log("  HASSIO_URL: Home Assistant URL");
       console.log("  HASSIO_TOKEN: Long-lived access token");

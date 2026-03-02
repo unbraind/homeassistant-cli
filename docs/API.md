@@ -291,6 +291,17 @@ Validate configuration and test connection.
 hassio settings validate
 ```
 
+#### `settings doctor`
+Run machine-readable diagnostics for agent/automation workflows.
+
+```bash
+hassio settings doctor
+hassio settings doctor --skip-supervisor
+hassio settings doctor --skip-format-validation
+```
+
+Returns API health/version/location/entity count, config file paths, runtime validation metadata, output-format validation (`toon`, `json`, `json-compact`, `yaml`, `table`, `markdown`), and a supervisor capability probe.
+
 #### `settings set`
 Set configuration options.
 
@@ -923,6 +934,10 @@ hassio supervisor api -m GET -p /addons
 hassio supervisor api -m GET --endpoint /addons
 hassio supervisor api -m POST -p /addons/core_ssh/start
 ```
+
+If supervisor access is unavailable, error responses include actionable guidance:
+- `401`: token or permission scope issue for supervisor access
+- `404`: installation does not expose supervisor endpoints (common on Core/Container)
 
 #### `supervisor addons`
 Add-on operations.
