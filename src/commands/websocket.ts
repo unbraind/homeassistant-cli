@@ -43,7 +43,40 @@ export function createWebsocketCommand(): Command {
   }));
 
   cmd.addCommand(createWebsocketCallCommand());
+  cmd.addCommand(createWebsocketStatusCommand());
   cmd.addCommand(createWebsocketSubscribeCommand());
+  return cmd;
+}
+
+function createWebsocketStatusCommand(): Command {
+  const cmd = new Command("status")
+    .description("Get WebSocket auth/connectivity and server capability metadata");
+
+  cmd.action(withExit(async (_options, command) => {
+    const globalOpts = command.optsWithGlobals();
+    const client = getClient(globalOpts);
+    const format = getFormat(globalOpts);
+
+    try {
+      await client.connect();
+      const [config, currentUser] = await Promise.all([
+        client.call("get_config"),
+        client.call("auth/current_user"),
+      ]);
+
+      console.log(formatOutput({
+        connected: true,
+        auth: "ok",
+        websocket: {
+          config,
+          current_user: currentUser,
+        },
+      }, format));
+    } finally {
+      await client.close();
+    }
+  }));
+
   return cmd;
 }
 

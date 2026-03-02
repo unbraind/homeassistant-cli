@@ -81,4 +81,35 @@ describe("websocket command", () => {
     const parsed = JSON.parse(output.join("\n"));
     expect(parsed.event_count).toBe(1);
   });
+
+  it("supports websocket status metadata", async () => {
+    call.mockImplementation(async (type: string) => {
+      if (type === "get_config") {
+        return { version: "2026.1.3", location_name: "Home" };
+      }
+      if (type === "auth/current_user") {
+        return { id: "u1", name: "Steve", is_admin: true };
+      }
+      return { ok: true };
+    });
+
+    const cmd = createWebsocketCommand();
+    const output: string[] = [];
+    const originalLog = console.log;
+    console.log = (msg: string) => output.push(msg);
+
+    await cmd.parseAsync(["status"], { from: "user" });
+
+    console.log = originalLog;
+    expect(connect).toHaveBeenCalledTimes(1);
+    expect(call).toHaveBeenCalledWith("get_config");
+    expect(call).toHaveBeenCalledWith("auth/current_user");
+    expect(close).toHaveBeenCalledTimes(1);
+
+    const parsed = JSON.parse(output.join("\n"));
+    expect(parsed.connected).toBe(true);
+    expect(parsed.auth).toBe("ok");
+    expect(parsed.websocket.config.version).toBe("2026.1.3");
+    expect(parsed.websocket.current_user.name).toBe("Steve");
+  });
 });

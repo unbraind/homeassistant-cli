@@ -366,6 +366,7 @@ Options:
   -s, --state <state>        Filter by state
   -p, --pattern <pattern>    Filter by entity_id pattern
   -a, --attributes <attrs>   Include specific attributes (comma-separated)
+  -l, --limit <n>            Limit returned rows
   --count                    Return count only
   --domains                  Group and count by domain
 
@@ -373,6 +374,7 @@ Options:
 hassio entities -d light -s on      # Lights that are on
 hassio entities --count             # Count only
 hassio entities --domains           # Group by domain
+hassio entities --domains --limit 5 # Top 5 domains
 hassio entities -d sensor -a unit_of_measurement,device_class
 ```
 
@@ -905,6 +907,7 @@ Access Home Assistant WebSocket API with full passthrough support.
 
 ```bash
 hassio websocket --connect-test
+hassio websocket status
 hassio ws call -T get_states
 hassio ws call -T config/device_registry/list -d '{"area_id":"kitchen"}'
 hassio ws subscribe --event-type state_changed --wait-ms 10000 --max-events 20

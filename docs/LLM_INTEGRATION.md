@@ -93,6 +93,9 @@ hassio entities --count
 # Group by domain
 hassio entities --domains
 
+# Limit rows for token budgets
+hassio entities -d sensor --limit 25
+
 # Select specific attributes
 hassio entities -d sensor -a unit_of_measurement,device_class
 ```

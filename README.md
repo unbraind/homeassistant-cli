@@ -17,7 +17,7 @@ Agent-optimized CLI tool for Home Assistant with token-efficient output. Default
 - **LLM-Optimized Commands** - Query language, batch operations, entity discovery
 - **Search Endpoint Fallback** - Falls back to local entity-state search when `/api/search` is unavailable
 - **Service Schema Intelligence** - Supports modern object-style `/api/services` payloads with filter/flat/count modes
-- **WebSocket API Coverage** - Generic `websocket`/`ws` passthrough for all WS command types
+- **WebSocket API Coverage** - Generic `websocket`/`ws` passthrough plus `websocket status` metadata
 - **Supervisor API Coverage** - Generic `supervisor api` passthrough + common shortcuts (addons, host, logs)
 - **Full TypeScript Support** - Complete type safety throughout
 - **Comprehensive Testing** - High test coverage
@@ -226,6 +226,9 @@ hassio entities --count
 
 # Group by domain
 hassio entities --domains
+
+# Limit returned rows
+hassio entities -d sensor --limit 25
 ```
 
 ### Query Language
@@ -383,6 +386,9 @@ hassio search "sensor" -d sensor --count
 ```bash
 # WebSocket connectivity/auth check
 hassio websocket --connect-test
+
+# WebSocket status metadata
+hassio websocket status
 
 # Generic WS command
 hassio ws call -T get_states

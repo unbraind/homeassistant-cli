@@ -15,6 +15,19 @@ function getFormat(options: { format?: OutputFormat }): OutputFormat {
   return config.outputFormat;
 }
 
+function parseLimit(value?: string): number | undefined {
+  if (!value) {
+    return undefined;
+  }
+
+  const limit = parseInt(value, 10);
+  if (!Number.isFinite(limit) || limit <= 0) {
+    throw new Error(`Invalid limit '${value}'. Must be a positive integer.`);
+  }
+
+  return limit;
+}
+
 export function createEntitiesCommand(): Command {
   const command = new Command("entities")
     .description("List entities with optional filtering (LLM-optimized)")
@@ -22,6 +35,7 @@ export function createEntitiesCommand(): Command {
     .option("-s, --state <state>", "Filter by state (e.g., on, off, unavailable)")
     .option("-p, --pattern <pattern>", "Filter by entity_id pattern (substring match)")
     .option("-a, --attributes <attrs>", "Include specific attributes (comma-separated)")
+    .option("-l, --limit <n>", "Limit returned rows")
     .option("--count", "Only return count, not full list")
     .option("--domains", "Group and count by domain");
 
@@ -30,6 +44,7 @@ export function createEntitiesCommand(): Command {
     state?: string;
     pattern?: string;
     attributes?: string;
+    limit?: string;
     count?: boolean;
     domains?: boolean;
   }, cmd) => {
@@ -73,14 +88,19 @@ export function createEntitiesCommand(): Command {
       const result = Object.entries(domainCounts)
         .map(([domain, count]) => ({ domain, count }))
         .sort((a, b) => b.count - a.count);
-      
-      console.log(formatOutput(result, format));
+
+      const limit = parseLimit(options.limit);
+      const limited = limit ? result.slice(0, limit) : result;
+      console.log(formatOutput(limited, format));
       return;
     }
 
+    const limit = parseLimit(options.limit);
+    const limited = limit ? filtered.slice(0, limit) : filtered;
+
     if (options.attributes) {
       const attrs = options.attributes.split(",").map(a => a.trim());
-      const mappedStates = filtered.map((s: HaState) => ({
+      const mappedStates = limited.map((s: HaState) => ({
         entity_id: s.entity_id,
         state: s.state,
         last_changed: s.last_changed,
@@ -93,7 +113,7 @@ export function createEntitiesCommand(): Command {
       return;
     }
 
-    console.log(formatStates(filtered, format));
+    console.log(formatStates(limited, format));
   }));
 
   return command;

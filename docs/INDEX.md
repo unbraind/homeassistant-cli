@@ -150,7 +150,7 @@ Configuration is loaded in priority order (later overrides earlier):
 
 | Command | Description |
 |---------|-------------|
-| `websocket` / `ws` | Full WebSocket API passthrough (`call`, `subscribe`, `--connect-test`) |
+| `websocket` / `ws` | Full WebSocket API passthrough (`status`, `call`, `subscribe`, `--connect-test`) |
 | `supervisor api` | Raw Supervisor proxy passthrough |
 | `supervisor addons` | Add-on list/info/start/stop/restart |
 | `supervisor host` | Host reboot/shutdown |
