@@ -444,6 +444,20 @@ hassio inspect sensor.temperature --history
 hassio inspect sensor.temperature --history -l 5
 ```
 
+#### `summary`
+Get a compact summary of entities by domain and state.
+
+```bash
+hassio summary
+
+# Returns:
+# - total_entities
+# - domains
+# - by_domain
+# - by_state
+# - unavailable_count
+```
+
 #### `batch`
 Execute service calls in batch.
 

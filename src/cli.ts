@@ -64,7 +64,7 @@ import {
   createSupervisorCommand,
   createWebsocketCommand,
 } from "./commands/index.js";
-import { createInspectCommand } from "./commands/inspect.js";
+import { createInspectCommand, createSummaryCommand } from "./commands/inspect.js";
 
 const program = new Command();
 
@@ -149,6 +149,7 @@ program.addCommand(createBatchCommand());
 program.addCommand(createQueryCommand());
 program.addCommand(createDiscoverCommand());
 program.addCommand(createInspectCommand());
+program.addCommand(createSummaryCommand());
 
 // Registries
 program.addCommand(createRegistriesCommand());

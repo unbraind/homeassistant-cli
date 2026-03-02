@@ -15,6 +15,7 @@ Agent-optimized CLI tool for Home Assistant with token-efficient output. Default
 - **Read-Only Safety Mode** - Block all state-changing API calls with `--read-only` or `HASSIO_READONLY=true`
 - **GitHub Star Prompt** - Setup/settings commands can prompt to star the repo via `gh` (when available and logged in)
 - **LLM-Optimized Commands** - Query language, batch operations, entity discovery
+- **Fast Topology Snapshot** - `hassio summary` returns domain/state counts for quick agent planning
 - **Search Endpoint Fallback** - Falls back to local entity-state search when `/api/search` is unavailable
 - **Service Schema Intelligence** - Supports modern object-style `/api/services` payloads with filter/flat/count modes
 - **WebSocket API Coverage** - Generic `websocket`/`ws` passthrough plus `websocket status` metadata
@@ -257,6 +258,9 @@ hassio batch -d light -s turn_on -e light.living_room,light.kitchen --data '{"br
 ### Deep Inspection
 
 ```bash
+# One-shot environment summary for agents
+hassio summary
+
 # Inspect entity
 hassio inspect light.living_room
 

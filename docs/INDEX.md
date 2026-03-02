@@ -165,6 +165,7 @@ Configuration is loaded in priority order (later overrides earlier):
 |---------|-------------|
 | `entities` | List/filter entities with advanced options |
 | `discover` | Discover and categorize all entities |
+| `summary` | One-shot domain/state topology snapshot |
 | `query <expression>` | Query using simple expressions |
 | `batch` | Execute service calls in batch |
 | `inspect <entity-id>` | Deep inspect entity with history |

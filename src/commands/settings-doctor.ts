@@ -7,6 +7,7 @@ import { withExit } from "../utils/exit.js";
 import { maybePromptToStarRepo } from "../utils/github-star.js";
 import { getConfigPathFromCommand, withConfigPath } from "./settings-utils.js";
 import { parse as parseYaml } from "yaml";
+import type { OutputFormat } from "../types/index.js";
 
 function classifySupervisorError(error: unknown): { code: string; message: string; hint: string } {
   const message = error instanceof Error ? error.message : String(error);
@@ -81,7 +82,14 @@ export function createDoctorCommand(): Command {
     }, cmd) => {
       await maybePromptToStarRepo();
       const configPath = getConfigPathFromCommand(cmd as Command);
-      const config = getConfig(withConfigPath(configPath));
+      const globalOptions = (cmd as Command).optsWithGlobals() as {
+        url?: string;
+        token?: string;
+        format?: OutputFormat;
+        timeout?: number;
+        readOnly?: boolean | string;
+      };
+      const config = getConfig({ ...globalOptions, ...withConfigPath(configPath) });
       const client = new HomeAssistantClient(config);
 
       const status = await client.getStatus();

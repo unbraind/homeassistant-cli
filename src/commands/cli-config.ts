@@ -9,9 +9,11 @@ import {
   saveConfig,
   saveData,
 } from "../config/index.js";
+import { formatOutput } from "../formatters/index.js";
 import { withExit } from "../utils/exit.js";
 import { maybePromptToStarRepo } from "../utils/github-star.js";
 import { getConfigPathFromCommand, parseBoolean, parseFormat, parseTimeout, withConfigPath } from "./settings-utils.js";
+import type { OutputFormat } from "../types/index.js";
 
 interface SettingsSetOptions {
   haUrl?: string;
@@ -145,7 +147,14 @@ export function createValidateCommand(): Command {
       try {
         await maybePromptToStarRepo();
         const configPath = getConfigPathFromCommand(cmd as Command);
-        const config = getConfig(withConfigPath(configPath));
+        const globalOptions = (cmd as Command).optsWithGlobals() as {
+          url?: string;
+          token?: string;
+          format?: OutputFormat;
+          timeout?: number;
+          readOnly?: boolean | string;
+        };
+        const config = getConfig({ ...globalOptions, ...withConfigPath(configPath) });
 
         const { HomeAssistantClient } = await import("../api/index.js");
         const client = new HomeAssistantClient(config);
@@ -159,14 +168,16 @@ export function createValidateCommand(): Command {
           lastLocation: haConfig.location_name,
         }, configPath);
 
-        console.log(`status: VALID
-url: ${config.url}
-format: ${config.outputFormat}
-timeout: ${config.timeout}ms
-api: ${status.message}
-version: ${haConfig.version}
-location: ${haConfig.location_name}
-entities: ${states.length}`);
+        console.log(formatOutput({
+          status: "VALID",
+          url: config.url,
+          format: config.outputFormat,
+          timeout_ms: config.timeout,
+          api: status.message,
+          version: haConfig.version,
+          location: haConfig.location_name,
+          entities: states.length,
+        }, config.outputFormat));
       } catch (error) {
         console.error("\nERROR: Validation failed");
         console.error(error instanceof Error ? error.message : String(error));

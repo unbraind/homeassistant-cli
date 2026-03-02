@@ -164,6 +164,9 @@ hassio batch -d media_player -s media_stop -e media_player.living_room,media_pla
 Deep dive into a specific entity:
 
 ```bash
+# Fast environment snapshot for planning
+hassio summary
+
 # Basic inspection
 hassio inspect light.living_room
 
