@@ -43,6 +43,23 @@ function parseJson(out: string): unknown {
   return JSON.parse(out);
 }
 
+function parseToon(out: string): Record<string, string> {
+  const lines = out
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+  const pairs = lines
+    .map((line) => {
+      const idx = line.indexOf(":");
+      if (idx < 0) {
+        return undefined;
+      }
+      return [line.slice(0, idx).trim(), line.slice(idx + 1).trim()] as const;
+    })
+    .filter((value): value is readonly [string, string] => value !== undefined);
+  return Object.fromEntries(pairs);
+}
+
 function assert(condition: boolean, message: string): void {
   if (!condition) {
     console.error(message);
@@ -79,6 +96,10 @@ run(["settings", "validate"], {
 
 for (const format of ["toon", "json", "json-compact", "yaml", "table", "markdown"] as const) {
   const statusOut = run(["status", "--format", format]);
+  if (format === "toon") {
+    const parsed = parseToon(statusOut);
+    assert(parsed["message"] === "API running.", "invalid status TOON shape");
+  }
   if (format === "json" || format === "json-compact") {
     parseJson(statusOut);
   }
@@ -96,6 +117,31 @@ assert(typeof entities["count"] === "number", "invalid entities --count JSON sha
 
 const configEntries = parseJson(run(["config-entries", "--count", "--format", "json"])) as Record<string, unknown>;
 assert(typeof configEntries["count"] === "number", "invalid config-entries --count JSON shape");
+
+const config = parseJson(run(["config", "--format", "json"])) as Record<string, unknown>;
+assert(typeof config["version"] === "string", "invalid config JSON shape");
+
+const events = parseJson(run(["events", "--count", "--format", "json"])) as Record<string, unknown>;
+assert(typeof events["events_count"] === "number", "invalid events --count JSON shape");
+
+const components = parseJson(run(["components", "--count", "--format", "json"])) as Record<string, unknown>;
+assert(typeof components["components_count"] === "number", "invalid components --count JSON shape");
+
+const states = parseJson(run(["states", "--count", "--format", "json"])) as Record<string, unknown>;
+assert(typeof states["states_count"] === "number", "invalid states --count JSON shape");
+
+const flatServices = parseJson(run(["services", "--flat", "--format", "json"])) as Record<string, unknown>[];
+assert(Array.isArray(flatServices), "invalid services --flat JSON shape");
+assert(flatServices.length > 0, "services --flat returned no rows");
+assert(typeof flatServices[0]?.["domain"] === "string", "invalid services --flat domain field");
+assert(typeof flatServices[0]?.["service"] === "string", "invalid services --flat service field");
+
+const wsConnect = parseJson(run(["websocket", "--connect-test", "--format", "json"])) as Record<string, unknown>;
+assert(wsConnect["connected"] === true, "invalid websocket --connect-test connected field");
+assert(wsConnect["auth"] === "ok", "invalid websocket --connect-test auth field");
+
+const doctor = parseJson(run(["settings", "doctor", "--format", "json"])) as Record<string, unknown>;
+assert(typeof doctor["healthy"] === "boolean", "invalid settings doctor JSON shape");
 
 const capabilitiesProfile = parseJson(run(["capabilities", "--refresh", "--agent-profile", "--format", "json"])) as Record<string, unknown>;
 assert(typeof capabilitiesProfile["source"] === "string", "invalid capabilities --agent-profile source");

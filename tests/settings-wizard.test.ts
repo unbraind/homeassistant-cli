@@ -21,6 +21,7 @@ const exitSpy = vi.spyOn(process, "exit").mockImplementation(() => undefined as 
 describe("settings wizard command", () => {
   beforeEach(() => {
     (configModule.saveConfig as unknown as ReturnType<typeof vi.fn>).mockReset();
+    (configModule.getConfigSnapshot as unknown as ReturnType<typeof vi.fn>).mockReturnValue({});
     exitSpy.mockClear();
   });
 
@@ -73,6 +74,51 @@ describe("settings wizard command", () => {
     const cmd = createWizardCommand();
 
     await cmd.parseAsync(["node", "test", "--non-interactive", "--skip-test"], { from: "user" });
+
+    expect(exitSpy).toHaveBeenCalledWith(1);
+    expect(configModule.saveConfig).not.toHaveBeenCalled();
+  });
+
+  it("uses existing snapshot values in non-interactive mode", async () => {
+    (configModule.getConfigSnapshot as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+      url: "http://ha.local:8123/",
+      token: "from-snapshot",
+      outputFormat: "toon",
+      timeout: 30000,
+      readOnly: false,
+    });
+
+    const cmd = createWizardCommand();
+    await cmd.parseAsync(["node", "test", "--non-interactive", "--skip-test"], { from: "user" });
+
+    expect(configModule.saveConfig).toHaveBeenCalledWith(
+      {
+        url: "http://ha.local:8123",
+        token: "from-snapshot",
+        outputFormat: "toon",
+        timeout: 30000,
+        readOnly: false,
+      },
+      undefined
+    );
+  });
+
+  it("fails with invalid URL format", async () => {
+    const cmd = createWizardCommand();
+
+    await cmd.parseAsync(
+      [
+        "node",
+        "test",
+        "--non-interactive",
+        "--ha-url",
+        "ha.local:8123",
+        "--ha-token",
+        "token-123",
+        "--skip-test",
+      ],
+      { from: "user" }
+    );
 
     expect(exitSpy).toHaveBeenCalledWith(1);
     expect(configModule.saveConfig).not.toHaveBeenCalled();
