@@ -284,6 +284,8 @@ hassio capabilities --count
 hassio capabilities --refresh
 hassio capabilities --agent-plan
 hassio capabilities --agent-profile
+hassio capabilities --agent-context
+hassio capabilities --agent-context --redact-private
 ```
 
 Options:
@@ -292,6 +294,8 @@ Options:
 - `--count`: compact capability/count summary for quick health checks.
 - `--agent-plan`: emit recommended and avoided commands for orchestration.
 - `--agent-profile`: emit a structured execution profile with preferred output mode, fast-path command set, and streaming readiness.
+- `--agent-context`: emit one merged payload (`summary`, `plan`, `profile`, `suggested_sequence`).
+- `--redact-private`: redact private report fields for safe sharing (`api.location` -> `[REDACTED]`).
 
 #### `settings init`
 Initialize from environment variables.
@@ -950,6 +954,8 @@ Options:
   --count              Return summary counts only
   --agent-plan         Return an agent/LLM command plan derived from capabilities
   --agent-profile      Return a stable execution profile for agents/LLMs
+  --agent-context      Return one merged payload (summary + plan + profile)
+  --redact-private     Mask private report fields for safe sharing
 
 # Examples
 hassio capabilities
@@ -957,11 +963,14 @@ hassio capabilities --refresh
 hassio capabilities --count
 hassio capabilities --agent-plan
 hassio capabilities --agent-profile
+hassio capabilities --agent-context
+hassio capabilities --agent-context --redact-private --format json
 ```
 
 Returns a capability matrix for REST, WebSocket, config-entries, supervisor access, and service-derived conversation/TTS support.
 `--agent-plan` returns `recommended_commands`, `avoid_commands`, and `notes` for safer agent orchestration.
 `--agent-profile` returns `preferred_output_format`, per-capability statuses, `planning.fast_path`, and `planning.streaming_ready`.
+`--agent-context` returns `summary`, `plan`, `profile`, and `suggested_sequence` in one response.
 
 #### `schema`
 Export CLI schema for LLM/agent consumption.

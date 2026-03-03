@@ -19,6 +19,7 @@ Agent-optimized CLI tool for Home Assistant with token-efficient output. Default
 - **Capability Profiling for Agents** - `hassio capabilities` probes runtime API support and caches results
 - **Agent Execution Planning** - `hassio capabilities --agent-plan` returns recommended and avoid command sets
 - **Agent Execution Profile** - `hassio capabilities --agent-profile` returns a stable execution profile and fast-path commands
+- **One-Shot Agent Context** - `hassio capabilities --agent-context --redact-private` returns summary + plan + profile safely
 - **Fast Topology Snapshot** - `hassio summary` returns domain/state counts for quick agent planning
 - **Search Endpoint Fallback** - Falls back to local entity-state search when `/api/search` is unavailable
 - **Service Schema Intelligence** - Supports modern object-style `/api/services` payloads with filter/flat/count modes
@@ -127,6 +128,7 @@ hassio capabilities --refresh
 hassio capabilities --count
 hassio capabilities --agent-plan
 hassio capabilities --agent-profile
+hassio capabilities --agent-context --redact-private --format json
 
 # Reset all configuration
 hassio settings reset --force

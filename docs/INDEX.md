@@ -9,6 +9,7 @@ Complete documentation for the Home Assistant CLI tool.
 - [LLM Integration Guide](./LLM_INTEGRATION.md) - Agent/LLM optimized features
 - [API Research (2026-03-01)](./API_RESEARCH_2026-03-01.md) - Live endpoint findings and CLI enhancements
 - [API Research (2026-03-02)](./API_RESEARCH_2026-03-02.md) - Updated live validation and diagnostics improvements
+- [API Research (2026-03-03)](./API_RESEARCH_2026-03-03.md) - Live capability matrix, agent-context output, and private-field redaction
 - [Live E2E Testing](./E2E_LIVE_TESTING.md) - End-to-end smoke testing against a real Home Assistant instance
 
 ## Quick Start
@@ -229,6 +230,8 @@ The CLI is optimized for use by LLMs and AI agents:
 - **Capability Matrix**: `hassio capabilities` exposes per-instance API availability and scope hints
 - **Agent Plan Output**: `hassio capabilities --agent-plan` returns command recommendations and avoid-lists based on live capability probes
 - **Agent Profile Output**: `hassio capabilities --agent-profile` returns a stable execution profile (`preferred_output_format`, `capabilities`, `planning.fast_path`, `streaming_ready`)
+- **Agent Context Output**: `hassio capabilities --agent-context` returns combined summary + plan + profile for one-shot agent bootstrap
+- **Private Redaction**: `hassio capabilities --redact-private` masks sensitive instance fields before sharing outputs
 
 See [LLM Integration Guide](./LLM_INTEGRATION.md) for detailed examples.
 

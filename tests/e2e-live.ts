@@ -102,6 +102,15 @@ assert(typeof capabilitiesProfile["source"] === "string", "invalid capabilities 
 const profile = capabilitiesProfile["profile"] as Record<string, unknown> | undefined;
 assert(typeof profile?.["preferred_output_format"] === "string", "invalid capabilities --agent-profile output shape");
 
+const capabilitiesContext = parseJson(
+  run(["capabilities", "--refresh", "--agent-context", "--redact-private", "--format", "json"])
+) as Record<string, unknown>;
+assert(typeof capabilitiesContext["source"] === "string", "invalid capabilities --agent-context source");
+const contextSummary = capabilitiesContext["summary"] as Record<string, unknown> | undefined;
+assert(typeof contextSummary?.["entity_count"] === "number", "invalid capabilities --agent-context summary shape");
+const contextProfile = capabilitiesContext["profile"] as Record<string, unknown> | undefined;
+assert(contextProfile?.["preferred_output_format"] === "toon", "invalid capabilities --agent-context profile shape");
+
 const schemaCount = parseJson(run(["schema", "--count", "--full", "--format", "json"])) as Record<string, unknown>;
 assert(typeof schemaCount["command_count"] === "number", "invalid schema --count output shape");
 

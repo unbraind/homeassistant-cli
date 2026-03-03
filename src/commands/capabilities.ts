@@ -3,21 +3,22 @@ import { ConfigEntriesApiClient, HomeAssistantClient, HomeAssistantWebSocketClie
 import { SupervisorApiClient } from "../api/supervisor.js";
 import { getConfig, getData, saveData } from "../config/index.js";
 import { formatOutput } from "../formatters/index.js";
-import type { HaService, HaState, OutputFormat } from "../types/index.js";
-import { getServiceNames } from "../utils/services.js";
+import type { OutputFormat } from "../types/index.js";
 import { withExit } from "../utils/exit.js";
 import { getConfigPathFromCommand, withConfigPath } from "./settings-utils.js";
 import { buildAgentPlan } from "./capabilities-agent-plan.js";
 import { buildAgentProfile } from "./capabilities-agent-profile.js";
 import { countSummary } from "./capabilities-summary.js";
-
-type CapabilityStatus = "available" | "unavailable" | "unauthorized" | "error";
-
-interface CapabilityProbe {
-  status: CapabilityStatus;
-  endpoint: string;
-  message?: string;
-}
+import { buildAgentContext } from "./capabilities-agent-context.js";
+import { redactCapabilitiesReport } from "./capabilities-redact.js";
+import {
+  buildHints,
+  countServices,
+  normalizeProbeError,
+  parseTtlSeconds,
+  summarizeEntityDomains,
+  type CapabilityProbe,
+} from "./capabilities-utils.js";
 
 interface CapabilitiesReport {
   checked_at: string;
@@ -48,56 +49,6 @@ interface CapabilitiesReport {
 interface CapabilitiesCache {
   checkedAt: string;
   report: unknown;
-}
-
-function parseTtlSeconds(value?: string): number {
-  if (!value) {
-    return 900;
-  }
-  const parsed = parseInt(value, 10);
-  if (!Number.isFinite(parsed) || parsed <= 0) {
-    throw new Error("--ttl must be a positive integer number of seconds");
-  }
-  return parsed;
-}
-
-function normalizeProbeError(endpoint: string, error: unknown): CapabilityProbe {
-  const message = error instanceof Error ? error.message : String(error);
-  if (/401/.test(message)) {
-    return { status: "unauthorized", endpoint, message };
-  }
-  if (/404/.test(message)) {
-    return { status: "unavailable", endpoint, message };
-  }
-  return { status: "error", endpoint, message };
-}
-
-function countServices(services: HaService[]): number {
-  return services.reduce((acc, serviceDomain) => acc + getServiceNames(serviceDomain.services).length, 0);
-}
-
-function summarizeEntityDomains(states: HaState[]): Record<string, number> {
-  const byDomain: Record<string, number> = {};
-  for (const state of states) {
-    const domain = state.entity_id.split(".")[0] || "unknown";
-    byDomain[domain] = (byDomain[domain] || 0) + 1;
-  }
-  return byDomain;
-}
-
-function buildHints(report: CapabilitiesReport): string[] {
-  const hints: string[] = [];
-  if (report.capabilities.websocket.status === "available") {
-    hints.push("Use websocket subscribe for event streaming and low-latency updates.");
-  }
-  if (report.capabilities.supervisor.status !== "available") {
-    hints.push("Avoid supervisor commands unless running Home Assistant OS/Supervised with proper token scope.");
-  }
-  if (report.capabilities.conversation.status === "available") {
-    hints.push("Natural-language flows are available via 'ask' and 'conversation'.");
-  }
-  hints.push("Prefer '--format toon' for token-efficient agent workflows.");
-  return hints;
 }
 
 function getCachedReport(data: Partial<{ capabilitiesCache: CapabilitiesCache }>): CapabilitiesCache | undefined {
@@ -223,7 +174,17 @@ export function createCapabilitiesCommand(): Command {
     .option("--count", "Return only summary counts")
     .option("--agent-plan", "Return agent/LLM command recommendations from capability report")
     .option("--agent-profile", "Return structured execution profile for agents/LLMs")
-    .action(withExit(async (options: { refresh?: boolean; ttl?: string; count?: boolean; agentPlan?: boolean; agentProfile?: boolean }, cmd) => {
+    .option("--agent-context", "Return merged agent payload (summary + plan + profile)")
+    .option("--redact-private", "Redact private instance fields (for sharing outputs safely)")
+    .action(withExit(async (options: {
+      refresh?: boolean;
+      ttl?: string;
+      count?: boolean;
+      agentPlan?: boolean;
+      agentProfile?: boolean;
+      agentContext?: boolean;
+      redactPrivate?: boolean;
+    }, cmd) => {
       const configPath = getConfigPathFromCommand(cmd as Command);
       const globalOpts = (cmd as Command).optsWithGlobals() as {
         url?: string;
@@ -236,57 +197,68 @@ export function createCapabilitiesCommand(): Command {
       const ttlSeconds = parseTtlSeconds(options.ttl);
       const runtimeData = getData(configPath);
       const cached = getCachedReport(runtimeData);
+      const wantsAgentPayload = options.agentPlan || options.agentProfile || options.agentContext;
 
       const useCache = !options.refresh && cached && cacheIsFresh(cached, ttlSeconds);
       if (useCache) {
         if (!isCapabilitiesReport(cached.report)) {
           throw new Error("Invalid cached capabilities report shape. Re-run with --refresh.");
         }
-        const plan = options.agentPlan || options.agentProfile ? buildAgentPlan(cached.report) : undefined;
-        if (plan) {
+        const sharedReport = options.redactPrivate ? redactCapabilitiesReport(cached.report) : cached.report;
+        if (options.agentContext) {
+          console.log(formatOutput(buildAgentContext("cache", sharedReport), config.outputFormat));
+          return;
+        }
+        const plan = wantsAgentPayload ? buildAgentPlan(sharedReport) : undefined;
+        if (plan && (options.agentPlan || options.agentProfile)) {
           const payload: Record<string, unknown> = {
             source: "cache",
-            checked_at: cached.report.checked_at,
+            checked_at: sharedReport.checked_at,
           };
           if (options.agentPlan) {
             payload["plan"] = plan;
           }
           if (options.agentProfile) {
-            payload["profile"] = buildAgentProfile(cached.report, plan);
+            payload["profile"] = buildAgentProfile(sharedReport, plan);
           }
           console.log(formatOutput(payload, config.outputFormat));
           return;
         }
         if (options.count) {
-          console.log(formatOutput(countSummary("cache", cached.report), config.outputFormat));
+          console.log(formatOutput(countSummary("cache", sharedReport), config.outputFormat));
           return;
         }
-        console.log(formatOutput({ source: "cache", report: cached.report }, config.outputFormat));
+        console.log(formatOutput({ source: "cache", report: sharedReport }, config.outputFormat));
         return;
       }
 
       const report = await probeCapabilities(config);
       saveData({ capabilitiesCache: { checkedAt: report.checked_at, report } }, configPath);
+      const sharedReport = options.redactPrivate ? redactCapabilitiesReport(report) : report;
 
-      const plan = options.agentPlan || options.agentProfile ? buildAgentPlan(report) : undefined;
-      if (plan) {
+      if (options.agentContext) {
+        console.log(formatOutput(buildAgentContext("live", sharedReport), config.outputFormat));
+        return;
+      }
+      const plan = wantsAgentPayload ? buildAgentPlan(sharedReport) : undefined;
+      if (plan && (options.agentPlan || options.agentProfile)) {
         const payload: Record<string, unknown> = {
           source: "live",
-          checked_at: report.checked_at,
+          checked_at: sharedReport.checked_at,
         };
         if (options.agentPlan) {
           payload["plan"] = plan;
         }
         if (options.agentProfile) {
-          payload["profile"] = buildAgentProfile(report, plan);
+          payload["profile"] = buildAgentProfile(sharedReport, plan);
         }
         console.log(formatOutput(payload, config.outputFormat));
         return;
       }
       if (options.count) {
-        console.log(formatOutput(countSummary("live", report), config.outputFormat));
+        console.log(formatOutput(countSummary("live", sharedReport), config.outputFormat));
         return;
       }
-      console.log(formatOutput({ source: "live", report }, config.outputFormat));
+      console.log(formatOutput({ source: "live", report: sharedReport }, config.outputFormat));
     }));
 }

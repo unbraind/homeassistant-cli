@@ -29,10 +29,17 @@ Use `hassio capabilities --agent-profile --format json` to get a stable profile 
 - `planning.fast_path` starter command sequence
 - `planning.streaming_ready` boolean
 
-4. Cursor-based pagination (future):
+4. One-shot context payload (implemented):
+Use `hassio capabilities --agent-context --redact-private --format json` to get:
+- `summary` (counts + status totals)
+- `plan` (`recommended_commands`, `avoid_commands`, `notes`)
+- `profile` (stable execution profile)
+- `suggested_sequence` (starter command chain)
+
+5. Cursor-based pagination (future):
 Add `--cursor` + `--limit` for entity-heavy installations so agents can page deterministically.
 
-5. Stable machine error envelope (future):
+6. Stable machine error envelope (future):
 Standardize failures to `{ code, message, hint, retriable }` across all commands and formats.
 
 ## TOON Format Explained
