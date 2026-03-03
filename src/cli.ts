@@ -65,6 +65,15 @@ import {
   createWebsocketCommand,
   createConfigEntriesCommand,
   createCapabilitiesCommand,
+  createAreaCreateCommand,
+  createAreaUpdateCommand,
+  createAreaDeleteCommand,
+  createFloorCreateCommand,
+  createFloorUpdateCommand,
+  createFloorDeleteCommand,
+  createLabelCreateCommand,
+  createLabelUpdateCommand,
+  createLabelDeleteCommand,
 } from "./commands/index.js";
 import { createInspectCommand, createSummaryCommand } from "./commands/inspect.js";
 
@@ -155,6 +164,17 @@ program.addCommand(createSummaryCommand());
 
 // Registries
 program.addCommand(createRegistriesCommand());
+
+// Registry CRUD operations
+program.addCommand(createAreaCreateCommand());
+program.addCommand(createAreaUpdateCommand());
+program.addCommand(createAreaDeleteCommand());
+program.addCommand(createFloorCreateCommand());
+program.addCommand(createFloorUpdateCommand());
+program.addCommand(createFloorDeleteCommand());
+program.addCommand(createLabelCreateCommand());
+program.addCommand(createLabelUpdateCommand());
+program.addCommand(createLabelDeleteCommand());
 
 // Statistics
 program.addCommand(createStatisticsCommand());

@@ -8,6 +8,7 @@ export * from "./settings-doctor.js";
 export * from "./llm.js";
 export * from "./inspect.js";
 export * from "./registries.js";
+export * from "./registry-crud.js";
 export * from "./statistics.js";
 export * from "./lists.js";
 export * from "./system.js";

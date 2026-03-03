@@ -535,6 +535,155 @@ hassio registries --devices --area-id area_living_room  # Devices in area
 hassio registries --areas                               # List areas
 ```
 
+### Registry CRUD Operations
+
+#### `area-create`
+Create a new area in Home Assistant.
+
+```bash
+hassio area-create [options]
+
+Options:
+  --name <name>              Area name (required)
+  --icon <icon>              Area icon (e.g., mdi:sofa)
+  --floor-id <floorId>       Floor ID to associate
+  --labels <labels>          Comma-separated list of label IDs
+
+# Examples
+hassio area-create --name "Living Room" --icon "mdi:sofa"
+hassio area-create --name "Kitchen" --floor-id ground_floor
+```
+
+#### `area-update`
+Update an existing area.
+
+```bash
+hassio area-update [options]
+
+Options:
+  --area-id <areaId>         Area ID to update (required)
+  --name <name>              New area name
+  --icon <icon>              New icon
+  --floor-id <floorId>       New floor ID (use 'null' to clear)
+  --labels <labels>          Comma-separated list of label IDs
+  --aliases <aliases>        Comma-separated list of aliases
+
+# Examples
+hassio area-update --area-id living_room --name "Main Living Room"
+hassio area-update --area-id kitchen --floor-id null
+```
+
+#### `area-delete`
+Delete an area.
+
+```bash
+hassio area-delete [options]
+
+Options:
+  --area-id <areaId>         Area ID to delete (required)
+  --yes                      Skip confirmation
+
+# Examples
+hassio area-delete --area-id old_room --yes
+```
+
+#### `floor-create`
+Create a new floor in Home Assistant.
+
+```bash
+hassio floor-create [options]
+
+Options:
+  --name <name>              Floor name (required)
+  --icon <icon>              Floor icon (e.g., mdi:home-floor-1)
+  --level <level>            Floor level (number)
+
+# Examples
+hassio floor-create --name "Ground Floor" --level 0
+hassio floor-create --name "First Floor" --level 1 --icon "mdi:home-floor-1"
+```
+
+#### `floor-update`
+Update an existing floor.
+
+```bash
+hassio floor-update [options]
+
+Options:
+  --floor-id <floorId>       Floor ID to update (required)
+  --name <name>              New floor name
+  --icon <icon>              New icon
+  --level <level>            New level (number, use 'null' to clear)
+  --aliases <aliases>        Comma-separated list of aliases
+
+# Examples
+hassio floor-update --floor-id ground_floor --name "Main Floor"
+hassio floor-update --floor-id first_floor --level null
+```
+
+#### `floor-delete`
+Delete a floor.
+
+```bash
+hassio floor-delete [options]
+
+Options:
+  --floor-id <floorId>       Floor ID to delete (required)
+  --yes                      Skip confirmation
+
+# Examples
+hassio floor-delete --floor-id old_floor --yes
+```
+
+#### `label-create`
+Create a new label in Home Assistant.
+
+```bash
+hassio label-create [options]
+
+Options:
+  --name <name>              Label name (required)
+  --icon <icon>              Label icon (e.g., mdi:tag)
+  --color <color>            Label color
+  --description <desc>       Label description
+
+# Examples
+hassio label-create --name "Important" --color "red"
+hassio label-create --name "Electronics" --icon "mdi:chip"
+```
+
+#### `label-update`
+Update an existing label.
+
+```bash
+hassio label-update [options]
+
+Options:
+  --label-id <labelId>       Label ID to update (required)
+  --name <name>              New label name
+  --icon <icon>              New icon
+  --color <color>            New color (use 'null' to clear)
+  --description <desc>       New description (use 'null' to clear)
+
+# Examples
+hassio label-update --label-id important --name "Priority"
+hassio label-update --label-id electronics --color null
+```
+
+#### `label-delete`
+Delete a label.
+
+```bash
+hassio label-delete [options]
+
+Options:
+  --label-id <labelId>       Label ID to delete (required)
+  --yes                      Skip confirmation
+
+# Examples
+hassio label-delete --label-id old_label --yes
+```
+
 ## Config Entry Commands
 
 #### `config-entries`
