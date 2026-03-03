@@ -8,6 +8,36 @@ import type {
 } from "../types/api.js";
 import { HomeAssistantClient } from "./client.js";
 
+export interface CreatePersonData {
+  name: string;
+  user_id?: string;
+  device_trackers?: string[];
+}
+
+export interface UpdatePersonData {
+  name?: string;
+  user_id?: string;
+  device_trackers?: string[];
+}
+
+export interface CreateZoneData {
+  name: string;
+  icon?: string;
+  latitude: number;
+  longitude: number;
+  radius: number;
+  passive?: boolean;
+}
+
+export interface UpdateZoneData {
+  name?: string;
+  icon?: string;
+  latitude?: number;
+  longitude?: number;
+  radius?: number;
+  passive?: boolean;
+}
+
 export class SystemApiClient extends HomeAssistantClient {
   constructor(config: Config) {
     super(config);
@@ -17,8 +47,40 @@ export class SystemApiClient extends HomeAssistantClient {
     return this.request<HaPerson[]>("GET", "/person");
   }
 
+  async getPerson(personId: string): Promise<HaPerson> {
+    return this.request<HaPerson>("GET", `/person/${personId}`);
+  }
+
+  async createPerson(data: CreatePersonData): Promise<HaPerson> {
+    return this.request<HaPerson>("POST", "/person/create", data);
+  }
+
+  async updatePerson(personId: string, data: UpdatePersonData): Promise<HaPerson> {
+    return this.request<HaPerson>("POST", `/person/${personId}/update`, data);
+  }
+
+  async deletePerson(personId: string): Promise<void> {
+    await this.request<void>("DELETE", `/person/${personId}`);
+  }
+
   async getZones(): Promise<HaZone[]> {
     return this.request<HaZone[]>("GET", "/zones");
+  }
+
+  async getZone(zoneId: string): Promise<HaZone> {
+    return this.request<HaZone>("GET", `/zones/${zoneId}`);
+  }
+
+  async createZone(data: CreateZoneData): Promise<HaZone> {
+    return this.request<HaZone>("POST", "/zones/create", data);
+  }
+
+  async updateZone(zoneId: string, data: UpdateZoneData): Promise<HaZone> {
+    return this.request<HaZone>("POST", `/zones/${zoneId}/update`, data);
+  }
+
+  async deleteZone(zoneId: string): Promise<void> {
+    await this.request<void>("DELETE", `/zones/${zoneId}`);
   }
 
   async getAnalytics(): Promise<HaAnalytics> {
@@ -58,5 +120,23 @@ export class SystemApiClient extends HomeAssistantClient {
 
     const arrayBuffer = await response.body.arrayBuffer();
     return Buffer.from(arrayBuffer);
+  }
+
+  async uploadBackup(file: Buffer, filename: string): Promise<HaBackup> {
+    const url = `${this.baseUrl}/api/backups/upload`;
+    const formData = new FormData();
+    const blob = new Blob([file]);
+    formData.append('file', blob, filename);
+
+    const response = await request(url, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${this.token}`,
+      },
+      body: formData as any,
+    });
+
+    const text = await response.body.text();
+    return JSON.parse(text);
   }
 }
