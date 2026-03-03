@@ -190,6 +190,11 @@ Configuration is loaded in priority order (later overrides earlier):
 | `ask <text>` | Shortcut for conversation (ask question) |
 | `tts` | Text-to-Speech operations |
 | `say <message>` | Speak text through media player |
+| `pipeline list` | List all assist pipelines |
+| `pipeline get <id>` | Get specific pipeline details |
+| `pipeline create --name <name>` | Create a new assist pipeline |
+| `pipeline delete <id>` | Delete an assist pipeline |
+| `pipeline set-preferred <id>` | Set the preferred pipeline |
 
 ### Automation Commands
 
@@ -265,11 +270,12 @@ See [LLM Integration Guide](./LLM_INTEGRATION.md) for detailed examples.
 ✅ Zones  
 ✅ Analytics  
 ✅ Backups  
-✅ Automations  
-✅ Scripts  
-✅ Scenes  
-✅ LLM Schema Export  
-✅ Intelligent Action Helper  
+✅ Automations
+✅ Scripts
+✅ Scenes
+✅ LLM Schema Export
+✅ Intelligent Action Helper
+✅ Assist Pipeline Management
 
 ## Project Structure
 
@@ -334,9 +340,9 @@ bun run dev -- <command>
 
 ### Test Coverage
 
-Current test run (2026-03-03): **246 tests passing across 35 test files**.
-Latest coverage run (v8): **47.94% statements / 75.62% branches / 65.60% functions / 47.94% lines**.
-Live E2E result (2026-03-03): **passed** (`bun run test:e2e:live`, using installed `hassio` binary).
+Current test run (2026-03-03): **395 tests passing across 47 test files**.
+Latest coverage run (v8): available via `bun run test:coverage`.
+Live E2E result (2026-03-03): **passed** (`bun run test:e2e:live`, using installed `hassio` binary against HA 2026.1.3).
 
 ## Security
 

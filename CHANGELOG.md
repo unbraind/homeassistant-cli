@@ -2,6 +2,49 @@
 
 All notable changes to the Home Assistant CLI project will be documented in this file.
 
+## [1.2.0] - 2026-03-03
+
+### Added
+
+#### Assist Pipeline Management (`pipeline` command)
+- **`pipeline list`** - List all assist pipelines with preferred pipeline info
+- **`pipeline list --count`** - Return pipeline count only
+- **`pipeline get <id>`** - Get details of a specific pipeline
+- **`pipeline create --name <name> [--language <lang>]`** - Create a new pipeline
+- **`pipeline delete <id>`** - Delete an assist pipeline
+- **`pipeline set-preferred <id>`** - Set the preferred assist pipeline
+- Uses WebSocket `assist_pipeline/pipeline/list|get|create|delete|set_preferred` commands
+
+#### WebSocket-based Registry Access
+- **`registries`** command completely rewritten to use WebSocket instead of REST
+- All registry types now use WebSocket API (required by HA 2024+):
+  - Entity registry: `config/entity_registry/list`
+  - Device registry: `config/device_registry/list`
+  - Area registry: `config/area_registry/list`
+  - Floor registry: `config/floor_registry/list`
+  - Label registry: `config/label_registry/list`
+  - Category registry: `config/category_registry/list`
+- New `WebSocketRegistryClient` class in `src/api/registries.ts`
+- Graceful fallback to state-based area discovery if WebSocket unavailable
+
+### Fixed
+
+#### Test Isolation and Compatibility
+- **`tests/api-base.test.ts`**: Replaced `vi.advanceTimersByTimeAsync` (not available in Bun) with zero-delay retry client approach
+- **`tests/registry-crud.test.ts`**: Changed from `vi.mock("../src/api/client.js")` (caused module contamination) to `vi.mock("undici")` - consistent with all other tests
+- **`tests/media-command.test.ts`**: Fixed `importOriginal` parameter syntax to use `vi.importActual()` instead
+- **`vitest.config.ts`**: Added `pool: "forks"` for proper process-level test isolation
+
+#### Registry Command
+- Fixed: `registries` command was returning 404 errors via REST API (HA 2024+ moved registries to WebSocket-only)
+- Live verification: `registries --areas` returns 10 areas, `--entities` 703, `--devices` 409
+
+### Testing
+- All **395 tests passing** across **47 test files** (up from 238 tests / 35 files)
+- Test coverage maintained and expanded
+- New test files: `api-base.test.ts`, `api-errors.test.ts`, `api-websocket.test.ts`, `automation-command.test.ts`, `extended-command.test.ts`, `formatters-extended.test.ts`, `lists-command.test.ts`, `media-command.test.ts`, `notify-command.test.ts`, `pipeline-command.test.ts`, `search-command.test.ts`, `system-command.test.ts`
+- Live E2E validation against HA 2026.1.3 (http://192.168.1.208:8123): all commands verified
+
 ## [1.1.0] - 2026-03-03
 
 ### Added - Agent Optimization & Production Enhancements

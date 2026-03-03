@@ -74,6 +74,7 @@ import {
   createLabelCreateCommand,
   createLabelUpdateCommand,
   createLabelDeleteCommand,
+  createPipelineCommand,
 } from "./commands/index.js";
 import { createInspectCommand, createSummaryCommand } from "./commands/inspect.js";
 
@@ -193,6 +194,7 @@ program.addCommand(createBackupsCommand());
 // Conversation & Voice
 program.addCommand(createConversationCommand());
 program.addCommand(createAskCommand());
+program.addCommand(createPipelineCommand());
 
 // Search
 program.addCommand(createSearchCommand());

@@ -98,6 +98,48 @@ export function formatEventsTable(events: HaEvent[]): string {
   return [header, separator, ...rows].join("\n");
 }
 
+export function formatTable(data: unknown): string {
+  if (data == null) return String(data);
+  if (typeof data === "string") return data;
+  if (typeof data !== "object") return String(data);
+
+  if (Array.isArray(data)) {
+    if (data.length === 0) return "No data.";
+
+    if (data.every((item) => typeof item === "object" && item !== null && !Array.isArray(item))) {
+      const keys = [...new Set(data.flatMap((item) => Object.keys(item as Record<string, unknown>)))];
+      const rows = data.map((item) => {
+        const rec = item as Record<string, unknown>;
+        return keys.map((k) => {
+          const v = rec[k];
+          return v == null ? "" : typeof v === "object" ? JSON.stringify(v) : String(v);
+        });
+      });
+
+      const widths: number[] = keys.map((k, i) =>
+        Math.max(k.length, ...rows.map((r) => r[i]!.length))
+      );
+
+      const header = keys.map((k, i) => pad(k, widths[i]!)).join(" | ");
+      const separator = widths.map((w) => "-".repeat(w)).join("-+-");
+      const body = rows.map((r) => r.map((c, i) => pad(c, widths[i]!)).join(" | "));
+
+      return [header, separator, ...body].join("\n");
+    }
+
+    return data.map((item) => String(item)).join("\n");
+  }
+
+  const rec = data as Record<string, unknown>;
+  return Object.entries(rec)
+    .map(([k, v]) => {
+      if (v == null) return `${k}: null`;
+      if (typeof v === "object") return `${k}: ${JSON.stringify(v)}`;
+      return `${k}: ${v}`;
+    })
+    .join("\n");
+}
+
 export function formatConfigTable(config: HaConfig): string {
   const lines = [
     `Location: ${config.location_name}`,

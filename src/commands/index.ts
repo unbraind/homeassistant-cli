@@ -23,3 +23,4 @@ export * from "./supervisor.js";
 export * from "./websocket.js";
 export * from "./config-entries.js";
 export * from "./capabilities.js";
+export * from "./pipeline.js";

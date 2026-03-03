@@ -32,7 +32,7 @@ export function formatOutput(
     case "yaml":
       return yaml.formatYaml(data);
     case "table":
-      return typeof data === "string" ? data : json.formatJson(data, false);
+      return table.formatTable(data);
     case "markdown":
       return markdown.formatMarkdown(data);
     default:

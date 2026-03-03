@@ -1,6 +1,6 @@
 {
   "name": "homeassistant-cli",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "Agent-optimized CLI tool for interacting with the Home Assistant API",
   "type": "module",
   "main": "dist/index.js",

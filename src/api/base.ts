@@ -20,6 +20,14 @@ const DEFAULT_RETRY_CONFIG: RetryConfig = {
   retryableStatusCodes: [429, 500, 502, 503, 504],
 };
 
+const CONNECTION_ERROR_PATTERNS = [
+  "ECONNREFUSED",
+  "ENOTFOUND",
+  "ETIMEDOUT",
+  "fetch failed",
+  "ECONNRESET",
+];
+
 export abstract class BaseClient {
   protected readonly baseUrl: string;
   protected readonly token: string;
@@ -50,26 +58,29 @@ export abstract class BaseClient {
     return Math.min(delay, this.retryConfig.maxDelayMs);
   }
 
-  protected async request<T>(
+  private isConnectionError(error: Error): boolean {
+    return CONNECTION_ERROR_PATTERNS.some(p => error.message.includes(p));
+  }
+
+  private isTimeoutError(error: Error): boolean {
+    return error.message.includes("timeout");
+  }
+
+  private async executeWithRetry<T>(
     method: HttpMethod,
     path: string,
-    body?: unknown,
-    skipRetry = false
+    headers: Record<string, string>,
+    body: string | null,
+    processResponse: (statusCode: number, response: { body: { text(): Promise<string>; arrayBuffer(): Promise<ArrayBuffer> } }) => Promise<T>,
+    skipRetry: boolean
   ): Promise<T> {
-    this.assertMethodAllowed(method, path);
     const endpoint = `/api${path}`;
     const url = `${this.baseUrl}${endpoint}`;
-    const headers: Record<string, string> = {
-      Authorization: `Bearer ${this.token}`,
-      "Content-Type": "application/json",
-    };
-
     let lastError: Error | null = null;
     const maxAttempts = skipRetry ? 1 : this.retryConfig.maxRetries + 1;
 
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
       try {
-        const bodyContent = body ? JSON.stringify(body) : null;
         const requestOptions: {
           method: HttpMethod;
           headers: Record<string, string>;
@@ -84,14 +95,14 @@ export abstract class BaseClient {
           headersTimeout: this.timeout,
           bodyTimeout: this.timeout,
         };
-        if (bodyContent) {
-          requestOptions.body = bodyContent;
+        if (body) {
+          requestOptions.body = body;
         }
 
         const response = await request(url, requestOptions);
-        const responseText = await response.body.text();
 
         if (response.statusCode >= 400) {
+          const responseText = await response.body.text();
           const error = new HomeAssistantApiError(
             `API request failed: ${response.statusCode} - ${responseText}`,
             response.statusCode,
@@ -101,32 +112,20 @@ export abstract class BaseClient {
 
           if (this.retryConfig.retryableStatusCodes.includes(response.statusCode) && attempt < maxAttempts - 1) {
             lastError = error;
-            const delay = this.calculateDelay(attempt);
-            await this.sleep(delay);
+            await this.sleep(this.calculateDelay(attempt));
             continue;
           }
 
           throw error;
         }
 
-        if (!responseText || responseText.trim() === "") {
-          return undefined as T;
-        }
-
-        return JSON.parse(responseText) as T;
+        return await processResponse(response.statusCode, response);
       } catch (error) {
         if (error instanceof HomeAssistantApiError) {
           throw error;
         }
 
-        if (
-          error instanceof Error &&
-          (error.message.includes("ECONNREFUSED") ||
-            error.message.includes("ENOTFOUND") ||
-            error.message.includes("ETIMEDOUT") ||
-            error.message.includes("fetch failed") ||
-            error.message.includes("ECONNRESET"))
-        ) {
+        if (error instanceof Error && this.isConnectionError(error)) {
           const connError = new HomeAssistantConnectionError(
             `Failed to connect to Home Assistant at ${this.baseUrl}. ` +
               `Please check the URL and ensure Home Assistant is running.`,
@@ -135,21 +134,19 @@ export abstract class BaseClient {
 
           if (attempt < maxAttempts - 1) {
             lastError = connError;
-            const delay = this.calculateDelay(attempt);
-            await this.sleep(delay);
+            await this.sleep(this.calculateDelay(attempt));
             continue;
           }
 
           throw connError;
         }
 
-        if (error instanceof Error && error.message.includes("timeout")) {
+        if (error instanceof Error && this.isTimeoutError(error)) {
           const timeoutError = new HomeAssistantTimeoutError(this.timeout, endpoint);
-          
+
           if (attempt < maxAttempts - 1) {
             lastError = timeoutError;
-            const delay = this.calculateDelay(attempt);
-            await this.sleep(delay);
+            await this.sleep(this.calculateDelay(attempt));
             continue;
           }
 
@@ -163,49 +160,61 @@ export abstract class BaseClient {
     throw lastError || new Error("Max retries exceeded");
   }
 
-  protected async requestText(path: string, body?: unknown): Promise<string> {
-    this.assertMethodAllowed(body ? "POST" : "GET", path);
-    const endpoint = `/api${path}`;
-    const url = `${this.baseUrl}${endpoint}`;
-    const bodyContent = body ? JSON.stringify(body) : null;
-    const requestOptions: {
-      method: "GET" | "POST";
-      headers: Record<string, string>;
-      body?: string;
-      headersTimeout: number;
-      bodyTimeout: number;
-    } = {
-      method: body ? "POST" : "GET",
-      headers: {
-        Authorization: `Bearer ${this.token}`,
-        "Content-Type": "application/json",
-      },
-      headersTimeout: this.timeout,
-      bodyTimeout: this.timeout,
+  protected async request<T>(
+    method: HttpMethod,
+    path: string,
+    body?: unknown,
+    skipRetry = false
+  ): Promise<T> {
+    this.assertMethodAllowed(method, path);
+    const headers: Record<string, string> = {
+      Authorization: `Bearer ${this.token}`,
+      "Content-Type": "application/json",
     };
-    if (bodyContent) {
-      requestOptions.body = bodyContent;
-    }
+    const bodyContent = body ? JSON.stringify(body) : null;
 
-    const response = await request(url, requestOptions);
+    return this.executeWithRetry<T>(
+      method, path, headers, bodyContent,
+      async (_statusCode, response) => {
+        const responseText = await response.body.text();
+        if (!responseText || responseText.trim() === "") {
+          return undefined as T;
+        }
+        return JSON.parse(responseText) as T;
+      },
+      skipRetry
+    );
+  }
 
-    return response.body.text() as Promise<string>;
+  protected async requestText(path: string, body?: unknown): Promise<string> {
+    const method: HttpMethod = body ? "POST" : "GET";
+    this.assertMethodAllowed(method, path);
+    const headers: Record<string, string> = {
+      Authorization: `Bearer ${this.token}`,
+      "Content-Type": "application/json",
+    };
+    const bodyContent = body ? JSON.stringify(body) : null;
+
+    return this.executeWithRetry<string>(
+      method, path, headers, bodyContent,
+      async (_statusCode, response) => response.body.text(),
+      false
+    );
   }
 
   protected async requestBuffer(path: string): Promise<Buffer> {
     this.assertMethodAllowed("GET", path);
-    const endpoint = `/api${path}`;
-    const url = `${this.baseUrl}${endpoint}`;
-    const response = await request(url, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${this.token}`,
-      },
-      headersTimeout: this.timeout,
-      bodyTimeout: this.timeout,
-    });
+    const headers: Record<string, string> = {
+      Authorization: `Bearer ${this.token}`,
+    };
 
-    const arrayBuffer = await response.body.arrayBuffer();
-    return Buffer.from(arrayBuffer);
+    return this.executeWithRetry<Buffer>(
+      "GET", path, headers, null,
+      async (_statusCode, response) => {
+        const arrayBuffer = await response.body.arrayBuffer();
+        return Buffer.from(arrayBuffer);
+      },
+      false
+    );
   }
 }

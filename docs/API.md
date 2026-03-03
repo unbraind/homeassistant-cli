@@ -517,7 +517,7 @@ hassio batch -d light -s turn_on -e light.living_room,light.kitchen --data '{"br
 ## Registry Commands
 
 #### `registries`
-Query Home Assistant registries.
+Query Home Assistant registries via WebSocket (HA 2024+ requires WebSocket for registry access).
 
 ```bash
 hassio registries [options]
@@ -529,16 +529,20 @@ Options:
   --floors        List floor registry
   --labels        List label registry
   --categories    List category registry
-  -d, --domain <domain>      Filter by domain
-  --device-id <id>           Filter by device ID
-  --area-id <id>             Filter by area ID
+  -d, --domain <domain>      Filter by domain (entities only)
+  --device-id <id>           Filter by device ID (entities only)
+  --area-id <id>             Filter by area ID (devices/entities)
   --count                    Only return count
 
 # Examples
 hassio registries --entities --count                    # Count entities
 hassio registries --devices --area-id area_living_room  # Devices in area
 hassio registries --areas                               # List areas
+hassio registries --entities -d light                   # Light entities only
+hassio registries                                       # All registries
 ```
+
+> **Note**: Uses WebSocket API (`config/entity_registry/list`, etc.). Falls back to state-based area discovery if WebSocket unavailable.
 
 ### Registry CRUD Operations
 
@@ -1029,6 +1033,37 @@ Options:
 # Examples
 hassio say "The front door is open" -p media_player.kitchen
 hassio say "Welcome home" -p media_player.living_room -e tts.cloud
+```
+
+## Assist Pipeline Commands
+
+#### `pipeline`
+Manage Home Assistant Assist voice pipelines via WebSocket.
+
+```bash
+hassio pipeline <subcommand> [options]
+
+Subcommands:
+  list [--count]                      List all pipelines (or count)
+  get <id>                            Get specific pipeline details
+  create --name <name> [options]      Create a new pipeline
+  delete <id>                         Delete a pipeline
+  set-preferred <id>                  Set the preferred pipeline
+
+Create options:
+  --name <name>                Pipeline name (required)
+  --language <lang>            Language code (default: en)
+  --conversation-engine <id>   Conversation engine ID
+  --stt-engine <id>            Speech-to-text engine ID
+  --tts-engine <id>            Text-to-speech engine ID
+
+# Examples
+hassio pipeline list                              # List all pipelines
+hassio pipeline list --count                      # Count pipelines
+hassio pipeline get pipeline-001                  # Get pipeline details
+hassio pipeline create --name "My Pipeline" --language en
+hassio pipeline delete pipeline-001               # Delete a pipeline
+hassio pipeline set-preferred pipeline-001        # Set preferred
 ```
 
 ## Automation Commands
