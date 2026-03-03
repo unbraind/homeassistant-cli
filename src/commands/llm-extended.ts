@@ -5,6 +5,7 @@ import { formatOutput } from "../formatters/index.js";
 import { withExit } from "../utils/exit.js";
 import type { OutputFormat, HaState, HaService } from "../types/index.js";
 import { getServiceNames } from "../utils/services.js";
+import { getOutputContractsPayload } from "./schema-output-contracts.js";
 
 function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
   const config = getConfig(options);
@@ -22,28 +23,34 @@ export function createSchemaCommand(): Command {
     .option("--commands", "Export command schema")
     .option("--services", "Export service schema from HA")
     .option("--entities", "Export entity schema summary")
+    .option("--output-contracts", "Export machine-readable formatter contracts and parser guidance")
     .option("--full", "Export full schema (all of the above)")
     .option("--count", "Only return section counts");
 
   command.action(withExit(async (options: {
     commands?: boolean;
-    services?: boolean;
-    entities?: boolean;
-    full?: boolean;
-    count?: boolean;
-  }, cmd) => {
+      services?: boolean;
+      entities?: boolean;
+      outputContracts?: boolean;
+      full?: boolean;
+      count?: boolean;
+    }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
     const format = getFormat(globalOpts);
 
-    const showAll = !options.commands && !options.services && !options.entities && !options.full;
+    const showAll = !options.commands && !options.services && !options.entities && !options.outputContracts && !options.full;
     const showCommands = options.commands || options.full || showAll;
     const showServices = options.services || options.full;
     const showEntities = options.entities || options.full;
+    const showOutputContracts = options.outputContracts || options.full || showAll;
 
     const result: Record<string, unknown> = {};
 
     if (showCommands) {
       result["commands"] = getCommandSchema();
+    }
+    if (showOutputContracts) {
+      result["output_contracts"] = getOutputContractsPayload();
     }
 
     if (showServices || showEntities) {
@@ -73,10 +80,12 @@ export function createSchemaCommand(): Command {
       const commandsSchema = result["commands"] as { commands?: Record<string, unknown> } | undefined;
       const servicesSchema = result["services"] as Record<string, unknown> | undefined;
       const entityDomains = result["entity_domains"] as Record<string, unknown> | undefined;
+      const outputContracts = result["output_contracts"] as { formats?: Record<string, unknown> } | undefined;
       console.log(formatOutput({
         command_count: commandsSchema?.commands ? Object.keys(commandsSchema.commands).length : 0,
         service_domain_count: servicesSchema ? Object.keys(servicesSchema).length : 0,
         entity_domain_count: entityDomains ? Object.keys(entityDomains).length : 0,
+        output_contract_count: outputContracts?.formats ? Object.keys(outputContracts.formats).length : 0,
         total_entities: result["total_entities"] ?? 0,
       }, format));
       return;

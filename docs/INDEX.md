@@ -204,7 +204,7 @@ Configuration is loaded in priority order (later overrides earlier):
 | Command | Description |
 |---------|-------------|
 | `capabilities` | Probe/cache runtime capability matrix for agent planning |
-| `schema` | Export CLI schema for LLM consumption |
+| `schema` | Export CLI schema and output formatter contracts for LLM consumption |
 | `action <intent>` | Intelligent action helper for LLMs |
 
 ### Extended Commands
@@ -235,6 +235,7 @@ The CLI is optimized for use by LLMs and AI agents:
 - **Agent Profile Output**: `hassio capabilities --agent-profile` returns a stable execution profile (`preferred_output_format`, `capabilities`, `planning.fast_path`, `streaming_ready`)
 - **Agent Context Output**: `hassio capabilities --agent-context` returns combined summary + plan + profile for one-shot agent bootstrap
 - **Private Redaction**: `hassio capabilities --redact-private` masks sensitive instance fields before sharing outputs
+- **Output Contracts**: `hassio schema --output-contracts` exposes parser/media-type/schema guidance per formatter
 
 See [LLM Integration Guide](./LLM_INTEGRATION.md) for detailed examples.
 

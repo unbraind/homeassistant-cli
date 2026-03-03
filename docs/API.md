@@ -1136,12 +1136,14 @@ Options:
   --commands           Export command schema
   --services           Export service schema from HA
   --entities           Export entity schema summary
+  --output-contracts   Export machine-readable formatter contracts
   --full               Export full schema (all of the above)
   --count              Return counts only
 
 # Examples
 hassio schema --commands                     # Get command schema
 hassio schema --services                     # Get service schema
+hassio schema --output-contracts             # Get formatter contracts for parsers/CI
 hassio schema --full                         # Get full schema
 hassio schema --services --count             # Domain/section counts
 ```

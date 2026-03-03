@@ -46,10 +46,17 @@ Use `hassio services --schema --format json` to retrieve normalized service rows
 Use `hassio call-service <domain> <service> --validate-input` to validate payloads against live service definitions before execution.
 Use `--strict-input` to fail on unknown keys (recommended for agent-written automation).
 
-6. Cursor-based pagination (future):
+6. Output contracts for parser-safe automation (implemented):
+Use `hassio schema --output-contracts --format json` to retrieve:
+- per-format `media_type`
+- parseability mode (`strict` or `best_effort`)
+- parser hints
+- baseline schema contracts for CI and agent tooling
+
+7. Cursor-based pagination (future):
 Add `--cursor` + `--limit` for entity-heavy installations so agents can page deterministically.
 
-7. Stable machine error envelope (future):
+8. Stable machine error envelope (future):
 Standardize failures to `{ code, message, hint, retriable }` across all commands and formats.
 
 ## TOON Format Explained

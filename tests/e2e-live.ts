@@ -165,6 +165,14 @@ assert(contextProfile?.["preferred_output_format"] === "toon", "invalid capabili
 
 const schemaCount = parseJson(run(["schema", "--count", "--full", "--format", "json"])) as Record<string, unknown>;
 assert(typeof schemaCount["command_count"] === "number", "invalid schema --count output shape");
+assert(typeof schemaCount["output_contract_count"] === "number", "invalid schema --count output_contract_count shape");
+
+const outputContracts = parseJson(run(["schema", "--output-contracts", "--format", "json"])) as Record<string, unknown>;
+const contracts = outputContracts["output_contracts"] as Record<string, unknown> | undefined;
+const contractFormats = contracts?.["formats"] as Record<string, unknown> | undefined;
+assert(typeof contracts?.["version"] === "string", "invalid schema --output-contracts version shape");
+assert(typeof contractFormats?.["toon"] === "object", "missing toon output contract");
+assert(typeof contractFormats?.["json"] === "object", "missing json output contract");
 
 console.log("Live e2e smoke test passed");
 console.log(`binary:${hasInstalledHassio ? "hassio" : "node dist/cli.js"}`);

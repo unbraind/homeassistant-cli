@@ -81,6 +81,22 @@ describe("LLM Extended Commands", () => {
       expect(result).toContain("light");
       expect(result).toContain("turn_on");
     });
+
+    it("should export formatter output contracts", async () => {
+      const cmd = createSchemaCommand();
+      const output: string[] = [];
+      const originalLog = console.log;
+      console.log = (msg: string) => output.push(msg);
+
+      await cmd.parseAsync(["node", "test", "--output-contracts"], { from: "user" });
+
+      console.log = originalLog;
+      const result = output.join("\n");
+      expect(result).toContain("output_contracts");
+      expect(result).toContain("toon");
+      expect(result).toContain("json-compact");
+      expect(result).toContain("default_for_agents");
+    });
   });
 
   describe("createActionCommand", () => {
