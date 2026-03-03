@@ -4,6 +4,7 @@ import { HomeAssistantClient } from "../api/index.js";
 import { formatOutput } from "../formatters/index.js";
 import { withExit } from "../utils/exit.js";
 import type { OutputFormat } from "../types/index.js";
+import { findServiceDefinition, validateServiceData } from "../utils/services.js";
 
 function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
   const config = getConfig(options);
@@ -22,13 +23,21 @@ export function createCallServiceCommand(): Command {
     .argument("<service>", "Service name (e.g., turn_on, toggle)")
     .option("-e, --entity-id <entity>", "Entity ID to target")
     .option("-d, --data <json>", "JSON data to pass to the service")
+    .option("--validate-input", "Validate payload against service schema before calling", false)
+    .option("--strict-input", "Fail on unknown input fields when validating", false)
     .option("-r, --return-response", "Return response data from service", false);
 
   command.action(
     withExit(async (
       domain: string,
       service: string,
-      options: { entityId?: string; data?: string; returnResponse?: boolean },
+      options: {
+        entityId?: string;
+        data?: string;
+        returnResponse?: boolean;
+        validateInput?: boolean;
+        strictInput?: boolean;
+      },
       cmd
     ) => {
       const globalOpts = cmd.optsWithGlobals();
@@ -42,6 +51,20 @@ export function createCallServiceCommand(): Command {
 
       if (options.entityId) {
         data = { ...data, entity_id: options.entityId };
+      }
+
+      if (options.validateInput || options.strictInput) {
+        const services = await client.getServices();
+        const definition = findServiceDefinition(services, domain, service);
+        const validation = validateServiceData(definition, data, options.strictInput);
+        if (!validation.ok) {
+          throw new Error(
+            `Service input validation failed: ${validation.errors.join("; ")}`
+          );
+        }
+        if (validation.warnings.length > 0) {
+          console.error(`WARN: ${validation.warnings.join("; ")}`);
+        }
       }
 
       const result = await client.callService(

@@ -136,6 +136,12 @@ assert(flatServices.length > 0, "services --flat returned no rows");
 assert(typeof flatServices[0]?.["domain"] === "string", "invalid services --flat domain field");
 assert(typeof flatServices[0]?.["service"] === "string", "invalid services --flat service field");
 
+const serviceSchema = parseJson(run(["services", "--schema", "--format", "json"])) as Record<string, unknown>[];
+assert(Array.isArray(serviceSchema), "invalid services --schema JSON shape");
+assert(serviceSchema.length > 0, "services --schema returned no rows");
+assert(Array.isArray(serviceSchema[0]?.["required_fields"]), "invalid services --schema required_fields");
+assert(Array.isArray(serviceSchema[0]?.["optional_fields"]), "invalid services --schema optional_fields");
+
 const wsConnect = parseJson(run(["websocket", "--connect-test", "--format", "json"])) as Record<string, unknown>;
 assert(wsConnect["connected"] === true, "invalid websocket --connect-test connected field");
 assert(wsConnect["auth"] === "ok", "invalid websocket --connect-test auth field");

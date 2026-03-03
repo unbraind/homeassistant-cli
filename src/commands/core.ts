@@ -4,7 +4,7 @@ import { HomeAssistantClient } from "../api/index.js";
 import { formatOutput, formatServices, formatStates } from "../formatters/index.js";
 import type { OutputFormat } from "../types/index.js";
 import { withExit } from "../utils/exit.js";
-import { flattenServices, getServiceNames } from "../utils/services.js";
+import { flattenServices, getServiceNames, normalizeServices } from "../utils/services.js";
 
 function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
   const config = getConfig(options);
@@ -81,11 +81,13 @@ export function createServicesCommand(): Command {
     .option("-s, --service <name>", "Filter by service name (e.g., turn_on)")
     .option("--count", "Return summary counts only")
     .option("--flat", "Flatten to one row per domain/service (LLM-friendly)")
+    .option("--schema", "Return normalized service schema rows (LLM-friendly)")
     .action(withExit(async (options: {
       domain?: string;
       service?: string;
       count?: boolean;
       flat?: boolean;
+      schema?: boolean;
     }, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
       const client = getClient(globalOpts);
@@ -120,6 +122,11 @@ export function createServicesCommand(): Command {
 
       if (options.flat) {
         console.log(formatOutput(flattenServices(filtered), format));
+        return;
+      }
+
+      if (options.schema) {
+        console.log(formatOutput(normalizeServices(filtered), format));
         return;
       }
 

@@ -86,7 +86,7 @@ Configuration is loaded in priority order (later overrides earlier):
 | `config` | Get Home Assistant configuration |
 | `components` | List loaded components |
 | `events` | List available events |
-| `services` | List/filter service schema (`--domain`, `--service`, `--count`, `--flat`) |
+| `services` | List/filter service schema (`--domain`, `--service`, `--count`, `--flat`, `--schema`) |
 
 ### State Management
 
@@ -229,6 +229,7 @@ The CLI is optimized for use by LLMs and AI agents:
 - **List Management**: Todo lists, shopping list, notifications
 - **Search Fallback**: Automatically uses local entity-state search if `/api/search` is unavailable
 - **Capability Matrix**: `hassio capabilities` exposes per-instance API availability and scope hints
+- **Service Input Validation**: `call-service --validate-input` checks payloads against live HA service definitions before execution
 - **Agent Plan Output**: `hassio capabilities --agent-plan` returns command recommendations and avoid-lists based on live capability probes
 - **Agent Profile Output**: `hassio capabilities --agent-profile` returns a stable execution profile (`preferred_output_format`, `capabilities`, `planning.fast_path`, `streaming_ready`)
 - **Agent Context Output**: `hassio capabilities --agent-context` returns combined summary + plan + profile for one-shot agent bootstrap

@@ -88,6 +88,7 @@ hassio services --domain light
 hassio services --service turn_on
 hassio services --count
 hassio services --flat
+hassio services --schema
 ```
 
 Options:
@@ -95,6 +96,7 @@ Options:
 - `-s, --service <name>`: filter by service name.
 - `--count`: show domain + service counts only.
 - `--flat`: flatten to one row per `{domain, service}` including `field_count` and `has_response`.
+- `--schema`: normalize service definitions into agent-friendly rows with `required_fields` and `optional_fields`.
 
 ## State Management
 
@@ -138,11 +140,14 @@ hassio call-service <domain> <service> [options]
 Options:
   -e, --entity-id <entity>  Target entity
   -d, --data <json>         JSON data
+  --validate-input          Validate payload against live service schema first
+  --strict-input            Treat unknown payload keys as errors (with validation)
   -r, --return-response     Return response data
 
 # Examples
 hassio call-service light turn_on -e light.living_room
 hassio call-service light turn_on -e light.living_room -d '{"brightness":200,"rgb_color":[255,0,0]}'
+hassio call-service light turn_on --validate-input -d '{"entity_id":"light.living_room","brightness":200}'
 hassio call-service weather get_forecasts -e weather.home -d '{"type":"daily"}' -r
 ```
 

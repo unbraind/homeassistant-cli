@@ -105,7 +105,17 @@ function getCommandSchema(): Record<string, unknown> {
       states: { description: "Get entity states", args: ["[entity-id]"] },
       "set-state": { description: "Set entity state", args: ["<entity-id>", "<state>"], options: ["-a, --attributes <json>"] },
       "delete-state": { description: "Delete entity state", args: ["<entity-id>"] },
-      "call-service": { description: "Call a service", args: ["<domain>", "<service>"], options: ["-e, --entity-id <entity>", "-d, --data <json>", "-r, --return-response"] },
+      "call-service": {
+        description: "Call a service",
+        args: ["<domain>", "<service>"],
+        options: [
+          "-e, --entity-id <entity>",
+          "-d, --data <json>",
+          "--validate-input",
+          "--strict-input",
+          "-r, --return-response",
+        ],
+      },
       "fire-event": { description: "Fire an event", args: ["<event-type>"], options: ["-d, --data <json>"] },
       "render-template": { description: "Render Jinja2 template", args: ["<template>"], options: ["-f, --file <path>"] },
       "check-config": { description: "Validate HA configuration" },

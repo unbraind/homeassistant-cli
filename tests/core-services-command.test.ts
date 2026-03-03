@@ -104,4 +104,36 @@ describe("core services command", () => {
     expect(result).toContain("turn_on");
     expect(result).toContain("1");
   });
+
+  it("supports --schema normalized output", async () => {
+    mockRequest.mockResolvedValueOnce(
+      mockResponse([
+        {
+          domain: "light",
+          services: {
+            turn_on: {
+              target: {},
+              fields: {
+                entity_id: { required: true },
+                brightness: { required: false },
+              },
+            },
+          },
+        },
+      ])
+    );
+
+    const cmd = createServicesCommand();
+    const output: string[] = [];
+    const originalLog = console.log;
+    console.log = (msg: string) => output.push(msg);
+
+    await cmd.parseAsync(["node", "test", "--schema"], { from: "user" });
+    console.log = originalLog;
+
+    const result = output.join("\n");
+    expect(result).toContain("required_fields");
+    expect(result).toContain("accepts_target");
+    expect(result).toContain("entity_id");
+  });
 });

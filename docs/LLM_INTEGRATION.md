@@ -36,10 +36,20 @@ Use `hassio capabilities --agent-context --redact-private --format json` to get:
 - `profile` (stable execution profile)
 - `suggested_sequence` (starter command chain)
 
-5. Cursor-based pagination (future):
+5. Service schema normalization + preflight validation (implemented):
+Use `hassio services --schema --format json` to retrieve normalized service rows:
+- `required_fields`
+- `optional_fields`
+- `accepts_target`
+- `has_response`
+
+Use `hassio call-service <domain> <service> --validate-input` to validate payloads against live service definitions before execution.
+Use `--strict-input` to fail on unknown keys (recommended for agent-written automation).
+
+6. Cursor-based pagination (future):
 Add `--cursor` + `--limit` for entity-heavy installations so agents can page deterministically.
 
-6. Stable machine error envelope (future):
+7. Stable machine error envelope (future):
 Standardize failures to `{ code, message, hint, retriable }` across all commands and formats.
 
 ## TOON Format Explained
