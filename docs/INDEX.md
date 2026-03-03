@@ -11,6 +11,7 @@ Complete documentation for the Home Assistant CLI tool.
 - [API Research (2026-03-02)](./API_RESEARCH_2026-03-02.md) - Updated live validation and diagnostics improvements
 - [API Research (2026-03-03)](./API_RESEARCH_2026-03-03.md) - Live capability matrix, agent-context output, and private-field redaction
 - [Live E2E Testing](./E2E_LIVE_TESTING.md) - End-to-end smoke testing against a real Home Assistant instance
+- [Enhancement Summary (2026-03-03)](./ENHANCEMENT_SUMMARY_2026-03-03.md) - Comprehensive verification and enhancement report
 
 ## Quick Start
 
