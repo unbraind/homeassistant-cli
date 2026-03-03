@@ -10,6 +10,7 @@ Complete documentation for the Home Assistant CLI tool.
 - [API Research (2026-03-01)](./API_RESEARCH_2026-03-01.md) - Live endpoint findings and CLI enhancements
 - [API Research (2026-03-02)](./API_RESEARCH_2026-03-02.md) - Updated live validation and diagnostics improvements
 - [API Research (2026-03-03)](./API_RESEARCH_2026-03-03.md) - Live capability matrix, agent-context output, and private-field redaction
+- [Production Gaps (2026-03-03)](./PRODUCTION_GAPS_2026-03-03.md) - Remaining work for higher coverage and broader endpoint parity
 - [Live E2E Testing](./E2E_LIVE_TESTING.md) - End-to-end smoke testing against a real Home Assistant instance
 - [Enhancement Summary (2026-03-03)](./ENHANCEMENT_SUMMARY_2026-03-03.md) - Comprehensive verification and enhancement report
 
@@ -318,7 +319,7 @@ bun install
 bun run build
 
 # Run tests
-bun test
+bun run test
 
 # Run tests with coverage
 bun run test:coverage
@@ -332,8 +333,9 @@ bun run dev -- <command>
 
 ### Test Coverage
 
-Current test run: **181 tests passing across 19 test files**.
-Latest coverage run (v8): **35.70% statements / 81.81% branches / 68.72% functions / 35.70% lines**.
+Current test run (2026-03-03): **246 tests passing across 35 test files**.
+Latest coverage run (v8): **47.94% statements / 75.62% branches / 65.60% functions / 47.94% lines**.
+Live E2E result (2026-03-03): **passed** (`bun run test:e2e:live`, using installed `hassio` binary).
 
 ## Security
 
