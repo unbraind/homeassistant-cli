@@ -128,6 +128,7 @@ hassio settings doctor
 # Probe runtime capabilities for this specific HA instance
 hassio capabilities --refresh
 hassio capabilities --count
+hassio capabilities --api-matrix
 hassio capabilities --agent-plan
 hassio capabilities --agent-profile
 hassio capabilities --agent-context --redact-private --format json

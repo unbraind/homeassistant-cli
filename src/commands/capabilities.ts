@@ -11,6 +11,7 @@ import { buildAgentProfile } from "./capabilities-agent-profile.js";
 import { countSummary } from "./capabilities-summary.js";
 import { buildAgentContext } from "./capabilities-agent-context.js";
 import { redactCapabilitiesReport } from "./capabilities-redact.js";
+import { probeApiMatrix } from "./capabilities-api-matrix.js";
 import {
   buildHints,
   countServices,
@@ -175,6 +176,7 @@ export function createCapabilitiesCommand(): Command {
     .option("--agent-plan", "Return agent/LLM command recommendations from capability report")
     .option("--agent-profile", "Return structured execution profile for agents/LLMs")
     .option("--agent-context", "Return merged agent payload (summary + plan + profile)")
+    .option("--api-matrix", "Run live endpoint capability matrix probe with CLI command mapping")
     .option("--redact-private", "Redact private instance fields (for sharing outputs safely)")
     .action(withExit(async (options: {
       refresh?: boolean;
@@ -183,6 +185,7 @@ export function createCapabilitiesCommand(): Command {
       agentPlan?: boolean;
       agentProfile?: boolean;
       agentContext?: boolean;
+      apiMatrix?: boolean;
       redactPrivate?: boolean;
     }, cmd) => {
       const configPath = getConfigPathFromCommand(cmd as Command);
@@ -198,6 +201,21 @@ export function createCapabilitiesCommand(): Command {
       const runtimeData = getData(configPath);
       const cached = getCachedReport(runtimeData);
       const wantsAgentPayload = options.agentPlan || options.agentProfile || options.agentContext;
+
+      if (options.apiMatrix) {
+        const matrix = await probeApiMatrix(config);
+        if (options.count) {
+          console.log(formatOutput({
+            source: matrix.source,
+            checked_at: matrix.checked_at,
+            summary: matrix.summary,
+            recommendation_count: matrix.recommendations.length,
+          }, config.outputFormat));
+          return;
+        }
+        console.log(formatOutput(matrix, config.outputFormat));
+        return;
+      }
 
       const useCache = !options.refresh && cached && cacheIsFresh(cached, ttlSeconds);
       if (useCache) {

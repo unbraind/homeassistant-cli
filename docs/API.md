@@ -288,6 +288,7 @@ Probe and cache runtime capabilities for this Home Assistant instance.
 hassio capabilities
 hassio capabilities --count
 hassio capabilities --refresh
+hassio capabilities --api-matrix
 hassio capabilities --agent-plan
 hassio capabilities --agent-profile
 hassio capabilities --agent-context
@@ -298,6 +299,7 @@ Options:
 - `--refresh`: ignore cache and re-probe live endpoints.
 - `--ttl <seconds>`: cache freshness window (default `900`).
 - `--count`: compact capability/count summary for quick health checks.
+- `--api-matrix`: run a live endpoint probe matrix with `cli_commands` mapping and recommendations.
 - `--agent-plan`: emit recommended and avoided commands for orchestration.
 - `--agent-profile`: emit a structured execution profile with preferred output mode, fast-path command set, and streaming readiness.
 - `--agent-context`: emit one merged payload (`summary`, `plan`, `profile`, `suggested_sequence`).
@@ -1142,6 +1144,7 @@ Options:
   --refresh            Ignore cache and run live probes
   --ttl <seconds>      Cache TTL in seconds (default: 900)
   --count              Return summary counts only
+  --api-matrix         Run a live API endpoint matrix probe with CLI mapping
   --agent-plan         Return an agent/LLM command plan derived from capabilities
   --agent-profile      Return a stable execution profile for agents/LLMs
   --agent-context      Return one merged payload (summary + plan + profile)
@@ -1151,6 +1154,7 @@ Options:
 hassio capabilities
 hassio capabilities --refresh
 hassio capabilities --count
+hassio capabilities --api-matrix
 hassio capabilities --agent-plan
 hassio capabilities --agent-profile
 hassio capabilities --agent-context

@@ -1,6 +1,6 @@
 {
   "name": "homeassistant-cli",
-  "version": "2026.3.4",
+  "version": "2026.3.4-2",
   "description": "Agent-optimized CLI tool for interacting with the Home Assistant API",
   "type": "module",
   "main": "dist/index.js",
@@ -13,6 +13,7 @@
     "dev": "bun src/cli.ts",
     "test": "vitest run",
     "test:e2e:live": "tsx tests/e2e-live.ts",
+    "test:e2e:help": "vitest run tests/help-surface-e2e.test.ts",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "lint": "eslint src tests",

@@ -2,9 +2,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createCapabilitiesCommand } from "../src/commands/capabilities.js";
 
 const exitSpy = vi.spyOn(process, "exit").mockImplementation(() => undefined as never);
-const { getDataMock, saveDataMock } = vi.hoisted(() => ({
+const { getDataMock, saveDataMock, probeApiMatrixMock } = vi.hoisted(() => ({
   getDataMock: vi.fn(),
   saveDataMock: vi.fn(),
+  probeApiMatrixMock: vi.fn(),
 }));
 
 vi.mock("../src/config/index.js", () => ({
@@ -63,11 +64,23 @@ vi.mock("../src/api/supervisor.js", () => ({
   },
 }));
 
+vi.mock("../src/commands/capabilities-api-matrix.js", () => ({
+  probeApiMatrix: probeApiMatrixMock,
+}));
+
 describe("capabilities command", () => {
   beforeEach(() => {
     exitSpy.mockClear();
     getDataMock.mockReset();
     saveDataMock.mockReset();
+    probeApiMatrixMock.mockReset();
+    probeApiMatrixMock.mockResolvedValue({
+      source: "live",
+      checked_at: "2026-03-04T00:00:00.000Z",
+      summary: { total: 3, available: 2, unavailable: 1, unauthorized: 0, error: 0 },
+      entries: [],
+      recommendations: ["Use --format toon for token-efficient agent workflows."],
+    });
   });
 
   afterEach(() => {
@@ -291,5 +304,49 @@ describe("capabilities command", () => {
 
     const parsed = JSON.parse(output.join("\n")) as { report: { api: { location: string } } };
     expect(parsed.report.api.location).toBe("[REDACTED]");
+  });
+
+  it("returns live API matrix payload when requested", async () => {
+    getDataMock.mockReturnValue({});
+
+    const cmd = createCapabilitiesCommand();
+    const output: string[] = [];
+    const originalLog = console.log;
+    console.log = (msg: string) => output.push(msg);
+
+    await cmd.parseAsync(["node", "test", "--api-matrix"], { from: "user" });
+    console.log = originalLog;
+
+    const parsed = JSON.parse(output.join("\n")) as {
+      source: string;
+      summary: { total: number };
+      recommendations: string[];
+    };
+    expect(parsed.source).toBe("live");
+    expect(parsed.summary.total).toBe(3);
+    expect(parsed.recommendations.length).toBe(1);
+    expect(probeApiMatrixMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("returns API matrix summary in count mode", async () => {
+    getDataMock.mockReturnValue({});
+
+    const cmd = createCapabilitiesCommand();
+    const output: string[] = [];
+    const originalLog = console.log;
+    console.log = (msg: string) => output.push(msg);
+
+    await cmd.parseAsync(["node", "test", "--api-matrix", "--count"], { from: "user" });
+    console.log = originalLog;
+
+    const parsed = JSON.parse(output.join("\n")) as {
+      source: string;
+      recommendation_count: number;
+      summary: { available: number };
+    };
+    expect(parsed.source).toBe("live");
+    expect(parsed.summary.available).toBe(2);
+    expect(parsed.recommendation_count).toBe(1);
+    expect(probeApiMatrixMock).toHaveBeenCalledTimes(1);
   });
 });

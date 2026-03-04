@@ -163,6 +163,11 @@ assert(typeof contextSummary?.["entity_count"] === "number", "invalid capabiliti
 const contextProfile = capabilitiesContext["profile"] as Record<string, unknown> | undefined;
 assert(contextProfile?.["preferred_output_format"] === "toon", "invalid capabilities --agent-context profile shape");
 
+const apiMatrixCount = parseJson(run(["capabilities", "--api-matrix", "--count", "--format", "json"])) as Record<string, unknown>;
+const apiMatrixSummary = apiMatrixCount["summary"] as Record<string, unknown> | undefined;
+assert(typeof apiMatrixSummary?.["total"] === "number", "invalid capabilities --api-matrix --count summary shape");
+assert(typeof apiMatrixCount["recommendation_count"] === "number", "invalid capabilities --api-matrix --count recommendation_count shape");
+
 const schemaCount = parseJson(run(["schema", "--count", "--full", "--format", "json"])) as Record<string, unknown>;
 assert(typeof schemaCount["command_count"] === "number", "invalid schema --count output shape");
 assert(typeof schemaCount["output_contract_count"] === "number", "invalid schema --count output_contract_count shape");

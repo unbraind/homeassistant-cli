@@ -172,6 +172,9 @@ Understand what features are available:
 # Get capabilities
 hassio capabilities --refresh
 
+# Live endpoint + command mapping matrix
+hassio capabilities --api-matrix
+
 # Agent execution plan
 hassio capabilities --agent-plan
 
