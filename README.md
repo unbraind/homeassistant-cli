@@ -27,7 +27,7 @@ Agent-optimized CLI tool for Home Assistant with token-efficient output. Default
 - **WebSocket API Coverage** - Generic `websocket`/`ws` passthrough plus `websocket status` metadata
 - **Supervisor API Coverage** - Generic `supervisor api` passthrough + common shortcuts (addons, host, logs)
 - **Full TypeScript Support** - Complete type safety throughout
-- **Comprehensive Testing** - 746 tests passing, 92.06% coverage
+- **Comprehensive Testing** - 975 tests passing, 95.93% statement coverage
 
 ## Installation
 
@@ -59,6 +59,7 @@ bun run build
 ```bash
 # Run the setup wizard
 hassio settings wizard
+hassio settings setup   # alias
 
 # Agent/CI setup (no prompts)
 hassio settings wizard --non-interactive \
@@ -136,6 +137,21 @@ hassio settings reset --force
 ```
 
 If `gh` is installed and authenticated, `hassio settings ...` commands will ask you to star `unbraind/homeassistant-cli` until it is starred.
+
+## Global Flags and Help
+
+Global flags are supported for all commands:
+
+```bash
+-u, --url <url>
+-t, --token <token>
+-f, --format <format>
+    --timeout <ms>
+    --read-only
+-c, --config <path>
+```
+
+Use `hassio <command> --help` to see command-specific options plus the global flag section.
 
 ## Getting Your Token
 

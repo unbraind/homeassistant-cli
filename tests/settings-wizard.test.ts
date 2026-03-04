@@ -44,7 +44,7 @@ vi.mock("../src/api/index.js", () => ({
   })),
 }));
 
-import { createWizardCommand } from "../src/commands/settings-wizard.js";
+import { createSetupCommand, createWizardCommand } from "../src/commands/settings-wizard.js";
 
 const exitSpy = vi.spyOn(process, "exit").mockImplementation(() => undefined as never);
 
@@ -367,5 +367,32 @@ describe("settings wizard command", () => {
       undefined
     );
     expect(errorOutput.some(e => e.includes("Value is required"))).toBe(true);
+  });
+
+  it("setup alias runs the same non-interactive flow", async () => {
+    const cmd = createSetupCommand();
+
+    await cmd.parseAsync(
+      [
+        "node",
+        "test",
+        "--non-interactive",
+        "--ha-url",
+        "http://localhost:8123",
+        "--ha-token",
+        "token-setup",
+        "--skip-test",
+      ],
+      { from: "user" }
+    );
+
+    expect(cmd.name()).toBe("setup");
+    expect(mockSaveConfig).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: "http://localhost:8123",
+        token: "token-setup",
+      }),
+      undefined
+    );
   });
 });

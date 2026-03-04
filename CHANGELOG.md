@@ -2,6 +2,21 @@
 
 All notable changes to the Home Assistant CLI project will be documented in this file.
 
+## [2026.3.4] - 2026-03-04
+
+### Improvements
+- Added global flags help section to all command `--help` outputs for consistent discoverability.
+- Added `hassio settings setup` as an alias of `hassio settings wizard` for clearer onboarding.
+- Reduced `src/cli.ts` to stay under the 300-line source file limit.
+
+### Testing
+- Added coverage for global help output (`tests/global-help.test.ts`).
+- Added setup alias behavior coverage in settings wizard tests.
+- Full suite passing: 977 tests across 98 test files.
+
+### Documentation
+- Updated `README.md`, `docs/API.md`, and `docs/INDEX.md` for global flags help behavior and setup alias usage.
+
 ## [2026.3.4-57] - 2026-03-04
 
 ### Breaking Changes
@@ -236,7 +251,7 @@ All notable changes to the Home Assistant CLI project will be documented in this
 - All **395 tests passing** across **47 test files** (up from 238 tests / 35 files)
 - Test coverage maintained and expanded
 - New test files: `api-base.test.ts`, `api-errors.test.ts`, `api-websocket.test.ts`, `automation-command.test.ts`, `extended-command.test.ts`, `formatters-extended.test.ts`, `lists-command.test.ts`, `media-command.test.ts`, `notify-command.test.ts`, `pipeline-command.test.ts`, `search-command.test.ts`, `system-command.test.ts`
-- Live E2E validation against HA 2026.1.3 (http://192.168.1.208:8123): all commands verified
+- Live E2E validation against HA 2026.1.3 instance: all commands verified
 
 ## [1.1.0] - 2026-03-03
 

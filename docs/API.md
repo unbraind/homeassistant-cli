@@ -6,7 +6,7 @@ This document provides a comprehensive reference for Home Assistant CLI commands
 
 ## Global Options
 
-These options can be used with any command:
+These options can be used with any command and are shown in `hassio <command> --help`:
 
 | Option | Environment Variable | Description | Default |
 |--------|---------------------|-------------|---------|
@@ -273,6 +273,7 @@ Interactive setup wizard.
 
 ```bash
 hassio settings wizard [--skip-test]
+hassio settings setup [--skip-test]
 hassio settings wizard --non-interactive --ha-url <url> --ha-token <token> [options]
 ```
 

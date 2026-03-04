@@ -1,3 +1,4 @@
+import type { Command } from "commander";
 import { getConfig } from "../config/index.js";
 import type { Config, OutputFormat } from "../types/index.js";
 
@@ -35,4 +36,33 @@ export function parseLimit(value?: string): number | undefined {
   }
 
   return limit;
+}
+
+const GLOBAL_FLAGS_HELP = `
+Global flags:
+  -u, --url <url>          Home Assistant URL (or HASSIO_URL)
+  -t, --token <token>      Long-lived access token (or HASSIO_TOKEN)
+  -f, --format <format>    Output format: toon|json|json-compact|yaml|table|markdown
+      --timeout <ms>       Request timeout in milliseconds (or HASSIO_TIMEOUT)
+      --read-only          Block all state-changing API calls (or HASSIO_READONLY=true)
+  -c, --config <path>      Path to settings file (or HASSIO_CONFIG)
+`;
+
+export function attachGlobalFlagsHelp(program: Command): void {
+  const stack: Command[] = [program];
+
+  while (stack.length > 0) {
+    const command = stack.pop();
+    if (!command) {
+      continue;
+    }
+
+    if (command.parent) {
+      command.addHelpText("after", GLOBAL_FLAGS_HELP);
+    }
+
+    for (const child of command.commands) {
+      stack.push(child);
+    }
+  }
 }

@@ -17,6 +17,7 @@ bun install -g homeassistant-cli
 
 # Setup (interactive wizard)
 hassio settings wizard
+hassio settings setup   # alias
 
 # Or initialize from environment variables
 hassio settings init
@@ -52,12 +53,15 @@ Configuration is loaded in priority order (later overrides earlier):
 | Command | Description |
 |---------|-------------|
 | `settings wizard` | Interactive setup wizard |
+| `settings setup` | Alias for `settings wizard` |
 | `settings init` | Initialize from environment variables |
 | `settings validate` | Validate configuration and test connection |
 | `settings doctor` | Agent-friendly diagnostics (API, output formats, supervisor probe) |
 | `settings set` | Set configuration options |
 | `settings get` | View current configuration (token masked, runtime summary by default) |
 | `settings path` | Show settings/auth/data file paths |
+
+All commands support global flags (`--url`, `--token`, `--format`, `--timeout`, `--read-only`, `--config`) and show them via `hassio <command> --help`.
 
 `settings` commands may prompt to star `https://github.com/unbraind/homeassistant-cli` when `gh` is installed, authenticated, and the repo is not starred yet.
 

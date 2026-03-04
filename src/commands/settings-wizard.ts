@@ -140,3 +140,9 @@ export function createWizardCommand(): Command {
       }
     }));
 }
+
+export function createSetupCommand(): Command {
+  return createWizardCommand()
+    .name("setup")
+    .description("Setup wizard alias for first-time configuration");
+}
