@@ -26,7 +26,7 @@ Agent-optimized CLI tool for Home Assistant with token-efficient output. Default
 - **WebSocket API Coverage** - Generic `websocket`/`ws` passthrough plus `websocket status` metadata
 - **Supervisor API Coverage** - Generic `supervisor api` passthrough + common shortcuts (addons, host, logs)
 - **Full TypeScript Support** - Complete type safety throughout
-- **Comprehensive Testing** - High test coverage
+- **Comprehensive Testing** - 654 tests passing, 90.64% coverage
 
 ## Installation
 

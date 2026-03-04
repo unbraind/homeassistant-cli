@@ -75,6 +75,8 @@ import {
   createLabelUpdateCommand,
   createLabelDeleteCommand,
   createPipelineCommand,
+  createTimersCommand,
+  createInputCommand,
 } from "./commands/index.js";
 import { createInspectCommand, createSummaryCommand } from "./commands/inspect.js";
 
@@ -83,7 +85,7 @@ const program = new Command();
 program
   .name("hassio")
   .description("Agent-optimized CLI tool for interacting with the Home Assistant API")
-  .version("1.0.0")
+  .version("2026.3.4-48")
   .addOption(
     new Option("-u, --url <url>", "Home Assistant URL")
       .env("HASSIO_URL")
@@ -226,6 +228,10 @@ program.addCommand(createSupervisorCommand());
 program.addCommand(createWebsocketCommand());
 program.addCommand(createConfigEntriesCommand());
 program.addCommand(createCapabilitiesCommand());
+
+// Timers & Input Helpers
+program.addCommand(createTimersCommand());
+program.addCommand(createInputCommand());
 
 program.parseAsync(process.argv).catch((err) => {
   console.error("Error:", err.message);

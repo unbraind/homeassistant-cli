@@ -2,6 +2,48 @@
 
 All notable changes to the Home Assistant CLI project will be documented in this file.
 
+## [2026.3.4-48] - 2026-03-04
+
+### Added
+
+#### Timer Management (`timers` command)
+- **`timers`** / **`timers list`** - List all HA timers with state info
+- **`timers list --count`** - Return timer count only
+- **`timers start <entity-id>`** - Start a timer (with optional `--duration`)
+- **`timers pause <entity-id>`** - Pause a running timer
+- **`timers cancel <entity-id>`** - Cancel a timer
+- **`timers finish <entity-id>`** - Finish a timer immediately
+- **`timers change <entity-id>`** - Change timer duration (with `--duration`)
+- **`timers reload`** - Reload timer configuration
+
+#### Input Helper Management (`input` command)
+- **`input boolean list [--count]`** - List input_boolean helpers
+- **`input boolean turn-on/turn-off/toggle <entity-id>`** - Control input booleans
+- **`input text list [--count]`** - List input_text helpers
+- **`input text set <entity-id> <value>`** - Set input text value
+- **`input number list [--count]`** - List input_number helpers
+- **`input number set <entity-id> <value>`** - Set input number value
+- **`input select list [--count]`** - List input_select helpers
+- **`input select set <entity-id> <option>`** - Set input select option
+- **`input datetime list [--count]`** - List input_datetime helpers
+- **`input datetime set <entity-id> <value>`** - Set input datetime value
+- **`input button list [--count]`** - List input_button helpers
+- **`input button press <entity-id>`** - Press an input button
+
+### Testing
+- **654 tests passing** across **69 test files** — coverage: **90.64%** (up from 395 tests / 47 files / ~77%)
+- New test files covering previously low-coverage paths:
+  - `core-commands.test.ts`, `history-command.test.ts`, `services-extended.test.ts`
+  - `system-extended.test.ts`, `cli-config-extended.test.ts`, `api-system-extended.test.ts`
+  - `api-conversation-extended.test.ts`, `formatters-index.test.ts`, `llm-entities-extended.test.ts`
+  - `supervisor-extended.test.ts`, `api-registries-ws.test.ts`, `api-search-extended.test.ts`
+  - `github-star-extended.test.ts`, `capabilities-matrix.test.ts`
+- All critical code paths now covered: formatters, API clients, CLI commands, WebSocket registry, capability matrix
+
+### Documentation
+- Updated `docs/INDEX.md` with `timers` and `input` command tables
+- Updated test statistics throughout docs to reflect current coverage
+
 ## [1.2.0] - 2026-03-03
 
 ### Added

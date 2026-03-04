@@ -151,6 +151,8 @@ Configuration is loaded in priority order (later overrides earlier):
 | `zones` | List zones (from entity states) |
 | `analytics` | System analytics |
 | `backups` | Backup management (via service calls) |
+| `timers` | Manage HA timers (list, start, pause, cancel, finish, change, reload) |
+| `input` | Manage input helpers (boolean, text, number, select, datetime, button) |
 
 ### Config Entry Commands
 
@@ -340,7 +342,7 @@ bun run dev -- <command>
 
 ### Test Coverage
 
-Current test run (2026-03-03): **395 tests passing across 47 test files**.
+Current test run (2026-03-04): **654 tests passing across 69 test files** — coverage: **90.64%**.
 Latest coverage run (v8): available via `bun run test:coverage`.
 Live E2E result (2026-03-03): **passed** (`bun run test:e2e:live`, using installed `hassio` binary against HA 2026.1.3).
 
