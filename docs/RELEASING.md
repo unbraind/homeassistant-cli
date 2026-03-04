@@ -2,11 +2,15 @@
 
 This project uses date-based versions with daily sequence:
 
-- First release of a day: `YYYY.MM.DD`
-- Additional releases that same day: `YYYY.MM.DD-N`
+- First release of a day: `YYYY.M.D`
+- Additional releases that same day: `YYYY.M.D-N`
 
-- `YYYY.MM.DD`: release date
+- `YYYY.M.D`: release date (no zero-padding; SemVer compatible)
 - `N`: release sequence number for that calendar day on `master` (2, 3, 4, ...)
+
+Examples:
+- First release on March 4, 2026: `2026.3.4`
+- Third release on March 4, 2026: `2026.3.4-3`
 
 ## Pre-Release State
 
@@ -47,6 +51,7 @@ Equivalent npm commands are available (`npm run release:prepare`, `npm run relea
 - `Publish to npm` (`.github/workflows/publish.yml`)
   - manual trigger only
   - supports dry-run and real publish
+  - enforces `master` branch, valid `YYYY.M.D[-N]` version, and non-existing release tag
   - publishes with npm provenance
   - creates GitHub release notes for non-dry-run
 - `Commit Quality` (`.github/workflows/commit-quality.yml`)
@@ -73,7 +78,7 @@ Compatibility is enforced in automation:
 3. Trigger `Release Dry Run` workflow.
 4. Run `bun run release:prepare` and commit:
    ```text
-   chore(release): vYYYY.MM.DD[-N]
+   chore(release): vYYYY.M.D[-N]
    ```
 5. Push `master`.
 6. Trigger `Publish to npm` with `dry_run=true`.
@@ -84,7 +89,7 @@ Compatibility is enforced in automation:
 Before pushing release commits:
 
 ```bash
-git diff --cached | rg -n "eyJhbGci|HASSIO_TOKEN\s*=|token.*:"
+git diff --cached -U0 | rg -n '^\+.*(ghp_[A-Za-z0-9]{36}|github_pat_[A-Za-z0-9_]{40,}|npm_[A-Za-z0-9]{36}|eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9._-]{10,}\.[A-Za-z0-9._-]{10,}|-----BEGIN (RSA|OPENSSH|EC|DSA|PGP) PRIVATE KEY-----|_authToken\s*=)'
 bun run security:scan:history
 bun run commit:audit
 ```

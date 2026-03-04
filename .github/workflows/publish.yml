@@ -9,6 +9,10 @@ on:
         type: boolean
         default: true
 
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
+
 permissions:
   contents: write
   id-token: write
@@ -21,6 +25,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Ensure workflow is running on master
+        run: |
+          if [[ "${GITHUB_REF}" != "refs/heads/master" ]]; then
+            echo "ERROR: publish workflow must run from refs/heads/master (current: ${GITHUB_REF})."
+            exit 1
+          fi
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -39,6 +52,22 @@ jobs:
       - name: Read package version
         id: version
         run: echo "value=$(node -p 'require(\"./package.json\").version')" >> "$GITHUB_OUTPUT"
+
+      - name: Validate version format (YYYY.M.D[-N])
+        run: |
+          VERSION="${{ steps.version.outputs.value }}"
+          node -e "const v=process.env.VERSION; const ok=/^[1-9][0-9]{3}\\.(1[0-2]|[1-9])\\.(3[01]|[12][0-9]|[1-9])(?:-([2-9]|[1-9][0-9]+))?$/.test(v); if(!ok){console.error('ERROR: invalid version format: '+v); process.exit(1);}"
+        env:
+          VERSION: ${{ steps.version.outputs.value }}
+
+      - name: Ensure git tag does not already exist
+        run: |
+          TAG="v${{ steps.version.outputs.value }}"
+          git fetch --tags --force
+          if git rev-parse -q --verify "refs/tags/${TAG}" >/dev/null; then
+            echo "ERROR: Tag ${TAG} already exists."
+            exit 1
+          fi
 
       - name: Verify release quality gates
         run: bun run release:verify

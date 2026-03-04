@@ -1337,7 +1337,7 @@ Returns a consolidated summary including:
 
 ## New Domain Commands
 
-Commands for HA domains added in v2026.03.04-51.
+Commands for these HA domains were added during the final pre-release hardening cycle.
 
 ### `counter`
 Manage Home Assistant counter helper entities.

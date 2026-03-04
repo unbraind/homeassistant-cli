@@ -5,6 +5,10 @@ on:
     branches: [master]
   pull_request:
 
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
@@ -103,6 +107,7 @@ jobs:
           name: coverage-report
           path: coverage/
           if-no-files-found: error
+          retention-days: 14
 
   package-smoke:
     runs-on: ubuntu-latest

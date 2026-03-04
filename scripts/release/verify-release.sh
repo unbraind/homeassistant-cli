@@ -23,7 +23,7 @@ echo "[6/9] Coverage"
 bun run test:coverage
 
 echo "[7/9] Security sanity scan (staged changes)"
-if git diff --cached | rg -n "eyJhbGci|HASSIO_TOKEN\\s*=|token.*:"; then
+if git diff --cached -U0 | rg -n '^\+.*(ghp_[A-Za-z0-9]{36}|github_pat_[A-Za-z0-9_]{40,}|npm_[A-Za-z0-9]{36}|eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9._-]{10,}\.[A-Za-z0-9._-]{10,}|-----BEGIN (RSA|OPENSSH|EC|DSA|PGP) PRIVATE KEY-----|_authToken\s*=)'; then
   echo "ERROR: possible secret pattern found in staged changes"
   exit 1
 fi

@@ -71,7 +71,7 @@ Prefer focused commits with imperative, professional summaries. Avoid placeholde
 Quick check:
 
 ```bash
-git diff --cached | rg -n "eyJhbGci|HASSIO_TOKEN\s*=|token.*:"
+git diff --cached -U0 | rg -n '^\+.*(ghp_[A-Za-z0-9]{36}|github_pat_[A-Za-z0-9_]{40,}|npm_[A-Za-z0-9]{36}|eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9._-]{10,}\.[A-Za-z0-9._-]{10,}|-----BEGIN (RSA|OPENSSH|EC|DSA|PGP) PRIVATE KEY-----|_authToken\s*=)'
 bun run security:scan:history
 ```
 

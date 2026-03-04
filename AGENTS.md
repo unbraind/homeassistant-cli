@@ -9,11 +9,11 @@ This file contains guidance for AI agents, LLMs, and human contributors working 
 This project uses **date-based versioning** with a daily release sequence:
 
 ```
-YYYY.MM.DD[-N]
+YYYY.M.D[-N]
 ```
 
 Where:
-- `YYYY.MM.DD` — The ISO date of the release commit (e.g. `2026.3.3`)
+- `YYYY.M.D` — The ISO date of the release commit (no zero-padding; e.g. `2026.3.3`)
 - `N` — The release sequence number for that same day on `master` (`2`, `3`, `4`, ...)
 - If it is the first release of the day, omit `-N` entirely.
 
@@ -22,16 +22,16 @@ Where:
 | Releases that day (including release commit) | Release date | Version         |
 |-----------------------------------------------|--------------|-----------------|
 | 1                                             | 2025.12.31   | `2025.12.31`    |
-| 2                                             | 2026.3.3   | `2026.3.3-2`  |
-| 5                                             | 2026.3.3   | `2026.3.3-5`  |
+| 2                                             | 2026.3.3     | `2026.3.3-2`    |
+| 5                                             | 2026.3.3     | `2026.3.3-5`    |
 
 ### How to compute the version before committing
 
 ```bash
 # Count release commits already made today on master, then add one for the new release commit
 TODAY=$(date +%Y-%m-%d)
-DATE=$(date +%Y.%m.%d)
-TODAY_RELEASE_COUNT=$(git log --since="${TODAY} 00:00:00" --until="${TODAY} 23:59:59" --pretty=format:'%s' HEAD | rg -n "^chore\\(release\\): v${DATE}(-[0-9]+)?$" | wc -l | tr -d ' ')
+DATE=$(node -e 'const d=new Date(); console.log(`${d.getFullYear()}.${d.getMonth()+1}.${d.getDate()}`)')
+TODAY_RELEASE_COUNT=$( (git log --first-parent --since="${TODAY} 00:00:00" --until="${TODAY} 23:59:59" --pretty=format:'%s' HEAD | rg -n "^chore\\(release\\): v${DATE}(-[0-9]+)?$" || true) | wc -l | tr -d ' ')
 NEXT=$((TODAY_RELEASE_COUNT + 1))
 if [ "$NEXT" -eq 1 ]; then
   echo "Version: ${DATE}"
@@ -147,7 +147,7 @@ All secrets live **outside** the repository in `~/.hassio-cli/`:
 **Never commit tokens or credentials.** Before every push, scan:
 
 ```bash
-git diff --cached | grep -E "eyJhbGci|HASSIO_TOKEN\s*=|token.*:"
+git diff --cached -U0 | rg -n '^\+.*(ghp_[A-Za-z0-9]{36}|github_pat_[A-Za-z0-9_]{40,}|npm_[A-Za-z0-9]{36}|eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9._-]{10,}\.[A-Za-z0-9._-]{10,}|-----BEGIN (RSA|OPENSSH|EC|DSA|PGP) PRIVATE KEY-----|_authToken\s*=)'
 ```
 
 Environment variables override file config:
@@ -277,10 +277,10 @@ Before tagging a release:
 - [ ] `bun run typecheck` — no type errors
 - [ ] `bun run test` — all tests pass
 - [ ] `bun run test:coverage` — ≥90% statement coverage
-- [ ] Scan for secrets: `git diff HEAD~1 | grep -E "eyJhbGci|token"`
+- [ ] Scan for secrets: `git diff HEAD~1 -U0 | rg -n '^\+.*(ghp_|github_pat_|npm_|_authToken|-----BEGIN (RSA|OPENSSH|EC|DSA|PGP) PRIVATE KEY-----|eyJ[A-Za-z0-9_-]{10,}\.)'`
 - [ ] Update `CHANGELOG.md` with release notes
-- [ ] Update version in `package.json` and `src/cli.ts` to `YYYY.MM.DD[-N]`
-- [ ] Commit with message: `chore(release): vYYYY.MM.DD[-N]`
+- [ ] Update version in `package.json` and `src/cli.ts` to `YYYY.M.D[-N]`
+- [ ] Commit with message: `chore(release): vYYYY.M.D[-N]`
 - [ ] Push to `master`
 
 ---

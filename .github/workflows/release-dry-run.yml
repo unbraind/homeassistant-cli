@@ -3,6 +3,10 @@ name: Release Dry Run
 on:
   workflow_dispatch:
 
+concurrency:
+  group: release-dry-run-${{ github.ref }}
+  cancel-in-progress: false
+
 permissions:
   contents: read
 
@@ -13,6 +17,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2

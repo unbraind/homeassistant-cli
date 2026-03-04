@@ -34,6 +34,7 @@ This document captures the internal development history before the first public 
 Current visible `master` history has been reviewed for professionalism and consistency.
 
 - Style baseline: Conventional Commits (`feat`, `fix`, `docs`, `test`, `refactor`, `chore`).
+- Legacy noisy pre-release summary artifacts were removed from git history so commits contain only project-relevant files.
 - Historical backup refs from previous rewrites (`refs/original/*`) were removed locally to prevent duplicate/legacy history from appearing in audits.
 
 ## Security Audit Status
@@ -47,4 +48,4 @@ A repository history scan was performed for high-confidence secret signatures (G
 
 - `CHANGELOG.md` remains intentionally minimal until first public release.
 - Pre-release implementation history and hardening details are documented here instead of changelog entries.
-- Versioning is date-based with daily sequence: `YYYY.MM.DD` for first release of day, then `YYYY.MM.DD-N`.
+- Versioning is date-based with daily sequence: `YYYY.M.D` for first release of day, then `YYYY.M.D-N`.
