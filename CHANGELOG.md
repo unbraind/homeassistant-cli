@@ -2,18 +2,20 @@
 
 All notable changes to the Home Assistant CLI project will be documented in this file.
 
-## [2026.3.4-2] - 2026-03-04
+## [2026.3.4-3] - 2026-03-04
 
 ### Added
 - Added `hassio capabilities --api-matrix` to run a live endpoint probe matrix with mapped CLI commands and recommendations.
 - Added recursive CLI help-surface verification test (`tests/help-surface-e2e.test.ts`) to assert `--help` works across command paths and includes global flags.
 - Added `test:e2e:help` script for targeted help-surface validation.
+- Added `hassio ws target` helpers (`extract`, `services`, `related`) to wrap Home Assistant WebSocket target APIs for entity/device/area/floor/label resolution.
 
 ### Improved
 - Extended live E2E smoke coverage to validate `capabilities --api-matrix --count` output shape.
+- Extended live E2E smoke coverage for `ws target extract` and `ws target services`.
 
 ### Documentation
-- Updated `README.md`, `docs/API.md`, `docs/INDEX.md`, and `docs/AGENT_OPTIMIZATION.md` with `--api-matrix` guidance.
+- Updated `README.md`, `docs/API.md`, `docs/INDEX.md`, and `docs/AGENT_OPTIMIZATION.md` with WebSocket target helper guidance.
 
 ## [2026.3.4] - 2026-03-04
 

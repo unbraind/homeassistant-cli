@@ -436,6 +436,15 @@ hassio websocket status
 # Generic WS command
 hassio ws call -T get_states
 
+# Target helper: resolve target selectors to concrete IDs
+hassio ws target extract --area-id kitchen
+
+# Target helper: get available services for a target
+hassio ws target services --entity-id light.kitchen
+
+# Target helper: resolve and fetch related registries
+hassio ws target related --label-id lighting
+
 # Capture WS events for 10s
 hassio ws subscribe --event-type state_changed --wait-ms 10000 --max-events 20
 

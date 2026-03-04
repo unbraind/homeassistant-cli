@@ -206,7 +206,7 @@ All commands support global flags (`--url`, `--token`, `--format`, `--timeout`, 
 
 | Command | Description |
 |---------|-------------|
-| `websocket` / `ws` | Full WebSocket API passthrough (`status`, `call`, `subscribe`, `--connect-test`) |
+| `websocket` / `ws` | Full WebSocket API passthrough (`status`, `call`, `subscribe`, `target`, `--connect-test`) |
 | `supervisor api` | Raw Supervisor proxy passthrough |
 | `supervisor addons` | Add-on list/info/start/stop/restart |
 | `supervisor host` | Host reboot/shutdown |

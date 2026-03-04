@@ -185,6 +185,16 @@ hassio capabilities --agent-profile
 hassio capabilities --agent-context --redact-private
 ```
 
+### 7. WebSocket Target Resolution
+
+Use WebSocket target helpers to convert abstract targets into concrete IDs and discover callable services:
+
+```bash
+hassio ws target extract --area-id kitchen
+hassio ws target services --entity-id light.kitchen
+hassio ws target related --label-id lighting
+```
+
 ## Best Practices for Agents
 
 ### 1. Use Appropriate Output Format

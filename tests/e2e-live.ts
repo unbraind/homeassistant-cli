@@ -1,7 +1,7 @@
 import { mkdtempSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { spawnSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { parse as parseYaml } from "yaml";
 
 const required = ["HASSIO_URL", "HASSIO_TOKEN"] as const;
@@ -16,27 +16,26 @@ const repoRoot = process.cwd();
 const cliPath = join(repoRoot, "dist", "cli.js");
 const configDir = mkdtempSync(join(tmpdir(), "hassio-cli-e2e-"));
 const configPath = join(configDir, "settings.json");
-const hasInstalledHassio = spawnSync("which", ["hassio"], { encoding: "utf8" }).status === 0;
 
 function run(args: string[], env?: NodeJS.ProcessEnv): string {
-  const command = hasInstalledHassio ? "hassio" : "node";
-  const commandArgs = hasInstalledHassio
-    ? ["--config", configPath, ...args]
-    : [cliPath, "--config", configPath, ...args];
-  const result = spawnSync(command, commandArgs, {
-    cwd: repoRoot,
-    env: { ...process.env, ...env },
-    encoding: "utf8",
-  });
-
-  if (result.status !== 0) {
+  try {
+    return execFileSync("node", [cliPath, "--config", configPath, ...args], {
+      cwd: repoRoot,
+      env: { ...process.env, ...env },
+      encoding: "utf8",
+      maxBuffer: 20 * 1024 * 1024,
+    }).trim();
+  } catch (error) {
+    const typed = error as {
+      status?: number;
+      stdout?: string;
+      stderr?: string;
+    };
     console.error(`Command failed: hassio ${args.join(" ")}`);
-    if (result.stdout) console.error(result.stdout);
-    if (result.stderr) console.error(result.stderr);
-    process.exit(result.status ?? 1);
+    if (typed.stdout) console.error(typed.stdout);
+    if (typed.stderr) console.error(typed.stderr);
+    process.exit(typed.status ?? 1);
   }
-
-  return result.stdout.trim();
 }
 
 function parseJson(out: string): unknown {
@@ -129,6 +128,7 @@ assert(typeof components["components_count"] === "number", "invalid components -
 
 const states = parseJson(run(["states", "--count", "--format", "json"])) as Record<string, unknown>;
 assert(typeof states["states_count"] === "number", "invalid states --count JSON shape");
+const sampleEntityId = "sensor.does_not_exist";
 
 const flatServices = parseJson(run(["services", "--flat", "--format", "json"])) as Record<string, unknown>[];
 assert(Array.isArray(flatServices), "invalid services --flat JSON shape");
@@ -145,6 +145,17 @@ assert(Array.isArray(serviceSchema[0]?.["optional_fields"]), "invalid services -
 const wsConnect = parseJson(run(["websocket", "--connect-test", "--format", "json"])) as Record<string, unknown>;
 assert(wsConnect["connected"] === true, "invalid websocket --connect-test connected field");
 assert(wsConnect["auth"] === "ok", "invalid websocket --connect-test auth field");
+const wsTargetExtract = parseJson(
+  run(["ws", "target", "extract", "--entity-id", sampleEntityId, "--format", "json"])
+) as Record<string, unknown>;
+assert(typeof wsTargetExtract["target"] === "object", "invalid ws target extract target shape");
+assert(typeof wsTargetExtract["result"] === "object", "invalid ws target extract result shape");
+
+const wsTargetServices = parseJson(
+  run(["ws", "target", "services", "--entity-id", sampleEntityId, "--format", "json"])
+) as Record<string, unknown>;
+assert(typeof wsTargetServices["target"] === "object", "invalid ws target services target shape");
+assert(typeof wsTargetServices["result"] === "object", "invalid ws target services result shape");
 
 const doctor = parseJson(run(["settings", "doctor", "--format", "json"])) as Record<string, unknown>;
 assert(typeof doctor["healthy"] === "boolean", "invalid settings doctor JSON shape");
@@ -180,5 +191,5 @@ assert(typeof contractFormats?.["toon"] === "object", "missing toon output contr
 assert(typeof contractFormats?.["json"] === "object", "missing json output contract");
 
 console.log("Live e2e smoke test passed");
-console.log(`binary:${hasInstalledHassio ? "hassio" : "node dist/cli.js"}`);
+console.log("binary:node dist/cli.js");
 console.log(`config:${configPath}`);
