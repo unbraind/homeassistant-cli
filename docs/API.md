@@ -1307,6 +1307,112 @@ Returns a consolidated summary including:
 - Entity statistics (total, domains, unavailable count)
 - Top domains by entity count
 
+## New Domain Commands
+
+Commands for HA domains added in v2026.03.04-51.
+
+### `counter`
+Manage Home Assistant counter helper entities.
+
+```bash
+hassio counter [options]
+
+Options:
+  -e, --entity-id <entityId>  Target counter entity (for --set)
+  --increment <entityId>      Increment a counter by its configured step
+  --decrement <entityId>      Decrement a counter by its configured step
+  --reset <entityId>          Reset a counter to its initial value
+  --set <value>               Set counter to specific value (use with --entity-id)
+  --count                     Only return count of counter entities
+  -s, --state <state>         Filter by state value
+
+# Examples
+hassio counter                                      # List all counters
+hassio counter --count                              # Count counters
+hassio counter --increment counter.daily_steps      # Increment
+hassio counter --decrement counter.daily_steps      # Decrement
+hassio counter --reset counter.daily_steps          # Reset to initial
+hassio counter --entity-id counter.steps --set 10  # Set to value 10
+```
+
+### `siren`
+Control Home Assistant siren entities.
+
+```bash
+hassio siren [options]
+
+Options:
+  --on <entityId>             Turn on a siren
+  --off <entityId>            Turn off a siren
+  --toggle <entityId>         Toggle a siren
+  -e, --entity-id <entityId>  Target entity (use with --tone/--volume/--duration)
+  --tone <tone>               Set the siren tone
+  --volume <0-1>              Set volume level (0.0-1.0)
+  --duration <seconds>        Duration in seconds
+  --count                     Only return count of siren entities
+  -s, --state <state>         Filter by state
+
+# Examples
+hassio siren                                        # List all sirens
+hassio siren --on siren.alarm                       # Turn on
+hassio siren --on siren.alarm --tone fire           # Turn on with specific tone
+hassio siren --on siren.alarm --volume 0.8          # Turn on with volume
+hassio siren --off siren.alarm                      # Turn off
+hassio siren --toggle siren.doorbell                # Toggle
+```
+
+### `ai-task`
+Interact with Home Assistant AI Task entities (OpenAI, local models, etc.).
+
+```bash
+hassio ai-task [options]
+
+Options:
+  -e, --entity-id <entityId>        Target AI task entity (e.g. ai_task.openai_ai_task)
+  --generate-data <instructions>    Generate structured data using AI
+  --generate-image <instructions>   Generate an image using AI
+  --task-name <name>                Task name identifier (default: cli_task)
+  --structure <json>                JSON schema structure for generate-data output
+  --count                           Only return count of AI task entities
+  -s, --state <state>               Filter by state
+
+# Examples
+hassio ai-task                                          # List all AI task entities
+hassio ai-task --count                                  # Count AI tasks
+hassio ai-task -e ai_task.openai_ai_task \\
+  --generate-data "List 3 automation ideas" \\
+  --task-name "automation_ideas"                        # Generate structured data
+hassio ai-task -e ai_task.openai_ai_task \\
+  --generate-image "Smart home dashboard" \\
+  --task-name "dashboard_image"                         # Generate image
+hassio ai-task -e ai_task.openai_ai_task \\
+  --generate-data "Get room info" \\
+  --structure '{"room":{"type":"string"}}'              # With JSON schema
+```
+
+**Note:** AI task services require `?return_response` (handled automatically). Server errors
+may indicate missing API keys or model configuration issues.
+
+### `event`
+Browse Home Assistant event entities (read-only). Not to be confused with `events`
+which lists HA event bus event types.
+
+```bash
+hassio event [options]
+
+Options:
+  -e, --entity-id <entityId>  Get a specific event entity
+  --class <deviceClass>       Filter by device class (e.g. button, motion, doorbell)
+  --count                     Only return count of event entities
+  -s, --state <state>         Filter by state (ISO timestamp of last event)
+
+# Examples
+hassio event                             # List all event entities
+hassio event --count                     # Count event entities
+hassio event --class button              # List button-class events
+hassio event -e event.hue_button_1      # Get specific event entity
+```
+
 ## Exit Codes
 
 | Code | Meaning |
