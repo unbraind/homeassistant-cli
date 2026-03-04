@@ -1,5 +1,5 @@
 {
-  "name": "homeassistant-cli",
+  "name": "@unbraind/homeassistant-cli",
   "version": "2026.3.4",
   "description": "Agent-optimized CLI tool for interacting with the Home Assistant API",
   "type": "module",

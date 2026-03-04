@@ -1,6 +1,6 @@
 # Home Assistant CLI
 
-[![npm version](https://img.shields.io/npm/v/homeassistant-cli.svg)](https://www.npmjs.com/package/homeassistant-cli)
+[![npm version](https://img.shields.io/npm/v/%40unbraind%2Fhomeassistant-cli.svg)](https://www.npmjs.com/package/@unbraind/homeassistant-cli)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![CI](https://github.com/unbraind/homeassistant-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/unbraind/homeassistant-cli/actions/workflows/ci.yml)
 
@@ -44,25 +44,25 @@ Public release `v2026.3.4` was published on March 4, 2026. See:
 ### Using Bun (Recommended)
 
 ```bash
-bun install -g homeassistant-cli
+bun install -g @unbraind/homeassistant-cli
 ```
 
 ### Using npx (No Installation)
 
 ```bash
-npx homeassistant-cli --help
+npx @unbraind/homeassistant-cli --help
 ```
 
 ### Using npm (Global Installation)
 
 ```bash
-npm install -g homeassistant-cli
+npm install -g @unbraind/homeassistant-cli
 ```
 
 ### Using bunx (No Installation)
 
 ```bash
-bunx homeassistant-cli --help
+bunx @unbraind/homeassistant-cli --help
 ```
 
 ### From Source

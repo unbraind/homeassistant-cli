@@ -23,10 +23,10 @@ Current public release: **v2026.3.4** (2026-03-04).
 
 ```bash
 # Install (Bun)
-bun install -g homeassistant-cli
+bun install -g @unbraind/homeassistant-cli
 
 # Install (npm)
-npm install -g homeassistant-cli
+npm install -g @unbraind/homeassistant-cli
 
 # Setup (interactive wizard)
 hassio settings wizard
