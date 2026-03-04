@@ -117,7 +117,7 @@ const program = new Command();
 program
   .name("hassio")
   .description("Agent-optimized CLI tool for interacting with the Home Assistant API")
-  .version("2026.3.4-3")
+  .version("2026.3.4-4")
   .addOption(
     new Option("-u, --url <url>", "Home Assistant URL")
       .env("HASSIO_URL")
