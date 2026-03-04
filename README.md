@@ -8,10 +8,10 @@ CLI for Home Assistant with token-efficient output and broad API coverage. Defau
 
 ## Project Status
 
-Pre-release hardening is complete and the first public release is pending. See:
+Public release `v2026.3.4` was published on March 4, 2026. See:
 
-- [CHANGELOG](./CHANGELOG.md) for current unreleased scope
-- [Project History](./docs/PROJECT_HISTORY.md) for pre-release implementation history
+- [CHANGELOG](./CHANGELOG.md) for released and unreleased changes
+- [Project History](./docs/PROJECT_HISTORY.md) for pre-release implementation history and audits
 - [Releasing Guide](./docs/RELEASING.md) for publish workflow and CI/CD gates
 - Versioning scheme: `YYYY.M.D` for first release of the day, then `YYYY.M.D-N`
 

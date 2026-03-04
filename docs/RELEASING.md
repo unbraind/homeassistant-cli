@@ -12,9 +12,12 @@ Examples:
 - First release on March 4, 2026: `2026.3.4`
 - Third release on March 4, 2026: `2026.3.4-3`
 
-## Pre-Release State
+## Current Release State
 
-As of now, there is no public release yet. `CHANGELOG.md` is intentionally reset to `Unreleased` and pre-release history is kept in `docs/PROJECT_HISTORY.md`.
+Latest public release: `v2026.3.4` (2026-03-04).
+
+- `CHANGELOG.md` contains release notes and current unreleased changes.
+- `docs/PROJECT_HISTORY.md` preserves pre-release implementation history and audit notes.
 
 ## Local Release Workflow
 
@@ -71,18 +74,17 @@ Compatibility is enforced in automation:
   - `npx --no-install hassio --help`
   - `bunx hassio --help`
 
-## Recommended First Public Release Steps
+## Standard Release Steps
 
-1. Merge all pending hardening PRs.
-2. Run `bun run release:verify` locally.
-3. Trigger `Release Dry Run` workflow.
-4. Run `bun run release:prepare` and commit:
+1. Run `bun run release:verify` locally.
+2. Trigger `Release Dry Run` workflow.
+3. Run `bun run release:prepare` and commit:
    ```text
    chore(release): vYYYY.M.D[-N]
    ```
-5. Push `master`.
-6. Trigger `Publish to npm` with `dry_run=true`.
-7. Trigger `Publish to npm` with `dry_run=false`.
+4. Push `master`.
+5. Trigger `Publish to npm` with `dry_run=true`.
+6. Trigger `Publish to npm` with `dry_run=false`.
 
 ## Secret Hygiene
 
