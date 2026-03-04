@@ -61,6 +61,8 @@ import {
   createRestartCommand,
   createStopCommand,
   createNotifyCommand,
+  createSystemLogCommand,
+  createFrontendCommand,
   createSupervisorCommand,
   createWebsocketCommand,
   createConfigEntriesCommand,
@@ -113,7 +115,7 @@ const program = new Command();
 program
   .name("hassio")
   .description("Agent-optimized CLI tool for interacting with the Home Assistant API")
-  .version("2026.3.4-54")
+  .version("2026.3.4-56")
   .addOption(
     new Option("-u, --url <url>", "Home Assistant URL")
       .env("HASSIO_URL")
@@ -252,6 +254,8 @@ program.addCommand(createInfoCommand());
 program.addCommand(createRestartCommand());
 program.addCommand(createStopCommand());
 program.addCommand(createNotifyCommand());
+program.addCommand(createSystemLogCommand());
+program.addCommand(createFrontendCommand());
 program.addCommand(createSupervisorCommand());
 program.addCommand(createWebsocketCommand());
 program.addCommand(createConfigEntriesCommand());

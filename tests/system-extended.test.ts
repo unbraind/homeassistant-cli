@@ -184,4 +184,26 @@ describe("backups command", () => {
     expect(body.password).toBe("secret123");
     expect(body.name).toBe("secure-backup");
   });
+
+  it("rethrows non-404 error on backup create", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse({ message: "Internal Server Error" }, 500));
+
+    const cmd = createBackupsCommand();
+    await expect(
+      captureLog(() =>
+        cmd.parseAsync(["node", "test", "--create", "my-backup"], { from: "user" })
+      )
+    ).rejects.toThrow();
+  });
+
+  it("rethrows non-404 error on backup restore", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse({ message: "Internal Server Error" }, 500));
+
+    const cmd = createBackupsCommand();
+    await expect(
+      captureLog(() =>
+        cmd.parseAsync(["node", "test", "--restore", "backup-slug-123"], { from: "user" })
+      )
+    ).rejects.toThrow();
+  });
 });

@@ -90,4 +90,44 @@ describe("settings doctor command", () => {
     expect(supervisor["available"]).toBe(false);
     expect(supervisor["code"]).toBe("unauthorized");
   });
+
+  it("reports supervisor as available when addons API succeeds", async () => {
+    mockRequest
+      .mockResolvedValueOnce(mockJson({ message: "API running." }))
+      .mockResolvedValueOnce(mockJson({ version: "2026.1.3", location_name: "Home" }))
+      .mockResolvedValueOnce(mockJson([]))
+      .mockResolvedValueOnce(mockJson({ result: "ok", data: { addons: [{ name: "SSH", slug: "ssh" }] } }));
+
+    const cmd = createDoctorCommand();
+    const output: string[] = [];
+    const originalLog = console.log;
+    console.log = (msg: string) => output.push(msg);
+
+    await cmd.parseAsync([], { from: "user" });
+
+    console.log = originalLog;
+    const parsed = JSON.parse(output.join("\n")) as Record<string, unknown>;
+    const supervisor = parsed["supervisor"] as Record<string, unknown>;
+    expect(supervisor["available"]).toBe(true);
+    expect(supervisor["addon_count"]).toBe(1);
+  });
+
+  it("skips format validation when --skip-format-validation is passed", async () => {
+    mockRequest
+      .mockResolvedValueOnce(mockJson({ message: "API running." }))
+      .mockResolvedValueOnce(mockJson({ version: "2026.1.3", location_name: "Home" }))
+      .mockResolvedValueOnce(mockJson([]));
+
+    const cmd = createDoctorCommand();
+    const output: string[] = [];
+    const originalLog = console.log;
+    console.log = (msg: string) => output.push(msg);
+
+    await cmd.parseAsync(["--skip-supervisor", "--skip-format-validation"], { from: "user" });
+
+    console.log = originalLog;
+    const parsed = JSON.parse(output.join("\n")) as Record<string, unknown>;
+    const outputValidation = parsed["output_validation"] as Record<string, unknown>;
+    expect(outputValidation["skipped"]).toBe(true);
+  });
 });

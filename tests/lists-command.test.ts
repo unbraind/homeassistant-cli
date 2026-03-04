@@ -233,6 +233,20 @@ describe("shopping-list command", () => {
 
     expect(result).toContain("cleared");
   });
+
+  it("updates a shopping item", async () => {
+    mockRequest.mockResolvedValueOnce(
+      mockResponse({ id: "2", name: "Updated Milk", complete: true })
+    );
+
+    const cmd = createShoppingListCommand();
+    const result = await captureLog(() =>
+      cmd.parseAsync(["node", "test", "--update", "2", "--name", "Updated Milk", "--complete"], { from: "user" })
+    );
+
+    expect(result).toContain("updated");
+    expect(result).toContain("Updated Milk");
+  });
 });
 
 describe("notifications command", () => {
@@ -308,5 +322,52 @@ describe("notifications command", () => {
 
     expect(result).toContain("all");
     expect(result).toContain("dismissed");
+  });
+
+  it("falls back to states when notifications endpoint returns 404", async () => {
+    mockRequest
+      .mockResolvedValueOnce(mockResponse({ message: "Not found" }, 404))
+      .mockResolvedValueOnce(
+        mockResponse([
+          {
+            entity_id: "persistent_notification.info",
+            state: "notifying",
+            attributes: { message: "System update available", title: "Update" },
+            last_changed: "2024-01-01T00:00:00Z",
+            last_updated: "2024-01-01T00:00:00Z",
+          },
+          { entity_id: "light.kitchen", state: "on", attributes: {}, last_changed: "", last_updated: "" },
+        ])
+      );
+
+    const cmd = createNotificationsCommand();
+    const result = await captureLog(() => cmd.parseAsync(["node", "test"], { from: "user" }));
+
+    expect(result).toContain("System update available");
+    expect(result).not.toContain("light.kitchen");
+  });
+
+  it("falls back to states with --count when 404", async () => {
+    mockRequest
+      .mockResolvedValueOnce(mockResponse({ message: "Not found" }, 404))
+      .mockResolvedValueOnce(
+        mockResponse([
+          {
+            entity_id: "persistent_notification.info",
+            state: "notifying",
+            attributes: { message: "Update", title: "Update" },
+            last_changed: "",
+            last_updated: "",
+          },
+        ])
+      );
+
+    const cmd = createNotificationsCommand();
+    const result = await captureLog(() =>
+      cmd.parseAsync(["node", "test", "--count"], { from: "user" })
+    );
+
+    expect(result).toContain("notifications_count");
+    expect(result).toContain("1");
   });
 });

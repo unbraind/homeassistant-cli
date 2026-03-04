@@ -187,3 +187,87 @@ export function createBackupsCommand(): Command {
 
   return command;
 }
+
+export function createSystemLogCommand(): Command {
+  const command = new Command("system-log")
+    .description("Manage the Home Assistant system log (clear or write entries)")
+    .option("--clear", "Clear all system log entries")
+    .option("--write <message>", "Write a custom entry to the system log")
+    .option("--level <level>", "Log level for written entry (debug, info, warning, error, critical)", "warning")
+    .option("--logger <logger>", "Logger name for written entry", "custom");
+
+  command.action(withExit(async (options: {
+    clear?: boolean;
+    write?: string;
+    level?: string;
+    logger?: string;
+  }, cmd) => {
+    const globalOpts = cmd.optsWithGlobals();
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new HomeAssistantClient(config);
+
+    if (options.clear) {
+      await client.callService("system_log", "clear", {});
+      console.log(formatOutput({ success: true, message: "System log cleared" }, format));
+      return;
+    }
+
+    if (options.write) {
+      const data: Record<string, string> = {
+        message: options.write,
+        level: options.level ?? "warning",
+        logger: options.logger ?? "custom",
+      };
+      await client.callService("system_log", "write", data);
+      console.log(formatOutput({ success: true, written: options.write, level: data["level"] }, format));
+      return;
+    }
+
+    // Default: show available actions
+    console.log(formatOutput({
+      message: "Use --clear to clear the log or --write <message> to write an entry",
+      available_levels: ["debug", "info", "warning", "error", "critical"],
+    }, format));
+  }));
+
+  return command;
+}
+
+export function createFrontendCommand(): Command {
+  const command = new Command("frontend")
+    .description("Manage the Home Assistant frontend (themes)")
+    .option("--reload-themes", "Reload all custom themes from configuration")
+    .option("--set-theme <name>", "Set the active theme by name")
+    .option("--dark-theme <name>", "Set the dark mode theme (use with --set-theme)");
+
+  command.action(withExit(async (options: {
+    reloadThemes?: boolean;
+    setTheme?: string;
+    darkTheme?: string;
+  }, cmd) => {
+    const globalOpts = cmd.optsWithGlobals();
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new HomeAssistantClient(config);
+
+    if (options.reloadThemes) {
+      await client.callService("frontend", "reload_themes", {});
+      console.log(formatOutput({ success: true, message: "Frontend themes reloaded" }, format));
+      return;
+    }
+
+    if (options.setTheme) {
+      const data: Record<string, string> = { name: options.setTheme };
+      if (options.darkTheme) data["name_dark"] = options.darkTheme;
+      await client.callService("frontend", "set_theme", data);
+      console.log(formatOutput({ success: true, theme: options.setTheme, dark_theme: options.darkTheme }, format));
+      return;
+    }
+
+    console.log(formatOutput({
+      message: "Use --reload-themes to reload themes or --set-theme <name> to activate a theme",
+      hint: "Use 'hassio services --domain frontend' to list all available themes",
+    }, format));
+  }));
+
+  return command;
+}

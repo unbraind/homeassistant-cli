@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { createPersonsCommand, createZonesCommand } from "../src/commands/system.js";
+import { createPersonsCommand, createZonesCommand, createSystemLogCommand, createFrontendCommand } from "../src/commands/system.js";
 
 const exitSpy = vi.spyOn(process, "exit").mockImplementation(() => undefined as never);
 
@@ -167,5 +167,112 @@ describe("zones command", () => {
 
     expect(result).toContain("zones_count");
     expect(result).toContain("2");
+  });
+});
+
+describe("system-log command", () => {
+  beforeEach(() => {
+    mockRequest.mockReset();
+    exitSpy.mockClear();
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("clears the system log", async () => {
+    mockRequest.mockResolvedValue(mockResponse(null));
+    const cmd = createSystemLogCommand();
+    const result = await captureLog(() =>
+      cmd.parseAsync(["node", "test", "--clear"], { from: "user" })
+    );
+    expect(result).toContain("success");
+    expect(mockRequest).toHaveBeenCalledWith(
+      expect.stringContaining("/api/services/system_log/clear"),
+      expect.any(Object)
+    );
+  });
+
+  it("writes a custom log entry with defaults", async () => {
+    mockRequest.mockResolvedValue(mockResponse(null));
+    const cmd = createSystemLogCommand();
+    const result = await captureLog(() =>
+      cmd.parseAsync(["node", "test", "--write", "Test message"], { from: "user" })
+    );
+    expect(result).toContain("Test message");
+    expect(result).toContain("warning");
+  });
+
+  it("writes a custom log entry with custom level and logger", async () => {
+    mockRequest.mockResolvedValue(mockResponse(null));
+    const cmd = createSystemLogCommand();
+    const result = await captureLog(() =>
+      cmd.parseAsync(["node", "test", "--write", "Debug msg", "--level", "debug", "--logger", "my.logger"], { from: "user" })
+    );
+    expect(result).toContain("debug");
+  });
+
+  it("shows help when no action specified", async () => {
+    const cmd = createSystemLogCommand();
+    const result = await captureLog(() =>
+      cmd.parseAsync(["node", "test"], { from: "user" })
+    );
+    expect(result).toContain("--clear");
+    expect(result).toContain("available_levels");
+  });
+});
+
+describe("frontend command", () => {
+  beforeEach(() => {
+    mockRequest.mockReset();
+    exitSpy.mockClear();
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("reloads themes", async () => {
+    mockRequest.mockResolvedValue(mockResponse(null));
+    const cmd = createFrontendCommand();
+    const result = await captureLog(() =>
+      cmd.parseAsync(["node", "test", "--reload-themes"], { from: "user" })
+    );
+    expect(result).toContain("success");
+    expect(mockRequest).toHaveBeenCalledWith(
+      expect.stringContaining("/api/services/frontend/reload_themes"),
+      expect.any(Object)
+    );
+  });
+
+  it("sets a theme by name", async () => {
+    mockRequest.mockResolvedValue(mockResponse(null));
+    const cmd = createFrontendCommand();
+    const result = await captureLog(() =>
+      cmd.parseAsync(["node", "test", "--set-theme", "default"], { from: "user" })
+    );
+    expect(result).toContain("default");
+    expect(mockRequest).toHaveBeenCalledWith(
+      expect.stringContaining("/api/services/frontend/set_theme"),
+      expect.any(Object)
+    );
+  });
+
+  it("sets theme with dark mode variant", async () => {
+    mockRequest.mockResolvedValue(mockResponse(null));
+    const cmd = createFrontendCommand();
+    const result = await captureLog(() =>
+      cmd.parseAsync(["node", "test", "--set-theme", "light", "--dark-theme", "dark"], { from: "user" })
+    );
+    expect(result).toContain("light");
+    expect(result).toContain("dark");
+  });
+
+  it("shows help when no action specified", async () => {
+    const cmd = createFrontendCommand();
+    const result = await captureLog(() =>
+      cmd.parseAsync(["node", "test"], { from: "user" })
+    );
+    expect(result).toContain("--reload-themes");
   });
 });

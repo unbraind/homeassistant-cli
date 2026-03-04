@@ -129,5 +129,64 @@ describe("LLM Extended Commands", () => {
       expect(result).toContain("suggestions");
       expect(result).toContain("dry_run");
     });
+
+    it("outputs hint without dry-run flag", async () => {
+      mockRequest.mockResolvedValueOnce(
+        mockResponse([
+          { entity_id: "light.bedroom", state: "off", attributes: { friendly_name: "Bedroom Light" } },
+        ])
+      );
+
+      const cmd = createActionCommand();
+      const output: string[] = [];
+      const originalLog = console.log;
+      console.log = (msg: string) => output.push(msg);
+
+      await cmd.parseAsync(["turn on bedroom"], { from: "user" });
+
+      console.log = originalLog;
+      const result = output.join("\n");
+      expect(result).toContain("intent");
+      expect(result).toContain("hint");
+      expect(result).not.toContain("dry_run");
+    });
+
+    it("handles turn off intent", async () => {
+      mockRequest.mockResolvedValueOnce(
+        mockResponse([
+          { entity_id: "light.kitchen", state: "on", attributes: { friendly_name: "Kitchen Light" } },
+        ])
+      );
+
+      const cmd = createActionCommand();
+      const output: string[] = [];
+      const originalLog = console.log;
+      console.log = (msg: string) => output.push(msg);
+
+      await cmd.parseAsync(["turn off kitchen", "--dry-run"], { from: "user" });
+
+      console.log = originalLog;
+      const result = output.join("\n");
+      expect(result).toContain("turn_off");
+    });
+
+    it("handles toggle intent", async () => {
+      mockRequest.mockResolvedValueOnce(
+        mockResponse([
+          { entity_id: "switch.fan", state: "on", attributes: { friendly_name: "Fan Switch" } },
+        ])
+      );
+
+      const cmd = createActionCommand();
+      const output: string[] = [];
+      const originalLog = console.log;
+      console.log = (msg: string) => output.push(msg);
+
+      await cmd.parseAsync(["toggle fan", "--dry-run"], { from: "user" });
+
+      console.log = originalLog;
+      const result = output.join("\n");
+      expect(result).toContain("toggle");
+    });
   });
 });
