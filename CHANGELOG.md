@@ -2,6 +2,39 @@
 
 All notable changes to the Home Assistant CLI project will be documented in this file.
 
+## [2026.3.4-54] - 2026-03-04
+
+### Added
+
+#### New System & Integration Commands (6 new commands)
+- **`sun`** - Get solar/sun position info from `sun.sun`:
+  - Returns state (`above_horizon` / `below_horizon`), elevation, azimuth, rising flag
+  - Includes next_dawn, next_rising, next_noon, next_setting, next_dusk, next_midnight times
+  - Useful for agents/automations that need daytime awareness
+- **`logger`** - Manage HA log levels:
+  - `--set-default <level>` - Set default log level (debug, info, warning, error, fatal, critical)
+  - `--set <component=level>` - Set log level for a specific component (repeatable for multiple)
+- **`recorder`** - Manage the HA recorder (database):
+  - `--purge [--keep-days <n>] [--repack]` - Purge old recorder data
+  - `--purge-entities <ids>` - Purge specific entity IDs from DB (comma-separated)
+  - `--enable` / `--disable` - Enable or disable recording
+- **`mqtt`** - MQTT integration operations:
+  - `--publish --topic <t> [--payload <p>] [--qos 0|1|2] [--retain]` - Publish message
+  - `--reload` - Reload MQTT YAML configuration
+- **`schedule`** - Browse and manage schedule helper entities:
+  - Lists all `schedule.*` entities with state, friendly_name, icon
+  - `--reload` - Reload schedule configuration
+  - `--entity-id <id>` - Get detailed schedule data (calls `schedule.get_schedule`)
+  - `--state <on|off>` / `--count` filtering
+- **`utility-meter`** - Browse and manage utility meter helpers:
+  - Lists utility meter `sensor.*` entities (identified by `source` + `last_period` attrs)
+  - `--reset <entityId>` - Reset meter to zero
+  - `--calibrate <entityId> --value <n>` - Set meter to specific value
+  - `--state <value>` / `--count` filtering
+
+### Tests
+- 929 tests total (+34 new), 6 new test files (sun, logger, recorder, mqtt, schedule, utility-meter commands)
+
 ## [2026.3.4-53] - 2026-03-04
 
 ### Added

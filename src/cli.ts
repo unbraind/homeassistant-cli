@@ -99,6 +99,12 @@ import {
   createValveCommand,
   createWaterHeaterCommand,
   createDeviceTrackerCommand,
+  createSunCommand,
+  createLoggerCommand,
+  createRecorderCommand,
+  createMqttCommand,
+  createScheduleCommand,
+  createUtilityMeterCommand,
 } from "./commands/index.js";
 import { createInspectCommand, createSummaryCommand } from "./commands/inspect.js";
 
@@ -107,7 +113,7 @@ const program = new Command();
 program
   .name("hassio")
   .description("Agent-optimized CLI tool for interacting with the Home Assistant API")
-  .version("2026.3.4-53")
+  .version("2026.3.4-54")
   .addOption(
     new Option("-u, --url <url>", "Home Assistant URL")
       .env("HASSIO_URL")
@@ -284,6 +290,12 @@ program.addCommand(createVacuumCommand());
 program.addCommand(createValveCommand());
 program.addCommand(createWaterHeaterCommand());
 program.addCommand(createDeviceTrackerCommand());
+program.addCommand(createSunCommand());
+program.addCommand(createLoggerCommand());
+program.addCommand(createRecorderCommand());
+program.addCommand(createMqttCommand());
+program.addCommand(createScheduleCommand());
+program.addCommand(createUtilityMeterCommand());
 
 program.parseAsync(process.argv).catch((err) => {
   console.error("Error:", err.message);
