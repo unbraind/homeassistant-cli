@@ -6,36 +6,43 @@ This file contains guidance for AI agents, LLMs, and human contributors working 
 
 ## Versioning Scheme
 
-This project uses **date-based versioning** with a sequential commit counter:
+This project uses **date-based versioning** with a daily release sequence:
 
 ```
-YYYY.MM.DD-N
+YYYY.MM.DD[-N]
 ```
 
 Where:
 - `YYYY.MM.DD` — The ISO date of the release commit (e.g. `2026.3.3`)
-- `N` — The **total sequential commit number** on the `master` branch at the time of that commit
+- `N` — The release sequence number for that same day on `master` (`2`, `3`, `4`, ...)
+- If it is the first release of the day, omit `-N` entirely.
 
 ### Examples
 
-| Total commits on master | Release date | Version        |
-|------------------------|--------------|----------------|
-| 10                     | 2025.12.31   | `2025.12.31-10` |
-| 47                     | 2026.3.3   | `2026.3.3-47` |
-| 52                     | 2026.3.3   | `2026.3.3-52` |
+| Releases that day (including release commit) | Release date | Version         |
+|-----------------------------------------------|--------------|-----------------|
+| 1                                             | 2025.12.31   | `2025.12.31`    |
+| 2                                             | 2026.3.3   | `2026.3.3-2`  |
+| 5                                             | 2026.3.3   | `2026.3.3-5`  |
 
 ### How to compute the version before committing
 
 ```bash
-# Count commits on master (before the new commit)
-COMMITS=$(git rev-list --count HEAD)
+# Count release commits already made today on master, then add one for the new release commit
+TODAY=$(date +%Y-%m-%d)
 DATE=$(date +%Y.%m.%d)
-echo "Version: ${DATE}-${COMMITS}"
+TODAY_RELEASE_COUNT=$(git log --since="${TODAY} 00:00:00" --until="${TODAY} 23:59:59" --pretty=format:'%s' HEAD | rg -n "^chore\\(release\\): v${DATE}(-[0-9]+)?$" | wc -l | tr -d ' ')
+NEXT=$((TODAY_RELEASE_COUNT + 1))
+if [ "$NEXT" -eq 1 ]; then
+  echo "Version: ${DATE}"
+else
+  echo "Version: ${DATE}-${NEXT}"
+fi
 ```
 
 After running that, bump `package.json` and `src/cli.ts` to match, then commit.
 
-> **Important:** The version in `package.json` and `src/cli.ts` must **always** match and reflect the total commit count **of that commit** (i.e. `rev-list --count HEAD` evaluated _after_ including the release commit, or equivalently `$(git rev-list --count HEAD) + 1` before committing).
+> **Important:** The version in `package.json` and `src/cli.ts` must **always** match and reflect the release sequence number **for that date**.
 
 ### Version fields to update
 
@@ -272,8 +279,8 @@ Before tagging a release:
 - [ ] `bun run test:coverage` — ≥90% statement coverage
 - [ ] Scan for secrets: `git diff HEAD~1 | grep -E "eyJhbGci|token"`
 - [ ] Update `CHANGELOG.md` with release notes
-- [ ] Update version in `package.json` and `src/cli.ts` to `YYYY.MM.DD-N`
-- [ ] Commit with message: `chore(release): vYYYY.MM.DD-N`
+- [ ] Update version in `package.json` and `src/cli.ts` to `YYYY.MM.DD[-N]`
+- [ ] Commit with message: `chore(release): vYYYY.MM.DD[-N]`
 - [ ] Push to `master`
 
 ---

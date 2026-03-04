@@ -42,3 +42,9 @@ A repository history scan was performed for high-confidence secret signatures (G
 
 - Result: no confirmed credential leak found in reachable commit history.
 - Guardrails added: `scripts/security/scan-history.sh` and GitHub `Security` workflow.
+
+## Release Baseline (Before First Public Tag)
+
+- `CHANGELOG.md` remains intentionally minimal until first public release.
+- Pre-release implementation history and hardening details are documented here instead of changelog entries.
+- Versioning is date-based with daily sequence: `YYYY.MM.DD` for first release of day, then `YYYY.MM.DD-N`.

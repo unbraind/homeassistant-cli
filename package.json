@@ -1,10 +1,11 @@
 {
   "name": "homeassistant-cli",
-  "version": "2026.3.4-62",
+  "version": "2026.3.4",
   "description": "Agent-optimized CLI tool for interacting with the Home Assistant API",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
+    "homeassistant-cli": "dist/cli.js",
     "hassio": "dist/cli.js"
   },
   "scripts": {

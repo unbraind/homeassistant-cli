@@ -1,9 +1,12 @@
 # Releasing
 
-This project uses date-based versions: `YYYY.MM.DD-N`.
+This project uses date-based versions with daily sequence:
+
+- First release of a day: `YYYY.MM.DD`
+- Additional releases that same day: `YYYY.MM.DD-N`
 
 - `YYYY.MM.DD`: release date
-- `N`: total commit count on `master` for the release commit
+- `N`: release sequence number for that calendar day on `master` (2, 3, 4, ...)
 
 ## Pre-Release State
 
@@ -70,7 +73,7 @@ Compatibility is enforced in automation:
 3. Trigger `Release Dry Run` workflow.
 4. Run `bun run release:prepare` and commit:
    ```text
-   chore(release): vYYYY.MM.DD-N
+   chore(release): vYYYY.MM.DD[-N]
    ```
 5. Push `master`.
 6. Trigger `Publish to npm` with `dry_run=true`.

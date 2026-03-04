@@ -15,6 +15,7 @@ cp "$TARBALL" "$TMP_NPX/"
   cd "$TMP_NPX"
   npm init -y >/dev/null
   npm install "./$TARBALL" >/dev/null
+  npx --yes --no-install homeassistant-cli --help >/dev/null
   npx --yes --no-install hassio --help >/dev/null
 )
 
@@ -34,6 +35,7 @@ cp "$TARBALL" "$TMP_BUNX/"
 }
 JSON
   bun install >/dev/null
+  bunx homeassistant-cli --help >/dev/null
   bunx hassio --help >/dev/null
 )
 

@@ -13,6 +13,7 @@ Pre-release hardening is complete and the first public release is pending. See:
 - [CHANGELOG](./CHANGELOG.md) for current unreleased scope
 - [Project History](./docs/PROJECT_HISTORY.md) for pre-release implementation history
 - [Releasing Guide](./docs/RELEASING.md) for publish workflow and CI/CD gates
+- Versioning scheme: `YYYY.MM.DD` for first release of the day, then `YYYY.MM.DD-N`
 
 ## Features
 
