@@ -2,6 +2,26 @@
 
 All notable changes to the Home Assistant CLI project will be documented in this file.
 
+## [2026.3.4-53] - 2026-03-04
+
+### Added
+
+#### New Domain Command
+- **`device-tracker`** - Browse `device_tracker.*` entities (phones, tags, presence):
+  - `--state <state>` - Filter by state: home, not_home, unknown, or zone name
+  - `--home` - Shortcut to show only home devices
+  - `--away` - Shortcut to show only non-home devices
+  - `--source <type>` - Filter by source type (gps, router, bluetooth, manual)
+  - `--count` - Return count only
+  - Includes GPS coordinates (latitude, longitude, gps_accuracy) in output
+
+### Improved
+- **Test coverage**: Settings wizard test coverage 44.64% → 100% (statement); added interactive readline path tests
+- **Overall coverage**: 92.96% → 93.78%
+
+### Tests
+- 895 tests total (+17 new), 2 new test files (device-tracker-command, improved settings-wizard)
+
 ## [2026.3.4-52] - 2026-03-04
 
 ### Added

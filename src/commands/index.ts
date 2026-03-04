@@ -46,3 +46,4 @@ export * from "./event-entity.js";
 export * from "./vacuum.js";
 export * from "./valve.js";
 export * from "./water-heater.js";
+export * from "./device-tracker.js";
