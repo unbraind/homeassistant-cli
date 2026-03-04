@@ -30,7 +30,7 @@ cp "$TARBALL" "$TMP_BUNX/"
   "name": "hassio-smoke",
   "private": true,
   "dependencies": {
-    "@unbraind/homeassistant-cli": "file:./$TARBALL"
+    "@unbrained/homeassistant-cli": "file:./$TARBALL"
   }
 }
 JSON
