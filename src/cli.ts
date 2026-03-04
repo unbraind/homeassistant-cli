@@ -83,6 +83,14 @@ import {
   createCoverCommand,
   createLockCommand,
   createFanCommand,
+  createMediaPlayerCommand,
+  createUpdateCommand,
+  createButtonCommand,
+  createNumberCommand,
+  createSelectCommand,
+  createRemoteCommand,
+  createSensorCommand,
+  createBinarySensorCommand,
 } from "./commands/index.js";
 import { createInspectCommand, createSummaryCommand } from "./commands/inspect.js";
 
@@ -91,7 +99,7 @@ const program = new Command();
 program
   .name("hassio")
   .description("Agent-optimized CLI tool for interacting with the Home Assistant API")
-  .version("2026.3.4-49")
+  .version("2026.3.4-50")
   .addOption(
     new Option("-u, --url <url>", "Home Assistant URL")
       .env("HASSIO_URL")
@@ -246,6 +254,18 @@ program.addCommand(createClimateCommand());
 program.addCommand(createCoverCommand());
 program.addCommand(createLockCommand());
 program.addCommand(createFanCommand());
+program.addCommand(createMediaPlayerCommand());
+program.addCommand(createRemoteCommand());
+
+// Helper Entity Commands
+program.addCommand(createButtonCommand());
+program.addCommand(createNumberCommand());
+program.addCommand(createSelectCommand());
+program.addCommand(createUpdateCommand());
+
+// Sensor Browse Commands
+program.addCommand(createSensorCommand());
+program.addCommand(createBinarySensorCommand());
 
 program.parseAsync(process.argv).catch((err) => {
   console.error("Error:", err.message);
