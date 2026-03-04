@@ -4,10 +4,23 @@ import { join } from "node:path";
 
 type CommandPath = string[];
 
+function hasBunRuntime(): boolean {
+  const check = spawnSync("bun", ["--version"], {
+    cwd: process.cwd(),
+    env: process.env,
+    encoding: "utf8",
+  });
+  return check.status === 0;
+}
+
 function runHelp(path: CommandPath): string {
   const cliPath = join(process.cwd(), "src", "cli.ts");
-  const args = [cliPath, ...path, "--help"];
-  const result = spawnSync("bun", args, {
+  const useBun = hasBunRuntime();
+  const command = useBun ? "bun" : "node";
+  const args = useBun
+    ? [cliPath, ...path, "--help"]
+    : ["--import", "tsx", cliPath, ...path, "--help"];
+  const result = spawnSync(command, args, {
     cwd: process.cwd(),
     env: process.env,
     encoding: "utf8",
