@@ -62,7 +62,7 @@ function captureLog(fn: () => Promise<void>): Promise<string> {
 describe("statistics command", () => {
   beforeEach(() => {
     mockRequest.mockReset();
-    exitSpy.mockClear(); // eslint-disable-line
+    exitSpy.mockClear();
   });
 
   afterEach(() => {

@@ -2,14 +2,23 @@
 
 [![npm version](https://img.shields.io/npm/v/homeassistant-cli.svg)](https://www.npmjs.com/package/homeassistant-cli)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![CI](https://github.com/unbraind/homeassistant-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/unbraind/homeassistant-cli/actions/workflows/ci.yml)
 
-Agent-optimized CLI tool for Home Assistant with token-efficient output. Default TOON format provides ~40% token reduction vs JSON. Optimized for LLM/agent consumption with structured, minimal output.
+CLI for Home Assistant with token-efficient output and broad API coverage. Default TOON format reduces token usage versus pretty JSON and is suitable for both humans and LLM/agent tooling.
+
+## Project Status
+
+Pre-release hardening is complete and the first public release is pending. See:
+
+- [CHANGELOG](./CHANGELOG.md) for current unreleased scope
+- [Project History](./docs/PROJECT_HISTORY.md) for pre-release implementation history
+- [Releasing Guide](./docs/RELEASING.md) for publish workflow and CI/CD gates
 
 ## Features
 
 - **Broad Home Assistant API Coverage** - States, services, events, history, logbook, calendars, cameras, templates, and more
 - **Device Control Commands** - Dedicated `light`, `switch`, `climate`, `cover`, `lock`, `fan` commands with full parameter support
-- **Token-Efficient Output** - Default TOON format saves ~40% tokens vs JSON, no emojis/decorations
+- **Token-Efficient Output** - Default TOON format is compact and automation-friendly
 - **Multiple Output Formats** - TOON, JSON, JSON-compact, YAML, table, and markdown
 - **Interactive Setup Wizard** - Easy first-time configuration
 - **Flexible Configuration** - Environment variables, secure global config files (`settings/auth/data`), custom `--config` path, or CLI options
@@ -27,7 +36,7 @@ Agent-optimized CLI tool for Home Assistant with token-efficient output. Default
 - **WebSocket API Coverage** - Generic `websocket`/`ws` passthrough plus `websocket status` metadata
 - **Supervisor API Coverage** - Generic `supervisor api` passthrough + common shortcuts (addons, host, logs)
 - **Full TypeScript Support** - Complete type safety throughout
-- **Comprehensive Testing** - 975 tests passing, 95.93% statement coverage
+- **Comprehensive Testing** - Large automated test suite with strong coverage
 
 ## Installation
 
@@ -41,6 +50,18 @@ bun install -g homeassistant-cli
 
 ```bash
 npx homeassistant-cli --help
+```
+
+### Using npm (Global Installation)
+
+```bash
+npm install -g homeassistant-cli
+```
+
+### Using bunx (No Installation)
+
+```bash
+bunx homeassistant-cli --help
 ```
 
 ### From Source

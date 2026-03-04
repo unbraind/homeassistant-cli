@@ -8,12 +8,25 @@ Complete documentation for the Home Assistant CLI tool.
 - [API Reference](./API.md) - Complete command reference
 - [LLM Integration Guide](./LLM_INTEGRATION.md) - Agent/LLM optimized features
 - [Agent Optimization Guide](./AGENT_OPTIMIZATION.md) - Agent-specific optimization features
+- [Releasing Guide](./RELEASING.md) - Release process, CI/CD, npm publish workflow
+- [Project History](./PROJECT_HISTORY.md) - Pre-release development timeline and audit notes
+- [Security Policy](../SECURITY.md) - Vulnerability reporting and secret handling rules
+
+## Release Status
+
+This repository is currently in **pre-release** state.
+
+- `CHANGELOG.md` tracks only unreleased changes until first public tag.
+- Historical implementation progress is documented in `docs/PROJECT_HISTORY.md`.
 
 ## Quick Start
 
 ```bash
-# Install
+# Install (Bun)
 bun install -g homeassistant-cli
+
+# Install (npm)
+npm install -g homeassistant-cli
 
 # Setup (interactive wizard)
 hassio settings wizard

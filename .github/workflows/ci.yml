@@ -1,0 +1,140 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        runtime: [bun, node]
+        include:
+          - runtime: bun
+            setup: bun
+          - runtime: node
+            setup: node
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        if: matrix.setup == 'bun'
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Setup Node
+        if: matrix.setup == 'node'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install deps (Bun)
+        if: matrix.setup == 'bun'
+        run: bun install --frozen-lockfile
+
+      - name: Install deps (Node)
+        if: matrix.setup == 'node'
+        run: npm install --no-audit --no-fund
+
+      - name: Lint (Bun)
+        if: matrix.setup == 'bun'
+        run: bun run lint
+
+      - name: Lint (Node)
+        if: matrix.setup == 'node'
+        run: npm run lint
+
+      - name: Typecheck (Bun)
+        if: matrix.setup == 'bun'
+        run: bun run typecheck
+
+      - name: Typecheck (Node)
+        if: matrix.setup == 'node'
+        run: npm run typecheck
+
+      - name: Build (Bun)
+        if: matrix.setup == 'bun'
+        run: bun run build
+
+      - name: Build (Node)
+        if: matrix.setup == 'node'
+        run: npm run build
+
+      - name: Unit tests (Bun)
+        if: matrix.setup == 'bun'
+        run: bun run test
+
+      - name: Unit tests (Node)
+        if: matrix.setup == 'node'
+        run: npm run test
+
+  coverage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install deps
+        run: bun install --frozen-lockfile
+
+      - name: Coverage
+        run: bun run test:coverage
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+          if-no-files-found: error
+
+  package-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install deps
+        run: bun install --frozen-lockfile
+
+      - name: Release dry-run (npx + bunx smoke)
+        run: bun run release:dry-run
+
+  commit-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Audit commit message quality
+        run: bash scripts/git/audit-commit-messages.sh

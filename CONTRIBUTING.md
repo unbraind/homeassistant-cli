@@ -1,89 +1,80 @@
 # Contributing to Home Assistant CLI
 
-## Development Setup
+Thanks for contributing.
 
-This project uses [Bun](https://bun.sh) as the primary package manager and runtime. Please use Bun instead of npm.
+## Prerequisites
 
-### Install Bun
+- Bun (latest)
+- Node.js 20+ (CI uses Node 22)
+- Git
 
-```bash
-curl -fsSL https://bun.sh/install | bash
-```
-
-### Setup Project
+## Local Setup
 
 ```bash
-# Clone the repository
-git clone https://github.com/your-org/homeassistant-cli.git
+git clone https://github.com/unbraind/homeassistant-cli.git
 cd homeassistant-cli
-
-# Install dependencies
 bun install
-
-# Build the project
-bun run build
-
-# Run tests
-bun test
 ```
 
 ## Development Commands
 
-| Command | Description |
-|---------|-------------|
-| `bun install` | Install dependencies |
-| `bun run build` | Build TypeScript to dist/ |
-| `bun run dev -- <cmd>` | Run CLI in development mode |
-| `bun test` | Run tests |
+| Command | Purpose |
+|---|---|
+| `bun run dev -- <command>` | Run CLI directly from source |
+| `bun run lint` | Lint source and tests |
+| `bun run typecheck` | TypeScript type-check |
+| `bun run build` | Build `dist/` with TypeScript |
+| `bun run test` | Run full test suite |
 | `bun run test:coverage` | Run tests with coverage |
-| `bun run typecheck` | Run TypeScript type checking |
-| `bun run lint` | Run ESLint |
+| `bun run release:dry-run` | Package smoke check (`npx` + `bunx`) |
 
-## Project Structure
+Node/npm users can run equivalent scripts with `npm run <script>` (`lint`, `typecheck`, `build`, `test`).
 
-```
-homeassistant-cli/
-├── src/
-│   ├── api/           # Home Assistant API client
-│   ├── commands/      # CLI command implementations
-│   ├── config/        # Configuration management
-│   ├── formatters/    # Output formatters (TOON, JSON, YAML, table)
-│   ├── types/         # TypeScript type definitions
-│   ├── cli.ts         # CLI entry point
-│   └── index.ts       # Library exports
-├── tests/             # Test files
-├── docs/              # Documentation
-└── dist/              # Compiled output
+## Quality Bar
+
+Before opening a PR, run:
+
+```bash
+bun run lint
+bun run typecheck
+bun run build
+bun run test
 ```
 
-## Code Style
+For release-impacting changes, also run:
 
-- Use TypeScript with strict mode
-- Keep files under 300 lines of code (excluding comments)
-- No comments unless explicitly requested
-- Follow existing code patterns
+```bash
+bun run test:coverage
+bun run release:dry-run
+bun run commit:audit
+```
 
-## Testing
+## Commit Style
 
-- All new features must include tests
-- Aim for 100% test coverage
-- Run tests before submitting PRs: `bun test`
+Use Conventional Commits:
+
+- `feat(scope): ...`
+- `fix(scope): ...`
+- `docs: ...`
+- `test(scope): ...`
+- `refactor(scope): ...`
+- `chore(scope): ...`
+
+Prefer focused commits with imperative, professional summaries. Avoid placeholders, trailing punctuation artifacts, or catch-all messages.
 
 ## Security
 
-- **Never commit credentials** - Use environment variables or config files
-- The `.gitignore` excludes `.hassio-cli/`, `.env`, and credential files
-- Test that no sensitive data is included: `grep -r "password\|token\|secret" src/`
+- Never commit tokens or credentials.
+- Keep Home Assistant secrets outside the repo (`~/.hassio-cli/`).
+- Use placeholders in docs/examples.
 
-## Pull Requests
+Quick check:
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Run tests: `bun test`
-5. Run typecheck: `bun run typecheck`
-6. Submit PR
+```bash
+git diff --cached | rg -n "eyJhbGci|HASSIO_TOKEN\s*=|token.*:"
+bun run security:scan:history
+```
 
-## License
+## Release Process
 
-MIT
+Release process and CI/CD details are documented in [docs/RELEASING.md](./docs/RELEASING.md).
