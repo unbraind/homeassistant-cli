@@ -1,9 +1,8 @@
 import { Command } from "commander";
-import { getConfig } from "../config/index.js";
 import { HomeAssistantClient } from "../api/client.js";
 import { formatOutput } from "../formatters/index.js";
 import { withExit } from "../utils/exit.js";
-import type { OutputFormat } from "../types/index.js";
+import { resolveCommandOptions } from "../utils/command-helpers.js";
 
 type InputDomain = "input_boolean" | "input_text" | "input_number" | "input_select" | "input_datetime" | "input_button";
 
@@ -11,15 +10,6 @@ const INPUT_DOMAINS: InputDomain[] = [
   "input_boolean", "input_text", "input_number",
   "input_select", "input_datetime", "input_button",
 ];
-
-function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number; readOnly?: boolean }) {
-  const config = getConfig(options);
-  return new HomeAssistantClient(config);
-}
-
-function getFormat(options: { format?: OutputFormat }): OutputFormat {
-  return getConfig(options).outputFormat;
-}
 
 export function createInputCommand(): Command {
   const command = new Command("input")
@@ -52,8 +42,8 @@ export function createInputCommand(): Command {
     count?: boolean;
   }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new HomeAssistantClient(config);
 
     if (options.reload) {
       for (const domain of INPUT_DOMAINS) {

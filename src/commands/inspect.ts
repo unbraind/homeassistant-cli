@@ -1,19 +1,8 @@
 import { Command } from "commander";
-import { getConfig } from "../config/index.js";
 import { HomeAssistantClient } from "../api/index.js";
 import { formatOutput } from "../formatters/index.js";
 import { withExit } from "../utils/exit.js";
-import type { OutputFormat } from "../types/index.js";
-
-function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
-  const config = getConfig(options);
-  return new HomeAssistantClient(config);
-}
-
-function getFormat(options: { format?: OutputFormat }): OutputFormat {
-  const config = getConfig(options);
-  return config.outputFormat;
-}
+import { resolveCommandOptions } from "../utils/command-helpers.js";
 
 export function createInspectCommand(): Command {
   const command = new Command("inspect")
@@ -24,8 +13,8 @@ export function createInspectCommand(): Command {
 
   command.action(withExit(async (entityId: string, options: { history?: boolean; limit?: string }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new HomeAssistantClient(config);
 
     const state = await client.getState(entityId);
     
@@ -74,8 +63,8 @@ export function createSummaryCommand(): Command {
     cmd,
   ) => {
     const globalOpts = cmd.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new HomeAssistantClient(config);
 
     const states = await client.getStates();
 

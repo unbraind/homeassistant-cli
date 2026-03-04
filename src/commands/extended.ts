@@ -1,27 +1,16 @@
 import { Command } from "commander";
-import { getConfig } from "../config/index.js";
 import { ExtendedApiClient, HomeAssistantApiError } from "../api/index.js";
 import { formatOutput } from "../formatters/index.js";
 import { withExit } from "../utils/exit.js";
-import type { OutputFormat } from "../types/index.js";
-
-function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
-  const config = getConfig(options);
-  return new ExtendedApiClient(config);
-}
-
-function getFormat(options: { format?: OutputFormat }): OutputFormat {
-  const config = getConfig(options);
-  return config.outputFormat;
-}
+import { resolveCommandOptions } from "../utils/command-helpers.js";
 
 export function createEnergyCommand(): Command {
   const command = new Command("energy")
     .description("Get Home Assistant energy dashboard preferences")
     .action(withExit(async (_options, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
-      const client = getClient(globalOpts);
-      const format = getFormat(globalOpts);
+      const { config, format } = resolveCommandOptions(globalOpts);
+      const client = new ExtendedApiClient(config);
 
       try {
         const energy = await client.getEnergyPreferences();
@@ -54,12 +43,12 @@ export function createWeatherCommand(): Command {
     count?: boolean;
   }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new ExtendedApiClient(config);
 
     if (options.list || !entityId) {
       const { HomeAssistantClient } = await import("../api/index.js");
-      const baseClient = new HomeAssistantClient(getConfig(globalOpts));
+      const baseClient = new HomeAssistantClient(config);
       const states = await baseClient.getStates();
       const weatherEntities = states
         .filter(s => s.entity_id.startsWith("weather."))
@@ -101,8 +90,8 @@ export function createHealthCommand(): Command {
     .description("Get Home Assistant system health information")
     .action(withExit(async (_options, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
-      const client = getClient(globalOpts);
-      const format = getFormat(globalOpts);
+      const { config, format } = resolveCommandOptions(globalOpts);
+      const client = new ExtendedApiClient(config);
 
       try {
         const health = await client.getSystemHealth();
@@ -126,12 +115,12 @@ export function createInfoCommand(): Command {
     .description("Get comprehensive system information summary")
     .action(withExit(async (_options, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
-      const format = getFormat(globalOpts);
+      const { config, format } = resolveCommandOptions(globalOpts);
 
       const { HomeAssistantClient } = await import("../api/index.js");
-      const baseClient = new HomeAssistantClient(getConfig(globalOpts));
+      const baseClient = new HomeAssistantClient(config);
 
-      const [status, config, states] = await Promise.all([
+      const [status, haConfig, states] = await Promise.all([
         baseClient.getStatus(),
         baseClient.getConfig(),
         baseClient.getStates(),
@@ -147,13 +136,13 @@ export function createInfoCommand(): Command {
 
       const info = {
         status: status.message,
-        version: config.version,
-        location_name: config.location_name,
-        time_zone: config.time_zone,
-        country: config.country,
-        language: config.language,
-        state: config.state,
-        installation_type: config.installation_type,
+        version: haConfig.version,
+        location_name: haConfig.location_name,
+        time_zone: haConfig.time_zone,
+        country: haConfig.country,
+        language: haConfig.language,
+        state: haConfig.state,
+        installation_type: haConfig.installation_type,
         entities: {
           total: states.length,
           domains: Object.keys(domains).length,

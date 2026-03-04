@@ -1,9 +1,9 @@
 import { Command } from "commander";
 import { ConfigEntriesApiClient } from "../api/config-entries.js";
-import { getConfig } from "../config/index.js";
 import { formatOutput } from "../formatters/index.js";
 import { withExit } from "../utils/exit.js";
-import type { HaConfigEntry, OutputFormat } from "../types/index.js";
+import { resolveCommandOptions } from "../utils/command-helpers.js";
+import type { HaConfigEntry } from "../types/index.js";
 
 interface ConfigEntriesOptions {
   domain?: string;
@@ -12,14 +12,6 @@ interface ConfigEntriesOptions {
   count?: boolean;
   delete?: string;
   yes?: boolean;
-}
-
-function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
-  return new ConfigEntriesApiClient(getConfig(options));
-}
-
-function getFormat(options: { format?: OutputFormat }): OutputFormat {
-  return getConfig(options).outputFormat;
 }
 
 function filterConfigEntries(entries: HaConfigEntry[], options: ConfigEntriesOptions): HaConfigEntry[] {
@@ -70,8 +62,8 @@ export function createConfigEntriesCommand(): Command {
 
   command.action(withExit(async (options: ConfigEntriesOptions, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new ConfigEntriesApiClient(config);
 
     if (options.delete) {
       if (!options.yes) {

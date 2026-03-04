@@ -1,20 +1,9 @@
 import { Command } from "commander";
-import { getConfig } from "../config/index.js";
 import { HomeAssistantClient } from "../api/index.js";
 import { formatOutput } from "../formatters/index.js";
 import { withExit } from "../utils/exit.js";
-import type { OutputFormat } from "../types/index.js";
+import { resolveCommandOptions } from "../utils/command-helpers.js";
 import { findServiceDefinition, validateServiceData } from "../utils/services.js";
-
-function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
-  const config = getConfig(options);
-  return new HomeAssistantClient(config);
-}
-
-function getFormat(options: { format?: OutputFormat }): OutputFormat {
-  const config = getConfig(options);
-  return config.outputFormat;
-}
 
 export function createCallServiceCommand(): Command {
   const command = new Command("call-service")
@@ -41,8 +30,8 @@ export function createCallServiceCommand(): Command {
       cmd
     ) => {
       const globalOpts = cmd.optsWithGlobals();
-      const client = getClient(globalOpts);
-      const format = getFormat(globalOpts);
+      const { config, format } = resolveCommandOptions(globalOpts);
+      const client = new HomeAssistantClient(config);
 
       let data: Record<string, unknown> | undefined;
       if (options.data) {
@@ -89,8 +78,8 @@ export function createFireEventCommand(): Command {
   command.action(
     withExit(async (eventType: string, options: { data?: string }, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
-      const client = getClient(globalOpts);
-      const format = getFormat(globalOpts);
+      const { config, format } = resolveCommandOptions(globalOpts);
+      const client = new HomeAssistantClient(config);
 
       let eventData: Record<string, unknown> | undefined;
       if (options.data) {
@@ -114,8 +103,8 @@ export function createRenderTemplateCommand(): Command {
   command.action(
     withExit(async (templateArg: string, options: { file?: string }, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
-      const client = getClient(globalOpts);
-      const format = getFormat(globalOpts);
+      const { config, format } = resolveCommandOptions(globalOpts);
+      const client = new HomeAssistantClient(config);
 
       let template = templateArg;
       if (options.file) {
@@ -136,8 +125,8 @@ export function createCheckConfigCommand(): Command {
     .description("Validate the Home Assistant configuration")
     .action(withExit(async (_options, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
-      const client = getClient(globalOpts);
-      const format = getFormat(globalOpts);
+      const { config, format } = resolveCommandOptions(globalOpts);
+      const client = new HomeAssistantClient(config);
       const result = await client.checkConfig();
       console.log(formatOutput(result, format));
     }));
@@ -151,8 +140,8 @@ export function createHandleIntentCommand(): Command {
 
   command.action(withExit(async (name: string, options: { data?: string }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new HomeAssistantClient(config);
 
     let data: Record<string, unknown> | undefined;
     if (options.data) {

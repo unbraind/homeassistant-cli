@@ -1,19 +1,8 @@
 import { Command } from "commander";
-import { getConfig } from "../config/index.js";
 import { AutomationApiClient } from "../api/automation.js";
 import { formatOutput } from "../formatters/index.js";
 import { withExit } from "../utils/exit.js";
-import type { OutputFormat } from "../types/index.js";
-
-function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
-  const config = getConfig(options);
-  return new AutomationApiClient(config);
-}
-
-function getFormat(options: { format?: OutputFormat }): OutputFormat {
-  const config = getConfig(options);
-  return config.outputFormat;
-}
+import { resolveCommandOptions } from "../utils/command-helpers.js";
 
 export function createAutomationsCommand(): Command {
   const command = new Command("automations")
@@ -36,8 +25,8 @@ export function createAutomationsCommand(): Command {
     count?: boolean;
   }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new AutomationApiClient(config);
 
     if (options.on) {
       await client.turnOnAutomation(options.on);
@@ -106,8 +95,8 @@ export function createScriptsCommand(): Command {
     count?: boolean;
   }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new AutomationApiClient(config);
 
     if (options.run) {
       const variables = options.data ? JSON.parse(options.data) as Record<string, unknown> : undefined;
@@ -157,8 +146,8 @@ export function createScenesCommand(): Command {
     count?: boolean;
   }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new AutomationApiClient(config);
 
     if (options.apply) {
       await client.applyScene(options.apply);

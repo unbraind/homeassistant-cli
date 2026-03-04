@@ -1,32 +1,17 @@
 import { Command } from "commander";
-import { getConfig } from "../config/index.js";
 import { HomeAssistantClient, SystemApiClient, HomeAssistantApiError } from "../api/index.js";
 import { formatOutput } from "../formatters/index.js";
 import { withExit } from "../utils/exit.js";
-import type { OutputFormat, HaState } from "../types/index.js";
-
-function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
-  const config = getConfig(options);
-  return new SystemApiClient(config);
-}
-
-function getBaseClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
-  const config = getConfig(options);
-  return new HomeAssistantClient(config);
-}
-
-function getFormat(options: { format?: OutputFormat }): OutputFormat {
-  const config = getConfig(options);
-  return config.outputFormat;
-}
+import { resolveCommandOptions } from "../utils/command-helpers.js";
+import type { HaState } from "../types/index.js";
 
 export function createRestartCommand(): Command {
   return new Command("restart")
     .description("Restart Home Assistant")
     .action(withExit(async (_options, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
-      const client = getBaseClient(globalOpts);
-      const format = getFormat(globalOpts);
+      const { config, format } = resolveCommandOptions(globalOpts);
+      const client = new HomeAssistantClient(config);
 
       await client.restartHomeAssistant();
       console.log(formatOutput({ status: "restarting", message: "Home Assistant is restarting" }, format));
@@ -38,8 +23,8 @@ export function createStopCommand(): Command {
     .description("Stop Home Assistant")
     .action(withExit(async (_options, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
-      const client = getBaseClient(globalOpts);
-      const format = getFormat(globalOpts);
+      const { config, format } = resolveCommandOptions(globalOpts);
+      const client = new HomeAssistantClient(config);
 
       await client.stopHomeAssistant();
       console.log(formatOutput({ status: "stopping", message: "Home Assistant is stopping" }, format));
@@ -52,8 +37,8 @@ export function createPersonsCommand(): Command {
     .option("--count", "Only return count")
     .action(withExit(async (options: { count?: boolean }, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
-      const client = getBaseClient(globalOpts);
-      const format = getFormat(globalOpts);
+      const { config, format } = resolveCommandOptions(globalOpts);
+      const client = new HomeAssistantClient(config);
 
       const states = await client.getStates();
       const persons = states
@@ -80,8 +65,8 @@ export function createZonesCommand(): Command {
     .option("--count", "Only return count")
     .action(withExit(async (options: { count?: boolean }, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
-      const client = getBaseClient(globalOpts);
-      const format = getFormat(globalOpts);
+      const { config, format } = resolveCommandOptions(globalOpts);
+      const client = new HomeAssistantClient(config);
 
       const states = await client.getStates();
       const zones = states
@@ -109,8 +94,8 @@ export function createAnalyticsCommand(): Command {
     .description("Get Home Assistant analytics data")
     .action(withExit(async (_options, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
-      const client = getClient(globalOpts);
-      const format = getFormat(globalOpts);
+      const { config, format } = resolveCommandOptions(globalOpts);
+      const client = new SystemApiClient(config);
 
       try {
         const analytics = await client.getAnalytics();
@@ -152,8 +137,8 @@ export function createBackupsCommand(): Command {
     count?: boolean;
   }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
-    const client = getBaseClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new HomeAssistantClient(config);
 
     if (options.create) {
       const data: Record<string, unknown> = { name: options.create };

@@ -6,7 +6,7 @@ import type {
   HaEntityRegistryEntry,
   HaDeviceRegistryEntry,
 } from "../types/api.js";
-import { HomeAssistantClient } from "./client.js";
+import { HomeAssistantWebSocketClient } from "./websocket.js";
 
 export interface CreateAreaParams {
   name: string;
@@ -70,52 +70,63 @@ export interface UpdateDeviceParams {
   labels?: string[];
 }
 
-export class RegistryCrudClient extends HomeAssistantClient {
+export class RegistryCrudClient {
+  private readonly ws: HomeAssistantWebSocketClient;
+
   constructor(config: Config) {
-    super(config);
+    this.ws = new HomeAssistantWebSocketClient(config);
+  }
+
+  private async wsCall<T>(type: string, params: Record<string, unknown>): Promise<T> {
+    try {
+      const result = await this.ws.call(type, params);
+      return result as T;
+    } finally {
+      await this.ws.close();
+    }
   }
 
   async createArea(params: CreateAreaParams): Promise<HaAreaRegistryEntry> {
-    return this.request<HaAreaRegistryEntry>("POST", "/config/area_registry/create", params);
+    return this.wsCall<HaAreaRegistryEntry>("config/area_registry/create", params as unknown as Record<string, unknown>);
   }
 
   async updateArea(params: UpdateAreaParams): Promise<HaAreaRegistryEntry> {
-    return this.request<HaAreaRegistryEntry>("POST", "/config/area_registry/update", params);
+    return this.wsCall<HaAreaRegistryEntry>("config/area_registry/update", params as unknown as Record<string, unknown>);
   }
 
   async deleteArea(areaId: string): Promise<void> {
-    await this.request("POST", "/config/area_registry/delete", { area_id: areaId });
+    await this.wsCall<void>("config/area_registry/delete", { area_id: areaId } as Record<string, unknown>);
   }
 
   async createFloor(params: CreateFloorParams): Promise<HaFloorRegistryEntry> {
-    return this.request<HaFloorRegistryEntry>("POST", "/config/floor_registry/create", params);
+    return this.wsCall<HaFloorRegistryEntry>("config/floor_registry/create", params as unknown as Record<string, unknown>);
   }
 
   async updateFloor(params: UpdateFloorParams): Promise<HaFloorRegistryEntry> {
-    return this.request<HaFloorRegistryEntry>("POST", "/config/floor_registry/update", params);
+    return this.wsCall<HaFloorRegistryEntry>("config/floor_registry/update", params as unknown as Record<string, unknown>);
   }
 
   async deleteFloor(floorId: string): Promise<void> {
-    await this.request("POST", "/config/floor_registry/delete", { floor_id: floorId });
+    await this.wsCall<void>("config/floor_registry/delete", { floor_id: floorId } as Record<string, unknown>);
   }
 
   async createLabel(params: CreateLabelParams): Promise<HaLabelRegistryEntry> {
-    return this.request<HaLabelRegistryEntry>("POST", "/config/label_registry/create", params);
+    return this.wsCall<HaLabelRegistryEntry>("config/label_registry/create", params as unknown as Record<string, unknown>);
   }
 
   async updateLabel(params: UpdateLabelParams): Promise<HaLabelRegistryEntry> {
-    return this.request<HaLabelRegistryEntry>("POST", "/config/label_registry/update", params);
+    return this.wsCall<HaLabelRegistryEntry>("config/label_registry/update", params as unknown as Record<string, unknown>);
   }
 
   async deleteLabel(labelId: string): Promise<void> {
-    await this.request("POST", "/config/label_registry/delete", { label_id: labelId });
+    await this.wsCall<void>("config/label_registry/delete", { label_id: labelId } as Record<string, unknown>);
   }
 
   async updateEntity(params: UpdateEntityParams): Promise<HaEntityRegistryEntry> {
-    return this.request<HaEntityRegistryEntry>("POST", "/config/entity_registry/update", params);
+    return this.wsCall<HaEntityRegistryEntry>("config/entity_registry/update", params as unknown as Record<string, unknown>);
   }
 
   async updateDevice(params: UpdateDeviceParams): Promise<HaDeviceRegistryEntry> {
-    return this.request<HaDeviceRegistryEntry>("POST", "/config/device_registry/update", params);
+    return this.wsCall<HaDeviceRegistryEntry>("config/device_registry/update", params as unknown as Record<string, unknown>);
   }
 }

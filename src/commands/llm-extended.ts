@@ -1,21 +1,11 @@
 import { Command } from "commander";
-import { getConfig } from "../config/index.js";
 import { HomeAssistantClient } from "../api/index.js";
 import { formatOutput } from "../formatters/index.js";
 import { withExit } from "../utils/exit.js";
-import type { OutputFormat, HaState, HaService } from "../types/index.js";
+import type { HaState, HaService } from "../types/index.js";
 import { getServiceNames } from "../utils/services.js";
 import { getOutputContractsPayload } from "./schema-output-contracts.js";
-
-function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
-  const config = getConfig(options);
-  return new HomeAssistantClient(config);
-}
-
-function getFormat(options: { format?: OutputFormat }): OutputFormat {
-  const config = getConfig(options);
-  return config.outputFormat;
-}
+import { resolveCommandOptions } from "../utils/command-helpers.js";
 
 export function createSchemaCommand(): Command {
   const command = new Command("schema")
@@ -36,7 +26,7 @@ export function createSchemaCommand(): Command {
       count?: boolean;
     }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
 
     const showAll = !options.commands && !options.services && !options.entities && !options.outputContracts && !options.full;
     const showCommands = options.commands || options.full || showAll;
@@ -54,7 +44,7 @@ export function createSchemaCommand(): Command {
     }
 
     if (showServices || showEntities) {
-      const client = getClient(globalOpts);
+      const client = new HomeAssistantClient(config);
 
       if (showServices) {
         const services = await client.getServices();
@@ -183,8 +173,8 @@ export function createActionCommand(): Command {
 
   command.action(withExit(async (intent: string, options: { dryRun?: boolean }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new HomeAssistantClient(config);
 
     const states = await client.getStates();
 

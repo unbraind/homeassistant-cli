@@ -1,19 +1,8 @@
 import { Command } from "commander";
-import { getConfig } from "../config/index.js";
 import { HomeAssistantApiError, StatisticsApiClient } from "../api/index.js";
 import { formatOutput } from "../formatters/index.js";
 import { withExit } from "../utils/exit.js";
-import type { OutputFormat } from "../types/index.js";
-
-function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
-  const config = getConfig(options);
-  return new StatisticsApiClient(config);
-}
-
-function getFormat(options: { format?: OutputFormat }): OutputFormat {
-  const config = getConfig(options);
-  return config.outputFormat;
-}
+import { resolveCommandOptions } from "../utils/command-helpers.js";
 
 export function createStatisticsCommand(): Command {
   const command = new Command("statistics")
@@ -38,8 +27,8 @@ export function createStatisticsCommand(): Command {
     count?: boolean;
   }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new StatisticsApiClient(config);
 
     if (options.metadata) {
       try {

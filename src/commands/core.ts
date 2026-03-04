@@ -1,28 +1,17 @@
 import { Command } from "commander";
-import { getConfig } from "../config/index.js";
 import { HomeAssistantClient } from "../api/index.js";
 import { formatOutput, formatServices, formatStates } from "../formatters/index.js";
-import type { OutputFormat } from "../types/index.js";
 import { withExit } from "../utils/exit.js";
 import { flattenServices, getServiceNames, normalizeServices } from "../utils/services.js";
-
-function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
-  const config = getConfig(options);
-  return new HomeAssistantClient(config);
-}
-
-function getFormat(options: { format?: OutputFormat }): OutputFormat {
-  const config = getConfig(options);
-  return config.outputFormat;
-}
+import { resolveCommandOptions } from "../utils/command-helpers.js";
 
 export function createStatusCommand(): Command {
   return new Command("status")
     .description("Check if the Home Assistant API is running")
     .action(withExit(async (_options, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
-      const client = getClient(globalOpts);
-      const format = getFormat(globalOpts);
+      const { config, format } = resolveCommandOptions(globalOpts);
+      const client = new HomeAssistantClient(config);
       const result = await client.getStatus();
       console.log(formatOutput(result, format));
     }));
@@ -33,8 +22,8 @@ export function createConfigCommand(): Command {
     .description("Get the current Home Assistant configuration")
     .action(withExit(async (_options, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
-      const client = getClient(globalOpts);
-      const format = getFormat(globalOpts);
+      const { config, format } = resolveCommandOptions(globalOpts);
+      const client = new HomeAssistantClient(config);
       const result = await client.getConfig();
       console.log(formatOutput(result, format));
     }));
@@ -46,8 +35,8 @@ export function createComponentsCommand(): Command {
     .option("--count", "Only return count")
     .action(withExit(async (options: { count?: boolean }, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
-      const client = getClient(globalOpts);
-      const format = getFormat(globalOpts);
+      const { config, format } = resolveCommandOptions(globalOpts);
+      const client = new HomeAssistantClient(config);
       const result = await client.getComponents();
       if (options.count) {
         console.log(formatOutput({ components_count: result.length }, format));
@@ -63,8 +52,8 @@ export function createEventsCommand(): Command {
     .option("--count", "Only return count")
     .action(withExit(async (options: { count?: boolean }, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
-      const client = getClient(globalOpts);
-      const format = getFormat(globalOpts);
+      const { config, format } = resolveCommandOptions(globalOpts);
+      const client = new HomeAssistantClient(config);
       const result = await client.getEvents();
       if (options.count) {
         console.log(formatOutput({ events_count: result.length }, format));
@@ -90,8 +79,8 @@ export function createServicesCommand(): Command {
       schema?: boolean;
     }, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
-      const client = getClient(globalOpts);
-      const format = getFormat(globalOpts);
+      const { config, format } = resolveCommandOptions(globalOpts);
+      const client = new HomeAssistantClient(config);
       const services = await client.getServices();
 
       const filtered = services.filter((serviceDomain) => {
@@ -142,8 +131,8 @@ export function createStatesCommand(): Command {
 
   command.action(withExit(async (entityId: string | undefined, options: { count?: boolean }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new HomeAssistantClient(config);
 
     if (entityId) {
       const result = await client.getState(entityId);
@@ -175,8 +164,8 @@ export function createSetStateCommand(): Command {
   command.action(
     withExit(async (entityId: string, state: string, options: { attributes?: string }, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
-      const client = getClient(globalOpts);
-      const format = getFormat(globalOpts);
+      const { config, format } = resolveCommandOptions(globalOpts);
+      const client = new HomeAssistantClient(config);
 
       let attributes: Record<string, unknown> | undefined;
       if (options.attributes) {
@@ -198,8 +187,8 @@ export function createDeleteStateCommand(): Command {
 
   command.action(withExit(async (entityId: string, _options, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new HomeAssistantClient(config);
 
     await client.deleteState(entityId);
     console.log(formatOutput({ success: true, entity_id: entityId }, format));

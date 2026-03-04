@@ -1,19 +1,8 @@
 import { Command } from "commander";
-import { getConfig } from "../config/index.js";
 import { SearchApiClient } from "../api/search.js";
 import { formatOutput, formatStates } from "../formatters/index.js";
 import { withExit } from "../utils/exit.js";
-import type { OutputFormat } from "../types/index.js";
-
-function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
-  const config = getConfig(options);
-  return new SearchApiClient(config);
-}
-
-function getFormat(options: { format?: OutputFormat }): OutputFormat {
-  const config = getConfig(options);
-  return config.outputFormat;
-}
+import { resolveCommandOptions } from "../utils/command-helpers.js";
 
 export function createSearchCommand(): Command {
   const command = new Command("search")
@@ -35,8 +24,8 @@ export function createSearchCommand(): Command {
     limit?: string;
   }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new SearchApiClient(config);
 
     if (options.quick) {
       const quickResults = await client.quickSearch(query);
@@ -91,8 +80,8 @@ export function createFindCommand(): Command {
     count?: boolean;
   }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new SearchApiClient(config);
 
     let results = await client.quickSearch(pattern);
 

@@ -1,19 +1,8 @@
 import { Command } from "commander";
-import { getConfig } from "../config/index.js";
 import { HomeAssistantClient } from "../api/index.js";
 import { formatHistory, formatLogbook, formatOutput } from "../formatters/index.js";
 import { withExit } from "../utils/exit.js";
-import type { OutputFormat } from "../types/index.js";
-
-function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
-  const config = getConfig(options);
-  return new HomeAssistantClient(config);
-}
-
-function getFormat(options: { format?: OutputFormat }): OutputFormat {
-  const config = getConfig(options);
-  return config.outputFormat;
-}
+import { resolveCommandOptions } from "../utils/command-helpers.js";
 
 export function createHistoryCommand(): Command {
   const command = new Command("history")
@@ -27,8 +16,8 @@ export function createHistoryCommand(): Command {
 
   command.action(withExit(async (options, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new HomeAssistantClient(config);
 
     const entities = options.entityId.split(",").map((e: string) => e.trim());
     const result = await client.getHistory({
@@ -54,8 +43,8 @@ export function createLogbookCommand(): Command {
 
   command.action(withExit(async (options, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new HomeAssistantClient(config);
 
     const result = await client.getLogbook({
       entityId: options.entityId,
@@ -73,8 +62,8 @@ export function createErrorLogCommand(): Command {
     .description("Get the Home Assistant error log")
     .action(withExit(async (_options, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
-      const client = getClient(globalOpts);
-      const format = getFormat(globalOpts);
+      const { config, format } = resolveCommandOptions(globalOpts);
+      const client = new HomeAssistantClient(config);
       const result = await client.getErrorLog();
       console.log(formatOutput({ error_log: result }, format));
     }));

@@ -3,17 +3,7 @@ import { getConfig } from "../config/index.js";
 import { ListsApiClient, HomeAssistantApiError } from "../api/index.js";
 import { formatOutput } from "../formatters/index.js";
 import { withExit } from "../utils/exit.js";
-import type { OutputFormat } from "../types/index.js";
-
-function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
-  const config = getConfig(options);
-  return new ListsApiClient(config);
-}
-
-function getFormat(options: { format?: OutputFormat }): OutputFormat {
-  const config = getConfig(options);
-  return config.outputFormat;
-}
+import { resolveCommandOptions } from "../utils/command-helpers.js";
 
 export function createTodoCommand(): Command {
   const command = new Command("todo")
@@ -44,8 +34,8 @@ export function createTodoCommand(): Command {
     count?: boolean;
   }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new ListsApiClient(config);
 
     if (options.add && options.entityId) {
       await client.addTodoItem(options.entityId, options.add, options.description, options.due);
@@ -126,8 +116,8 @@ export function createShoppingListCommand(): Command {
     count?: boolean;
   }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new ListsApiClient(config);
 
     if (options.add) {
       const item = await client.addShoppingItem(options.add);
@@ -195,8 +185,8 @@ export function createNotificationsCommand(): Command {
     count?: boolean;
   }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new ListsApiClient(config);
 
     if (options.create) {
       const notifOptions: { title?: string; notificationId?: string } = {};

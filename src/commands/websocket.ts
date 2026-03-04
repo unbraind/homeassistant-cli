@@ -1,17 +1,8 @@
 import { Command } from "commander";
-import { getConfig } from "../config/index.js";
 import { HomeAssistantWebSocketClient } from "../api/websocket.js";
 import { formatOutput } from "../formatters/index.js";
 import { withExit } from "../utils/exit.js";
-import type { OutputFormat } from "../types/index.js";
-
-function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
-  return new HomeAssistantWebSocketClient(getConfig(options));
-}
-
-function getFormat(options: { format?: OutputFormat }): OutputFormat {
-  return getConfig(options).outputFormat;
-}
+import { resolveCommandOptions } from "../utils/command-helpers.js";
 
 function parseJson(value?: string): Record<string, unknown> | undefined {
   if (!value) return undefined;
@@ -31,8 +22,8 @@ export function createWebsocketCommand(): Command {
     }
 
     const globalOpts = command.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new HomeAssistantWebSocketClient(config);
 
     try {
       await client.connect();
@@ -54,8 +45,8 @@ function createWebsocketStatusCommand(): Command {
 
   cmd.action(withExit(async (_options, command) => {
     const globalOpts = command.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new HomeAssistantWebSocketClient(config);
 
     try {
       await client.connect();
@@ -88,8 +79,8 @@ function createWebsocketCallCommand(): Command {
 
   cmd.action(withExit(async (options: { type: string; data?: string }, command) => {
     const globalOpts = command.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new HomeAssistantWebSocketClient(config);
 
     try {
       const result = await client.call(options.type, parseJson(options.data));
@@ -111,8 +102,8 @@ function createWebsocketSubscribeCommand(): Command {
 
   cmd.action(withExit(async (options: { eventType?: string; waitMs: string; maxEvents: string }, command) => {
     const globalOpts = command.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new HomeAssistantWebSocketClient(config);
 
     try {
       const waitMs = parseInt(options.waitMs, 10);

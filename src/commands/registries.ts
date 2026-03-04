@@ -1,13 +1,9 @@
 import { Command } from "commander";
-import { getConfig } from "../config/index.js";
 import { WebSocketRegistryClient, HomeAssistantClient, HomeAssistantApiError } from "../api/index.js";
 import { formatOutput } from "../formatters/index.js";
 import { withExit } from "../utils/exit.js";
+import { resolveCommandOptions } from "../utils/command-helpers.js";
 import type { OutputFormat, HaState } from "../types/index.js";
-
-function getFormat(options: { format?: OutputFormat }): OutputFormat {
-  return getConfig(options).outputFormat;
-}
 
 interface RegistryOptions {
   entities?: boolean;
@@ -50,8 +46,7 @@ export function createRegistriesCommand(): Command {
 
   command.action(withExit(async (options: RegistryOptions, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
-    const config = getConfig(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
     const wsClient = new WebSocketRegistryClient(config);
 
     const useEntities = options.entities || options.entity;

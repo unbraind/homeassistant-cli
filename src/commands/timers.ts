@@ -1,18 +1,8 @@
 import { Command } from "commander";
-import { getConfig } from "../config/index.js";
 import { HomeAssistantClient } from "../api/client.js";
 import { formatOutput } from "../formatters/index.js";
 import { withExit } from "../utils/exit.js";
-import type { OutputFormat } from "../types/index.js";
-
-function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number; readOnly?: boolean }) {
-  const config = getConfig(options);
-  return new HomeAssistantClient(config);
-}
-
-function getFormat(options: { format?: OutputFormat }): OutputFormat {
-  return getConfig(options).outputFormat;
-}
+import { resolveCommandOptions } from "../utils/command-helpers.js";
 
 export function createTimersCommand(): Command {
   const command = new Command("timers")
@@ -41,8 +31,8 @@ export function createTimersCommand(): Command {
     state?: string;
   }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new HomeAssistantClient(config);
 
     if (options.reload) {
       await client.callService("timer", "reload", {});

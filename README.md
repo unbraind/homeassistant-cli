@@ -45,7 +45,7 @@ npx homeassistant-cli --help
 ### From Source
 
 ```bash
-git clone https://github.com/your-org/homeassistant-cli.git
+git clone https://github.com/unbraind/homeassistant-cli.git
 cd homeassistant-cli
 bun install
 bun run build

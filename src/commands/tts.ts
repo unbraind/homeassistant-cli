@@ -1,19 +1,8 @@
 import { Command } from "commander";
-import { getConfig } from "../config/index.js";
 import { TtsApiClient } from "../api/tts.js";
 import { formatOutput } from "../formatters/index.js";
 import { withExit } from "../utils/exit.js";
-import type { OutputFormat } from "../types/index.js";
-
-function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
-  const config = getConfig(options);
-  return new TtsApiClient(config);
-}
-
-function getFormat(options: { format?: OutputFormat }): OutputFormat {
-  const config = getConfig(options);
-  return config.outputFormat;
-}
+import { resolveCommandOptions } from "../utils/command-helpers.js";
 
 export function createTtsCommand(): Command {
   const command = new Command("tts")
@@ -36,8 +25,8 @@ export function createTtsCommand(): Command {
     clearCache?: boolean;
   }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new TtsApiClient(config);
 
     if (options.engines || options.listEngines) {
       try {
@@ -91,8 +80,8 @@ export function createSayCommand(): Command {
 
   command.action(withExit(async (message: string, options: { player: string; engine?: string }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new TtsApiClient(config);
 
     const speakOptions: { engineId?: string } = {};
     if (options.engine) speakOptions.engineId = options.engine;

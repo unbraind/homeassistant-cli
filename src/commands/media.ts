@@ -1,28 +1,17 @@
 import { Command } from "commander";
 import { writeFileSync } from "node:fs";
-import { getConfig } from "../config/index.js";
 import { HomeAssistantClient } from "../api/index.js";
 import { formatCalendars, formatCalendarEvents, formatOutput } from "../formatters/index.js";
 import { withExit } from "../utils/exit.js";
-import type { OutputFormat } from "../types/index.js";
-
-function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
-  const config = getConfig(options);
-  return new HomeAssistantClient(config);
-}
-
-function getFormat(options: { format?: OutputFormat }): OutputFormat {
-  const config = getConfig(options);
-  return config.outputFormat;
-}
+import { resolveCommandOptions } from "../utils/command-helpers.js";
 
 export function createCalendarsCommand(): Command {
   return new Command("calendars")
     .description("Get list of calendar entities")
     .action(withExit(async (_options, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
-      const client = getClient(globalOpts);
-      const format = getFormat(globalOpts);
+      const { config, format } = resolveCommandOptions(globalOpts);
+      const client = new HomeAssistantClient(config);
       const result = await client.getCalendars();
       console.log(formatCalendars(result, format));
     }));
@@ -38,8 +27,8 @@ export function createCalendarEventsCommand(): Command {
   command.action(
     withExit(async (entityId: string, options: { start: string; end: string }, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
-      const client = getClient(globalOpts);
-      const format = getFormat(globalOpts);
+      const { config, format } = resolveCommandOptions(globalOpts);
+      const client = new HomeAssistantClient(config);
 
       const result = await client.getCalendarEvents(
         entityId,
@@ -62,8 +51,8 @@ export function createCameraCommand(): Command {
   command.action(
     withExit(async (entityId: string, options: { output?: string }, cmd) => {
       const globalOpts = cmd.optsWithGlobals();
-      const client = getClient(globalOpts);
-      const format = getFormat(globalOpts);
+      const { config, format } = resolveCommandOptions(globalOpts);
+      const client = new HomeAssistantClient(config);
 
       const buffer = await client.getCameraImage(entityId);
 

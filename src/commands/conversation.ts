@@ -1,19 +1,8 @@
 import { Command } from "commander";
-import { getConfig } from "../config/index.js";
 import { ConversationApiClient } from "../api/conversation.js";
 import { formatOutput } from "../formatters/index.js";
 import { withExit } from "../utils/exit.js";
-import type { OutputFormat } from "../types/index.js";
-
-function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
-  const config = getConfig(options);
-  return new ConversationApiClient(config);
-}
-
-function getFormat(options: { format?: OutputFormat }): OutputFormat {
-  const config = getConfig(options);
-  return config.outputFormat;
-}
+import { resolveCommandOptions } from "../utils/command-helpers.js";
 
 export function createConversationCommand(): Command {
   const command = new Command("conversation")
@@ -30,8 +19,8 @@ export function createConversationCommand(): Command {
     conversationId?: string;
   }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new ConversationApiClient(config);
 
     if (options.agents) {
       try {
@@ -71,8 +60,8 @@ export function createAskCommand(): Command {
 
   command.action(withExit(async (text: string, options: { agentId?: string }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new ConversationApiClient(config);
 
     const convOptions: { agentId?: string } = {};
     if (options.agentId) convOptions.agentId = options.agentId;

@@ -1,9 +1,8 @@
 import { Command } from "commander";
-import { getConfig } from "../config/index.js";
 import { HomeAssistantWebSocketClient } from "../api/websocket.js";
 import { formatOutput } from "../formatters/index.js";
 import { withExit } from "../utils/exit.js";
-import type { OutputFormat } from "../types/index.js";
+import { resolveCommandOptions } from "../utils/command-helpers.js";
 
 interface AssistPipeline {
   id: string;
@@ -26,14 +25,6 @@ interface PipelineListResult {
   preferred_pipeline: string;
 }
 
-function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
-  return new HomeAssistantWebSocketClient(getConfig(options));
-}
-
-function getFormat(options: { format?: OutputFormat }): OutputFormat {
-  return getConfig(options).outputFormat;
-}
-
 export function createPipelineCommand(): Command {
   const cmd = new Command("pipeline")
     .description("Manage Home Assistant Assist voice pipelines");
@@ -54,8 +45,8 @@ function createPipelineListCommand(): Command {
 
   cmd.action(withExit(async (options: { count?: boolean }, command) => {
     const globalOpts = command.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new HomeAssistantWebSocketClient(config);
 
     try {
       const result = await client.call("assist_pipeline/pipeline/list") as PipelineListResult;
@@ -92,8 +83,8 @@ function createPipelineGetCommand(): Command {
 
   cmd.action(withExit(async (id: string, _options, command) => {
     const globalOpts = command.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new HomeAssistantWebSocketClient(config);
 
     try {
       const result = await client.call("assist_pipeline/pipeline/get", { pipeline_id: id }) as AssistPipeline;
@@ -123,8 +114,8 @@ function createPipelineCreateCommand(): Command {
     ttsEngine?: string;
   }, command) => {
     const globalOpts = command.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new HomeAssistantWebSocketClient(config);
 
     const payload: Record<string, unknown> = {
       name: options.name,
@@ -152,8 +143,8 @@ function createPipelineDeleteCommand(): Command {
 
   cmd.action(withExit(async (id: string, _options, command) => {
     const globalOpts = command.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new HomeAssistantWebSocketClient(config);
 
     try {
       await client.call("assist_pipeline/pipeline/delete", { pipeline_id: id });
@@ -173,8 +164,8 @@ function createPipelineSetPreferredCommand(): Command {
 
   cmd.action(withExit(async (id: string, _options, command) => {
     const globalOpts = command.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new HomeAssistantWebSocketClient(config);
 
     try {
       await client.call("assist_pipeline/pipeline/set_preferred", { pipeline_id: id });

@@ -1,19 +1,10 @@
 import { Command } from "commander";
-import { getConfig } from "../config/index.js";
 import { SupervisorApiClient } from "../api/supervisor.js";
 import { formatOutput } from "../formatters/index.js";
 import { withExit } from "../utils/exit.js";
-import type { OutputFormat } from "../types/index.js";
+import { resolveCommandOptions } from "../utils/command-helpers.js";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
-
-function getClient(options: { url?: string; token?: string; format?: OutputFormat; timeout?: number }) {
-  return new SupervisorApiClient(getConfig(options));
-}
-
-function getFormat(options: { format?: OutputFormat }): OutputFormat {
-  return getConfig(options).outputFormat;
-}
 
 function parseJson(value?: string): Record<string, unknown> | undefined {
   if (!value) return undefined;
@@ -61,8 +52,8 @@ function createSupervisorApiCommand(): Command {
 
   cmd.action(withExit(async (options: { method: string; path?: string; endpoint?: string; data?: string }, command) => {
     const globalOpts = command.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new SupervisorApiClient(config);
     const method = options.method.toUpperCase() as HttpMethod;
     const endpointPath = options.endpoint ?? options.path;
 
@@ -98,8 +89,8 @@ function createSupervisorAddonsCommand(): Command {
     restart?: string;
   }, command) => {
     const globalOpts = command.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new SupervisorApiClient(config);
 
     if (options.info) {
       console.log(formatOutput(await runSupervisorAction(() => client.getAddonInfo(options.info as string)), format));
@@ -135,8 +126,8 @@ function createSupervisorHostCommand(): Command {
 
   cmd.action(withExit(async (options: { reboot?: boolean; shutdown?: boolean }, command) => {
     const globalOpts = command.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new SupervisorApiClient(config);
 
     if (options.reboot) {
       console.log(formatOutput(await runSupervisorAction(() => client.hostReboot()), format));
@@ -159,8 +150,8 @@ function createSupervisorLogsCommand(): Command {
     .description("Fetch supervisor logs")
     .action(withExit(async (_options, command) => {
       const globalOpts = command.optsWithGlobals();
-      const client = getClient(globalOpts);
-      const format = getFormat(globalOpts);
+      const { config, format } = resolveCommandOptions(globalOpts);
+      const client = new SupervisorApiClient(config);
       console.log(formatOutput(await runSupervisorAction(() => client.getSupervisorLogs()), format));
     }));
 }
