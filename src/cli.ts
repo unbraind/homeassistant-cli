@@ -77,6 +77,12 @@ import {
   createPipelineCommand,
   createTimersCommand,
   createInputCommand,
+  createLightCommand,
+  createSwitchCommand,
+  createClimateCommand,
+  createCoverCommand,
+  createLockCommand,
+  createFanCommand,
 } from "./commands/index.js";
 import { createInspectCommand, createSummaryCommand } from "./commands/inspect.js";
 
@@ -85,7 +91,7 @@ const program = new Command();
 program
   .name("hassio")
   .description("Agent-optimized CLI tool for interacting with the Home Assistant API")
-  .version("2026.3.4-48")
+  .version("2026.3.4-49")
   .addOption(
     new Option("-u, --url <url>", "Home Assistant URL")
       .env("HASSIO_URL")
@@ -232,6 +238,14 @@ program.addCommand(createCapabilitiesCommand());
 // Timers & Input Helpers
 program.addCommand(createTimersCommand());
 program.addCommand(createInputCommand());
+
+// Device Control Commands
+program.addCommand(createLightCommand());
+program.addCommand(createSwitchCommand());
+program.addCommand(createClimateCommand());
+program.addCommand(createCoverCommand());
+program.addCommand(createLockCommand());
+program.addCommand(createFanCommand());
 
 program.parseAsync(process.argv).catch((err) => {
   console.error("Error:", err.message);

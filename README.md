@@ -8,6 +8,7 @@ Agent-optimized CLI tool for Home Assistant with token-efficient output. Default
 ## Features
 
 - **Broad Home Assistant API Coverage** - States, services, events, history, logbook, calendars, cameras, templates, and more
+- **Device Control Commands** - Dedicated `light`, `switch`, `climate`, `cover`, `lock`, `fan` commands with full parameter support
 - **Token-Efficient Output** - Default TOON format saves ~40% tokens vs JSON, no emojis/decorations
 - **Multiple Output Formats** - TOON, JSON, JSON-compact, YAML, table, and markdown
 - **Interactive Setup Wizard** - Easy first-time configuration
@@ -26,7 +27,7 @@ Agent-optimized CLI tool for Home Assistant with token-efficient output. Default
 - **WebSocket API Coverage** - Generic `websocket`/`ws` passthrough plus `websocket status` metadata
 - **Supervisor API Coverage** - Generic `supervisor api` passthrough + common shortcuts (addons, host, logs)
 - **Full TypeScript Support** - Complete type safety throughout
-- **Comprehensive Testing** - 654 tests passing, 90.64% coverage
+- **Comprehensive Testing** - 746 tests passing, 92.06% coverage
 
 ## Installation
 

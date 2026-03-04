@@ -2,6 +2,60 @@
 
 All notable changes to the Home Assistant CLI project will be documented in this file.
 
+## [2026.3.4-49] - 2026-03-04
+
+### Added
+
+#### Device Control Commands (6 new commands)
+- **`light`** - Full light entity control:
+  - `--on/--off/--toggle <entity-id>` - Basic control
+  - `--entity-id <id>` with modifiers - Turn on with options
+  - `--brightness <0-255>`, `--brightness-pct <0-100>` - Brightness control
+  - `--color-temp <mireds>`, `--kelvin <k>` - Color temperature
+  - `--rgb <r,g,b>`, `--hs <h,s>`, `--color-name <name>` - Color control
+  - `--effect <name>`, `--transition <s>`, `--flash <short|long>` - Effects
+  - `--state <on|off|unavailable>`, `--count` - Listing/filtering
+
+- **`switch`** - Switch entity control:
+  - `--on/--off/--toggle <entity-id>` - On/off/toggle
+  - `--state <on|off>`, `--count` - Listing/filtering
+
+- **`climate`** - Climate/thermostat control:
+  - `--on/--off/--toggle <entity-id>` - Power control
+  - `--entity-id <id> --set-temp <°C>` - Set target temperature
+  - `--entity-id <id> --set-mode <mode>` - Set HVAC mode (heat/cool/auto/dry/fan_only/heat_cool/off)
+  - `--entity-id <id> --set-preset <preset>` - Set preset (eco/away/boost/comfort/home/sleep)
+  - `--entity-id <id> --set-humidity <0-100>` - Set target humidity
+  - `--entity-id <id> --set-fan <mode>` - Set fan mode
+  - `--entity-id <id> --set-swing <mode>` - Set swing mode
+  - `--state <mode>`, `--count` - Listing/filtering
+
+- **`cover`** - Cover entity control (blinds, shutters, garage doors):
+  - `--open/--close/--stop/--toggle <entity-id>` - Basic movement
+  - `--entity-id <id> --position <0-100>` - Set cover position
+  - `--entity-id <id> --tilt <0-100>` - Set tilt position
+  - `--open-tilt/--close-tilt/--stop-tilt <entity-id>` - Tilt control
+  - `--state <open|closed|opening|closing>`, `--count` - Listing/filtering
+
+- **`lock`** - Lock entity control:
+  - `--lock/--unlock/--open <entity-id>` - Lock operations
+  - `--code <code>` - Access code (use with lock/unlock/open)
+  - `--state <locked|unlocked|jammed>`, `--count` - Listing/filtering
+
+- **`fan`** - Fan entity control:
+  - `--on/--off/--toggle <entity-id>` - Basic control
+  - `--entity-id <id> --percentage <0-100>` - Set fan speed
+  - `--entity-id <id> --preset <mode>` - Set preset mode
+  - `--entity-id <id> --direction <forward|reverse>` - Set direction
+  - `--oscillate <entity-id>` / `--no-oscillate` - Oscillation control
+  - `--increase-speed/--decrease-speed <entity-id>` - Speed increments
+  - `--on <entity-id> --percentage/--preset` - Turn on with settings
+  - `--state <on|off>`, `--count` - Listing/filtering
+
+### Improved
+- **Test coverage**: 90.4% → 92.06% (746 tests across 76 test files, up from 654 tests)
+- **`api/media.ts`**: Coverage raised from 23.46% → 100% with 25 new API-level tests covering all media player methods
+
 ## [2026.3.4-48] - 2026-03-04
 
 ### Added
