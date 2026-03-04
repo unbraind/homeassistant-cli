@@ -2,7 +2,8 @@ import { Command } from "commander";
 import { formatOutput, formatStates } from "../../formatters/index.js";
 import { withExit } from "../../utils/exit.js";
 import type { HaState } from "../../types/index.js";
-import { getClient, getFormat, parseLimit } from "./shared.js";
+import { resolveCommandOptions, parseLimit } from "../../utils/command-helpers.js";
+import { HomeAssistantClient } from "../../api/client.js";
 
 interface EntitiesOptions {
   domain?: string;
@@ -39,8 +40,8 @@ export function createEntitiesCommand(): Command {
 
   command.action(withExit(async (options: EntitiesOptions, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new HomeAssistantClient(config);
 
     const states = await client.getStates();
 

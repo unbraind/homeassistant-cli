@@ -7,14 +7,7 @@ Complete documentation for the Home Assistant CLI tool.
 - [README](../README.md) - Installation and quick start
 - [API Reference](./API.md) - Complete command reference
 - [LLM Integration Guide](./LLM_INTEGRATION.md) - Agent/LLM optimized features
-- [API Research (2026-03-01)](./API_RESEARCH_2026-03-01.md) - Live endpoint findings and CLI enhancements
-- [API Research (2026-03-02)](./API_RESEARCH_2026-03-02.md) - Updated live validation and diagnostics improvements
-- [API Research (2026-03-03)](./API_RESEARCH_2026-03-03.md) - Live capability matrix, agent-context output, and private-field redaction
-- [API Research (2026-03-04)](./API_RESEARCH_2026-03-04.md) - Full entity-domain audit, 8 new commands (media-player, update, button, number, select, remote, sensor, binary-sensor)
-- [API Research (2026-03-04b)](./API_RESEARCH_2026-03-04b.md) - device-tracker command, settings-wizard 100% coverage, v53 (895 tests)
-- [Production Gaps (2026-03-03)](./PRODUCTION_GAPS_2026-03-03.md) - Remaining work for higher coverage and broader endpoint parity
-- [Live E2E Testing](./E2E_LIVE_TESTING.md) - End-to-end smoke testing against a real Home Assistant instance
-- [Enhancement Summary (2026-03-03)](./ENHANCEMENT_SUMMARY_2026-03-03.md) - Comprehensive verification and enhancement report
+- [Agent Optimization Guide](./AGENT_OPTIMIZATION.md) - Agent-specific optimization features
 
 ## Quick Start
 
@@ -187,6 +180,17 @@ Configuration is loaded in priority order (later overrides earlier):
 | `vacuum` | Control `vacuum.*` entities (start/pause/stop/return-to-base/locate, `--fan-speed`) |
 | `valve` | Control `valve.*` entities (open/close/stop/toggle, `--position`) |
 | `water-heater` | Control `water_heater.*` entities (on/off, `--temperature`, `--operation-mode`) |
+| `sun` | Get sun/solar position (sunrise, sunset, elevation, azimuth) |
+| `logger` | Manage log levels for HA components |
+| `recorder` | Manage the recorder (purge, enable/disable) |
+| `mqtt` | Interact with MQTT integration (publish, reload) |
+| `schedule` | Manage schedule helper entities |
+| `utility-meter` | Manage utility meter helpers |
+| `system-log` | Clear or write system log entries |
+| `frontend` | Manage frontend themes |
+| `restart` | Restart Home Assistant |
+| `stop` | Stop Home Assistant |
+| `notify` | Send notifications |
 
 ### Config Entry Commands
 
@@ -261,7 +265,7 @@ Configuration is loaded in priority order (later overrides earlier):
 
 The CLI is optimized for use by LLMs and AI agents:
 
-- **TOON Format**: Default output uses TOON for ~40% token reduction
+- **TOON Format**: Default output uses the official `@toon-format/toon` library for spec-conformant output (~40% token reduction)
 - **Query Language**: Simple expression syntax for filtering
 - **Batch Operations**: Execute multiple operations efficiently
 - **Structured Output**: Predictable, parseable formats
@@ -320,6 +324,21 @@ See [LLM Integration Guide](./LLM_INTEGRATION.md) for detailed examples.
 ✅ Update Entities
 ✅ Sensor Browse (sensor + binary_sensor)
 ✅ Device Tracker Browse (device_tracker)
+✅ Sun/Solar position
+✅ Logger management
+✅ Recorder management
+✅ MQTT integration
+✅ Schedule helpers
+✅ Utility meter helpers
+✅ Counter helpers
+✅ Siren control
+✅ AI Task entities
+✅ Event entities
+✅ Vacuum control
+✅ Valve control
+✅ Water heater control
+✅ System log management
+✅ Frontend/themes management
 
 ## Project Structure
 
@@ -384,7 +403,7 @@ bun run dev -- <command>
 
 ### Test Coverage
 
-Current test run (2026-03-04): **895 tests passing across 91 test files** — coverage: **93.78%**.
+Current test run (2026-03-04): **975 tests passing across 97 test files** — coverage: **96%**.
 Latest coverage run (v8): available via `bun run test:coverage`.
 Live E2E result (2026-03-04): **passed** (`bun run test:e2e:live`, using installed `hassio` binary against HA 2026.1.3).
 

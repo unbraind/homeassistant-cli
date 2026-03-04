@@ -19,3 +19,20 @@ export function resolveCommandOptions(options: GlobalOptions): { config: Config;
   const config = getConfig(options);
   return { config, format: config.outputFormat };
 }
+
+/**
+ * Parses a string limit value into a positive integer, or returns undefined.
+ * Throws if the value is not a valid positive integer.
+ */
+export function parseLimit(value?: string): number | undefined {
+  if (!value) {
+    return undefined;
+  }
+
+  const limit = parseInt(value, 10);
+  if (!Number.isFinite(limit) || limit <= 0) {
+    throw new Error(`Invalid limit '${value}'. Must be a positive integer.`);
+  }
+
+  return limit;
+}

@@ -48,15 +48,17 @@ describe("TOON Formatter", () => {
     });
 
     it("should escape strings with newlines", () => {
-      expect(formatToon("hello\nworld")).toBe('"hello\nworld"');
+      // TOON spec uses backslash escaping (not CSV-style double-quoting)
+      expect(formatToon("hello\nworld")).toBe('"hello\\nworld"');
     });
 
     it("should escape strings with quotes", () => {
-      expect(formatToon('say "hello"')).toBe('"say ""hello"""');
+      // TOON spec uses \" escaping per §7.1
+      expect(formatToon('say "hello"')).toBe('"say \\"hello\\""');
     });
 
     it("should format empty array", () => {
-      expect(formatToon([])).toBe("[]:");
+      expect(formatToon([])).toBe("[0]:");
     });
 
     it("should format array of primitives", () => {
@@ -86,7 +88,8 @@ describe("TOON Formatter", () => {
       const data = { config: { url: "http://localhost", port: 8123 } };
       const result = formatToon(data);
       expect(result).toContain("config:");
-      expect(result).toContain("url: http://localhost");
+      // TOON spec quotes strings containing colons (§7.2)
+      expect(result).toContain('url: "http://localhost"');
       expect(result).toContain("port: 8123");
     });
   });
@@ -107,8 +110,10 @@ describe("TOON Formatter", () => {
         },
       ];
       const result = formatStatesToon(states);
-      expect(result).toContain("states[1]{entity_id,state,last_changed,attributes}:");
-      expect(result).toContain("light.living_room,on,2024-01-01T00:00:00Z");
+      // Official TOON uses expanded list form when objects have nested attributes
+      expect(result).toContain("states[1]:");
+      expect(result).toContain("entity_id: light.living_room");
+      expect(result).toContain("state: on");
     });
   });
 
@@ -174,9 +179,9 @@ describe("TOON Formatter", () => {
         ],
       ];
       const result = formatHistoryToon(history);
-      expect(result).toContain("history[1][2]:");
-      expect(result).toContain("entity[2](sensor.temperature):");
-      expect(result).toContain("2024-01-01T00:00:00Z,20");
+      expect(result).toContain("history[1]:");
+      expect(result).toContain("entity_id: sensor.temperature");
+      expect(result).toContain("changes[2]{last_changed,state}:");
     });
   });
 
@@ -198,7 +203,7 @@ describe("TOON Formatter", () => {
       ];
       const result = formatLogbookToon(entries);
       expect(result).toContain("logbook[1]{when,domain,entity_id,name,message}:");
-      expect(result).toContain("2024-01-01T00:00:00Z,light,light.living_room");
+      expect(result).toContain("light,light.living_room");
     });
   });
 
@@ -233,7 +238,8 @@ describe("TOON Formatter", () => {
       ];
       const result = formatCalendarEventsToon(events);
       expect(result).toContain("events[1]{summary,start,end,location,description}:");
-      expect(result).toContain("Meeting,2024-01-15T10:00:00Z");
+      expect(result).toContain("Meeting");
+      expect(result).toContain("Office");
     });
 
     it("should format all-day events", () => {

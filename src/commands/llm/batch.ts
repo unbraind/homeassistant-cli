@@ -1,7 +1,8 @@
 import { Command } from "commander";
 import { formatOutput } from "../../formatters/index.js";
 import { withExit } from "../../utils/exit.js";
-import { getClient, getFormat } from "./shared.js";
+import { resolveCommandOptions } from "../../utils/command-helpers.js";
+import { HomeAssistantClient } from "../../api/client.js";
 
 interface BatchOptions {
   domain: string;
@@ -27,8 +28,8 @@ export function createBatchCommand(): Command {
 
   command.action(withExit(async (options: BatchOptions, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
-    const client = getClient(globalOpts);
-    const format = getFormat(globalOpts);
+    const { config, format } = resolveCommandOptions(globalOpts);
+    const client = new HomeAssistantClient(config);
 
     const entities = options.entities.split(",").map((entityId) => entityId.trim());
     const baseData = options.data ? JSON.parse(options.data) as Record<string, unknown> : {};

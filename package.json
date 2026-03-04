@@ -1,6 +1,6 @@
 {
   "name": "homeassistant-cli",
-  "version": "2026.3.4-56",
+  "version": "2026.3.4-57",
   "description": "Agent-optimized CLI tool for interacting with the Home Assistant API",
   "type": "module",
   "main": "dist/index.js",
@@ -32,6 +32,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@toon-format/toon": "^2.1.0",
     "commander": "^12.1.0",
     "undici": "^6.21.0",
     "ws": "^8.19.0",

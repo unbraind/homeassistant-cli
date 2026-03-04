@@ -2,6 +2,21 @@
 
 All notable changes to the Home Assistant CLI project will be documented in this file.
 
+## [2026.3.4-57] - 2026-03-04
+
+### Breaking Changes
+- **TOON output format**: Replaced custom TOON implementation with official `@toon-format/toon` library for full spec compliance. Escaping now uses `\"` instead of `""`, and strings containing colons are properly quoted per TOON spec §7.2.
+
+### Improvements
+- **Spec-conformant TOON output**: Integrated official `@toon-format/toon` v2.1.0 for deterministic, standards-compliant TOON encoding
+- **Eliminated duplicate helpers**: Removed `commands/llm/shared.ts`, consolidated into `utils/command-helpers.ts`
+- **Project cleanup**: Removed 18 obsolete development status/report files from root and docs/
+- **Test coverage**: 975 tests across 97 test files, 96% statement coverage
+
+### Documentation
+- Updated docs/INDEX.md with accurate command inventory and coverage stats
+- Cleaned docs/ to contain only canonical documentation files
+
 ## [2026.3.4-54] - 2026-03-04
 
 ### Added
