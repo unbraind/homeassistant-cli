@@ -43,3 +43,6 @@ export * from "./counter.js";
 export * from "./siren.js";
 export * from "./ai-task.js";
 export * from "./event-entity.js";
+export * from "./vacuum.js";
+export * from "./valve.js";
+export * from "./water-heater.js";

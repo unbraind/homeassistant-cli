@@ -2,6 +2,35 @@
 
 All notable changes to the Home Assistant CLI project will be documented in this file.
 
+## [2026.3.4-52] - 2026-03-04
+
+### Added
+
+#### New Domain Commands (3 new commands)
+- **`vacuum`** - Robot vacuum control:
+  - `--start/--pause/--stop <entity-id>` - Start, pause, or stop cleaning
+  - `--return-to-base <entity-id>` - Send to docking station
+  - `--clean-spot <entity-id>` - Spot cleaning mode
+  - `--locate <entity-id>` - Locate vacuum (play sound)
+  - `--entity-id <id> --fan-speed <speed>` - Set fan speed
+  - `--entity-id <id> --command <cmd> --params <json>` - Send custom command
+  - `--state <state>`, `--count` - Listing/filtering
+
+- **`valve`** - Valve entity control:
+  - `--open/--close/--stop/--toggle <entity-id>` - Open, close, stop, or toggle
+  - `--entity-id <id> --position <0-100>` - Set valve position percentage
+  - `--state <state>`, `--count` - Listing/filtering
+
+- **`water-heater`** - Water heater control:
+  - `--on/--off <entity-id>` - Turn on/off
+  - `--entity-id <id> --temperature <°C>` - Set target temperature
+  - `--entity-id <id> --operation-mode <mode>` - Set operation mode
+  - `--entity-id <id> --away-mode <on|off>` - Set away mode
+  - `--state <state>`, `--count` - Listing/filtering
+
+### Tests
+- 878 tests total (30 new), 3 new test files covering all new commands
+
 ## [2026.3.4-49] - 2026-03-04
 
 ### Added
