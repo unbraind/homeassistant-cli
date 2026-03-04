@@ -2,6 +2,14 @@
   "name": "@unbrained/homeassistant-cli",
   "version": "2026.3.4",
   "description": "Agent-optimized CLI tool for interacting with the Home Assistant API",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unbraind/homeassistant-cli"
+  },
+  "homepage": "https://github.com/unbraind/homeassistant-cli#readme",
+  "bugs": {
+    "url": "https://github.com/unbraind/homeassistant-cli/issues"
+  },
   "type": "module",
   "main": "dist/index.js",
   "bin": {
