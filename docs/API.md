@@ -107,6 +107,7 @@ Get entity states.
 # All states
 hassio states
 hassio states --count
+hassio states --limit 25
 
 # Specific entity
 hassio states light.living_room

@@ -3,7 +3,7 @@ import { HomeAssistantClient } from "../api/index.js";
 import { formatOutput, formatServices, formatStates } from "../formatters/index.js";
 import { withExit } from "../utils/exit.js";
 import { flattenServices, getServiceNames, normalizeServices } from "../utils/services.js";
-import { resolveCommandOptions } from "../utils/command-helpers.js";
+import { parseLimit, resolveCommandOptions } from "../utils/command-helpers.js";
 
 export function createStatusCommand(): Command {
   return new Command("status")
@@ -127,12 +127,14 @@ export function createStatesCommand(): Command {
   const command = new Command("states")
     .description("Get entity states")
     .option("--count", "Only return count")
+    .option("-l, --limit <n>", "Limit returned rows")
     .argument("[entity-id]", "Specific entity ID to get state for");
 
-  command.action(withExit(async (entityId: string | undefined, options: { count?: boolean }, cmd) => {
+  command.action(withExit(async (entityId: string | undefined, options: { count?: boolean; limit?: string }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
     const { config, format } = resolveCommandOptions(globalOpts);
     const client = new HomeAssistantClient(config);
+    const limit = parseLimit(options.limit);
 
     if (entityId) {
       const result = await client.getState(entityId);
@@ -147,7 +149,8 @@ export function createStatesCommand(): Command {
         console.log(formatOutput({ states_count: result.length }, format));
         return;
       }
-      console.log(formatStates(result, format));
+      const limited = limit ? result.slice(0, limit) : result;
+      console.log(formatStates(limited, format));
     }
   }));
 

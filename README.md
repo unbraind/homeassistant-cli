@@ -218,6 +218,7 @@ hassio status
 hassio states                    # All entities
 hassio states light.living_room  # Specific entity
 hassio states --count            # Count only
+hassio states --limit 25         # Limit list output
 
 # Control devices
 hassio call-service light turn_on -e light.living_room

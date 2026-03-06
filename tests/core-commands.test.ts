@@ -174,6 +174,31 @@ describe("states command", () => {
     expect(parsed.states_count).toBe(2);
   });
 
+  it("limits returned states with --limit", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse(sampleStates));
+
+    const cmd = createStatesCommand();
+    const result = await captureLog(() =>
+      cmd.parseAsync(["--limit", "1"], { from: "user" })
+    );
+
+    const parsed = JSON.parse(result);
+    expect(parsed).toHaveLength(1);
+    expect(parsed[0].entity_id).toBe("light.kitchen");
+  });
+
+  it("keeps full count with --count and --limit", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse(sampleStates));
+
+    const cmd = createStatesCommand();
+    const result = await captureLog(() =>
+      cmd.parseAsync(["--count", "--limit", "1"], { from: "user" })
+    );
+
+    const parsed = JSON.parse(result);
+    expect(parsed.states_count).toBe(2);
+  });
+
   it("returns single entity state by entity-id", async () => {
     mockRequest.mockResolvedValueOnce(mockResponse(sampleStates[0]));
 
