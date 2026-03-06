@@ -14,7 +14,7 @@ Examples:
 
 ## Current Release State
 
-Latest public release: `v2026.3.4` (2026-03-04).
+Latest public release: `v2026.3.6` (2026-03-06).
 
 - `CHANGELOG.md` contains release notes and current unreleased changes.
 - `docs/PROJECT_HISTORY.md` preserves pre-release implementation history and audit notes.

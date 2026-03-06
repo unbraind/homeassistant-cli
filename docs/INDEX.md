@@ -14,7 +14,7 @@ Complete documentation for the Home Assistant CLI tool.
 
 ## Release Status
 
-Current public release: **v2026.3.4** (2026-03-04).
+Current public release: **v2026.3.6** (2026-03-06).
 
 - `CHANGELOG.md` tracks released and unreleased changes.
 - Pre-release implementation progress and history audits are documented in `docs/PROJECT_HISTORY.md`.
