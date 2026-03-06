@@ -29,6 +29,12 @@ interface DataFile {
     checkedAt: string;
     report: unknown;
   };
+  githubStarPrompt?: {
+    completed: boolean;
+    checkedAt: string;
+    lastStatus: "unavailable" | "not_logged_in" | "starred" | "not_starred" | "error";
+    outcome: "already_starred" | "starred_via_gh" | "declined" | "manual_link";
+  };
 }
 
 interface ConfigFiles {

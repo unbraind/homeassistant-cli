@@ -4,7 +4,12 @@ All notable changes to this project are documented in this file.
 
 ## Unreleased
 
-- Ongoing changes after `v2026.3.6`
+- Ongoing changes after `v2026.3.6-2`
+
+## 2026.3.6-2 - 2026-03-06
+
+- Hardened CLI startup preflight handling for `--config`/`-c` path resolution.
+- Expanded regression test coverage for setup flow alias behavior and startup preflight branches.
 
 ## 2026.3.6 - 2026-03-06
 

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { beforeEach, describe, it, expect, vi } from "vitest";
 import { getGitHubStarStatus, maybePromptToStarRepo } from "../src/utils/github-star.js";
 
 interface GhCommandResult {
@@ -9,11 +9,36 @@ interface GhCommandResult {
 
 type ExecFn = (args: string[]) => Promise<GhCommandResult>;
 
+const { mockGetData, mockSaveData, resetDataStore } = vi.hoisted(() => {
+  let dataStore: Record<string, unknown> = {};
+
+  return {
+    mockGetData: vi.fn(() => dataStore),
+    mockSaveData: vi.fn((data: Record<string, unknown>) => {
+      dataStore = { ...dataStore, ...data };
+    }),
+    resetDataStore: () => {
+      dataStore = {};
+    },
+  };
+});
+
+vi.mock("../src/config/index.js", () => ({
+  getData: (...args: unknown[]) => mockGetData(...args),
+  saveData: (...args: unknown[]) => mockSaveData(...args),
+}));
+
 function createExecStub(mapper: (key: string) => GhCommandResult): ExecFn {
   return async (args: string[]) => mapper(args.join(" "));
 }
 
 describe("github-star extended", () => {
+  beforeEach(() => {
+    resetDataStore();
+    mockGetData.mockClear();
+    mockSaveData.mockClear();
+  });
+
   it("returns not_starred when viewerHasStarred is false", async () => {
     const exec = createExecStub((key) => {
       if (key === "--version") return { ok: true, stdout: "gh version 2", stderr: "" };
@@ -50,9 +75,35 @@ describe("github-star extended", () => {
     expect(result).toBe("error");
   });
 
-  it("does nothing when user declines to star", async () => {
+  it("prints manual link when gh is installed but not authenticated", async () => {
     const log = vi.fn();
-    const warn = vi.fn();
+    const exec = createExecStub((key) => {
+      if (key === "--version") return { ok: true, stdout: "gh version 2", stderr: "" };
+      if (key === "auth status") return { ok: false, stdout: "", stderr: "not logged in" };
+      return { ok: true, stdout: "", stderr: "" };
+    });
+
+    await maybePromptToStarRepo({
+      exec,
+      log,
+      isInteractive: true,
+    });
+
+    expect(log).toHaveBeenCalledWith("Star this project: https://github.com/unbraind/homeassistant-cli");
+    expect(mockSaveData).toHaveBeenCalledWith(
+      expect.objectContaining({
+        githubStarPrompt: expect.objectContaining({
+          completed: true,
+          lastStatus: "not_logged_in",
+          outcome: "manual_link",
+        }),
+      }),
+      undefined
+    );
+  });
+
+  it("caches decline path so user is not prompted repeatedly", async () => {
+    const prompt = vi.fn(async () => "n");
     const exec = createExecStub((key) => {
       if (key === "--version") return { ok: true, stdout: "gh version 2", stderr: "" };
       if (key === "auth status") return { ok: true, stdout: "logged in", stderr: "" };
@@ -60,46 +111,54 @@ describe("github-star extended", () => {
       return { ok: true, stdout: "", stderr: "" };
     });
 
-    await maybePromptToStarRepo({
-      exec,
-      log,
-      warn,
-      isInteractive: true,
-      prompt: async () => "n",
-    });
+    await maybePromptToStarRepo({ exec, prompt, isInteractive: true });
+    await maybePromptToStarRepo({ exec, prompt, isInteractive: true });
 
-    // Neither log nor warn should be called when user says no
-    expect(log).not.toHaveBeenCalled();
-    expect(warn).not.toHaveBeenCalled();
+    expect(prompt).toHaveBeenCalledTimes(1);
+    expect(mockSaveData).toHaveBeenCalledWith(
+      expect.objectContaining({
+        githubStarPrompt: expect.objectContaining({
+          completed: true,
+          lastStatus: "not_starred",
+          outcome: "declined",
+        }),
+      }),
+      undefined
+    );
   });
 
-  it("warns when starRepo fails", async () => {
-    const log = vi.fn();
+  it("warns and saves manual-link outcome when star command fails", async () => {
     const warn = vi.fn();
     const exec = createExecStub((key) => {
       if (key === "--version") return { ok: true, stdout: "gh version 2", stderr: "" };
       if (key === "auth status") return { ok: true, stdout: "logged in", stderr: "" };
       if (key.includes("repo view")) return { ok: true, stdout: "false\n", stderr: "" };
-      // Both star attempts fail
       if (key.includes("repo star")) return { ok: false, stdout: "", stderr: "some error" };
       return { ok: true, stdout: "", stderr: "" };
     });
 
     await maybePromptToStarRepo({
       exec,
-      log,
       warn,
       isInteractive: true,
       prompt: async () => "y",
     });
 
-    expect(warn).toHaveBeenCalledWith(expect.stringContaining("Unable to star the repo"));
-    expect(log).not.toHaveBeenCalled();
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("Unable to star the repo automatically"));
+    expect(mockSaveData).toHaveBeenCalledWith(
+      expect.objectContaining({
+        githubStarPrompt: expect.objectContaining({
+          completed: true,
+          lastStatus: "error",
+          outcome: "manual_link",
+        }),
+      }),
+      undefined
+    );
   });
 
-  it("falls back to starRepo without --yes when flag is unknown", async () => {
+  it("falls back to star command without --yes when flag is unknown", async () => {
     const log = vi.fn();
-    const warn = vi.fn();
     const calls: string[] = [];
     const exec: ExecFn = async (args) => {
       const key = args.join(" ");
@@ -107,9 +166,7 @@ describe("github-star extended", () => {
       if (key === "--version") return { ok: true, stdout: "gh version 2", stderr: "" };
       if (key === "auth status") return { ok: true, stdout: "logged in", stderr: "" };
       if (key.includes("repo view")) return { ok: true, stdout: "false\n", stderr: "" };
-      // First star attempt fails with "unknown flag" error
       if (key.includes("--yes")) return { ok: false, stdout: "", stderr: "unknown flag: --yes" };
-      // Fallback star without --yes succeeds
       if (key.startsWith("repo star")) return { ok: true, stdout: "", stderr: "" };
       return { ok: true, stdout: "", stderr: "" };
     };
@@ -117,13 +174,11 @@ describe("github-star extended", () => {
     await maybePromptToStarRepo({
       exec,
       log,
-      warn,
       isInteractive: true,
       prompt: async () => "yes",
     });
 
-    // Should have tried the fallback without --yes
-    expect(calls.some(c => c === "repo star unbraind/homeassistant-cli")).toBe(true);
+    expect(calls).toContain("repo star unbraind/homeassistant-cli");
     expect(log).toHaveBeenCalledWith("Thanks for starring homeassistant-cli on GitHub.");
   });
 });

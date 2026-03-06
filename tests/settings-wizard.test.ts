@@ -6,6 +6,10 @@ const { mockSaveConfig, mockSaveData, mockGetConfigSnapshot } = vi.hoisted(() =>
   mockGetConfigSnapshot: vi.fn(() => ({})),
 }));
 
+const { mockMaybePromptToStarRepo } = vi.hoisted(() => ({
+  mockMaybePromptToStarRepo: vi.fn(async () => undefined),
+}));
+
 vi.mock("../src/config/index.js", () => ({
   getConfigPath: vi.fn(() => "/tmp/hassio-wizard-test.json"),
   getAuthPath: vi.fn(() => "/tmp/auth.json"),
@@ -16,7 +20,7 @@ vi.mock("../src/config/index.js", () => ({
 }));
 
 vi.mock("../src/utils/github-star.js", () => ({
-  maybePromptToStarRepo: vi.fn(async () => undefined),
+  maybePromptToStarRepo: (...args: unknown[]) => mockMaybePromptToStarRepo(...args),
 }));
 
 // Mock node:readline to simulate interactive input
@@ -53,6 +57,7 @@ describe("settings wizard command", () => {
     mockSaveConfig.mockReset();
     mockSaveData.mockReset();
     mockGetConfigSnapshot.mockReturnValue({});
+    mockMaybePromptToStarRepo.mockReset();
     mockGetStatus.mockReset();
     mockGetConfig.mockReset();
     exitSpy.mockClear();
@@ -100,6 +105,7 @@ describe("settings wizard command", () => {
       },
       undefined
     );
+    expect(mockMaybePromptToStarRepo).toHaveBeenCalledTimes(1);
     expect(output.join("\n")).toContain("saved_settings:/tmp/hassio-wizard-test.json");
   });
 
@@ -387,6 +393,7 @@ describe("settings wizard command", () => {
     );
 
     expect(cmd.name()).toBe("setup");
+    expect(mockMaybePromptToStarRepo).toHaveBeenCalledTimes(1);
     expect(mockSaveConfig).toHaveBeenCalledWith(
       expect.objectContaining({
         url: "http://localhost:8123",

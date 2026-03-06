@@ -111,13 +111,14 @@ import {
 } from "./commands/index.js";
 import { createInspectCommand, createSummaryCommand } from "./commands/inspect.js";
 import { attachGlobalFlagsHelp } from "./utils/command-helpers.js";
+import { maybePromptToStarRepo } from "./utils/github-star.js";
 
 const program = new Command();
 
 program
   .name("hassio")
   .description("Agent-optimized CLI tool for interacting with the Home Assistant API")
-  .version("2026.3.6")
+  .version("2026.3.6-2")
   .addOption(
     new Option("-u, --url <url>", "Home Assistant URL")
       .env("HASSIO_URL")
@@ -260,6 +261,22 @@ program.addCommand(createScheduleCommand());
 program.addCommand(createUtilityMeterCommand());
 
 attachGlobalFlagsHelp(program);
+
+function getConfigPathFromArgv(argv: string[]): string | undefined {
+  for (let i = 0; i < argv.length; i += 1) {
+    const current = argv[i];
+    if (current === "--config" || current === "-c") {
+      return argv[i + 1];
+    }
+    if (current?.startsWith("--config=")) {
+      return current.slice("--config=".length);
+    }
+  }
+  return undefined;
+}
+
+const configPath = getConfigPathFromArgv(process.argv);
+await maybePromptToStarRepo(configPath ? { configPath } : undefined);
 
 program.parseAsync(process.argv).catch((err) => {
   console.error("Error:", err.message);
