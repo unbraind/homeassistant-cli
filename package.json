@@ -52,7 +52,7 @@
   "dependencies": {
     "@toon-format/toon": "^2.1.0",
     "commander": "^12.1.0",
-    "undici": "^6.21.0",
+    "undici": "^8.0.2",
     "ws": "^8.19.0",
     "yaml": "^2.8.2"
   },
