@@ -56,7 +56,7 @@ describe("restart command", () => {
 
     const cmd = createRestartCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
 
     expect(result).toContain("restarting");
@@ -73,7 +73,7 @@ describe("stop command", () => {
 
     const cmd = createStopCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
 
     expect(result).toContain("stopping");
@@ -94,7 +94,7 @@ describe("analytics command", () => {
 
     const cmd = createAnalyticsCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
 
     expect(result).toContain("abc123");
@@ -105,7 +105,7 @@ describe("analytics command", () => {
 
     const cmd = createAnalyticsCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
 
     expect(result).toContain("Analytics endpoint not available");
@@ -119,7 +119,7 @@ describe("backups command", () => {
   it("shows backup info message without subcommand", async () => {
     const cmd = createBackupsCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
 
     expect(result).toContain("Backup management requires");
@@ -130,7 +130,7 @@ describe("backups command", () => {
 
     const cmd = createBackupsCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--create", "my-backup"], { from: "user" })
+      cmd.parseAsync(["--create", "my-backup"], { from: "user" })
     );
 
     expect(result).toContain("created");
@@ -142,7 +142,7 @@ describe("backups command", () => {
 
     const cmd = createBackupsCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--create", "my-backup"], { from: "user" })
+      cmd.parseAsync(["--create", "my-backup"], { from: "user" })
     );
 
     expect(result).toContain("Backup service not available");
@@ -153,7 +153,7 @@ describe("backups command", () => {
 
     const cmd = createBackupsCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--restore", "backup-slug-123"], { from: "user" })
+      cmd.parseAsync(["--restore", "backup-slug-123"], { from: "user" })
     );
 
     expect(result).toContain("restored");
@@ -165,7 +165,7 @@ describe("backups command", () => {
 
     const cmd = createBackupsCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--restore", "backup-slug-123"], { from: "user" })
+      cmd.parseAsync(["--restore", "backup-slug-123"], { from: "user" })
     );
 
     expect(result).toContain("Restore service not available");
@@ -176,7 +176,7 @@ describe("backups command", () => {
 
     const cmd = createBackupsCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--create", "secure-backup", "--password", "secret123"], { from: "user" })
+      cmd.parseAsync(["--create", "secure-backup", "--password", "secret123"], { from: "user" })
     );
 
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -191,7 +191,7 @@ describe("backups command", () => {
     const cmd = createBackupsCommand();
     await expect(
       captureLog(() =>
-        cmd.parseAsync(["node", "test", "--create", "my-backup"], { from: "user" })
+        cmd.parseAsync(["--create", "my-backup"], { from: "user" })
       )
     ).rejects.toThrow();
   });
@@ -202,7 +202,7 @@ describe("backups command", () => {
     const cmd = createBackupsCommand();
     await expect(
       captureLog(() =>
-        cmd.parseAsync(["node", "test", "--restore", "backup-slug-123"], { from: "user" })
+        cmd.parseAsync(["--restore", "backup-slug-123"], { from: "user" })
       )
     ).rejects.toThrow();
   });

@@ -4,12 +4,19 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT_DIR"
 
-RANGE="${1:-master}"
+RANGE="${1:-}"
+if [[ -z "$RANGE" ]]; then
+  if [[ -n "${GITHUB_BASE_REF:-}" ]]; then
+    RANGE="origin/${GITHUB_BASE_REF}..HEAD"
+  else
+    RANGE="HEAD"
+  fi
+fi
 TMP="$(mktemp)"
 trap 'rm -f "$TMP"' EXIT
 
 # Conventional commit baseline for this repository.
-git log --pretty=format:'%h%x09%s' "$RANGE" | while IFS=$'\t' read -r sha subject; do
+git log --no-merges --pretty=format:'%h%x09%s' "$RANGE" | while IFS=$'\t' read -r sha subject; do
   if [[ ! "$subject" =~ ^(feat|fix|docs|test|refactor|chore|perf)(\([a-z0-9-]+\))?:\ .+ ]]; then
     echo "$sha	$subject" >> "$TMP"
   fi

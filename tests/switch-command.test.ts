@@ -81,7 +81,7 @@ describe("switch command", () => {
 
     const cmd = createSwitchCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
 
     expect(result).toContain("switch.kitchen_outlet");
@@ -94,7 +94,7 @@ describe("switch command", () => {
 
     const cmd = createSwitchCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--count"], { from: "user" })
+      cmd.parseAsync(["--count"], { from: "user" })
     );
 
     const parsed = JSON.parse(result);
@@ -106,7 +106,7 @@ describe("switch command", () => {
 
     const cmd = createSwitchCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--state", "off"], { from: "user" })
+      cmd.parseAsync(["--state", "off"], { from: "user" })
     );
 
     const parsed = JSON.parse(result);
@@ -119,7 +119,7 @@ describe("switch command", () => {
 
     const cmd = createSwitchCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--on", "switch.kitchen_outlet"], { from: "user" })
+      cmd.parseAsync(["--on", "switch.kitchen_outlet"], { from: "user" })
     );
 
     expect(result).toContain("turned_on");
@@ -135,7 +135,7 @@ describe("switch command", () => {
 
     const cmd = createSwitchCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--off", "switch.porch_light"], { from: "user" })
+      cmd.parseAsync(["--off", "switch.porch_light"], { from: "user" })
     );
 
     expect(result).toContain("turned_off");
@@ -147,7 +147,7 @@ describe("switch command", () => {
 
     const cmd = createSwitchCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--toggle", "switch.kitchen_outlet"], { from: "user" })
+      cmd.parseAsync(["--toggle", "switch.kitchen_outlet"], { from: "user" })
     );
 
     expect(result).toContain("toggled");

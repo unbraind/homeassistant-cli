@@ -81,7 +81,7 @@ describe("light command", () => {
 
     const cmd = createLightCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
 
     expect(result).toContain("light.living_room");
@@ -94,7 +94,7 @@ describe("light command", () => {
 
     const cmd = createLightCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--count"], { from: "user" })
+      cmd.parseAsync(["--count"], { from: "user" })
     );
 
     const parsed = JSON.parse(result);
@@ -106,7 +106,7 @@ describe("light command", () => {
 
     const cmd = createLightCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--state", "on"], { from: "user" })
+      cmd.parseAsync(["--state", "on"], { from: "user" })
     );
 
     const parsed = JSON.parse(result);
@@ -119,7 +119,7 @@ describe("light command", () => {
 
     const cmd = createLightCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--on", "light.living_room"], { from: "user" })
+      cmd.parseAsync(["--on", "light.living_room"], { from: "user" })
     );
 
     expect(result).toContain("turned_on");
@@ -131,7 +131,7 @@ describe("light command", () => {
 
     const cmd = createLightCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--on", "light.bedroom", "--brightness", "128"], { from: "user" })
+      cmd.parseAsync(["--on", "light.bedroom", "--brightness", "128"], { from: "user" })
     );
 
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -145,7 +145,7 @@ describe("light command", () => {
 
     const cmd = createLightCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--on", "light.living_room", "--rgb", "255,100,0"], { from: "user" })
+      cmd.parseAsync(["--on", "light.living_room", "--rgb", "255,100,0"], { from: "user" })
     );
 
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -158,7 +158,7 @@ describe("light command", () => {
 
     const cmd = createLightCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--on", "light.living_room", "--kelvin", "4000"], { from: "user" })
+      cmd.parseAsync(["--on", "light.living_room", "--kelvin", "4000"], { from: "user" })
     );
 
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -171,7 +171,7 @@ describe("light command", () => {
 
     const cmd = createLightCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--off", "light.living_room"], { from: "user" })
+      cmd.parseAsync(["--off", "light.living_room"], { from: "user" })
     );
 
     expect(result).toContain("turned_off");
@@ -182,7 +182,7 @@ describe("light command", () => {
 
     const cmd = createLightCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--off", "light.living_room", "--transition", "2.5"], { from: "user" })
+      cmd.parseAsync(["--off", "light.living_room", "--transition", "2.5"], { from: "user" })
     );
 
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -195,7 +195,7 @@ describe("light command", () => {
 
     const cmd = createLightCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--toggle", "light.bedroom"], { from: "user" })
+      cmd.parseAsync(["--toggle", "light.bedroom"], { from: "user" })
     );
 
     expect(result).toContain("toggled");
@@ -207,7 +207,7 @@ describe("light command", () => {
 
     const cmd = createLightCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "light.bedroom", "--brightness-pct", "50", "--effect", "colorloop"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "light.bedroom", "--brightness-pct", "50", "--effect", "colorloop"], { from: "user" })
     );
 
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -222,7 +222,7 @@ describe("light command", () => {
 
     const cmd = createLightCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "light.living_room", "--hs", "30,100"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "light.living_room", "--hs", "30,100"], { from: "user" })
     );
 
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -235,7 +235,7 @@ describe("light command", () => {
 
     const cmd = createLightCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--on", "light.bedroom", "--color-name", "red", "--flash", "short"], { from: "user" })
+      cmd.parseAsync(["--on", "light.bedroom", "--color-name", "red", "--flash", "short"], { from: "user" })
     );
 
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -249,7 +249,7 @@ describe("light command", () => {
 
     const cmd = createLightCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--on", "light.living_room", "--color-temp", "300"], { from: "user" })
+      cmd.parseAsync(["--on", "light.living_room", "--color-temp", "300"], { from: "user" })
     );
 
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };

@@ -87,7 +87,7 @@ describe("remote command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(remoteStates));
     const cmd = createRemoteCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
     expect(result).toContain("remote.living_room_tv");
     expect(result).toContain("remote.bedroom_ir");
@@ -98,7 +98,7 @@ describe("remote command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(remoteStates));
     const cmd = createRemoteCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--count"], { from: "user" })
+      cmd.parseAsync(["--count"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.remotes_count).toBe(2);
@@ -108,7 +108,7 @@ describe("remote command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createRemoteCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--on", "remote.living_room_tv"], { from: "user" })
+      cmd.parseAsync(["--on", "remote.living_room_tv"], { from: "user" })
     );
     expect(result).toContain("turned_on");
   });
@@ -117,7 +117,7 @@ describe("remote command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createRemoteCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--off", "remote.bedroom_ir"], { from: "user" })
+      cmd.parseAsync(["--off", "remote.bedroom_ir"], { from: "user" })
     );
     expect(result).toContain("turned_off");
   });
@@ -126,7 +126,7 @@ describe("remote command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createRemoteCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--toggle", "remote.living_room_tv"], { from: "user" })
+      cmd.parseAsync(["--toggle", "remote.living_room_tv"], { from: "user" })
     );
     expect(result).toContain("toggled");
   });
@@ -135,7 +135,7 @@ describe("remote command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createRemoteCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "remote.living_room_tv", "--send", "power"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "remote.living_room_tv", "--send", "power"], { from: "user" })
     );
     expect(result).toContain("command_sent");
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -148,7 +148,7 @@ describe("remote command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createRemoteCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "remote.bedroom_ir", "--send", "volume_up", "--device", "TV", "--num-repeats", "3"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "remote.bedroom_ir", "--send", "volume_up", "--device", "TV", "--num-repeats", "3"], { from: "user" })
     );
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
     const body = JSON.parse(callOptions?.body ?? "{}");
@@ -160,7 +160,7 @@ describe("remote command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createRemoteCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "remote.bedroom_ir", "--learn", "power"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "remote.bedroom_ir", "--learn", "power"], { from: "user" })
     );
     expect(result).toContain("learning_command");
   });
@@ -169,7 +169,7 @@ describe("remote command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createRemoteCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "remote.bedroom_ir", "--delete", "power"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "remote.bedroom_ir", "--delete", "power"], { from: "user" })
     );
     expect(result).toContain("command_deleted");
   });
@@ -178,7 +178,7 @@ describe("remote command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(remoteStates));
     const cmd = createRemoteCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--state", "on"], { from: "user" })
+      cmd.parseAsync(["--state", "on"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.remotes).toHaveLength(1);

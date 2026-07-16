@@ -1,0 +1,29 @@
+{
+  "name": "builtin-search-advanced",
+  "version": "0.1.0",
+  "entry": "./index.ts",
+  "priority": 0,
+  "trusted": true,
+  "sandbox_profile": "restricted",
+  "permissions": {
+    "fs_read": true,
+    "fs_write": true,
+    "network": true,
+    "env_read": true,
+    "env_write": false,
+    "process_spawn": false
+  },
+  "capabilities": [
+    "commands",
+    "schema",
+    "search"
+  ],
+  "manifest_version": 1,
+  "pm_min_version": "2026.6.24",
+  "activation": {
+    "commands": [
+      "reindex",
+      "search-advanced"
+    ]
+  }
+}

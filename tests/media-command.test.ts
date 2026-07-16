@@ -68,7 +68,7 @@ describe("calendars command", () => {
     );
 
     const cmd = createCalendarsCommand();
-    const result = await captureLog(() => cmd.parseAsync(["node", "test"], { from: "user" }));
+    const result = await captureLog(() => cmd.parseAsync([], { from: "user" }));
 
     expect(result).toContain("calendar.home");
     expect(result).toContain("calendar.work");

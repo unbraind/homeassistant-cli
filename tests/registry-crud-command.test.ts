@@ -32,7 +32,7 @@ const updateLabel = vi.fn(async (params: unknown) => ({ label_id: (params as { l
 const deleteLabel = vi.fn(async () => undefined);
 
 vi.mock("../src/api/registries-crud.js", () => ({
-  RegistryCrudClient: vi.fn().mockImplementation(() => ({
+  RegistryCrudClient: vi.fn().mockImplementation(function () { return {
     createArea,
     updateArea,
     deleteArea,
@@ -42,7 +42,7 @@ vi.mock("../src/api/registries-crud.js", () => ({
     createLabel,
     updateLabel,
     deleteLabel,
-  })),
+  }; }),
 }));
 
 const exitSpy = vi.spyOn(process, "exit").mockImplementation(() => undefined as never);
@@ -79,7 +79,7 @@ describe("area CRUD commands", () => {
     const cmd = createAreaCreateCommand();
     // Inject mock config since registry-crud uses optsWithGlobals
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--name", "Kitchen", "--format", "json"], { from: "user" })
+      cmd.parseAsync(["--name", "Kitchen"], { from: "user" })
     );
 
     expect(createArea).toHaveBeenCalledWith(expect.objectContaining({ name: "Kitchen" }));
@@ -90,7 +90,7 @@ describe("area CRUD commands", () => {
     const cmd = createAreaCreateCommand();
     await captureLog(() =>
       cmd.parseAsync(
-        ["node", "test", "--name", "Basement", "--icon", "mdi:basement", "--floor-id", "floor1", "--format", "json"],
+        ["--name", "Basement", "--icon", "mdi:basement", "--floor-id", "floor1"],
         { from: "user" }
       )
     );
@@ -103,7 +103,7 @@ describe("area CRUD commands", () => {
   it("creates an area with labels", async () => {
     const cmd = createAreaCreateCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--name", "Office", "--labels", "work,important", "--format", "json"], { from: "user" })
+      cmd.parseAsync(["--name", "Office", "--labels", "work,important"], { from: "user" })
     );
 
     expect(createArea).toHaveBeenCalledWith(
@@ -114,7 +114,7 @@ describe("area CRUD commands", () => {
   it("updates an area", async () => {
     const cmd = createAreaUpdateCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--area-id", "kitchen", "--name", "New Kitchen", "--format", "json"], { from: "user" })
+      cmd.parseAsync(["--area-id", "kitchen", "--name", "New Kitchen"], { from: "user" })
     );
 
     expect(updateArea).toHaveBeenCalledWith(
@@ -125,7 +125,7 @@ describe("area CRUD commands", () => {
   it("updates area floor_id to null", async () => {
     const cmd = createAreaUpdateCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--area-id", "kitchen", "--floor-id", "null", "--format", "json"], { from: "user" })
+      cmd.parseAsync(["--area-id", "kitchen", "--floor-id", "null"], { from: "user" })
     );
 
     expect(updateArea).toHaveBeenCalledWith(
@@ -136,7 +136,7 @@ describe("area CRUD commands", () => {
   it("deletes an area with --yes flag", async () => {
     const cmd = createAreaDeleteCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--area-id", "old-area", "--yes"], { from: "user" })
+      cmd.parseAsync(["--area-id", "old-area", "--yes"], { from: "user" })
     );
 
     expect(deleteArea).toHaveBeenCalledWith("old-area");
@@ -145,7 +145,7 @@ describe("area CRUD commands", () => {
   it("requires --yes to delete an area", async () => {
     const cmd = createAreaDeleteCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--area-id", "old-area"], { from: "user" })
+      cmd.parseAsync(["--area-id", "old-area"], { from: "user" })
     );
 
     // process.exit(1) should be called when --yes is missing
@@ -168,7 +168,7 @@ describe("floor CRUD commands", () => {
   it("creates a floor", async () => {
     const cmd = createFloorCreateCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--name", "Ground Floor", "--format", "json"], { from: "user" })
+      cmd.parseAsync(["--name", "Ground Floor"], { from: "user" })
     );
 
     expect(createFloor).toHaveBeenCalledWith(expect.objectContaining({ name: "Ground Floor" }));
@@ -178,7 +178,7 @@ describe("floor CRUD commands", () => {
     const cmd = createFloorCreateCommand();
     await captureLog(() =>
       cmd.parseAsync(
-        ["node", "test", "--name", "First Floor", "--level", "1", "--icon", "mdi:home-floor-1", "--format", "json"],
+        ["--name", "First Floor", "--level", "1", "--icon", "mdi:home-floor-1"],
         { from: "user" }
       )
     );
@@ -191,7 +191,7 @@ describe("floor CRUD commands", () => {
   it("updates a floor", async () => {
     const cmd = createFloorUpdateCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--floor-id", "ground", "--name", "Erdgeschoss", "--format", "json"], { from: "user" })
+      cmd.parseAsync(["--floor-id", "ground", "--name", "Erdgeschoss"], { from: "user" })
     );
 
     expect(updateFloor).toHaveBeenCalledWith(expect.objectContaining({ floor_id: "ground", name: "Erdgeschoss" }));
@@ -200,7 +200,7 @@ describe("floor CRUD commands", () => {
   it("updates floor level to null", async () => {
     const cmd = createFloorUpdateCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--floor-id", "ground", "--level", "null", "--format", "json"], { from: "user" })
+      cmd.parseAsync(["--floor-id", "ground", "--level", "null"], { from: "user" })
     );
 
     expect(updateFloor).toHaveBeenCalledWith(expect.objectContaining({ level: null }));
@@ -209,7 +209,7 @@ describe("floor CRUD commands", () => {
   it("deletes a floor with --yes", async () => {
     const cmd = createFloorDeleteCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--floor-id", "old-floor", "--yes"], { from: "user" })
+      cmd.parseAsync(["--floor-id", "old-floor", "--yes"], { from: "user" })
     );
 
     expect(deleteFloor).toHaveBeenCalledWith("old-floor");
@@ -218,7 +218,7 @@ describe("floor CRUD commands", () => {
   it("requires --yes to delete floor", async () => {
     const cmd = createFloorDeleteCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--floor-id", "old-floor"], { from: "user" })
+      cmd.parseAsync(["--floor-id", "old-floor"], { from: "user" })
     );
 
     expect(exitSpy).toHaveBeenCalledWith(1);
@@ -240,7 +240,7 @@ describe("label CRUD commands", () => {
   it("creates a label", async () => {
     const cmd = createLabelCreateCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--name", "Important", "--format", "json"], { from: "user" })
+      cmd.parseAsync(["--name", "Important"], { from: "user" })
     );
 
     expect(createLabel).toHaveBeenCalledWith(expect.objectContaining({ name: "Important" }));
@@ -250,7 +250,7 @@ describe("label CRUD commands", () => {
     const cmd = createLabelCreateCommand();
     await captureLog(() =>
       cmd.parseAsync(
-        ["node", "test", "--name", "Critical", "--color", "red", "--description", "Mission critical", "--format", "json"],
+        ["--name", "Critical", "--color", "red", "--description", "Mission critical"],
         { from: "user" }
       )
     );
@@ -263,7 +263,7 @@ describe("label CRUD commands", () => {
   it("updates a label", async () => {
     const cmd = createLabelUpdateCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--label-id", "important", "--name", "Very Important", "--format", "json"], { from: "user" })
+      cmd.parseAsync(["--label-id", "important", "--name", "Very Important"], { from: "user" })
     );
 
     expect(updateLabel).toHaveBeenCalledWith(expect.objectContaining({ label_id: "important", name: "Very Important" }));
@@ -272,7 +272,7 @@ describe("label CRUD commands", () => {
   it("updates label color to null", async () => {
     const cmd = createLabelUpdateCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--label-id", "lbl1", "--color", "null", "--format", "json"], { from: "user" })
+      cmd.parseAsync(["--label-id", "lbl1", "--color", "null"], { from: "user" })
     );
 
     expect(updateLabel).toHaveBeenCalledWith(expect.objectContaining({ color: null }));
@@ -281,7 +281,7 @@ describe("label CRUD commands", () => {
   it("updates label description to null", async () => {
     const cmd = createLabelUpdateCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--label-id", "lbl1", "--description", "null", "--format", "json"], { from: "user" })
+      cmd.parseAsync(["--label-id", "lbl1", "--description", "null"], { from: "user" })
     );
 
     expect(updateLabel).toHaveBeenCalledWith(expect.objectContaining({ description: null }));
@@ -290,7 +290,7 @@ describe("label CRUD commands", () => {
   it("deletes a label with --yes", async () => {
     const cmd = createLabelDeleteCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--label-id", "old-label", "--yes"], { from: "user" })
+      cmd.parseAsync(["--label-id", "old-label", "--yes"], { from: "user" })
     );
 
     expect(deleteLabel).toHaveBeenCalledWith("old-label");
@@ -299,7 +299,7 @@ describe("label CRUD commands", () => {
   it("requires --yes to delete label", async () => {
     const cmd = createLabelDeleteCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--label-id", "old-label"], { from: "user" })
+      cmd.parseAsync(["--label-id", "old-label"], { from: "user" })
     );
 
     expect(exitSpy).toHaveBeenCalledWith(1);

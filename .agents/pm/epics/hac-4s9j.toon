@@ -1,0 +1,281 @@
+id: hac-4s9j
+title: Maintain homeassistant-cli as a secure agent-optimized product
+description: "Durable product umbrella for roadmap, repository ownership, quality, security, releases, and Home Assistant API evolution."
+type: Epic
+status: open
+priority: 1
+tags[5]: agents,home-assistant,maintenance,product,roadmap
+created_at: "2026-07-16T17:07:03.007Z"
+updated_at: "2026-07-16T17:07:25.250Z"
+deadline: "2027-01-16T17:07:03.007Z"
+assignee: unbraind
+author: codex-root
+estimated_minutes: 10000
+acceptance_criteria: "All active delivery work is linked beneath this umbrella; repository files and docs have baseline PM ownership; security, quality, release, and API evolution work has detailed child items; PM validation has no unowned repository paths"
+goal: best-agent-home-assistant-cli
+objective: secure-complete-intuitive-home-assistant-automation
+value: Provide reliable Home Assistant control and discovery for agents and operators.
+impact: Creates durable governance and ownership for all future repository work.
+outcome: "A continuously maintained, secure, well-tested CLI with explicit roadmap lineage."
+why_now: The repository is being initialized into PM and needs a canonical non-temporary owner for its pre-existing artifacts.
+reviewer: unbraind
+risk: medium
+confidence: 95
+sprint: product-roadmap
+release: continuous
+dependencies[1]{id,kind,created_at,author,source_kind}:
+  hac-gpm3,related,"2026-07-16T17:07:03.007Z",codex-root,null
+comments[1]{created_at,author,text}:
+  "2026-07-16T17:07:03.007Z",codex-root,This umbrella owns baseline artifacts; active remediation remains in its dedicated child epic.
+notes[1]{created_at,author,text}:
+  "2026-07-16T17:07:03.007Z",codex-root,Do not place this durable umbrella in progress unless its own metadata or ownership model is actively changing.
+learnings[1]{created_at,author,text}:
+  "2026-07-16T17:07:03.007Z",codex-root,Repository initialization needs a durable product owner for legacy files; linking them to a temporary remediation issue creates misleading lineage.
+files[232]{path,scope,note}:
+  .github/dependabot.yml,project,Baseline automation ownership
+  .github/workflows/ci.yml,project,Baseline automation ownership
+  .github/workflows/commit-quality.yml,project,Baseline automation ownership
+  .github/workflows/publish.yml,project,Baseline automation ownership
+  .github/workflows/release-dry-run.yml,project,Baseline automation ownership
+  .github/workflows/security.yml,project,Baseline automation ownership
+  .gitignore,project,Repository hygiene policy
+  bun.lock,project,Resolved product dependency graph
+  LICENSE,project,Product license
+  package.json,project,Product package and command surface
+  scripts/git/audit-commit-messages.sh,project,Baseline maintenance automation ownership
+  scripts/release/dry-run.sh,project,Baseline maintenance automation ownership
+  scripts/release/generate-release-notes.sh,project,Baseline maintenance automation ownership
+  scripts/release/prepare-release.sh,project,Baseline maintenance automation ownership
+  scripts/release/verify-release.sh,project,Baseline maintenance automation ownership
+  scripts/security/scan-history.sh,project,Baseline maintenance automation ownership
+  src/api/automation.ts,project,Baseline product source ownership
+  src/api/base.ts,project,Baseline product source ownership
+  src/api/client.ts,project,Baseline product source ownership
+  src/api/config-entries.ts,project,Baseline product source ownership
+  src/api/conversation.ts,project,Baseline product source ownership
+  src/api/errors.ts,project,Baseline product source ownership
+  src/api/extended.ts,project,Baseline product source ownership
+  src/api/index.ts,project,Baseline product source ownership
+  src/api/lists.ts,project,Baseline product source ownership
+  src/api/media.ts,project,Baseline product source ownership
+  src/api/registries-crud.ts,project,Baseline product source ownership
+  src/api/registries.ts,project,Baseline product source ownership
+  src/api/search.ts,project,Baseline product source ownership
+  src/api/statistics.ts,project,Baseline product source ownership
+  src/api/supervisor.ts,project,Baseline product source ownership
+  src/api/system.ts,project,Baseline product source ownership
+  src/api/tts.ts,project,Baseline product source ownership
+  src/api/websocket.ts,project,Baseline product source ownership
+  src/cli.ts,project,Baseline product source ownership
+  src/commands/ai-task.ts,project,Baseline product source ownership
+  src/commands/automation.ts,project,Baseline product source ownership
+  src/commands/button.ts,project,Baseline product source ownership
+  src/commands/capabilities-agent-context.ts,project,Baseline product source ownership
+  src/commands/capabilities-agent-plan.ts,project,Baseline product source ownership
+  src/commands/capabilities-agent-profile.ts,project,Baseline product source ownership
+  src/commands/capabilities-api-matrix.ts,project,Baseline product source ownership
+  src/commands/capabilities-redact.ts,project,Baseline product source ownership
+  src/commands/capabilities-summary.ts,project,Baseline product source ownership
+  src/commands/capabilities-utils.ts,project,Baseline product source ownership
+  src/commands/capabilities.ts,project,Baseline product source ownership
+  src/commands/cli-config.ts,project,Baseline product source ownership
+  src/commands/climate.ts,project,Baseline product source ownership
+  src/commands/config-entries.ts,project,Baseline product source ownership
+  src/commands/conversation.ts,project,Baseline product source ownership
+  src/commands/core.ts,project,Baseline product source ownership
+  src/commands/counter.ts,project,Baseline product source ownership
+  src/commands/cover.ts,project,Baseline product source ownership
+  src/commands/device-tracker.ts,project,Baseline product source ownership
+  src/commands/event-entity.ts,project,Baseline product source ownership
+  src/commands/extended.ts,project,Baseline product source ownership
+  src/commands/fan.ts,project,Baseline product source ownership
+  src/commands/history.ts,project,Baseline product source ownership
+  src/commands/index.ts,project,Baseline product source ownership
+  src/commands/input.ts,project,Baseline product source ownership
+  src/commands/inspect.ts,project,Baseline product source ownership
+  src/commands/light.ts,project,Baseline product source ownership
+  src/commands/lists.ts,project,Baseline product source ownership
+  src/commands/llm-extended.ts,project,Baseline product source ownership
+  src/commands/llm.ts,project,Baseline product source ownership
+  src/commands/llm/batch.ts,project,Baseline product source ownership
+  src/commands/llm/discover.ts,project,Baseline product source ownership
+  src/commands/llm/entities.ts,project,Baseline product source ownership
+  src/commands/llm/query.ts,project,Baseline product source ownership
+  src/commands/lock.ts,project,Baseline product source ownership
+  src/commands/logger.ts,project,Baseline product source ownership
+  src/commands/media-player.ts,project,Baseline product source ownership
+  src/commands/media.ts,project,Baseline product source ownership
+  src/commands/mqtt.ts,project,Baseline product source ownership
+  src/commands/notify.ts,project,Baseline product source ownership
+  src/commands/number.ts,project,Baseline product source ownership
+  src/commands/pipeline.ts,project,Baseline product source ownership
+  src/commands/recorder.ts,project,Baseline product source ownership
+  src/commands/registries.ts,project,Baseline product source ownership
+  src/commands/registry-crud.ts,project,Baseline product source ownership
+  src/commands/remote.ts,project,Baseline product source ownership
+  src/commands/schedule.ts,project,Baseline product source ownership
+  src/commands/schema-output-contracts.ts,project,Baseline product source ownership
+  src/commands/search.ts,project,Baseline product source ownership
+  src/commands/select.ts,project,Baseline product source ownership
+  src/commands/sensor.ts,project,Baseline product source ownership
+  src/commands/services.ts,project,Baseline product source ownership
+  src/commands/settings-doctor.ts,project,Baseline product source ownership
+  src/commands/settings-utils.ts,project,Baseline product source ownership
+  src/commands/settings-wizard.ts,project,Baseline product source ownership
+  src/commands/siren.ts,project,Baseline product source ownership
+  src/commands/statistics.ts,project,Baseline product source ownership
+  src/commands/sun.ts,project,Baseline product source ownership
+  src/commands/supervisor.ts,project,Baseline product source ownership
+  src/commands/switch.ts,project,Baseline product source ownership
+  src/commands/system.ts,project,Baseline product source ownership
+  src/commands/timers.ts,project,Baseline product source ownership
+  src/commands/tts.ts,project,Baseline product source ownership
+  src/commands/update.ts,project,Baseline product source ownership
+  src/commands/utility-meter.ts,project,Baseline product source ownership
+  src/commands/vacuum.ts,project,Baseline product source ownership
+  src/commands/valve.ts,project,Baseline product source ownership
+  src/commands/water-heater.ts,project,Baseline product source ownership
+  src/commands/websocket.ts,project,Baseline product source ownership
+  src/config/index.ts,project,Baseline product source ownership
+  src/config/loader.ts,project,Baseline product source ownership
+  src/formatters/index.ts,project,Baseline product source ownership
+  src/formatters/json.ts,project,Baseline product source ownership
+  src/formatters/markdown.ts,project,Baseline product source ownership
+  src/formatters/table.ts,project,Baseline product source ownership
+  src/formatters/toon.ts,project,Baseline product source ownership
+  src/formatters/yaml.ts,project,Baseline product source ownership
+  src/index.ts,project,Baseline product source ownership
+  src/types/api.ts,project,Baseline product source ownership
+  src/types/api/analytics.ts,project,Baseline product source ownership
+  src/types/api/config.ts,project,Baseline product source ownership
+  src/types/api/core.ts,project,Baseline product source ownership
+  src/types/api/extended.ts,project,Baseline product source ownership
+  src/types/api/history.ts,project,Baseline product source ownership
+  src/types/api/lists.ts,project,Baseline product source ownership
+  src/types/api/media.ts,project,Baseline product source ownership
+  src/types/api/registries.ts,project,Baseline product source ownership
+  src/types/api/statistics.ts,project,Baseline product source ownership
+  src/types/api/system.ts,project,Baseline product source ownership
+  src/types/index.ts,project,Baseline product source ownership
+  src/types/options.ts,project,Baseline product source ownership
+  src/utils/command-helpers.ts,project,Baseline product source ownership
+  src/utils/exit.ts,project,Baseline product source ownership
+  src/utils/github-star.ts,project,Baseline product source ownership
+  src/utils/services.ts,project,Baseline product source ownership
+  tests/ai-task-command.test.ts,project,Baseline product test ownership
+  tests/api-base.test.ts,project,Baseline product test ownership
+  tests/api-conversation-extended.test.ts,project,Baseline product test ownership
+  tests/api-errors.test.ts,project,Baseline product test ownership
+  tests/api-extended.test.ts,project,Baseline product test ownership
+  tests/api-media.test.ts,project,Baseline product test ownership
+  tests/api-registries-ws.test.ts,project,Baseline product test ownership
+  tests/api-search-extended.test.ts,project,Baseline product test ownership
+  tests/api-system-extended.test.ts,project,Baseline product test ownership
+  tests/api-websocket.test.ts,project,Baseline product test ownership
+  tests/api.test.ts,project,Baseline product test ownership
+  tests/automation-command.test.ts,project,Baseline product test ownership
+  tests/automation.test.ts,project,Baseline product test ownership
+  tests/button-command.test.ts,project,Baseline product test ownership
+  tests/call-service-command.test.ts,project,Baseline product test ownership
+  tests/capabilities-command.test.ts,project,Baseline product test ownership
+  tests/capabilities-matrix.test.ts,project,Baseline product test ownership
+  tests/cli-config-command.test.ts,project,Baseline product test ownership
+  tests/cli-config-extended.test.ts,project,Baseline product test ownership
+  tests/climate-command.test.ts,project,Baseline product test ownership
+  tests/command-output-format.test.ts,project,Baseline product test ownership
+  tests/config-entries-command.test.ts,project,Baseline product test ownership
+  tests/config-entries.test.ts,project,Baseline product test ownership
+  tests/config.test.ts,project,Baseline product test ownership
+  tests/conversation-command.test.ts,project,Baseline product test ownership
+  tests/conversation.test.ts,project,Baseline product test ownership
+  tests/core-commands.test.ts,project,Baseline product test ownership
+  tests/core-services-command.test.ts,project,Baseline product test ownership
+  tests/counter-command.test.ts,project,Baseline product test ownership
+  tests/cover-command.test.ts,project,Baseline product test ownership
+  tests/device-tracker-command.test.ts,project,Baseline product test ownership
+  tests/e2e-live.ts,project,Baseline product test ownership
+  tests/event-entity-command.test.ts,project,Baseline product test ownership
+  tests/extended-command.test.ts,project,Baseline product test ownership
+  tests/extended.test.ts,project,Baseline product test ownership
+  tests/fan-command.test.ts,project,Baseline product test ownership
+  tests/formatters-extended.test.ts,project,Baseline product test ownership
+  tests/formatters-index.test.ts,project,Baseline product test ownership
+  tests/formatters.test.ts,project,Baseline product test ownership
+  tests/github-star-extended.test.ts,project,Baseline product test ownership
+  tests/github-star.test.ts,project,Baseline product test ownership
+  tests/global-help.test.ts,project,Baseline product test ownership
+  tests/help-surface-e2e.test.ts,project,Baseline product test ownership
+  tests/history-command.test.ts,project,Baseline product test ownership
+  tests/input-command.test.ts,project,Baseline product test ownership
+  tests/inspect-command.test.ts,project,Baseline product test ownership
+  tests/json.test.ts,project,Baseline product test ownership
+  tests/light-command.test.ts,project,Baseline product test ownership
+  tests/lists-command.test.ts,project,Baseline product test ownership
+  tests/lists.test.ts,project,Baseline product test ownership
+  tests/llm-batch-discover-query.test.ts,project,Baseline product test ownership
+  tests/llm-command.test.ts,project,Baseline product test ownership
+  tests/llm-entities-extended.test.ts,project,Baseline product test ownership
+  tests/llm-extended.test.ts,project,Baseline product test ownership
+  tests/lock-command.test.ts,project,Baseline product test ownership
+  tests/logger-command.test.ts,project,Baseline product test ownership
+  tests/media-command.test.ts,project,Baseline product test ownership
+  tests/media-player-command.test.ts,project,Baseline product test ownership
+  tests/mqtt-command.test.ts,project,Baseline product test ownership
+  tests/notify-command.test.ts,project,Baseline product test ownership
+  tests/number-command.test.ts,project,Baseline product test ownership
+  tests/output-formats-validation.test.ts,project,Baseline product test ownership
+  tests/pipeline-command.test.ts,project,Baseline product test ownership
+  tests/recorder-command.test.ts,project,Baseline product test ownership
+  tests/registries-command.test.ts,project,Baseline product test ownership
+  tests/registries.test.ts,project,Baseline product test ownership
+  tests/registry-crud-command.test.ts,project,Baseline product test ownership
+  tests/registry-crud.test.ts,project,Baseline product test ownership
+  tests/remote-command.test.ts,project,Baseline product test ownership
+  tests/schedule-command.test.ts,project,Baseline product test ownership
+  tests/search-command.test.ts,project,Baseline product test ownership
+  tests/search.test.ts,project,Baseline product test ownership
+  tests/select-command.test.ts,project,Baseline product test ownership
+  tests/sensor-command.test.ts,project,Baseline product test ownership
+  tests/services-extended.test.ts,project,Baseline product test ownership
+  tests/services-utils.test.ts,project,Baseline product test ownership
+  tests/settings-doctor.test.ts,project,Baseline product test ownership
+  tests/settings-validate.test.ts,project,Baseline product test ownership
+  tests/settings-wizard.test.ts,project,Baseline product test ownership
+  tests/siren-command.test.ts,project,Baseline product test ownership
+  tests/statistics-command.test.ts,project,Baseline product test ownership
+  tests/statistics.test.ts,project,Baseline product test ownership
+  tests/sun-command.test.ts,project,Baseline product test ownership
+  tests/supervisor-command.test.ts,project,Baseline product test ownership
+  tests/supervisor-extended.test.ts,project,Baseline product test ownership
+  tests/switch-command.test.ts,project,Baseline product test ownership
+  tests/system-command.test.ts,project,Baseline product test ownership
+  tests/system-extended.test.ts,project,Baseline product test ownership
+  tests/system.test.ts,project,Baseline product test ownership
+  tests/table.test.ts,project,Baseline product test ownership
+  tests/timers-command.test.ts,project,Baseline product test ownership
+  tests/tts-command.test.ts,project,Baseline product test ownership
+  tests/tts.test.ts,project,Baseline product test ownership
+  tests/update-command.test.ts,project,Baseline product test ownership
+  tests/utility-meter-command.test.ts,project,Baseline product test ownership
+  tests/vacuum-command.test.ts,project,Baseline product test ownership
+  tests/valve-command.test.ts,project,Baseline product test ownership
+  tests/water-heater-command.test.ts,project,Baseline product test ownership
+  tests/websocket-command.test.ts,project,Baseline product test ownership
+  tests/yaml.test.ts,project,Baseline product test ownership
+  tsconfig.json,project,Baseline project configuration ownership
+  vitest.config.ts,project,Baseline TypeScript configuration ownership
+tests[1]{command,scope,timeout_seconds}:
+  "bun run release:verify",project,2400
+docs[11]{path,scope,note}:
+  AGENTS.md,project,Baseline root documentation ownership
+  CHANGELOG.md,project,Baseline root documentation ownership
+  CONTRIBUTING.md,project,Baseline root documentation ownership
+  docs/AGENT_OPTIMIZATION.md,project,Baseline product documentation ownership
+  docs/API.md,project,Baseline product documentation ownership
+  docs/INDEX.md,project,Baseline product documentation ownership
+  docs/LLM_INTEGRATION.md,project,Baseline product documentation ownership
+  docs/PROJECT_HISTORY.md,project,Baseline product documentation ownership
+  docs/RELEASING.md,project,Baseline product documentation ownership
+  README.md,project,Primary product documentation
+  SECURITY.md,project,Baseline root documentation ownership
+body: "## Product goal\\n\\nKeep the Home Assistant CLI broad, safe, token-efficient, reproducible, and easy for agents and humans to operate. This permanent umbrella owns the pre-existing repository baseline; concrete delivery happens in child epics, features, issues, stories, chores, and tasks."

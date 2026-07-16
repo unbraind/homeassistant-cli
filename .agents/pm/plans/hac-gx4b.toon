@@ -1,0 +1,113 @@
+id: hac-gx4b
+title: Repository security and maintenance remediation plan
+description: Evidence-driven execution plan for the July 2026 repository remediation.
+type: Plan
+status: in_progress
+priority: 0
+tags[5]: ci,delivery,dependencies,plan,security
+created_at: "2026-07-16T16:54:09.573Z"
+updated_at: "2026-07-16T17:12:26.278Z"
+deadline: "2026-07-18T16:54:09.573Z"
+assignee: codex-root
+author: codex-root
+estimated_minutes: 600
+acceptance_criteria: Every ordered step has evidence; linked remediation items are closed only after verification; the combined change is merged and default-branch health is proven
+parent: hac-gpm3
+reviewer: unbraind
+risk: critical
+confidence: 95
+sprint: 2026-07-security
+release: 2026.7.16
+dependencies[7]{id,kind,created_at,author,source_kind}:
+  hac-gpm3,parent,"2026-07-16T16:54:09.573Z",codex-root,null
+  hac-d3yc,implements,"2026-07-16T16:54:51.956Z",codex-root,null
+  hac-brrf,implements,"2026-07-16T16:54:52.853Z",codex-root,null
+  hac-em8a,implements,"2026-07-16T16:54:53.657Z",codex-root,null
+  hac-cg64,implements,"2026-07-16T16:54:54.438Z",codex-root,null
+  hac-u9lg,implements,"2026-07-16T17:03:29.558Z",codex-root,null
+  hac-kv5o,implements,"2026-07-16T17:09:24.068Z",codex-root,null
+comments[1]{created_at,author,text}:
+  "2026-07-16T16:54:09.573Z",codex-root,"Plan synthesized from authenticated GitHub alert,PR,workflow,and local audit evidence."
+notes[1]{created_at,author,text}:
+  "2026-07-16T16:54:09.573Z",codex-root,Specialized pm plan create does not expose every strict-required Plan field; create the Plan via pm create and manage steps via pm plan.
+learnings[1]{created_at,author,text}:
+  "2026-07-16T16:54:09.573Z",codex-root,"Under strict PM governance,use the generic create surface for fully specified Plan items when the specialized constructor lacks policy-required fields."
+files[1]{path,scope,note}:
+  package.json,project,Dependency manifest
+tests[1]{command,scope,timeout_seconds}:
+  "bun run release:verify",project,1800
+docs[1]{path,scope,note}:
+  docs/RELEASING.md,project,Release verification contract
+plan_mode: approved
+plan_decisions[2]{ts,author,decision,rationale,evidence}:
+  "2026-07-16T16:54:58.523Z",codex-root,Upgrade direct dependencies and action majors as one coherent compatibility bundle.,Fifteen overlapping bot branches are stale against the same lockfile and cannot independently reach test execution.,PR 51 run 26775340556 and PR 50 run 26673365486 both fail bun install --frozen-lockfile.
+  "2026-07-16T17:01:15.418Z",codex-root,Keep TypeScript on 5.9 and Node typings on 22 while adopting other current majors.,typescript-eslint 8.64 requires TypeScript below 6.1; the package supports Node 22.19 and should type against its actual runtime line.,npm registry peerDependencies and engines inspected on 2026-07-16; lint/typecheck/build passed after compatible pins.
+plan_discoveries[2]{ts,author,text}:
+  "2026-07-16T16:54:56.876Z",codex-root,All representative Dependabot CI failures occur before tests because bun.lock is not regenerated with package.json.
+  "2026-07-16T16:54:57.745Z",codex-root,"Local bun audit finds 28 advisories, broader than the single GitHub alert, including vulnerable runtime Undici, ws, and YAML paths."
+plan_steps[6]:
+  - id: plan-step-001
+    order: 1
+    title: "Inventory GitHub, audit, repository, and PM state"
+    status: completed
+    created_at: "2026-07-16T16:54:11.160Z"
+    updated_at: "2026-07-16T16:54:59.495Z"
+    owner: codex-root
+    evidence: "Baseline complete: GitHub issues empty; 15 Dependabot PRs; 1 critical Dependabot alert; 0 CodeQL/secret alerts; 28 Bun audit findings; PM initialized and healthy; no source file exceeds 300 nonblank noncomment lines."
+    completed_at: "2026-07-16T16:54:59.495Z"
+    linked_items[1]{id,kind,note}:
+      hac-cg64,implements,Governance task implemented during baseline setup
+  - id: plan-step-002
+    order: 2
+    title: Upgrade runtime and development dependencies with a coherent Bun lockfile
+    status: completed
+    created_at: "2026-07-16T16:54:12.151Z"
+    updated_at: "2026-07-16T17:01:14.163Z"
+    owner: codex-root
+    evidence: "Updated all direct dependencies; pinned TypeScript 5.9 and @types/node 22 to supported peer/runtime lines; added patched transitive overrides; regenerated bun.lock; frozen install, bun audit (zero findings), lint, typecheck, build, and full tests pass."
+    completed_at: "2026-07-16T17:01:14.163Z"
+    linked_items[2]{id,kind,note}:
+      hac-d3yc,implements,Security issue implemented by dependency upgrade step
+      hac-brrf,implements,Dependency chore implemented by upgrade step
+  - id: plan-step-003
+    order: 3
+    title: Modernize GitHub Actions and add dependency-security enforcement
+    status: completed
+    created_at: "2026-07-16T16:54:13.752Z"
+    updated_at: "2026-07-16T17:10:23.364Z"
+    owner: codex-root
+    evidence: All Actions upgraded to current majors; Node and Bun lanes share frozen bun.lock; Dependabot updates grouped; dependency audit job and release audit gate added; official actionlint 1.7.12 and YAML parse pass; dead publish variable removed.
+    completed_at: "2026-07-16T17:10:23.364Z"
+    linked_items[1]{id,kind,note}:
+      hac-em8a,implements,CI issue implemented by workflow hardening step
+  - id: plan-step-004
+    order: 4
+    title: Repair compatibility regressions and implement discovered improvements
+    status: completed
+    created_at: "2026-07-16T16:54:14.652Z"
+    updated_at: "2026-07-16T17:10:24.582Z"
+    owner: codex-root
+    evidence: Compatibility suite repaired without production command changes; TOON empty-array contract updated; coverage thresholds enforce 90 statements/functions/lines and 80 branches; full lint/type/build/test and coverage pass.
+    completed_at: "2026-07-16T17:10:24.582Z"
+    linked_items[1]{id,kind,note}:
+      hac-u9lg,implements,Compatibility and quality step implements coverage enforcement
+  - id: plan-step-005
+    order: 5
+    title: Run full local and package-level verification
+    status: completed
+    created_at: "2026-07-16T16:54:15.826Z"
+    updated_at: "2026-07-16T17:12:25.789Z"
+    owner: codex-root
+    evidence: "Frozen install, zero-vulnerability audit, lint, typecheck, build, 988 tests, coverage thresholds (95.53 statements/96.1 lines), official actionlint, YAML parse, history scan, commit audit, PM health/validate, live CLI help/version, and npx+bunx packed-tarball smoke pass."
+    completed_at: "2026-07-16T17:12:25.789Z"
+  - id: plan-step-006
+    order: 6
+    title: "Publish branch, converge checks and review, merge, and prove default-branch health"
+    status: in_progress
+    created_at: "2026-07-16T16:54:16.678Z"
+    updated_at: "2026-07-16T17:12:26.277Z"
+    owner: codex-root
+    evidence: "Preparing intentional commit and PR; remote checks, alert closeout, bot PR cleanup, merge, branch protection, and merged-head proof remain."
+    linked_items[1]{id,kind,note}:
+      hac-kv5o,implements,Shipping step applies and verifies branch protection
+body: "## Scope\\n\\nPM initialization, security and dependency updates, CI hardening, source compatibility, complete verification, and GitHub closeout."

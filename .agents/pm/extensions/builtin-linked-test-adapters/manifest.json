@@ -1,0 +1,29 @@
+{
+  "name": "builtin-linked-test-adapters",
+  "version": "0.1.0",
+  "entry": "./index.ts",
+  "priority": 0,
+  "trusted": true,
+  "sandbox_profile": "none",
+  "permissions": {
+    "fs_read": true,
+    "fs_write": true,
+    "network": false,
+    "env_read": true,
+    "env_write": false,
+    "process_spawn": true
+  },
+  "capabilities": ["commands", "schema"],
+  "manifest_version": 1,
+  "pm_min_version": "2026.6.24",
+  "activation": {
+    "commands": [
+      "test-runs",
+      "test-runs list",
+      "test-runs logs",
+      "test-runs resume",
+      "test-runs status",
+      "test-runs stop"
+    ]
+  }
+}

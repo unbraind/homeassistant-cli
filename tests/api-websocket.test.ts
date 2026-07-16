@@ -46,7 +46,7 @@ const fastConfig: Config = { ...baseConfig, timeout: 100 };
 const { mockWsConstructor, wsHelpers } = vi.hoisted(() => {
   let nextWs: FakeWs | null = null;
 
-  const ctor = vi.fn().mockImplementation(() => {
+  const ctor = vi.fn().mockImplementation(function () {
     if (!nextWs) throw new Error("WS-MOCK: setNextWs() was not called before connect()");
     const ws = nextWs;
     nextWs = null;

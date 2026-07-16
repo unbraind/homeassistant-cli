@@ -81,7 +81,7 @@ describe("fan command", () => {
 
     const cmd = createFanCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
 
     expect(result).toContain("fan.bedroom_fan");
@@ -94,7 +94,7 @@ describe("fan command", () => {
 
     const cmd = createFanCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--count"], { from: "user" })
+      cmd.parseAsync(["--count"], { from: "user" })
     );
 
     const parsed = JSON.parse(result);
@@ -106,7 +106,7 @@ describe("fan command", () => {
 
     const cmd = createFanCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--state", "on"], { from: "user" })
+      cmd.parseAsync(["--state", "on"], { from: "user" })
     );
 
     const parsed = JSON.parse(result);
@@ -119,7 +119,7 @@ describe("fan command", () => {
 
     const cmd = createFanCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--on", "fan.living_room_fan"], { from: "user" })
+      cmd.parseAsync(["--on", "fan.living_room_fan"], { from: "user" })
     );
 
     expect(result).toContain("turned_on");
@@ -131,7 +131,7 @@ describe("fan command", () => {
 
     const cmd = createFanCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--on", "fan.bedroom_fan", "--percentage", "75"], { from: "user" })
+      cmd.parseAsync(["--on", "fan.bedroom_fan", "--percentage", "75"], { from: "user" })
     );
 
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -145,7 +145,7 @@ describe("fan command", () => {
 
     const cmd = createFanCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--on", "fan.bedroom_fan", "--preset", "high"], { from: "user" })
+      cmd.parseAsync(["--on", "fan.bedroom_fan", "--preset", "high"], { from: "user" })
     );
 
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -158,7 +158,7 @@ describe("fan command", () => {
 
     const cmd = createFanCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--off", "fan.bedroom_fan"], { from: "user" })
+      cmd.parseAsync(["--off", "fan.bedroom_fan"], { from: "user" })
     );
 
     expect(result).toContain("turned_off");
@@ -169,7 +169,7 @@ describe("fan command", () => {
 
     const cmd = createFanCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--toggle", "fan.living_room_fan"], { from: "user" })
+      cmd.parseAsync(["--toggle", "fan.living_room_fan"], { from: "user" })
     );
 
     expect(result).toContain("toggled");
@@ -180,7 +180,7 @@ describe("fan command", () => {
 
     const cmd = createFanCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "fan.bedroom_fan", "--percentage", "50"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "fan.bedroom_fan", "--percentage", "50"], { from: "user" })
     );
 
     expect(result).toContain("set_percentage");
@@ -195,7 +195,7 @@ describe("fan command", () => {
 
     const cmd = createFanCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "fan.living_room_fan", "--preset", "auto"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "fan.living_room_fan", "--preset", "auto"], { from: "user" })
     );
 
     expect(result).toContain("set_preset_mode");
@@ -207,7 +207,7 @@ describe("fan command", () => {
 
     const cmd = createFanCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "fan.bedroom_fan", "--direction", "reverse"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "fan.bedroom_fan", "--direction", "reverse"], { from: "user" })
     );
 
     expect(result).toContain("set_direction");
@@ -223,7 +223,7 @@ describe("fan command", () => {
 
     const cmd = createFanCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--oscillate", "fan.bedroom_fan"], { from: "user" })
+      cmd.parseAsync(["--oscillate", "fan.bedroom_fan"], { from: "user" })
     );
 
     expect(result).toContain("oscillate_on");
@@ -238,7 +238,7 @@ describe("fan command", () => {
 
     const cmd = createFanCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--increase-speed", "fan.bedroom_fan"], { from: "user" })
+      cmd.parseAsync(["--increase-speed", "fan.bedroom_fan"], { from: "user" })
     );
 
     expect(result).toContain("increased_speed");
@@ -249,7 +249,7 @@ describe("fan command", () => {
 
     const cmd = createFanCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--decrease-speed", "fan.bedroom_fan"], { from: "user" })
+      cmd.parseAsync(["--decrease-speed", "fan.bedroom_fan"], { from: "user" })
     );
 
     expect(result).toContain("decreased_speed");

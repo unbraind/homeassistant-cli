@@ -63,7 +63,7 @@ describe("schedule command", () => {
   it("lists all schedule entities", async () => {
     mockRequest.mockResolvedValueOnce(mockResponse(scheduleStates));
     const cmd = createScheduleCommand();
-    const result = await captureLog(() => cmd.parseAsync(["node", "test"], { from: "user" }));
+    const result = await captureLog(() => cmd.parseAsync([], { from: "user" }));
     const parsed = JSON.parse(result);
     expect(parsed.schedules).toHaveLength(2);
     expect(parsed.schedules[0].entity_id).toBe("schedule.work_hours");
@@ -74,7 +74,7 @@ describe("schedule command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(scheduleStates));
     const cmd = createScheduleCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--count"], { from: "user" })
+      cmd.parseAsync(["--count"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.schedules_count).toBe(2);
@@ -84,7 +84,7 @@ describe("schedule command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(scheduleStates));
     const cmd = createScheduleCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--state", "on"], { from: "user" })
+      cmd.parseAsync(["--state", "on"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.schedules).toHaveLength(1);
@@ -95,7 +95,7 @@ describe("schedule command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createScheduleCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--reload"], { from: "user" })
+      cmd.parseAsync(["--reload"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.success).toBe(true);
@@ -107,7 +107,7 @@ describe("schedule command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(scheduleData));
     const cmd = createScheduleCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "schedule.work_hours"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "schedule.work_hours"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.entity_id).toBe("schedule.work_hours");

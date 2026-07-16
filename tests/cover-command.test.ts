@@ -81,7 +81,7 @@ describe("cover command", () => {
 
     const cmd = createCoverCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
 
     expect(result).toContain("cover.living_room_blinds");
@@ -94,7 +94,7 @@ describe("cover command", () => {
 
     const cmd = createCoverCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--count"], { from: "user" })
+      cmd.parseAsync(["--count"], { from: "user" })
     );
 
     const parsed = JSON.parse(result);
@@ -106,7 +106,7 @@ describe("cover command", () => {
 
     const cmd = createCoverCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--state", "closed"], { from: "user" })
+      cmd.parseAsync(["--state", "closed"], { from: "user" })
     );
 
     const parsed = JSON.parse(result);
@@ -119,7 +119,7 @@ describe("cover command", () => {
 
     const cmd = createCoverCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--open", "cover.garage_door"], { from: "user" })
+      cmd.parseAsync(["--open", "cover.garage_door"], { from: "user" })
     );
 
     expect(result).toContain("opened");
@@ -131,7 +131,7 @@ describe("cover command", () => {
 
     const cmd = createCoverCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--close", "cover.living_room_blinds"], { from: "user" })
+      cmd.parseAsync(["--close", "cover.living_room_blinds"], { from: "user" })
     );
 
     expect(result).toContain("closed");
@@ -142,7 +142,7 @@ describe("cover command", () => {
 
     const cmd = createCoverCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--stop", "cover.living_room_blinds"], { from: "user" })
+      cmd.parseAsync(["--stop", "cover.living_room_blinds"], { from: "user" })
     );
 
     expect(result).toContain("stopped");
@@ -153,7 +153,7 @@ describe("cover command", () => {
 
     const cmd = createCoverCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--toggle", "cover.garage_door"], { from: "user" })
+      cmd.parseAsync(["--toggle", "cover.garage_door"], { from: "user" })
     );
 
     expect(result).toContain("toggled");
@@ -164,7 +164,7 @@ describe("cover command", () => {
 
     const cmd = createCoverCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "cover.living_room_blinds", "--position", "50"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "cover.living_room_blinds", "--position", "50"], { from: "user" })
     );
 
     expect(result).toContain("set_position");
@@ -180,7 +180,7 @@ describe("cover command", () => {
 
     const cmd = createCoverCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "cover.living_room_blinds", "--tilt", "30"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "cover.living_room_blinds", "--tilt", "30"], { from: "user" })
     );
 
     expect(result).toContain("set_tilt");
@@ -195,7 +195,7 @@ describe("cover command", () => {
 
     const cmd = createCoverCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--open-tilt", "cover.living_room_blinds"], { from: "user" })
+      cmd.parseAsync(["--open-tilt", "cover.living_room_blinds"], { from: "user" })
     );
 
     expect(result).toContain("opened_tilt");
@@ -206,7 +206,7 @@ describe("cover command", () => {
 
     const cmd = createCoverCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--close-tilt", "cover.living_room_blinds"], { from: "user" })
+      cmd.parseAsync(["--close-tilt", "cover.living_room_blinds"], { from: "user" })
     );
 
     expect(result).toContain("closed_tilt");
@@ -217,7 +217,7 @@ describe("cover command", () => {
 
     const cmd = createCoverCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--stop-tilt", "cover.living_room_blinds"], { from: "user" })
+      cmd.parseAsync(["--stop-tilt", "cover.living_room_blinds"], { from: "user" })
     );
 
     expect(result).toContain("stopped_tilt");

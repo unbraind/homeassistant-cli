@@ -53,7 +53,7 @@ describe("settings get command", () => {
     const originalLog = console.log;
     console.log = (msg: string) => output.push(msg);
 
-    await cmd.parseAsync(["node", "test"], { from: "user" });
+    await cmd.parseAsync([], { from: "user" });
 
     console.log = originalLog;
     const parsed = JSON.parse(output.join("\n")) as Record<string, unknown>;
@@ -67,7 +67,7 @@ describe("settings get command", () => {
     const originalLog = console.log;
     console.log = (msg: string) => output.push(msg);
 
-    await cmd.parseAsync(["node", "test", "--include-runtime"], { from: "user" });
+    await cmd.parseAsync(["--include-runtime"], { from: "user" });
 
     console.log = originalLog;
     const parsed = JSON.parse(output.join("\n")) as Record<string, unknown>;

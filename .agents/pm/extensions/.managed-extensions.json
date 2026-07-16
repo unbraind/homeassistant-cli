@@ -1,0 +1,233 @@
+{
+  "version": 1,
+  "updated_at": "2026-07-16T16:50:51.073Z",
+  "entries": [
+    {
+      "name": "builtin-beads-import",
+      "directory": "builtin-beads-import",
+      "scope": "project",
+      "manifest_version": "0.1.0",
+      "manifest_entry": "./index.ts",
+      "capabilities": [
+        "commands",
+        "importers",
+        "schema"
+      ],
+      "installed_at": "2026-07-16T16:50:50.375Z",
+      "updated_at": "2026-07-16T16:50:50.375Z",
+      "source": {
+        "kind": "builtin",
+        "input": "beads",
+        "location": "beads",
+        "name": "beads",
+        "package": "@unbrained/pm-beads"
+      }
+    },
+    {
+      "name": "builtin-calendar",
+      "directory": "builtin-calendar",
+      "scope": "project",
+      "manifest_version": "0.1.0",
+      "manifest_entry": "./index.ts",
+      "capabilities": [
+        "commands",
+        "schema",
+        "services"
+      ],
+      "installed_at": "2026-07-16T16:50:50.466Z",
+      "updated_at": "2026-07-16T16:50:50.466Z",
+      "source": {
+        "kind": "builtin",
+        "input": "calendar",
+        "location": "calendar",
+        "name": "calendar",
+        "package": "@unbrained/pm-calendar"
+      }
+    },
+    {
+      "name": "builtin-command-kit",
+      "directory": "builtin-command-kit",
+      "scope": "project",
+      "manifest_version": "0.1.0",
+      "manifest_entry": "./index.ts",
+      "capabilities": [
+        "commands",
+        "parser",
+        "schema"
+      ],
+      "installed_at": "2026-07-16T16:50:50.547Z",
+      "updated_at": "2026-07-16T16:50:50.547Z",
+      "source": {
+        "kind": "builtin",
+        "input": "command-kit",
+        "location": "command-kit",
+        "name": "command-kit",
+        "package": "@unbrained/pm-command-kit"
+      }
+    },
+    {
+      "name": "builtin-governance-audit",
+      "directory": "builtin-governance-audit",
+      "scope": "project",
+      "manifest_version": "0.1.0",
+      "manifest_entry": "./index.ts",
+      "capabilities": [
+        "commands",
+        "hooks",
+        "parser",
+        "schema",
+        "services"
+      ],
+      "installed_at": "2026-07-16T16:50:49.420Z",
+      "updated_at": "2026-07-16T16:50:50.617Z",
+      "source": {
+        "kind": "builtin",
+        "input": "governance-audit",
+        "location": "governance-audit",
+        "name": "governance-audit",
+        "package": "@unbrained/pm-governance-audit"
+      }
+    },
+    {
+      "name": "builtin-guide-shell",
+      "directory": "builtin-guide-shell",
+      "scope": "project",
+      "manifest_version": "0.1.0",
+      "manifest_entry": "./index.ts",
+      "capabilities": [
+        "commands",
+        "schema",
+        "services"
+      ],
+      "installed_at": "2026-07-16T16:50:50.649Z",
+      "updated_at": "2026-07-16T16:50:50.649Z",
+      "source": {
+        "kind": "builtin",
+        "input": "guide-shell",
+        "location": "guide-shell",
+        "name": "guide-shell",
+        "package": "@unbrained/pm-guide-shell"
+      }
+    },
+    {
+      "name": "builtin-kanban-profile",
+      "directory": "builtin-kanban-profile",
+      "scope": "project",
+      "manifest_version": "0.1.0",
+      "manifest_entry": "./index.ts",
+      "capabilities": [
+        "schema"
+      ],
+      "installed_at": "2026-07-16T16:50:50.698Z",
+      "updated_at": "2026-07-16T16:50:50.698Z",
+      "source": {
+        "kind": "builtin",
+        "input": "kanban",
+        "location": "kanban",
+        "name": "kanban",
+        "package": "@unbrained/pm-kanban"
+      }
+    },
+    {
+      "name": "builtin-lifecycle-hooks",
+      "directory": "builtin-lifecycle-hooks",
+      "scope": "project",
+      "manifest_version": "0.1.0",
+      "manifest_entry": "./index.ts",
+      "capabilities": [
+        "hooks"
+      ],
+      "installed_at": "2026-07-16T16:50:50.770Z",
+      "updated_at": "2026-07-16T16:50:50.770Z",
+      "source": {
+        "kind": "builtin",
+        "input": "lifecycle-hooks",
+        "location": "lifecycle-hooks",
+        "name": "lifecycle-hooks",
+        "package": "@unbrained/pm-lifecycle-hooks"
+      }
+    },
+    {
+      "name": "builtin-linked-test-adapters",
+      "directory": "builtin-linked-test-adapters",
+      "scope": "project",
+      "manifest_version": "0.1.0",
+      "manifest_entry": "./index.ts",
+      "capabilities": [
+        "commands",
+        "schema"
+      ],
+      "installed_at": "2026-07-16T16:50:50.808Z",
+      "updated_at": "2026-07-16T16:50:50.808Z",
+      "source": {
+        "kind": "builtin",
+        "input": "linked-test-adapters",
+        "location": "linked-test-adapters",
+        "name": "linked-test-adapters",
+        "package": "@unbrained/pm-linked-test-adapters"
+      }
+    },
+    {
+      "name": "builtin-search-advanced",
+      "directory": "builtin-search-advanced",
+      "scope": "project",
+      "manifest_version": "0.1.0",
+      "manifest_entry": "./index.ts",
+      "capabilities": [
+        "commands",
+        "schema",
+        "search"
+      ],
+      "installed_at": "2026-07-16T16:50:50.856Z",
+      "updated_at": "2026-07-16T16:50:50.856Z",
+      "source": {
+        "kind": "builtin",
+        "input": "search-advanced",
+        "location": "search-advanced",
+        "name": "search-advanced",
+        "package": "@unbrained/pm-search-advanced"
+      }
+    },
+    {
+      "name": "builtin-templates",
+      "directory": "builtin-templates",
+      "scope": "project",
+      "manifest_version": "0.1.0",
+      "manifest_entry": "./index.ts",
+      "capabilities": [
+        "commands",
+        "schema"
+      ],
+      "installed_at": "2026-07-16T16:50:50.974Z",
+      "updated_at": "2026-07-16T16:50:50.974Z",
+      "source": {
+        "kind": "builtin",
+        "input": "templates",
+        "location": "templates",
+        "name": "templates",
+        "package": "@unbrained/pm-templates"
+      }
+    },
+    {
+      "name": "builtin-todos-import-export",
+      "directory": "builtin-todos-import-export",
+      "scope": "project",
+      "manifest_version": "0.1.0",
+      "manifest_entry": "./index.ts",
+      "capabilities": [
+        "commands",
+        "importers",
+        "schema"
+      ],
+      "installed_at": "2026-07-16T16:50:51.067Z",
+      "updated_at": "2026-07-16T16:50:51.067Z",
+      "source": {
+        "kind": "builtin",
+        "input": "todos",
+        "location": "todos",
+        "name": "todos",
+        "package": "@unbrained/pm-todos"
+      }
+    }
+  ]
+}

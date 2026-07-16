@@ -32,7 +32,16 @@ hassio-config.json
 settings.json
 credentials.json
 
+# PM project settings are governance metadata, not Home Assistant credentials.
+!.agents/pm/settings.json
+
 # Temporary files
 tmp/
 temp/
 *.tmp
+
+# pm-cli:runtime-cache:start
+.agents/pm/runtime/
+.agents/pm/search/
+.agents/pm/locks/
+# pm-cli:runtime-cache:end

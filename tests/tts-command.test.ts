@@ -59,7 +59,7 @@ describe("tts command", () => {
 
     const cmd = createTtsCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--engines"], { from: "user" })
+      cmd.parseAsync(["--engines"], { from: "user" })
     );
 
     expect(result).toContain("tts_engines");
@@ -71,7 +71,7 @@ describe("tts command", () => {
 
     const cmd = createTtsCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--list-engines"], { from: "user" })
+      cmd.parseAsync(["--list-engines"], { from: "user" })
     );
 
     expect(result).toContain("tts_engines");
@@ -82,7 +82,7 @@ describe("tts command", () => {
 
     const cmd = createTtsCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--engines"], { from: "user" })
+      cmd.parseAsync(["--engines"], { from: "user" })
     );
 
     expect(result).toContain("tts_engines");
@@ -93,7 +93,7 @@ describe("tts command", () => {
 
     const cmd = createTtsCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--clear-cache"], { from: "user" })
+      cmd.parseAsync(["--clear-cache"], { from: "user" })
     );
 
     expect(result).toContain("success");
@@ -107,7 +107,7 @@ describe("tts command", () => {
 
     const cmd = createTtsCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--message", "Hello world", "--engine", "tts.google_translate"], { from: "user" })
+      cmd.parseAsync(["--message", "Hello world", "--engine", "tts.google_translate"], { from: "user" })
     );
 
     expect(result).toContain("url");
@@ -119,7 +119,7 @@ describe("tts command", () => {
     const cmd = createTtsCommand();
     const result = await captureLog(() =>
       cmd.parseAsync(
-        ["node", "test", "--message", "Hello", "--player", "media_player.living_room"],
+        ["--message", "Hello", "--player", "media_player.living_room"],
         { from: "user" }
       )
     );
@@ -134,7 +134,7 @@ describe("tts command", () => {
     const cmd = createTtsCommand();
     const result = await captureLog(() =>
       cmd.parseAsync(
-        ["node", "test", "--message", "Hallo", "--player", "media_player.living_room", "--engine", "tts.cloud", "--language", "de"],
+        ["--message", "Hallo", "--player", "media_player.living_room", "--engine", "tts.cloud", "--language", "de"],
         { from: "user" }
       )
     );
@@ -161,7 +161,7 @@ describe("say command", () => {
     const cmd = createSayCommand();
     const result = await captureLog(() =>
       cmd.parseAsync(
-        ["node", "test", "Good morning", "--player", "media_player.kitchen"],
+        ["Good morning", "--player", "media_player.kitchen"],
         { from: "user" }
       )
     );
@@ -176,7 +176,7 @@ describe("say command", () => {
     const cmd = createSayCommand();
     const result = await captureLog(() =>
       cmd.parseAsync(
-        ["node", "test", "Hello", "--player", "media_player.kitchen", "--engine", "tts.cloud"],
+        ["Hello", "--player", "media_player.kitchen", "--engine", "tts.cloud"],
         { from: "user" }
       )
     );

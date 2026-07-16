@@ -99,7 +99,7 @@ describe("media-player command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(mediaPlayerStates));
     const cmd = createMediaPlayerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
     expect(result).toContain("media_player.living_room_tv");
     expect(result).toContain("media_player.bedroom_speaker");
@@ -110,7 +110,7 @@ describe("media-player command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(mediaPlayerStates));
     const cmd = createMediaPlayerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--count"], { from: "user" })
+      cmd.parseAsync(["--count"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.media_players_count).toBe(2);
@@ -120,7 +120,7 @@ describe("media-player command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(mediaPlayerStates));
     const cmd = createMediaPlayerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--state", "playing"], { from: "user" })
+      cmd.parseAsync(["--state", "playing"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.media_players).toHaveLength(1);
@@ -131,7 +131,7 @@ describe("media-player command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createMediaPlayerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--on", "media_player.living_room_tv"], { from: "user" })
+      cmd.parseAsync(["--on", "media_player.living_room_tv"], { from: "user" })
     );
     expect(result).toContain("turned_on");
     expect(result).toContain("media_player.living_room_tv");
@@ -141,7 +141,7 @@ describe("media-player command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createMediaPlayerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--off", "media_player.bedroom_speaker"], { from: "user" })
+      cmd.parseAsync(["--off", "media_player.bedroom_speaker"], { from: "user" })
     );
     expect(result).toContain("turned_off");
   });
@@ -150,7 +150,7 @@ describe("media-player command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createMediaPlayerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--toggle", "media_player.living_room_tv"], { from: "user" })
+      cmd.parseAsync(["--toggle", "media_player.living_room_tv"], { from: "user" })
     );
     expect(result).toContain("toggled");
   });
@@ -159,7 +159,7 @@ describe("media-player command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createMediaPlayerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--play", "media_player.bedroom_speaker"], { from: "user" })
+      cmd.parseAsync(["--play", "media_player.bedroom_speaker"], { from: "user" })
     );
     expect(result).toContain("playing");
   });
@@ -168,7 +168,7 @@ describe("media-player command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createMediaPlayerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--pause", "media_player.living_room_tv"], { from: "user" })
+      cmd.parseAsync(["--pause", "media_player.living_room_tv"], { from: "user" })
     );
     expect(result).toContain("paused");
   });
@@ -177,7 +177,7 @@ describe("media-player command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createMediaPlayerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--stop", "media_player.living_room_tv"], { from: "user" })
+      cmd.parseAsync(["--stop", "media_player.living_room_tv"], { from: "user" })
     );
     expect(result).toContain("stopped");
   });
@@ -186,7 +186,7 @@ describe("media-player command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createMediaPlayerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--play-pause", "media_player.living_room_tv"], { from: "user" })
+      cmd.parseAsync(["--play-pause", "media_player.living_room_tv"], { from: "user" })
     );
     expect(result).toContain("play_pause_toggled");
   });
@@ -195,7 +195,7 @@ describe("media-player command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createMediaPlayerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--next", "media_player.bedroom_speaker"], { from: "user" })
+      cmd.parseAsync(["--next", "media_player.bedroom_speaker"], { from: "user" })
     );
     expect(result).toContain("next_track");
   });
@@ -204,7 +204,7 @@ describe("media-player command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createMediaPlayerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--prev", "media_player.bedroom_speaker"], { from: "user" })
+      cmd.parseAsync(["--prev", "media_player.bedroom_speaker"], { from: "user" })
     );
     expect(result).toContain("previous_track");
   });
@@ -213,7 +213,7 @@ describe("media-player command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createMediaPlayerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--mute", "media_player.living_room_tv"], { from: "user" })
+      cmd.parseAsync(["--mute", "media_player.living_room_tv"], { from: "user" })
     );
     expect(result).toContain("muted");
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -225,7 +225,7 @@ describe("media-player command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createMediaPlayerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--unmute", "media_player.living_room_tv"], { from: "user" })
+      cmd.parseAsync(["--unmute", "media_player.living_room_tv"], { from: "user" })
     );
     expect(result).toContain("unmuted");
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -237,7 +237,7 @@ describe("media-player command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createMediaPlayerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--volume-up", "media_player.bedroom_speaker"], { from: "user" })
+      cmd.parseAsync(["--volume-up", "media_player.bedroom_speaker"], { from: "user" })
     );
     expect(result).toContain("volume_up");
   });
@@ -246,7 +246,7 @@ describe("media-player command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createMediaPlayerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--volume-down", "media_player.bedroom_speaker"], { from: "user" })
+      cmd.parseAsync(["--volume-down", "media_player.bedroom_speaker"], { from: "user" })
     );
     expect(result).toContain("volume_down");
   });
@@ -255,7 +255,7 @@ describe("media-player command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createMediaPlayerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "media_player.living_room_tv", "--volume", "0.7"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "media_player.living_room_tv", "--volume", "0.7"], { from: "user" })
     );
     expect(result).toContain("volume_set");
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -267,7 +267,7 @@ describe("media-player command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createMediaPlayerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "media_player.living_room_tv", "--seek", "120"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "media_player.living_room_tv", "--seek", "120"], { from: "user" })
     );
     expect(result).toContain("seeked");
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -279,7 +279,7 @@ describe("media-player command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createMediaPlayerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "media_player.living_room_tv", "--source", "HDMI 1"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "media_player.living_room_tv", "--source", "HDMI 1"], { from: "user" })
     );
     expect(result).toContain("source_selected");
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -291,7 +291,7 @@ describe("media-player command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createMediaPlayerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "media_player.bedroom_speaker", "--sound-mode", "Music"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "media_player.bedroom_speaker", "--sound-mode", "Music"], { from: "user" })
     );
     expect(result).toContain("sound_mode_set");
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -303,7 +303,7 @@ describe("media-player command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createMediaPlayerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "media_player.bedroom_speaker", "--shuffle"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "media_player.bedroom_speaker", "--shuffle"], { from: "user" })
     );
     expect(result).toContain("shuffle_set");
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -315,7 +315,7 @@ describe("media-player command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createMediaPlayerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "media_player.bedroom_speaker", "--repeat", "all"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "media_player.bedroom_speaker", "--repeat", "all"], { from: "user" })
     );
     expect(result).toContain("repeat_set");
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -327,7 +327,7 @@ describe("media-player command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createMediaPlayerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "media_player.living_room_tv", "--play-media", "--media-url", "https://example.com/video.mp4", "--media-type", "video"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "media_player.living_room_tv", "--play-media", "--media-url", "https://example.com/video.mp4", "--media-type", "video"], { from: "user" })
     );
     expect(result).toContain("play_media");
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -340,7 +340,7 @@ describe("media-player command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createMediaPlayerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "media_player.living_room_tv", "--join", "media_player.bedroom_speaker"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "media_player.living_room_tv", "--join", "media_player.bedroom_speaker"], { from: "user" })
     );
     expect(result).toContain("joined");
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -352,7 +352,7 @@ describe("media-player command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createMediaPlayerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--unjoin", "media_player.bedroom_speaker"], { from: "user" })
+      cmd.parseAsync(["--unjoin", "media_player.bedroom_speaker"], { from: "user" })
     );
     expect(result).toContain("unjoined");
   });

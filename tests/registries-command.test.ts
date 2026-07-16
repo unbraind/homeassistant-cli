@@ -37,7 +37,7 @@ const getCategoryRegistry = vi.fn(async () => [
 const close = vi.fn(async () => undefined);
 
 vi.mock("../src/api/registries.js", () => ({
-  WebSocketRegistryClient: vi.fn().mockImplementation(() => ({
+  WebSocketRegistryClient: vi.fn().mockImplementation(function () { return {
     getEntityRegistry,
     getDeviceRegistry,
     getAreaRegistry,
@@ -45,19 +45,19 @@ vi.mock("../src/api/registries.js", () => ({
     getLabelRegistry,
     getCategoryRegistry,
     close,
-  })),
-  RegistryApiClient: vi.fn().mockImplementation(() => ({
+  }; }),
+  RegistryApiClient: vi.fn().mockImplementation(function () { return {
     getEntityRegistry,
     getDeviceRegistry,
     getAreaRegistry,
     getFloorRegistry,
     getLabelRegistry,
     getCategoryRegistry,
-  })),
+  }; }),
 }));
 
 vi.mock("../src/api/index.js", () => ({
-  WebSocketRegistryClient: vi.fn().mockImplementation(() => ({
+  WebSocketRegistryClient: vi.fn().mockImplementation(function () { return {
     getEntityRegistry,
     getDeviceRegistry,
     getAreaRegistry,
@@ -65,10 +65,10 @@ vi.mock("../src/api/index.js", () => ({
     getLabelRegistry,
     getCategoryRegistry,
     close,
-  })),
-  HomeAssistantClient: vi.fn().mockImplementation(() => ({
+  }; }),
+  HomeAssistantClient: vi.fn().mockImplementation(function () { return {
     getStates: vi.fn(async () => []),
-  })),
+  }; }),
   HomeAssistantApiError: class extends Error {
     statusCode: number;
     constructor(message: string, code: number) {
@@ -112,7 +112,7 @@ describe("registries command", () => {
   it("lists entity registry with --entities flag", async () => {
     const cmd = createRegistriesCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entities"], { from: "user" })
+      cmd.parseAsync(["--entities"], { from: "user" })
     );
 
     expect(result).toContain("entity_registry");
@@ -123,7 +123,7 @@ describe("registries command", () => {
   it("filters entity registry by domain", async () => {
     const cmd = createRegistriesCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entities", "--domain", "light"], { from: "user" })
+      cmd.parseAsync(["--entities", "--domain", "light"], { from: "user" })
     );
 
     expect(result).toContain("light.living_room");
@@ -134,7 +134,7 @@ describe("registries command", () => {
   it("returns count with --count flag", async () => {
     const cmd = createRegistriesCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entities", "--count"], { from: "user" })
+      cmd.parseAsync(["--entities", "--count"], { from: "user" })
     );
 
     expect(result).toContain("entity_registry_count");
@@ -145,7 +145,7 @@ describe("registries command", () => {
   it("lists device registry with --devices flag", async () => {
     const cmd = createRegistriesCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--devices"], { from: "user" })
+      cmd.parseAsync(["--devices"], { from: "user" })
     );
 
     expect(result).toContain("device_registry");
@@ -155,7 +155,7 @@ describe("registries command", () => {
   it("lists area registry with --areas flag", async () => {
     const cmd = createRegistriesCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--areas"], { from: "user" })
+      cmd.parseAsync(["--areas"], { from: "user" })
     );
 
     expect(result).toContain("area_registry");
@@ -165,7 +165,7 @@ describe("registries command", () => {
   it("lists floor registry with --floors flag", async () => {
     const cmd = createRegistriesCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--floors"], { from: "user" })
+      cmd.parseAsync(["--floors"], { from: "user" })
     );
 
     expect(result).toContain("floor_registry");
@@ -175,7 +175,7 @@ describe("registries command", () => {
   it("lists label registry with --labels flag", async () => {
     const cmd = createRegistriesCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--labels"], { from: "user" })
+      cmd.parseAsync(["--labels"], { from: "user" })
     );
 
     expect(result).toContain("label_registry");
@@ -185,7 +185,7 @@ describe("registries command", () => {
   it("lists category registry with --categories flag", async () => {
     const cmd = createRegistriesCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--categories"], { from: "user" })
+      cmd.parseAsync(["--categories"], { from: "user" })
     );
 
     expect(result).toContain("category_registry");
@@ -202,7 +202,7 @@ describe("registries command", () => {
 
     const cmd = createRegistriesCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
 
     // Should not throw, just show empty/fallback results
@@ -212,7 +212,7 @@ describe("registries command", () => {
   it("uses --entity alias for --entities", async () => {
     const cmd = createRegistriesCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity"], { from: "user" })
+      cmd.parseAsync(["--entity"], { from: "user" })
     );
 
     expect(result).toContain("entity_registry");
@@ -221,7 +221,7 @@ describe("registries command", () => {
   it("uses --device alias for --devices", async () => {
     const cmd = createRegistriesCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--device"], { from: "user" })
+      cmd.parseAsync(["--device"], { from: "user" })
     );
 
     expect(result).toContain("device_registry");
@@ -230,7 +230,7 @@ describe("registries command", () => {
   it("filters devices by area-id", async () => {
     const cmd = createRegistriesCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--devices", "--area-id", "living_room"], { from: "user" })
+      cmd.parseAsync(["--devices", "--area-id", "living_room"], { from: "user" })
     );
 
     expect(result).toContain("device_registry");
@@ -239,7 +239,7 @@ describe("registries command", () => {
   it("filters entities by device-id", async () => {
     const cmd = createRegistriesCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entities", "--device-id", "dev1"], { from: "user" })
+      cmd.parseAsync(["--entities", "--device-id", "dev1"], { from: "user" })
     );
 
     const parsed = JSON.parse(result);

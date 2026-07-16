@@ -93,7 +93,7 @@ describe("number command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(numberStates));
     const cmd = createNumberCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
     expect(result).toContain("number.light_brightness");
     expect(result).toContain("number.fan_speed");
@@ -104,7 +104,7 @@ describe("number command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(numberStates));
     const cmd = createNumberCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--count"], { from: "user" })
+      cmd.parseAsync(["--count"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.numbers_count).toBe(2);
@@ -114,7 +114,7 @@ describe("number command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createNumberCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "number.light_brightness", "--set", "80"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "number.light_brightness", "--set", "80"], { from: "user" })
     );
     expect(result).toContain("set_value");
     expect(result).toContain("number.light_brightness");
@@ -128,7 +128,7 @@ describe("number command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(numberStates));
     const cmd = createNumberCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--state", "75"], { from: "user" })
+      cmd.parseAsync(["--state", "75"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.numbers).toHaveLength(1);

@@ -81,7 +81,7 @@ describe("lock command", () => {
 
     const cmd = createLockCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
 
     expect(result).toContain("lock.front_door");
@@ -94,7 +94,7 @@ describe("lock command", () => {
 
     const cmd = createLockCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--count"], { from: "user" })
+      cmd.parseAsync(["--count"], { from: "user" })
     );
 
     const parsed = JSON.parse(result);
@@ -106,7 +106,7 @@ describe("lock command", () => {
 
     const cmd = createLockCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--state", "locked"], { from: "user" })
+      cmd.parseAsync(["--state", "locked"], { from: "user" })
     );
 
     const parsed = JSON.parse(result);
@@ -119,7 +119,7 @@ describe("lock command", () => {
 
     const cmd = createLockCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--lock", "lock.back_door"], { from: "user" })
+      cmd.parseAsync(["--lock", "lock.back_door"], { from: "user" })
     );
 
     expect(result).toContain("locked");
@@ -135,7 +135,7 @@ describe("lock command", () => {
 
     const cmd = createLockCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--lock", "lock.front_door", "--code", "1234"], { from: "user" })
+      cmd.parseAsync(["--lock", "lock.front_door", "--code", "1234"], { from: "user" })
     );
 
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -149,7 +149,7 @@ describe("lock command", () => {
 
     const cmd = createLockCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--unlock", "lock.front_door"], { from: "user" })
+      cmd.parseAsync(["--unlock", "lock.front_door"], { from: "user" })
     );
 
     expect(result).toContain("unlocked");
@@ -161,7 +161,7 @@ describe("lock command", () => {
 
     const cmd = createLockCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--unlock", "lock.front_door", "--code", "5678"], { from: "user" })
+      cmd.parseAsync(["--unlock", "lock.front_door", "--code", "5678"], { from: "user" })
     );
 
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -174,7 +174,7 @@ describe("lock command", () => {
 
     const cmd = createLockCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--open", "lock.front_door"], { from: "user" })
+      cmd.parseAsync(["--open", "lock.front_door"], { from: "user" })
     );
 
     expect(result).toContain("opened");
@@ -186,7 +186,7 @@ describe("lock command", () => {
 
     const cmd = createLockCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--open", "lock.back_door", "--code", "9999"], { from: "user" })
+      cmd.parseAsync(["--open", "lock.back_door", "--code", "9999"], { from: "user" })
     );
 
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };

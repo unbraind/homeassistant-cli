@@ -55,7 +55,7 @@ describe("energy command", () => {
     );
 
     const cmd = createEnergyCommand();
-    const result = await captureLog(() => cmd.parseAsync(["node", "test"], { from: "user" }));
+    const result = await captureLog(() => cmd.parseAsync([], { from: "user" }));
 
     expect(result).toContain("energy_sources");
     expect(result).toContain("grid");
@@ -65,7 +65,7 @@ describe("energy command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ message: "Not Found" }, 404));
 
     const cmd = createEnergyCommand();
-    const result = await captureLog(() => cmd.parseAsync(["node", "test"], { from: "user" }));
+    const result = await captureLog(() => cmd.parseAsync([], { from: "user" }));
 
     expect(result).toContain("Energy dashboard not configured");
   });
@@ -180,7 +180,7 @@ describe("health command", () => {
     );
 
     const cmd = createHealthCommand();
-    const result = await captureLog(() => cmd.parseAsync(["node", "test"], { from: "user" }));
+    const result = await captureLog(() => cmd.parseAsync([], { from: "user" }));
 
     expect(result).toContain("2024.1.0");
   });
@@ -189,7 +189,7 @@ describe("health command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ message: "Not Found" }, 404));
 
     const cmd = createHealthCommand();
-    const result = await captureLog(() => cmd.parseAsync(["node", "test"], { from: "user" }));
+    const result = await captureLog(() => cmd.parseAsync([], { from: "user" }));
 
     expect(result).toContain("System health endpoint not available");
   });
@@ -228,7 +228,7 @@ describe("info command", () => {
       );
 
     const cmd = createInfoCommand();
-    const result = await captureLog(() => cmd.parseAsync(["node", "test"], { from: "user" }));
+    const result = await captureLog(() => cmd.parseAsync([], { from: "user" }));
 
     expect(result).toContain("2024.1.0");
     expect(result).toContain("Home");

@@ -1,0 +1,52 @@
+id: hac-cg64
+title: Initialize and validate repository-local PM governance
+description: Establish strict repository-local PM tracking with tracked TOON items and JSONL history.
+type: Task
+status: closed
+priority: 1
+tags[4]: agent-workflow,governance,pm,tracking
+created_at: "2026-07-16T16:54:20.001Z"
+updated_at: "2026-07-16T17:13:32.134Z"
+deadline: "2026-07-18T16:54:20.001Z"
+closed_at: "2026-07-16T17:12:25.278Z"
+author: codex-root
+estimated_minutes: 90
+acceptance_criteria: PM health and validate pass; TOON items and JSONL histories are tracked; only runtime/search/cache artifacts are ignored; every remediation item has metadata and evidence links
+parent: hac-gpm3
+reviewer: unbraind
+risk: medium
+confidence: 95
+sprint: 2026-07-security
+release: 2026.7.16
+resolution: "Initialized hac-prefixed strict tracker with agile types, all bundled packages, agent guidance, cache exclusions, product hierarchy, baseline file ownership, and test-result tracking."
+expected_result: "TOON items and JSONL histories are CLI-managed, tracked, healthy, and cover repository ownership."
+actual_result: PM health passes; validation reports zero missing/orphaned paths and zero history drift across nine items; linked tracker-context test passed.
+dependencies[1]{id,kind,created_at,author,source_kind}:
+  hac-gpm3,parent,"2026-07-16T16:54:20.001Z",codex-root,null
+comments[1]{created_at,author,text}:
+  "2026-07-16T16:54:20.001Z",codex-root,pm init created repository-local storage and installed twelve bundled packages.
+notes[1]{created_at,author,text}:
+  "2026-07-16T16:54:20.001Z",codex-root,Never edit PM TOON or JSONL stores directly; use PM commands for every mutation.
+learnings[3]{created_at,author,text}:
+  "2026-07-16T16:54:20.001Z",codex-root,Explicit --workspace binding prevents accidental mutation of the global tracker.
+  "2026-07-16T17:10:59.356Z",codex-root,PM linked-test tracker context clones tracker state but not the full repository file tree. Run history checks in linked-test tracker mode and run check-files against the live workspace.
+  "2026-07-16T17:13:32.134Z",codex-root,A root-wide settings.json credential ignore also hides .agents/pm/settings.json. Preserve credential hygiene with a narrow PM settings negation so repository-local governance is reproducible.
+files[3]{path,scope,note}:
+  .agents/pm/settings.json,project,Primary implementation surface
+  .gitignore,project,PM-managed cache exclusions
+  AGENTS.md,project,PM-managed agent guidance
+tests[2]:
+  - command: pm health --check-only --summary --json
+    scope: project
+    timeout_seconds: 1800
+  - command: pm validate --check-history-drift --strict-exit --json
+    scope: project
+    timeout_seconds: 300
+    pm_context_mode: tracker
+test_runs[2]{run_id,kind,status,started_at,finished_at,recorded_at,passed,failed,skipped}:
+  test-local-mrnrm9iy-fv2cxf,test,failed,"2026-07-16T17:10:42.033Z","2026-07-16T17:10:43.642Z","2026-07-16T17:10:43.642Z",1,1,0
+  test-local-mrnrmn2s-drajgd,test,passed,"2026-07-16T17:10:59.992Z","2026-07-16T17:11:01.204Z","2026-07-16T17:11:01.204Z",1,0,0
+docs[1]{path,scope,note}:
+  AGENTS.md,project,Relevant project documentation
+close_reason: "Repository-local strict PM governance is initialized, linked, healthy, and history-valid."
+body: "## Scope\\n\\nInitialize .agents/pm with hac- IDs, strict governance, agile types, bundled packages, agent guidance, cache exclusions, health checks, and detailed task evidence."

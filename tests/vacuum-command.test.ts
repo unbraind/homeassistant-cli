@@ -91,7 +91,7 @@ describe("vacuum command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(vacuumStates));
     const cmd = createVacuumCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
     expect(result).toContain("vacuum.roomba");
     expect(result).toContain("vacuum.dyson");
@@ -102,7 +102,7 @@ describe("vacuum command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(vacuumStates));
     const cmd = createVacuumCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--count"], { from: "user" })
+      cmd.parseAsync(["--count"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.vacuums_count).toBe(2);
@@ -112,7 +112,7 @@ describe("vacuum command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(vacuumStates));
     const cmd = createVacuumCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--state", "docked"], { from: "user" })
+      cmd.parseAsync(["--state", "docked"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.vacuums).toHaveLength(1);
@@ -123,7 +123,7 @@ describe("vacuum command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createVacuumCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--start", "vacuum.roomba"], { from: "user" })
+      cmd.parseAsync(["--start", "vacuum.roomba"], { from: "user" })
     );
     expect(result).toContain("started");
     expect(result).toContain("vacuum.roomba");
@@ -136,7 +136,7 @@ describe("vacuum command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createVacuumCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--pause", "vacuum.dyson"], { from: "user" })
+      cmd.parseAsync(["--pause", "vacuum.dyson"], { from: "user" })
     );
     expect(result).toContain("paused");
     expect(result).toContain("vacuum.dyson");
@@ -146,7 +146,7 @@ describe("vacuum command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createVacuumCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--stop", "vacuum.roomba"], { from: "user" })
+      cmd.parseAsync(["--stop", "vacuum.roomba"], { from: "user" })
     );
     expect(result).toContain("stopped");
   });
@@ -155,7 +155,7 @@ describe("vacuum command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createVacuumCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--return-to-base", "vacuum.roomba"], { from: "user" })
+      cmd.parseAsync(["--return-to-base", "vacuum.roomba"], { from: "user" })
     );
     expect(result).toContain("returning_to_base");
     expect(result).toContain("vacuum.roomba");
@@ -165,7 +165,7 @@ describe("vacuum command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createVacuumCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--clean-spot", "vacuum.roomba"], { from: "user" })
+      cmd.parseAsync(["--clean-spot", "vacuum.roomba"], { from: "user" })
     );
     expect(result).toContain("clean_spot");
   });
@@ -174,7 +174,7 @@ describe("vacuum command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createVacuumCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--locate", "vacuum.roomba"], { from: "user" })
+      cmd.parseAsync(["--locate", "vacuum.roomba"], { from: "user" })
     );
     expect(result).toContain("located");
   });
@@ -183,7 +183,7 @@ describe("vacuum command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createVacuumCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "vacuum.roomba", "--fan-speed", "high"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "vacuum.roomba", "--fan-speed", "high"], { from: "user" })
     );
     expect(result).toContain("set_fan_speed");
     const callOpts = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -196,7 +196,7 @@ describe("vacuum command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createVacuumCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "vacuum.roomba", "--command", "zone_clean", "--params", '{"zone":1}'], { from: "user" })
+      cmd.parseAsync(["--entity-id", "vacuum.roomba", "--command", "zone_clean", "--params", '{"zone":1}'], { from: "user" })
     );
     expect(result).toContain("send_command");
     const callOpts = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -208,7 +208,7 @@ describe("vacuum command", () => {
   it("errors on invalid --params JSON", async () => {
     const cmd = createVacuumCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "vacuum.roomba", "--command", "test", "--params", "not-json"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "vacuum.roomba", "--command", "test", "--params", "not-json"], { from: "user" })
     );
     expect(exitSpy).toHaveBeenCalledWith(1);
   });

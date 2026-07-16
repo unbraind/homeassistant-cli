@@ -28,27 +28,21 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Bun
-        if: matrix.setup == 'bun'
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
 
       - name: Setup Node
         if: matrix.setup == 'node'
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 22
 
-      - name: Install deps (Bun)
-        if: matrix.setup == 'bun'
+      - name: Install dependencies from Bun lockfile
         run: bun install --frozen-lockfile
-
-      - name: Install deps (Node)
-        if: matrix.setup == 'node'
-        run: npm install --no-audit --no-fund
 
       - name: Lint (Bun)
         if: matrix.setup == 'bun'
@@ -87,7 +81,7 @@ jobs:
     timeout-minutes: 30
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -101,7 +95,7 @@ jobs:
         run: bun run test:coverage
 
       - name: Upload coverage artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-report
           path: coverage/
@@ -113,7 +107,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -121,7 +115,7 @@ jobs:
           bun-version: latest
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 22
 
@@ -136,7 +130,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout full history
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 

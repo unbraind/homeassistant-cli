@@ -21,11 +21,11 @@ const getStates = vi.fn(async () => ([
 ]));
 
 vi.mock("../src/api/index.js", () => ({
-  HomeAssistantClient: vi.fn().mockImplementation(() => ({
+  HomeAssistantClient: vi.fn().mockImplementation(function () { return {
     getState,
     getHistory,
     getStates,
-  })),
+  }; }),
 }));
 
 vi.mock("../src/config/loader.js", () => ({

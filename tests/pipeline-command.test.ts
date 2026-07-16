@@ -17,10 +17,10 @@ const mockCall = vi.fn();
 const mockClose = vi.fn().mockResolvedValue(undefined);
 
 vi.mock("../src/api/websocket.js", () => ({
-  HomeAssistantWebSocketClient: vi.fn().mockImplementation(() => ({
+  HomeAssistantWebSocketClient: vi.fn().mockImplementation(function () { return {
     call: mockCall,
     close: mockClose,
-  })),
+  }; }),
 }));
 
 const pipelineList = {

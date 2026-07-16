@@ -1,0 +1,185 @@
+/**
+ * Runtime contracts and behavior for packages/pm calendar/extensions/calendar/runtime.
+ *
+ * @module packages/pm-calendar/extensions/calendar/runtime
+ */
+import path from "node:path";
+import { pathToFileURL } from "node:url";
+import type {
+  CalendarOptions,
+  CalendarResult,
+} from "@unbrained/pm-cli/sdk/runtime";
+import type {
+  GlobalOptions,
+  ServiceOverrideContext,
+} from "@unbrained/pm-cli/sdk";
+
+const PM_PACKAGE_ROOT_ENV = "PM_CLI_PACKAGE_ROOT";
+
+interface CalendarCoreModule {
+  runCalendar: (
+    options: CalendarOptions,
+    global: GlobalOptions,
+  ) => Promise<CalendarResult>;
+  renderCalendarMarkdown: (result: CalendarResult) => string;
+  renderCalendarToon: (result: CalendarResult) => string;
+  resolveCalendarOutputFormat: (
+    options: CalendarOptions,
+    global: GlobalOptions,
+  ) => "markdown" | "toon" | "json";
+}
+
+let calendarCore: CalendarCoreModule | null = null;
+let calendarCoreLoadPromise: Promise<CalendarCoreModule> | null = null;
+
+async function ensureCalendarCoreModule(): Promise<CalendarCoreModule> {
+  if (calendarCore) {
+    return calendarCore;
+  }
+  if (!calendarCoreLoadPromise) {
+    calendarCoreLoadPromise = loadCalendarCoreModule();
+  }
+  calendarCore = await calendarCoreLoadPromise;
+  return calendarCore;
+}
+
+async function loadCalendarCoreModule(): Promise<CalendarCoreModule> {
+  const envRoot = process.env[PM_PACKAGE_ROOT_ENV];
+  if (typeof envRoot !== "string" || envRoot.trim().length === 0) {
+    throw new Error(
+      `builtin-calendar requires ${PM_PACKAGE_ROOT_ENV} to locate core SDK runtime exports.`,
+    );
+  }
+  const modulePath = path.join(
+    path.resolve(envRoot.trim()),
+    "dist",
+    "sdk",
+    "runtime.js",
+  );
+  try {
+    const loaded = (await import(
+      pathToFileURL(modulePath).href
+    )) as Partial<CalendarCoreModule>;
+    if (
+      typeof loaded.runCalendar === "function" &&
+      typeof loaded.renderCalendarMarkdown === "function" &&
+      typeof loaded.renderCalendarToon === "function" &&
+      typeof loaded.resolveCalendarOutputFormat === "function"
+    ) {
+      return loaded as CalendarCoreModule;
+    }
+  } catch {
+    // Fall through to deterministic failure message below.
+  }
+  throw new Error(
+    `builtin-calendar failed to load calendar SDK runtime exports from ${modulePath}.`,
+  );
+}
+
+function isCalendarResult(value: unknown): value is CalendarResult {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    (value as { output_default?: unknown }).output_default === "markdown" &&
+    Array.isArray((value as { events?: unknown }).events) &&
+    Array.isArray((value as { days?: unknown }).days)
+  );
+}
+
+function readObjectPayload(payload: unknown): Record<string, unknown> | null {
+  if (
+    typeof payload !== "object" ||
+    payload === null ||
+    Array.isArray(payload)
+  ) {
+    return null;
+  }
+  return payload as Record<string, unknown>;
+}
+
+function readPayloadFormat(payload: unknown): "toon" | "json" {
+  const record = readObjectPayload(payload);
+  if (record?.format === "json") {
+    return "json";
+  }
+  return "toon";
+}
+
+function readPayloadResult(payload: unknown): unknown {
+  const record = readObjectPayload(payload);
+  if (!record || !Object.hasOwn(record, "result")) {
+    return payload;
+  }
+  return record.result;
+}
+
+function readPayloadCommandOptions(payload: unknown): CalendarOptions {
+  const commandOptions = readObjectPayload(payload)?.command_options;
+  if (
+    typeof commandOptions === "object" &&
+    commandOptions !== null &&
+    !Array.isArray(commandOptions)
+  ) {
+    return commandOptions as CalendarOptions;
+  }
+  return {};
+}
+
+function readPayloadGlobalOptions(payload: unknown): GlobalOptions {
+  const global = readObjectPayload(payload)?.global;
+  if (typeof global === "object" && global !== null && !Array.isArray(global)) {
+    return global as GlobalOptions;
+  }
+  return {};
+}
+
+/** Executes the calendar package operation through the package runtime. */
+export async function runCalendarPackage(
+  options: CalendarOptions,
+  global: GlobalOptions,
+): Promise<CalendarResult> {
+  const loaded = await ensureCalendarCoreModule();
+  loaded.resolveCalendarOutputFormat(options, global);
+  return loaded.runCalendar(options, global);
+}
+
+/** Formats calendar package output data for the selected output mode. */
+export function renderCalendarPackageOutput(
+  context: ServiceOverrideContext,
+): string | null {
+  const result = readPayloadResult(context.payload);
+  if (!calendarCore || !isCalendarResult(result)) {
+    return null;
+  }
+  const options =
+    context.options && Object.keys(context.options).length > 0
+      ? (context.options as CalendarOptions)
+      : readPayloadCommandOptions(context.payload);
+  const global = context.global ?? readPayloadGlobalOptions(context.payload);
+  const outputFormat = calendarCore.resolveCalendarOutputFormat(
+    options,
+    global,
+  );
+  if (outputFormat === "markdown") {
+    return `${calendarCore.renderCalendarMarkdown(result)}\n`;
+  }
+  if (
+    outputFormat === "json" ||
+    readPayloadFormat(context.payload) === "json"
+  ) {
+    return `${JSON.stringify(result, null, 2)}\n`;
+  }
+  if (outputFormat === "toon") {
+    const rendered = calendarCore.renderCalendarToon(result);
+    return rendered.endsWith("\n") ? rendered : `${rendered}\n`;
+  }
+  return null;
+}
+
+/** Test-only seam exposing the internal payload readers. Their non-object guard arms are defensively present but unreachable through `renderCalendarPackageOutput` (the only caller validates payload via `isCalendarResult` first), so this seam lets the suite drive those branches directly without weakening the runtime guards. */
+export const _testOnly = {
+  readPayloadFormat,
+  readPayloadResult,
+  readPayloadCommandOptions,
+  readPayloadGlobalOptions,
+};

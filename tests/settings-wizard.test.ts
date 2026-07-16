@@ -42,10 +42,10 @@ const { mockGetStatus, mockGetConfig } = vi.hoisted(() => ({
 }));
 
 vi.mock("../src/api/index.js", () => ({
-  HomeAssistantClient: vi.fn().mockImplementation(() => ({
+  HomeAssistantClient: vi.fn().mockImplementation(function () { return {
     getStatus: mockGetStatus,
     getConfig: mockGetConfig,
-  })),
+  }; }),
 }));
 
 import { createSetupCommand, createWizardCommand } from "../src/commands/settings-wizard.js";
@@ -75,8 +75,6 @@ describe("settings wizard command", () => {
 
     await cmd.parseAsync(
       [
-        "node",
-        "test",
         "--non-interactive",
         "--ha-url",
         "http://localhost:8123",
@@ -112,7 +110,7 @@ describe("settings wizard command", () => {
   it("fails when required values are missing in non-interactive mode", async () => {
     const cmd = createWizardCommand();
 
-    await cmd.parseAsync(["node", "test", "--non-interactive", "--skip-test"], { from: "user" });
+    await cmd.parseAsync(["--non-interactive", "--skip-test"], { from: "user" });
 
     expect(exitSpy).toHaveBeenCalledWith(1);
     expect(mockSaveConfig).not.toHaveBeenCalled();
@@ -128,7 +126,7 @@ describe("settings wizard command", () => {
     });
 
     const cmd = createWizardCommand();
-    await cmd.parseAsync(["node", "test", "--non-interactive", "--skip-test"], { from: "user" });
+    await cmd.parseAsync(["--non-interactive", "--skip-test"], { from: "user" });
 
     expect(mockSaveConfig).toHaveBeenCalledWith(
       {
@@ -147,8 +145,6 @@ describe("settings wizard command", () => {
 
     await cmd.parseAsync(
       [
-        "node",
-        "test",
         "--non-interactive",
         "--ha-url",
         "ha.local:8123",
@@ -174,8 +170,6 @@ describe("settings wizard command", () => {
 
     await cmd.parseAsync(
       [
-        "node",
-        "test",
         "--non-interactive",
         "--ha-url",
         "http://localhost:8123",
@@ -208,8 +202,6 @@ describe("settings wizard command", () => {
 
     await cmd.parseAsync(
       [
-        "node",
-        "test",
         "--non-interactive",
         "--ha-url",
         "http://localhost:8123",
@@ -232,8 +224,6 @@ describe("settings wizard command", () => {
 
     await cmd.parseAsync(
       [
-        "node",
-        "test",
         "--non-interactive",
         "--ha-url",
         "http://ha.local:8123/",
@@ -255,8 +245,6 @@ describe("settings wizard command", () => {
 
     await cmd.parseAsync(
       [
-        "node",
-        "test",
         "--non-interactive",
         "--ha-url",
         "http://localhost:8123",
@@ -294,7 +282,7 @@ describe("settings wizard command", () => {
     const originalLog = console.log;
     console.log = (msg: string) => output.push(msg);
 
-    await cmd.parseAsync(["node", "test", "--skip-test"], { from: "user" });
+    await cmd.parseAsync(["--skip-test"], { from: "user" });
 
     console.log = originalLog;
 
@@ -332,7 +320,7 @@ describe("settings wizard command", () => {
     mockRlClose.mockImplementation(() => undefined);
 
     const cmd = createWizardCommand();
-    await cmd.parseAsync(["node", "test", "--skip-test"], { from: "user" });
+    await cmd.parseAsync(["--skip-test"], { from: "user" });
 
     console.error = originalError;
 
@@ -364,7 +352,7 @@ describe("settings wizard command", () => {
     mockRlClose.mockImplementation(() => undefined);
 
     const cmd = createWizardCommand();
-    await cmd.parseAsync(["node", "test", "--skip-test"], { from: "user" });
+    await cmd.parseAsync(["--skip-test"], { from: "user" });
 
     console.error = originalError;
 
@@ -380,8 +368,6 @@ describe("settings wizard command", () => {
 
     await cmd.parseAsync(
       [
-        "node",
-        "test",
         "--non-interactive",
         "--ha-url",
         "http://localhost:8123",

@@ -87,7 +87,7 @@ describe("history command", () => {
 
     const cmd = createHistoryCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "light.kitchen"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "light.kitchen"], { from: "user" })
     );
 
     expect(result).toContain("light.kitchen");
@@ -100,7 +100,6 @@ describe("history command", () => {
     const result = await captureLog(() =>
       cmd.parseAsync(
         [
-          "node", "test",
           "--entity-id", "light.kitchen",
           "--start-time", "2024-01-01T00:00:00Z",
           "--end-time", "2024-01-02T00:00:00Z",
@@ -121,7 +120,7 @@ describe("history command", () => {
     const cmd = createHistoryCommand();
     const result = await captureLog(() =>
       cmd.parseAsync(
-        ["node", "test", "--entity-id", "light.kitchen", "--minimal-response"],
+        ["--entity-id", "light.kitchen", "--minimal-response"],
         { from: "user" }
       )
     );
@@ -137,7 +136,7 @@ describe("history command", () => {
     const cmd = createHistoryCommand();
     const result = await captureLog(() =>
       cmd.parseAsync(
-        ["node", "test", "--entity-id", "light.kitchen", "--significant-only"],
+        ["--entity-id", "light.kitchen", "--significant-only"],
         { from: "user" }
       )
     );
@@ -156,7 +155,7 @@ describe("history command", () => {
     const cmd = createHistoryCommand();
     const result = await captureLog(() =>
       cmd.parseAsync(
-        ["node", "test", "--entity-id", "light.kitchen,switch.fan"],
+        ["--entity-id", "light.kitchen,switch.fan"],
         { from: "user" }
       )
     );
@@ -174,7 +173,7 @@ describe("logbook command", () => {
 
     const cmd = createLogbookCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
 
     expect(result).toContain("light.kitchen");
@@ -186,7 +185,7 @@ describe("logbook command", () => {
 
     const cmd = createLogbookCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "light.kitchen"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "light.kitchen"], { from: "user" })
     );
 
     expect(result).toContain("light.kitchen");
@@ -201,7 +200,6 @@ describe("logbook command", () => {
     const result = await captureLog(() =>
       cmd.parseAsync(
         [
-          "node", "test",
           "--start-time", "2024-01-01T00:00:00Z",
           "--end-time", "2024-01-02T00:00:00Z",
         ],
@@ -228,7 +226,7 @@ describe("error-log command", () => {
 
     const cmd = createErrorLogCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
 
     expect(result).toContain("error_log");

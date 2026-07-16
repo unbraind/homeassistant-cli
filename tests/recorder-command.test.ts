@@ -40,7 +40,7 @@ describe("recorder command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createRecorderCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--purge"], { from: "user" })
+      cmd.parseAsync(["--purge"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.success).toBe(true);
@@ -51,7 +51,7 @@ describe("recorder command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createRecorderCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--purge", "--keep-days", "7", "--repack"], { from: "user" })
+      cmd.parseAsync(["--purge", "--keep-days", "7", "--repack"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.success).toBe(true);
@@ -60,9 +60,9 @@ describe("recorder command", () => {
   });
 
   it("rejects invalid keep-days", async () => {
-    const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const errSpy = vi.spyOn(console, "error").mockImplementation(function () {});
     const cmd = createRecorderCommand();
-    await cmd.parseAsync(["node", "test", "--purge", "--keep-days", "abc"], { from: "user" });
+    await cmd.parseAsync(["--purge", "--keep-days", "abc"], { from: "user" });
     expect(exitSpy).toHaveBeenCalledWith(1);
     errSpy.mockRestore();
   });
@@ -71,7 +71,7 @@ describe("recorder command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createRecorderCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--purge-entities", "sensor.temp,sensor.humidity"], { from: "user" })
+      cmd.parseAsync(["--purge-entities", "sensor.temp,sensor.humidity"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.success).toBe(true);
@@ -80,9 +80,9 @@ describe("recorder command", () => {
   });
 
   it("rejects empty purge-entities list", async () => {
-    const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const errSpy = vi.spyOn(console, "error").mockImplementation(function () {});
     const cmd = createRecorderCommand();
-    await cmd.parseAsync(["node", "test", "--purge-entities", "  "], { from: "user" });
+    await cmd.parseAsync(["--purge-entities", "  "], { from: "user" });
     expect(exitSpy).toHaveBeenCalledWith(1);
     errSpy.mockRestore();
   });
@@ -91,7 +91,7 @@ describe("recorder command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createRecorderCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--enable"], { from: "user" })
+      cmd.parseAsync(["--enable"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.success).toBe(true);
@@ -102,7 +102,7 @@ describe("recorder command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createRecorderCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--disable"], { from: "user" })
+      cmd.parseAsync(["--disable"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.success).toBe(true);
@@ -110,9 +110,9 @@ describe("recorder command", () => {
   });
 
   it("exits with error when no flags given", async () => {
-    const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const errSpy = vi.spyOn(console, "error").mockImplementation(function () {});
     const cmd = createRecorderCommand();
-    await cmd.parseAsync(["node", "test"], { from: "user" });
+    await cmd.parseAsync([], { from: "user" });
     expect(exitSpy).toHaveBeenCalledWith(1);
     errSpy.mockRestore();
   });

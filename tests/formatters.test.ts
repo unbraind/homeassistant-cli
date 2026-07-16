@@ -58,7 +58,7 @@ describe("TOON Formatter", () => {
     });
 
     it("should format empty array", () => {
-      expect(formatToon([])).toBe("[0]:");
+      expect(formatToon([])).toBe("[]");
     });
 
     it("should format array of primitives", () => {
@@ -96,7 +96,7 @@ describe("TOON Formatter", () => {
 
   describe("formatStatesToon", () => {
     it("should format empty states", () => {
-      expect(formatStatesToon([])).toBe("states[0]:");
+      expect(formatStatesToon([])).toBe("states: []");
     });
 
     it("should format states", () => {
@@ -119,7 +119,7 @@ describe("TOON Formatter", () => {
 
   describe("formatServicesToon", () => {
     it("should format empty services", () => {
-      expect(formatServicesToon([])).toBe("services[0]:");
+      expect(formatServicesToon([])).toBe("services: []");
     });
 
     it("should format services", () => {
@@ -142,7 +142,7 @@ describe("TOON Formatter", () => {
 
   describe("formatEventsToon", () => {
     it("should format empty events", () => {
-      expect(formatEventsToon([])).toBe("events[0]:");
+      expect(formatEventsToon([])).toBe("events: []");
     });
 
     it("should format events", () => {
@@ -159,7 +159,7 @@ describe("TOON Formatter", () => {
 
   describe("formatHistoryToon", () => {
     it("should format empty history", () => {
-      expect(formatHistoryToon([])).toBe("history[0]:");
+      expect(formatHistoryToon([])).toBe("history: []");
     });
 
     it("should format history entries", () => {
@@ -187,7 +187,7 @@ describe("TOON Formatter", () => {
 
   describe("formatLogbookToon", () => {
     it("should format empty logbook", () => {
-      expect(formatLogbookToon([])).toBe("logbook[0]:");
+      expect(formatLogbookToon([])).toBe("logbook: []");
     });
 
     it("should format logbook entries", () => {
@@ -209,7 +209,7 @@ describe("TOON Formatter", () => {
 
   describe("formatCalendarsToon", () => {
     it("should format empty calendars", () => {
-      expect(formatCalendarsToon([])).toBe("calendars[0]:");
+      expect(formatCalendarsToon([])).toBe("calendars: []");
     });
 
     it("should format calendars", () => {
@@ -224,7 +224,7 @@ describe("TOON Formatter", () => {
 
   describe("formatCalendarEventsToon", () => {
     it("should format empty events", () => {
-      expect(formatCalendarEventsToon([])).toBe("events[0]:");
+      expect(formatCalendarEventsToon([])).toBe("events: []");
     });
 
     it("should format calendar events", () => {

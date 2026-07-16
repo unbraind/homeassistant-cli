@@ -87,7 +87,7 @@ describe("siren command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(sirenStates));
     const cmd = createSirenCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
     expect(result).toContain("siren.alarm");
     expect(result).toContain("siren.doorbell");
@@ -98,7 +98,7 @@ describe("siren command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(sirenStates));
     const cmd = createSirenCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--count"], { from: "user" })
+      cmd.parseAsync(["--count"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.sirens_count).toBe(2);
@@ -108,7 +108,7 @@ describe("siren command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createSirenCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--on", "siren.alarm"], { from: "user" })
+      cmd.parseAsync(["--on", "siren.alarm"], { from: "user" })
     );
     expect(result).toContain("turned_on");
     expect(result).toContain("siren.alarm");
@@ -121,7 +121,7 @@ describe("siren command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createSirenCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--on", "siren.alarm", "--tone", "fire", "--volume", "0.8", "--duration", "30"], { from: "user" })
+      cmd.parseAsync(["--on", "siren.alarm", "--tone", "fire", "--volume", "0.8", "--duration", "30"], { from: "user" })
     );
     expect(result).toContain("turned_on");
     const callOpts = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -135,7 +135,7 @@ describe("siren command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createSirenCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--off", "siren.alarm"], { from: "user" })
+      cmd.parseAsync(["--off", "siren.alarm"], { from: "user" })
     );
     expect(result).toContain("turned_off");
     expect(result).toContain("siren.alarm");
@@ -145,7 +145,7 @@ describe("siren command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createSirenCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--toggle", "siren.doorbell"], { from: "user" })
+      cmd.parseAsync(["--toggle", "siren.doorbell"], { from: "user" })
     );
     expect(result).toContain("toggled");
     expect(result).toContain("siren.doorbell");
@@ -155,7 +155,7 @@ describe("siren command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(sirenStates));
     const cmd = createSirenCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--state", "off"], { from: "user" })
+      cmd.parseAsync(["--state", "off"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.sirens).toHaveLength(2);

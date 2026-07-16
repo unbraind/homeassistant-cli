@@ -97,7 +97,7 @@ describe("water-heater command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(waterHeaterStates));
     const cmd = createWaterHeaterCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
     expect(result).toContain("water_heater.boiler");
     expect(result).toContain("water_heater.solar_tank");
@@ -108,7 +108,7 @@ describe("water-heater command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(waterHeaterStates));
     const cmd = createWaterHeaterCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--count"], { from: "user" })
+      cmd.parseAsync(["--count"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.water_heaters_count).toBe(2);
@@ -118,7 +118,7 @@ describe("water-heater command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(waterHeaterStates));
     const cmd = createWaterHeaterCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--state", "eco"], { from: "user" })
+      cmd.parseAsync(["--state", "eco"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.water_heaters).toHaveLength(1);
@@ -129,7 +129,7 @@ describe("water-heater command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createWaterHeaterCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--on", "water_heater.boiler"], { from: "user" })
+      cmd.parseAsync(["--on", "water_heater.boiler"], { from: "user" })
     );
     expect(result).toContain("turned_on");
     expect(result).toContain("water_heater.boiler");
@@ -142,7 +142,7 @@ describe("water-heater command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createWaterHeaterCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--off", "water_heater.solar_tank"], { from: "user" })
+      cmd.parseAsync(["--off", "water_heater.solar_tank"], { from: "user" })
     );
     expect(result).toContain("turned_off");
     expect(result).toContain("water_heater.solar_tank");
@@ -152,7 +152,7 @@ describe("water-heater command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createWaterHeaterCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "water_heater.boiler", "--temperature", "55"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "water_heater.boiler", "--temperature", "55"], { from: "user" })
     );
     expect(result).toContain("set_temperature");
     const callOpts = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -164,7 +164,7 @@ describe("water-heater command", () => {
   it("errors on invalid temperature", async () => {
     const cmd = createWaterHeaterCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "water_heater.boiler", "--temperature", "not-a-number"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "water_heater.boiler", "--temperature", "not-a-number"], { from: "user" })
     );
     expect(exitSpy).toHaveBeenCalledWith(1);
   });
@@ -173,7 +173,7 @@ describe("water-heater command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createWaterHeaterCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "water_heater.boiler", "--operation-mode", "heat_pump"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "water_heater.boiler", "--operation-mode", "heat_pump"], { from: "user" })
     );
     expect(result).toContain("set_operation_mode");
     const callOpts = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -185,7 +185,7 @@ describe("water-heater command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createWaterHeaterCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "water_heater.boiler", "--away-mode", "on"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "water_heater.boiler", "--away-mode", "on"], { from: "user" })
     );
     expect(result).toContain("set_away_mode");
     const callOpts = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -197,7 +197,7 @@ describe("water-heater command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createWaterHeaterCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "water_heater.boiler", "--away-mode", "off"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "water_heater.boiler", "--away-mode", "off"], { from: "user" })
     );
     expect(result).toContain("set_away_mode");
     const callOpts = mockRequest.mock.calls[0]?.[1] as { body?: string };

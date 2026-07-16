@@ -1,0 +1,302 @@
+/**
+ * @module pm-governance-audit/runtime-utils
+ *
+ * Shared parsing, comparison, linked-artifact, and result-decoration helpers
+ * for the governance-audit extension runtime.
+ */
+import { EXIT_CODE, PmCliError, PmClient, type ListOptions } from "./sdk.ts";
+
+/** Retain only list filters that the package-owned audit queries may forward. */
+export const buildListQueryFilters = (
+  filters: Pick<
+    ListOptions,
+    | "type"
+    | "tag"
+    | "priority"
+    | "deadlineBefore"
+    | "deadlineAfter"
+    | "assignee"
+    | "assigneeFilter"
+    | "parent"
+    | "sprint"
+    | "release"
+  >,
+): ListOptions => {
+  const {
+    type,
+    tag,
+    priority,
+    deadlineBefore,
+    deadlineAfter,
+    assignee,
+    assigneeFilter,
+    parent,
+    sprint,
+    release,
+  } = filters;
+  return {
+    type,
+    tag,
+    priority,
+    deadlineBefore,
+    deadlineAfter,
+    assignee,
+    assigneeFilter,
+    parent,
+    sprint,
+    release,
+  };
+};
+
+/** Order valid timestamps chronologically and malformed values lexicographically. */
+export const compareTimestampStrings = (
+  left: string,
+  right: string,
+): number => {
+  const leftMs = Date.parse(left);
+  const rightMs = Date.parse(right);
+  if (Number.isFinite(leftMs) && Number.isFinite(rightMs) && leftMs !== rightMs)
+    return leftMs - rightMs;
+  return left.localeCompare(right);
+};
+
+/** Measure set overlap between two token lists on the inclusive zero-to-one scale. */
+export const jaccardSimilarity = (
+  leftTokens: string[],
+  rightTokens: string[],
+): number => {
+  const left = new Set(leftTokens);
+  const right = new Set(rightTokens);
+  const union = new Set([...left, ...right]);
+  if (union.size === 0) return 1;
+  const intersection = [...left].filter((token) => right.has(token)).length;
+  return intersection / union.size;
+};
+
+/** Trim, lowercase, and collapse internal whitespace for stable audit comparisons. */
+export const normalizeLowercaseWhitespace = (value: string): string => {
+  return value.trim().toLowerCase().replace(/\s+/g, " ");
+};
+
+/** Split normalized text into non-empty lowercase ASCII alphanumeric tokens. */
+export const tokenizeAlphaNumeric = (value: string): string[] => {
+  return normalizeLowercaseWhitespace(value)
+    .split(/[^a-z0-9]+/)
+    .filter((token) => token.length > 0);
+};
+
+/** Parse an optional non-negative integer limit with package-specific error context. */
+export const parseIntegerLimit = (
+  raw: string | undefined,
+  label = "--limit",
+): number | undefined => {
+  if (raw === undefined) return undefined;
+  const parsed = Number(raw);
+  if (!Number.isInteger(parsed) || parsed < 0)
+    throw new PmCliError(
+      `${label} must be a non-negative integer`,
+      EXIT_CODE.USAGE,
+    );
+  return parsed;
+};
+
+/** Normalize an optional comma-separated value into trimmed non-empty entries. */
+export const splitCommaList = (raw: string | undefined | null): string[] => {
+  if (raw == null) return [];
+  return raw
+    .split(",")
+    .map((entry) => entry.trim())
+    .filter(Boolean);
+};
+
+/** Convert thrown values to a concise message suitable for audit result envelopes. */
+export const toErrorMessage = (error: unknown): string => {
+  if (error instanceof Error) return error.message.trim() || error.name;
+  return String(error);
+};
+
+/** Return trimmed non-empty text while rejecting non-string and blank values. */
+export const toNonEmptyStringOrUndefined = (
+  value: unknown,
+): string | undefined => {
+  if (typeof value !== "string") return undefined;
+  const normalized = value.trim();
+  return normalized.length > 0 ? normalized : undefined;
+};
+
+/** Inputs used to attribute linked paths to every item that references them. */
+export interface LinkedArtifactAuditPayload {
+  /** Paths whose reverse-reference attribution should be reported. */
+  paths?: string[];
+  /** Item identities and linked artifacts used to build the reverse index. */
+  items?: Array<{ id: string; artifacts?: Array<{ path: string }> }>;
+}
+
+/** Deterministic reverse-reference summary for one linked artifact path. */
+export interface LinkedArtifactAuditEntry {
+  /** Linked artifact path described by this summary. */
+  path: string;
+  /** Number of distinct items that reference the path. */
+  linked_by_count: number;
+  /** Sorted distinct item ids that reference the path. */
+  linked_item_ids: string[];
+}
+
+/** Build sorted, duplicate-free reverse attribution for requested artifact paths. */
+export const buildLinkedArtifactAudit = (
+  input: LinkedArtifactAuditPayload,
+): LinkedArtifactAuditEntry[] => {
+  /** Build a stable reverse index over optional item and path collections. */
+  /** Normalize an optional read-only collection into an iterable array. */
+  const optionalArray = <Value>(values: readonly Value[] | undefined) =>
+    values ?? [];
+  const index = new Map<string, Set<string>>();
+  for (const item of optionalArray(input.items)) {
+    for (const artifact of optionalArray(item.artifacts)) {
+      const ids = index.get(artifact.path) ?? new Set<string>();
+      ids.add(item.id);
+      index.set(artifact.path, ids);
+    }
+  }
+  return [...new Set(optionalArray(input.paths))]
+    .sort((left, right) => left.localeCompare(right))
+    .map((linkedPath) => {
+      const linkedItemIds = [...(index.get(linkedPath) ?? [])].sort(
+        (left, right) => left.localeCompare(right),
+      );
+      return {
+        path: linkedPath,
+        linked_by_count: linkedItemIds.length,
+        linked_item_ids: linkedItemIds,
+      };
+    });
+};
+
+interface CommandResultPayload {
+  command?: string;
+  args?: string[];
+  options?: Record<string, unknown>;
+  pm_root?: string;
+  result?: unknown;
+}
+
+const asRecord = (value: unknown): Record<string, unknown> | undefined => {
+  /** Narrow an unknown payload to a non-null object record. */
+  return typeof value === "object" && value !== null
+    ? (value as Record<string, unknown>)
+    : undefined;
+};
+
+const hasUpdateAuditBypass = (
+  options: Record<string, unknown> | undefined,
+): boolean => {
+  /** Detect every supported update-audit bypass alias. */
+  const resolved = options ?? {};
+  return (
+    resolved.allowAuditUpdate === true ||
+    resolved.allow_audit_update === true ||
+    resolved.allowAuditDepUpdate === true ||
+    resolved.allow_audit_dep_update === true
+  );
+};
+
+const resolveLinkedArtifactAuditKey = (
+  payload: CommandResultPayload,
+): "files" | "docs" | undefined => {
+  /** Resolve the supported linked-artifact result key for an eligible audit request. */
+  const artifactKey = (["files", "docs"] as const).find(
+    (candidate) => candidate === payload.command,
+  );
+  if (artifactKey === undefined) return undefined;
+  if (payload.options?.audit !== true) return undefined;
+  if (!payload.pm_root) return undefined;
+  return artifactKey;
+};
+
+const decorateLinkedArtifactResult = async (
+  payload: CommandResultPayload,
+  result: Record<string, unknown>,
+): Promise<Record<string, unknown> | undefined> => {
+  /** Add reverse linked-artifact attribution to eligible files/docs results. */
+  const artifactKey = resolveLinkedArtifactAuditKey(payload);
+  if (artifactKey === undefined) return undefined;
+  const artifacts = Array.isArray(result[artifactKey])
+    ? result[artifactKey]
+    : [];
+  const paths = artifacts.flatMap((entry) => {
+    const artifact = asRecord(entry);
+    return typeof artifact?.path === "string" ? [artifact.path] : [];
+  });
+  const listed = await new PmClient({ pmRoot: payload.pm_root }).list({
+    status: "all",
+    noTruncate: true,
+    fields: `id,${artifactKey}`,
+  });
+  const items = listed.items.flatMap((item) =>
+    typeof item.id === "string"
+      ? [
+          {
+            id: item.id,
+            artifacts: Array.isArray(item[artifactKey])
+              ? item[artifactKey].flatMap((entry) => {
+                  const artifact = asRecord(entry);
+                  return typeof artifact?.path === "string"
+                    ? [{ path: artifact.path }]
+                    : [];
+                })
+              : undefined,
+          },
+        ]
+      : [],
+  );
+  return {
+    ...result,
+    audit: buildLinkedArtifactAudit({ paths, items }),
+  };
+};
+
+const decorateUpdateAuditBypassResult = (
+  payload: CommandResultPayload,
+  result: Record<string, unknown>,
+): Record<string, unknown> | undefined => {
+  /** Add the package-owned audit marker for an explicit update bypass. */
+  const isUpdate = ["update", "update-many"].includes(String(payload.command));
+  if (isUpdate && hasUpdateAuditBypass(payload.options)) {
+    return { ...result, audit_update: true };
+  }
+  return undefined;
+};
+
+const decorateReleaseAuditBypassResult = (
+  payload: CommandResultPayload,
+  result: Record<string, unknown>,
+): Record<string, unknown> | undefined => {
+  /** Add the package-owned audit marker for an explicit release bypass. */
+  if (
+    payload.command === "release" &&
+    payload.options?.allowAuditRelease === true
+  ) {
+    return { ...result, audit_release: true };
+  }
+  return undefined;
+};
+
+/** Add package-owned fields to a completed core command result. */
+export const decorateGovernanceCommandResult = async (
+  raw: unknown,
+): Promise<unknown> => {
+  const payload = asRecord(raw) as CommandResultPayload | undefined;
+  if (!payload) return undefined;
+  const result = asRecord(payload.result);
+  if (!result) return payload.result;
+  const linkedArtifactResult = await decorateLinkedArtifactResult(
+    payload,
+    result,
+  );
+  if (linkedArtifactResult) return linkedArtifactResult;
+  const bypassResult = [
+    decorateUpdateAuditBypassResult(payload, result),
+    decorateReleaseAuditBypassResult(payload, result),
+  ].find((candidate) => candidate !== undefined);
+  return bypassResult ?? result;
+};

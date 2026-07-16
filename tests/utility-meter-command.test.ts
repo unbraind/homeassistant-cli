@@ -76,7 +76,7 @@ describe("utility-meter command", () => {
   it("lists utility meter entities", async () => {
     mockRequest.mockResolvedValueOnce(mockResponse(meterStates));
     const cmd = createUtilityMeterCommand();
-    const result = await captureLog(() => cmd.parseAsync(["node", "test"], { from: "user" }));
+    const result = await captureLog(() => cmd.parseAsync([], { from: "user" }));
     const parsed = JSON.parse(result);
     expect(parsed.utility_meters).toHaveLength(2);
     expect(parsed.utility_meters[0].entity_id).toBe("sensor.energy_daily");
@@ -87,7 +87,7 @@ describe("utility-meter command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(meterStates));
     const cmd = createUtilityMeterCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--count"], { from: "user" })
+      cmd.parseAsync(["--count"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.utility_meters_count).toBe(2);
@@ -97,7 +97,7 @@ describe("utility-meter command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(meterStates));
     const cmd = createUtilityMeterCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--state", "3.14"], { from: "user" })
+      cmd.parseAsync(["--state", "3.14"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.utility_meters).toHaveLength(1);
@@ -108,7 +108,7 @@ describe("utility-meter command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createUtilityMeterCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--reset", "sensor.energy_daily"], { from: "user" })
+      cmd.parseAsync(["--reset", "sensor.energy_daily"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.success).toBe(true);
@@ -120,7 +120,7 @@ describe("utility-meter command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createUtilityMeterCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--calibrate", "sensor.energy_daily", "--value", "5.5"], { from: "user" })
+      cmd.parseAsync(["--calibrate", "sensor.energy_daily", "--value", "5.5"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.success).toBe(true);
@@ -130,17 +130,17 @@ describe("utility-meter command", () => {
   });
 
   it("rejects calibrate without --value", async () => {
-    const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const errSpy = vi.spyOn(console, "error").mockImplementation(function () {});
     const cmd = createUtilityMeterCommand();
-    await cmd.parseAsync(["node", "test", "--calibrate", "sensor.energy_daily"], { from: "user" });
+    await cmd.parseAsync(["--calibrate", "sensor.energy_daily"], { from: "user" });
     expect(exitSpy).toHaveBeenCalledWith(1);
     errSpy.mockRestore();
   });
 
   it("rejects calibrate with non-numeric value", async () => {
-    const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const errSpy = vi.spyOn(console, "error").mockImplementation(function () {});
     const cmd = createUtilityMeterCommand();
-    await cmd.parseAsync(["node", "test", "--calibrate", "sensor.energy_daily", "--value", "notanumber"], { from: "user" });
+    await cmd.parseAsync(["--calibrate", "sensor.energy_daily", "--value", "notanumber"], { from: "user" });
     expect(exitSpy).toHaveBeenCalledWith(1);
     errSpy.mockRestore();
   });

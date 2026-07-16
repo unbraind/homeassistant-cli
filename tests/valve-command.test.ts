@@ -87,7 +87,7 @@ describe("valve command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(valveStates));
     const cmd = createValveCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
     expect(result).toContain("valve.garden_irrigation");
     expect(result).toContain("valve.pool_inlet");
@@ -98,7 +98,7 @@ describe("valve command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(valveStates));
     const cmd = createValveCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--count"], { from: "user" })
+      cmd.parseAsync(["--count"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.valves_count).toBe(2);
@@ -108,7 +108,7 @@ describe("valve command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(valveStates));
     const cmd = createValveCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--state", "open"], { from: "user" })
+      cmd.parseAsync(["--state", "open"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.valves).toHaveLength(1);
@@ -119,7 +119,7 @@ describe("valve command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createValveCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--open", "valve.garden_irrigation"], { from: "user" })
+      cmd.parseAsync(["--open", "valve.garden_irrigation"], { from: "user" })
     );
     expect(result).toContain("opened");
     expect(result).toContain("valve.garden_irrigation");
@@ -132,7 +132,7 @@ describe("valve command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createValveCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--close", "valve.pool_inlet"], { from: "user" })
+      cmd.parseAsync(["--close", "valve.pool_inlet"], { from: "user" })
     );
     expect(result).toContain("closed");
     expect(result).toContain("valve.pool_inlet");
@@ -142,7 +142,7 @@ describe("valve command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createValveCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--stop", "valve.garden_irrigation"], { from: "user" })
+      cmd.parseAsync(["--stop", "valve.garden_irrigation"], { from: "user" })
     );
     expect(result).toContain("stopped");
   });
@@ -151,7 +151,7 @@ describe("valve command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createValveCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--toggle", "valve.pool_inlet"], { from: "user" })
+      cmd.parseAsync(["--toggle", "valve.pool_inlet"], { from: "user" })
     );
     expect(result).toContain("toggled");
   });
@@ -160,7 +160,7 @@ describe("valve command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createValveCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "valve.garden_irrigation", "--position", "50"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "valve.garden_irrigation", "--position", "50"], { from: "user" })
     );
     expect(result).toContain("set_position");
     const callOpts = mockRequest.mock.calls[0]?.[1] as { body?: string };
