@@ -2,12 +2,13 @@ id: hac-gpm3
 title: Modernize and secure homeassistant-cli delivery
 description: "Eliminate known dependency vulnerabilities, restore reliable automated updates, modernize CI actions, and leave a governed maintenance backlog."
 type: Epic
-status: in_progress
+status: closed
 priority: 0
 tags[5]: ci,dependencies,github,governance,security
 created_at: "2026-07-16T16:52:35.105Z"
-updated_at: "2026-07-16T17:25:15.449Z"
+updated_at: "2026-07-16T17:31:23.444Z"
 deadline: "2026-07-18T16:52:35.105Z"
+closed_at: "2026-07-16T17:31:23.443Z"
 author: codex-root
 estimated_minutes: 720
 acceptance_criteria: "Zero actionable Bun audit advisories after supported upgrades; all local quality, coverage, package, and security gates pass; GitHub dependency and security alerts are cleared or explicitly documented; PM tracker is healthy and contains reproducible evidence; changes are reviewed, merged, and verified on the default branch"
@@ -24,15 +25,16 @@ risk: critical
 confidence: 95
 sprint: 2026-07-security
 release: 2026.7.16
-resolution: "Removed vulnerable dependency paths, restored reproducible automation, raised quality enforcement, initialized PM governance, reconciled GitHub backlog, and protected master."
-expected_result: "A current, reproducible, security-gated repository with no stale update backlog and complete PM evidence."
-actual_result: Zero security alerts/open PRs/issues; full merged-head release verification and hosted CI/security pass; master protection and PM tracker health verified.
+resolution: Completed the original dependency/security/CI/PM/protection remediation plus the newly released Action majors and compatible-major automation policy.
+expected_result: A current protected repository with clean security/update backlogs and reproducible PM evidence after Dependabot refresh.
+actual_result: "Merged master 3aa63d2 passed local and hosted gates; all GitHub PR, issue, and security inventories are empty after refresh."
 dependencies[1]{id,kind,created_at,author,source_kind}:
   hac-4s9j,parent,"2026-07-16T17:07:03.618Z",codex-root,null
-comments[3]{created_at,author,text}:
+comments[4]{created_at,author,text}:
   "2026-07-16T16:52:35.105Z",codex-root,"Live baseline: 15 open Dependabot PRs; one critical Dependabot alert GHSA-5xrq-8626-4rwp; zero open CodeQL and secret-scanning alerts."
   "2026-07-16T17:23:47.785Z",codex-root,"Outcome achieved: PR #52 merged as d2c73b2; merged-master release verification and hosted CI/Security passed; dependency, code-scanning, secret-scanning, issue, and PR backlogs are empty; master is protected; all seven remediation children are closed with reproducible evidence."
   "2026-07-16T17:25:15.427Z",codex-root,Reopened after Dependabot generated new grouped PRs #53 and #54 immediately following the completed bootstrap. The same remediation lineage remains canonical until valid new Action majors are adopted and incompatible toolchain churn is constrained.
+  "2026-07-16T17:31:22.890Z",codex-root,"Final follow-up outcome: #55 merged as 3aa63d2, post-merge CI/Security and local release verification passed, policy refresh jobs succeeded, and every GitHub backlog/security inventory is empty. The canonical remediation lineage can close again without leaving regenerated bot work."
 notes[1]{created_at,author,text}:
   "2026-07-16T16:52:35.105Z",codex-root,Representative PR checks fail at bun install --frozen-lockfile because package.json and bun.lock diverge.
 learnings[1]{created_at,author,text}:
@@ -44,4 +46,5 @@ tests[1]{command,scope,timeout_seconds}:
 docs[2]{path,scope,note}:
   docs/RELEASING.md,project,Release verification contract
   SECURITY.md,project,Security policy and reporting baseline
+close_reason: The initial remediation and post-bootstrap Dependabot follow-up are both shipped and verified; durable product epic hac-4s9j remains open.
 body: "## Scope\\n\\nSecurity remediation, dependency modernization, CI reproducibility, GitHub Actions maintenance, repository inspection, governed delivery, and merged-head proof.\\n\\n## Live baseline\\n\\n- 15 open Dependabot PRs\\n- Critical Vitest alert GHSA-5xrq-8626-4rwp / CVE-2026-47429\\n- 28 local Bun audit findings across runtime and development dependency paths\\n- Representative PRs fail frozen install because bun.lock is stale\\n- No open CodeQL or secret-scanning alerts"

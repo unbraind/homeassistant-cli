@@ -2,13 +2,13 @@ id: hac-em8a
 title: Restore reproducible Dependabot CI and modernize actions
 description: Fix the shared frozen-lockfile failure and update deprecated GitHub Actions majors.
 type: Issue
-status: in_progress
+status: closed
 priority: 1
 tags[4]: ci,dependabot,github-actions,reproducibility
 created_at: "2026-07-16T16:54:19.097Z"
-updated_at: "2026-07-16T17:26:24.590Z"
+updated_at: "2026-07-16T17:31:22.332Z"
 deadline: "2026-07-18T16:54:19.097Z"
-assignee: codex-root
+closed_at: "2026-07-16T17:31:22.331Z"
 author: codex-root
 estimated_minutes: 180
 acceptance_criteria: fresh frozen Bun install succeeds; workflows use maintained action majors; CI runs dependency audit; workflow syntax and local gates pass
@@ -18,12 +18,12 @@ risk: high
 confidence: 95
 sprint: 2026-07-security
 release: 2026.7.16
-resolution: "Regenerated the lockfile, aligned Node/Bun install behavior, upgraded maintained Actions, added dependency enforcement, and made commit auditing PR-checkout safe."
-expected_result: Frozen installs and maintained Actions permit every CI/security gate to execute and pass.
-actual_result: All PR gates passed at a481464; post-merge CI and Security runs passed at d2c73b2.
+resolution: "Restored reproducible grouped updates, adopted checkout/setup-node v7 and action-gh-release v3, and constrained unsupported TypeScript/Node-typing major churn while preserving compatible updates."
+expected_result: All maintained Action majors run successfully and Dependabot proposes only updates compatible with the supported toolchain/runtime contracts.
+actual_result: "PR #55 and merged-head CI/Security/release verification passed; policy refresh succeeded; zero open PRs, issues, or security alerts remain."
 dependencies[1]{id,kind,created_at,author,source_kind}:
   hac-gpm3,parent,"2026-07-16T16:54:19.097Z",codex-root,null
-comments[8]{created_at,author,text}:
+comments[9]{created_at,author,text}:
   "2026-07-16T16:54:19.097Z",codex-root,Representative GitHub Actions runs 26775340556 and 26673365486 fail before tests.
   "2026-07-16T17:08:03.440Z",codex-root,"Official actionlint 1.7.12 found SC2034 in publish.yml: a shell VERSION assignment was dead because the validator reads the step-level environment variable. Removed the dead assignment and preserved the validation contract."
   "2026-07-16T17:15:52.133Z",codex-root,"Hosted PR #52 exposed a CI-only commit-audit defect: actions/checkout checks out the synthetic merge ref without a local master branch, so the script's hard-coded master revision failed before inspecting any commits. Fixed the auditor to use origin/..HEAD for pull-request runs and HEAD for complete-history local/push runs; both modes pass locally."
@@ -32,6 +32,7 @@ comments[8]{created_at,author,text}:
   "2026-07-16T17:23:19.908Z",codex-root,"Exact PR head a481464 passed quality (bun), quality (node), coverage, package-smoke, commit-audit, history-scan, Dependency audit, PR title, and CodeQL before merge. Post-merge CI run 29519298326 and Security run 29519298269 both succeeded at d2c73b2; all stale Dependabot PRs are closed."
   "2026-07-16T17:25:16.027Z",codex-root,Reopened canonical CI/dependency automation item. PR #53 validly updates newly released checkout v7 setup-node v7 and action-gh-release v3 and is green; PR #54 proposes TypeScript 7 and Node 26 typings against the documented TypeScript-ESLint and Node 22 contracts and fails frozen install across all dependency-consuming jobs.
   "2026-07-16T17:26:24.570Z",codex-root,"Local follow-up validation passes: frozen install lint typecheck build zero-vulnerability audit official actionlint 1.7.12 and YAML parsing. Adopted checkout v7 setup-node v7 and action-gh-release v3 exactly as green PR #53; added major ignores that explain and prevent failing PR #54 churn."
+  "2026-07-16T17:31:21.805Z",codex-root,"Follow-up PR #55 exact head 776e40c passed Bun/Node quality, coverage, package smoke, commit audit, dependency audit, history scan, PR title, CodeQL, and review-status gates; merged as 3aa63d2. Post-merge CI 29519944470 and Security 29519944417 succeeded. Dependabot policy refresh jobs succeeded; #53 is superseded, #54 closed under the compatible-major policy, and the open PR/issue/alert inventories are empty."
 notes[3]{created_at,author,text}:
   "2026-07-16T16:54:19.097Z",codex-root,"The failure is infrastructure-wide,not specific to Vitest or Commander behavior."
   "2026-07-16T17:10:22.123Z",codex-root,Official actionlint 1.7.12 and YAML 2.9 parsing both pass after removing the dead VERSION assignment and using a folded YAML scalar.
@@ -57,4 +58,5 @@ test_runs[1]{run_id,kind,status,started_at,finished_at,recorded_at,passed,failed
   test-local-mrnrm7u7-wbxgv0,test,passed,"2026-07-16T17:10:37.192Z","2026-07-16T17:10:41.455Z","2026-07-16T17:10:41.455Z",3,0,0
 docs[1]{path,scope,note}:
   docs/RELEASING.md,project,Relevant project documentation
+close_reason: "Latest Action majors and compatible Dependabot update policy are merged, green, and backlog-clean."
 body: "## Reproduction\\n\\nOpen Dependabot PR 51 or 50. Every CI matrix job stops at bun install --frozen-lockfile with lockfile had changes. Runner also warns checkout/setup-node v4 use deprecated Node 20 action runtimes."
