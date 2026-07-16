@@ -2,13 +2,13 @@ id: hac-gx4b
 title: Repository security and maintenance remediation plan
 description: Evidence-driven execution plan for the July 2026 repository remediation.
 type: Plan
-status: in_progress
+status: closed
 priority: 0
 tags[5]: ci,delivery,dependencies,plan,security
 created_at: "2026-07-16T16:54:09.573Z"
-updated_at: "2026-07-16T17:12:26.278Z"
+updated_at: "2026-07-16T17:23:47.110Z"
 deadline: "2026-07-18T16:54:09.573Z"
-assignee: codex-root
+closed_at: "2026-07-16T17:23:47.109Z"
 author: codex-root
 estimated_minutes: 600
 acceptance_criteria: Every ordered step has evidence; linked remediation items are closed only after verification; the combined change is merged and default-branch health is proven
@@ -18,6 +18,9 @@ risk: critical
 confidence: 95
 sprint: 2026-07-security
 release: 2026.7.16
+resolution: Executed the full evidence-driven remediation plan through protected-default-branch verification.
+expected_result: All steps complete and every linked remediation item closed after merged-head proof.
+actual_result: Six of six steps complete; all implementation children closed; PR #52 and default-branch checks succeeded.
 dependencies[7]{id,kind,created_at,author,source_kind}:
   hac-gpm3,parent,"2026-07-16T16:54:09.573Z",codex-root,null
   hac-d3yc,implements,"2026-07-16T16:54:51.956Z",codex-root,null
@@ -38,7 +41,10 @@ tests[1]{command,scope,timeout_seconds}:
   "bun run release:verify",project,1800
 docs[1]{path,scope,note}:
   docs/RELEASING.md,project,Release verification contract
-plan_mode: approved
+close_reason: "All six approved remediation steps are complete with linked local, hosted, merge, security, and governance evidence."
+plan_mode: completed
+plan_validation[1]{text,command,expected}:
+  Merged-head delivery proof passed.,"bun install --frozen-lockfile && bun run release:verify; gh run list --branch master --commit d2c73b2; gh security alert APIs; gh branch protection API",Release verifier and default-branch CI/security succeed; security and PR backlogs are empty; branch protection matches policy.
 plan_decisions[2]{ts,author,decision,rationale,evidence}:
   "2026-07-16T16:54:58.523Z",codex-root,Upgrade direct dependencies and action majors as one coherent compatibility bundle.,Fifteen overlapping bot branches are stale against the same lockfile and cannot independently reach test execution.,PR 51 run 26775340556 and PR 50 run 26673365486 both fail bun install --frozen-lockfile.
   "2026-07-16T17:01:15.418Z",codex-root,Keep TypeScript on 5.9 and Node typings on 22 while adopting other current majors.,typescript-eslint 8.64 requires TypeScript below 6.1; the package supports Node 22.19 and should type against its actual runtime line.,npm registry peerDependencies and engines inspected on 2026-07-16; lint/typecheck/build passed after compatible pins.
@@ -103,11 +109,12 @@ plan_steps[6]:
   - id: plan-step-006
     order: 6
     title: "Publish branch, converge checks and review, merge, and prove default-branch health"
-    status: in_progress
+    status: completed
     created_at: "2026-07-16T16:54:16.678Z"
-    updated_at: "2026-07-16T17:12:26.277Z"
+    updated_at: "2026-07-16T17:23:33.498Z"
     owner: codex-root
-    evidence: "Preparing intentional commit and PR; remote checks, alert closeout, bot PR cleanup, merge, branch protection, and merged-head proof remain."
+    evidence: "PR #52 exact head a481464 passed all CI/security/CodeQL gates and merged as d2c73b2. Merged-master release:verify passed all 10 stages with 988 tests and zero audit findings; post-merge CI 29519298326 and Security 29519298269 succeeded; all alert APIs and open PR/issues are empty; 15 stale Dependabot PRs closed; master protection verified with nine strict checks."
+    completed_at: "2026-07-16T17:23:33.498Z"
     linked_items[1]{id,kind,note}:
       hac-kv5o,implements,Shipping step applies and verifies branch protection
 body: "## Scope\\n\\nPM initialization, security and dependency updates, CI hardening, source compatibility, complete verification, and GitHub closeout."

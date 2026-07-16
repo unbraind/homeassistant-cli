@@ -2,13 +2,13 @@ id: hac-d3yc
 title: Remediate critical and high dependency vulnerabilities
 description: Upgrade vulnerable direct and transitive dependency paths and prove the resulting graph is clean.
 type: Issue
-status: in_progress
+status: closed
 priority: 0
 tags[4]: dependencies,github-alert,security,vulnerability
 created_at: "2026-07-16T16:54:17.428Z"
-updated_at: "2026-07-16T17:10:35.943Z"
+updated_at: "2026-07-16T17:23:04.916Z"
 deadline: "2026-07-18T16:54:17.428Z"
-assignee: codex-root
+closed_at: "2026-07-16T17:23:04.915Z"
 author: codex-root
 estimated_minutes: 180
 acceptance_criteria: bun audit reports no actionable advisories; GHSA-5xrq-8626-4rwp is resolved; runtime dependency tests pass
@@ -18,10 +18,14 @@ risk: critical
 confidence: 95
 sprint: 2026-07-security
 release: 2026.7.16
+resolution: Upgraded vulnerable dependency roots and patched transitives; critical GHSA-5xrq-8626-4rwp is closed and the Bun graph has zero advisories.
+expected_result: No open GitHub Dependabot alerts and no Bun audit vulnerabilities after merge.
+actual_result: Zero open Dependabot alerts; bun audit found no vulnerabilities; merged Security workflow 29519298269 passed.
 dependencies[1]{id,kind,created_at,author,source_kind}:
   hac-gpm3,parent,"2026-07-16T16:54:17.428Z",codex-root,null
-comments[1]{created_at,author,text}:
+comments[2]{created_at,author,text}:
   "2026-07-16T16:54:17.428Z",codex-root,GitHub alert 2 is critical and directly affects vitest 2.1.9.
+  "2026-07-16T17:23:04.086Z",codex-root,Merged PR #52 at d2c73b20b3828651e2fdd709844044e6acba689a. GitHub now reports zero open Dependabot alerts; merged-master bun audit reports no vulnerabilities; Security run 29519298269 succeeded.
 notes[1]{created_at,author,text}:
   "2026-07-16T16:54:17.428Z",codex-root,Upgrade direct roots rather than suppressing advisories.
 learnings[1]{created_at,author,text}:
@@ -34,4 +38,5 @@ test_runs[1]{run_id,kind,status,started_at,finished_at,recorded_at,passed,failed
   test-local-mrnrm3kx-8rbw15,test,passed,"2026-07-16T17:10:35.083Z","2026-07-16T17:10:35.937Z","2026-07-16T17:10:35.937Z",1,0,0
 docs[1]{path,scope,note}:
   SECURITY.md,project,Relevant project documentation
+close_reason: Security remediation merged and independently verified on the default branch.
 body: "## Evidence\\n\\nBun audit reports 28 findings: critical Vitest, high Undici/ws/Vite/flatted/picomatch, and moderate/low transitive findings. GitHub Dependabot alert 2 identifies Vitest before 3.2.6."

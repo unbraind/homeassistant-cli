@@ -2,13 +2,13 @@ id: hac-kv5o
 title: Protect the default branch with required quality checks
 description: Enable GitHub branch protection so unverified commits cannot silently become the default branch.
 type: Issue
-status: in_progress
+status: closed
 priority: 1
 tags[5]: branch-protection,discovered,github,governance,security
 created_at: "2026-07-16T17:09:23.324Z"
-updated_at: "2026-07-16T17:09:24.976Z"
+updated_at: "2026-07-16T17:23:24.157Z"
 deadline: "2026-07-18T17:09:23.324Z"
-assignee: codex-root
+closed_at: "2026-07-16T17:23:24.156Z"
 author: codex-root
 estimated_minutes: 45
 acceptance_criteria: master blocks force pushes and deletion; current CI/security status checks are required with strict up-to-date branches; owner retains an explicit emergency admin bypass; settings are verified through gh after merge
@@ -18,10 +18,14 @@ risk: high
 confidence: 100
 sprint: 2026-07-security
 release: 2026.7.16
+resolution: "Protected master with PR-only changes, nine required current checks, linear history, conversation resolution, and destructive-update blocks."
+expected_result: Unverified or destructive non-admin changes cannot enter master; the owner retains an emergency bypass.
+actual_result: GitHub branch-protection API returned the requested policy with strict checks and all protective flags enabled.
 dependencies[1]{id,kind,created_at,author,source_kind}:
   hac-gpm3,parent,"2026-07-16T17:09:23.324Z",codex-root,null
-comments[1]{created_at,author,text}:
+comments[2]{created_at,author,text}:
   "2026-07-16T17:09:23.324Z",codex-root,gh api repos/unbraind/homeassistant-cli/branches/master/protection returned Branch not protected; repository rulesets list is empty.
+  "2026-07-16T17:23:23.081Z",codex-root,"Applied master protection after merge. GitHub confirms strict up-to-date required contexts for Bun/Node quality, coverage, package smoke, commit audit, history scan, CodeQL, dependency audit, and PR title; PR workflow, linear history, stale-review dismissal, conversation resolution, and force-push/deletion blocks are enabled. Admin enforcement remains disabled as the explicit emergency owner bypass."
 notes[1]{created_at,author,text}:
   "2026-07-16T17:09:23.324Z",codex-root,Apply protection only after the remediation PR merges so new required checks are known-good and do not block this bootstrap delivery.
 learnings[1]{created_at,author,text}:
@@ -32,4 +36,5 @@ tests[1]{command,scope,timeout_seconds}:
   gh api repos/unbraind/homeassistant-cli/branches/master/protection,project,120
 docs[1]{path,scope,note}:
   SECURITY.md,project,Repository security policy
+close_reason: Default-branch protection is active and verified through the GitHub API.
 body: "## Discovery\\n\\nThe authenticated GitHub branch-protection endpoint reports master is not protected and the repository has no rulesets. This permits force pushes/deletion and does not require the established CI/security checks."
