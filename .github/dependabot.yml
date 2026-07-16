@@ -5,6 +5,16 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 10
+    ignore:
+      # Keep the compiler and Node typings aligned with the supported peer and
+      # runtime contracts. Dependabot may continue proposing compatible updates
+      # within these major lines.
+      - dependency-name: typescript
+        update-types:
+          - version-update:semver-major
+      - dependency-name: "@types/node"
+        update-types:
+          - version-update:semver-major
     groups:
       runtime-dependencies:
         dependency-type: production

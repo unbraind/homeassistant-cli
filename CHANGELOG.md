@@ -7,17 +7,14 @@
 - Updated runtime and development dependencies, including Commander 15, Undici 8, Vitest 4, ESLint 10, ws 8.21, YAML 2.9, and TOON 2.3.
 - Raised the supported Node.js runtime to 22.19 or newer to match current Commander and Undici requirements.
 - Empty arrays now use the current canonical TOON representation (`[]`, or `key: []` for named fields).
-- GitHub Actions now use current Node 24-based action majors and both runtime matrix lanes install the same frozen Bun lockfile.
+- GitHub Actions now use current Node 24-based action majors (`checkout@v7`, `setup-node@v7`, and `action-gh-release@v3`), and both runtime matrix lanes install the same frozen Bun lockfile.
+- Dependabot keeps TypeScript and Node typings on compatible major lines while continuing to propose supported updates.
 
 ### Security
 
 - Added a dependency-audit CI job and patched transitive overrides for vulnerable `brace-expansion`, `flatted`, and `picomatch` releases.
 
 All notable changes to this project are documented in this file.
-
-## Unreleased
-
-- Ongoing changes after `v2026.3.6-2`
 
 ## 2026.3.6-2 - 2026-03-06
 
