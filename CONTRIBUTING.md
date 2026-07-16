@@ -5,7 +5,7 @@ Thanks for contributing.
 ## Prerequisites
 
 - Bun (latest)
-- Node.js 20+ (CI uses Node 22)
+- Node.js 22.19+ (CI uses Node 22)
 - Git
 
 ## Local Setup
@@ -26,6 +26,7 @@ bun install
 | `bun run build` | Build `dist/` with TypeScript |
 | `bun run test` | Run full test suite |
 | `bun run test:coverage` | Run tests with coverage |
+| `bun run security:audit` | Audit the resolved dependency graph |
 | `bun run release:dry-run` | Package smoke check (`npx` + `bunx`) |
 
 Node/npm users can run equivalent scripts with `npm run <script>` (`lint`, `typecheck`, `build`, `test`).
@@ -45,6 +46,7 @@ For release-impacting changes, also run:
 
 ```bash
 bun run test:coverage
+bun run security:audit
 bun run release:dry-run
 bun run commit:audit
 ```

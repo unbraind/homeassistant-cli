@@ -74,7 +74,7 @@ describe("statistics command", () => {
 
     const cmd = createStatisticsCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--metadata"], { from: "user" })
+      cmd.parseAsync(["--metadata"], { from: "user" })
     );
 
     expect(result).toContain("statistics_metadata");
@@ -86,7 +86,7 @@ describe("statistics command", () => {
 
     const cmd = createStatisticsCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--metadata", "--count"], { from: "user" })
+      cmd.parseAsync(["--metadata", "--count"], { from: "user" })
     );
 
     expect(result).toContain("statistics_metadata_count");
@@ -104,7 +104,7 @@ describe("statistics command", () => {
 
     const cmd = createStatisticsCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--metadata"], { from: "user" })
+      cmd.parseAsync(["--metadata"], { from: "user" })
     );
 
     // Should output fallback message (404 is caught)
@@ -117,7 +117,7 @@ describe("statistics command", () => {
     const cmd = createStatisticsCommand();
     const result = await captureLog(() =>
       cmd.parseAsync(
-        ["node", "test", "--entity-id", "sensor.temperature", "--period", "hour"],
+        ["--entity-id", "sensor.temperature", "--period", "hour"],
         { from: "user" }
       )
     );
@@ -131,7 +131,7 @@ describe("statistics command", () => {
     const cmd = createStatisticsCommand();
     const result = await captureLog(() =>
       cmd.parseAsync(
-        ["node", "test", "--entity-id", "sensor.temperature", "--count"],
+        ["--entity-id", "sensor.temperature", "--count"],
         { from: "user" }
       )
     );
@@ -147,7 +147,6 @@ describe("statistics command", () => {
     const result = await captureLog(() =>
       cmd.parseAsync(
         [
-          "node", "test",
           "--entity-id", "sensor.temperature",
           "--start-time", "2024-01-01T00:00:00Z",
           "--end-time", "2024-01-02T00:00:00Z",
@@ -166,7 +165,6 @@ describe("statistics command", () => {
     const result = await captureLog(() =>
       cmd.parseAsync(
         [
-          "node", "test",
           "--entity-id", "sensor.temperature",
           "--during-period",
           "--start-time", "2024-01-01T00:00:00Z",
@@ -184,7 +182,7 @@ describe("statistics command", () => {
     const cmd = createStatisticsCommand();
     try {
       await captureLog(() =>
-        cmd.parseAsync(["node", "test"], { from: "user" })
+        cmd.parseAsync([], { from: "user" })
       );
     } catch {
       // error may propagate after mocked process.exit
@@ -198,7 +196,7 @@ describe("statistics command", () => {
     try {
       await captureLog(() =>
         cmd.parseAsync(
-          ["node", "test", "--entity-id", "sensor.x", "--during-period"],
+          ["--entity-id", "sensor.x", "--during-period"],
           { from: "user" }
         )
       );
@@ -219,7 +217,7 @@ describe("statistics command", () => {
     const cmd = createStatisticsCommand();
     const result = await captureLog(() =>
       cmd.parseAsync(
-        ["node", "test", "--entity-id", "sensor.temperature,sensor.power"],
+        ["--entity-id", "sensor.temperature,sensor.power"],
         { from: "user" }
       )
     );

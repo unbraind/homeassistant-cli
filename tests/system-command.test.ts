@@ -111,7 +111,7 @@ describe("persons command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(allStates));
 
     const cmd = createPersonsCommand();
-    const result = await captureLog(() => cmd.parseAsync(["node", "test"], { from: "user" }));
+    const result = await captureLog(() => cmd.parseAsync([], { from: "user" }));
 
     expect(result).toContain("person.john");
     expect(result).toContain("John");
@@ -125,7 +125,7 @@ describe("persons command", () => {
 
     const cmd = createPersonsCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--count"], { from: "user" })
+      cmd.parseAsync(["--count"], { from: "user" })
     );
 
     expect(result).toContain("persons_count");
@@ -147,7 +147,7 @@ describe("zones command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(allStates));
 
     const cmd = createZonesCommand();
-    const result = await captureLog(() => cmd.parseAsync(["node", "test"], { from: "user" }));
+    const result = await captureLog(() => cmd.parseAsync([], { from: "user" }));
 
     expect(result).toContain("zone.home");
     expect(result).toContain("Home");
@@ -162,7 +162,7 @@ describe("zones command", () => {
 
     const cmd = createZonesCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--count"], { from: "user" })
+      cmd.parseAsync(["--count"], { from: "user" })
     );
 
     expect(result).toContain("zones_count");
@@ -184,7 +184,7 @@ describe("system-log command", () => {
     mockRequest.mockResolvedValue(mockResponse(null));
     const cmd = createSystemLogCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--clear"], { from: "user" })
+      cmd.parseAsync(["--clear"], { from: "user" })
     );
     expect(result).toContain("success");
     expect(mockRequest).toHaveBeenCalledWith(
@@ -197,7 +197,7 @@ describe("system-log command", () => {
     mockRequest.mockResolvedValue(mockResponse(null));
     const cmd = createSystemLogCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--write", "Test message"], { from: "user" })
+      cmd.parseAsync(["--write", "Test message"], { from: "user" })
     );
     expect(result).toContain("Test message");
     expect(result).toContain("warning");
@@ -207,7 +207,7 @@ describe("system-log command", () => {
     mockRequest.mockResolvedValue(mockResponse(null));
     const cmd = createSystemLogCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--write", "Debug msg", "--level", "debug", "--logger", "my.logger"], { from: "user" })
+      cmd.parseAsync(["--write", "Debug msg", "--level", "debug", "--logger", "my.logger"], { from: "user" })
     );
     expect(result).toContain("debug");
   });
@@ -215,7 +215,7 @@ describe("system-log command", () => {
   it("shows help when no action specified", async () => {
     const cmd = createSystemLogCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
     expect(result).toContain("--clear");
     expect(result).toContain("available_levels");
@@ -236,7 +236,7 @@ describe("frontend command", () => {
     mockRequest.mockResolvedValue(mockResponse(null));
     const cmd = createFrontendCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--reload-themes"], { from: "user" })
+      cmd.parseAsync(["--reload-themes"], { from: "user" })
     );
     expect(result).toContain("success");
     expect(mockRequest).toHaveBeenCalledWith(
@@ -249,7 +249,7 @@ describe("frontend command", () => {
     mockRequest.mockResolvedValue(mockResponse(null));
     const cmd = createFrontendCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--set-theme", "default"], { from: "user" })
+      cmd.parseAsync(["--set-theme", "default"], { from: "user" })
     );
     expect(result).toContain("default");
     expect(mockRequest).toHaveBeenCalledWith(
@@ -262,7 +262,7 @@ describe("frontend command", () => {
     mockRequest.mockResolvedValue(mockResponse(null));
     const cmd = createFrontendCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--set-theme", "light", "--dark-theme", "dark"], { from: "user" })
+      cmd.parseAsync(["--set-theme", "light", "--dark-theme", "dark"], { from: "user" })
     );
     expect(result).toContain("light");
     expect(result).toContain("dark");
@@ -271,7 +271,7 @@ describe("frontend command", () => {
   it("shows help when no action specified", async () => {
     const cmd = createFrontendCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
     expect(result).toContain("--reload-themes");
   });

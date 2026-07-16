@@ -9,12 +9,12 @@ const call = vi.fn(async () => ({ ok: true }));
 const subscribeEvents = vi.fn(async () => [{ event_type: "state_changed" }]);
 
 vi.mock("../src/api/websocket.js", () => ({
-  HomeAssistantWebSocketClient: vi.fn().mockImplementation(() => ({
+  HomeAssistantWebSocketClient: vi.fn().mockImplementation(function () { return {
     connect,
     close,
     call,
     subscribeEvents,
-  })),
+  }; }),
 }));
 
 vi.mock("../src/config/loader.js", () => ({

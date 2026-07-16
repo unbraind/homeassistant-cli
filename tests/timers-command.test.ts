@@ -88,7 +88,7 @@ describe("timers command", () => {
 
     const cmd = createTimersCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
 
     expect(result).toContain("timer.fan_basement");
@@ -101,7 +101,7 @@ describe("timers command", () => {
 
     const cmd = createTimersCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
 
     const parsed = JSON.parse(result);
@@ -114,7 +114,7 @@ describe("timers command", () => {
 
     const cmd = createTimersCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--count"], { from: "user" })
+      cmd.parseAsync(["--count"], { from: "user" })
     );
 
     expect(result).toContain("timers_count");
@@ -127,7 +127,7 @@ describe("timers command", () => {
 
     const cmd = createTimersCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--state", "active"], { from: "user" })
+      cmd.parseAsync(["--state", "active"], { from: "user" })
     );
 
     const parsed = JSON.parse(result);
@@ -139,7 +139,7 @@ describe("timers command", () => {
 
     const cmd = createTimersCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "timer.fan_basement"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "timer.fan_basement"], { from: "user" })
     );
 
     const parsed = JSON.parse(result);
@@ -152,7 +152,7 @@ describe("timers command", () => {
 
     const cmd = createTimersCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--start", "timer.fan_basement"], { from: "user" })
+      cmd.parseAsync(["--start", "timer.fan_basement"], { from: "user" })
     );
 
     expect(result).toContain("started");
@@ -164,7 +164,7 @@ describe("timers command", () => {
 
     const cmd = createTimersCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--start", "timer.fan_basement", "--duration", "00:05:00"], { from: "user" })
+      cmd.parseAsync(["--start", "timer.fan_basement", "--duration", "00:05:00"], { from: "user" })
     );
 
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -178,7 +178,7 @@ describe("timers command", () => {
 
     const cmd = createTimersCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--pause", "timer.sleep_timer"], { from: "user" })
+      cmd.parseAsync(["--pause", "timer.sleep_timer"], { from: "user" })
     );
 
     expect(result).toContain("paused");
@@ -189,7 +189,7 @@ describe("timers command", () => {
 
     const cmd = createTimersCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--cancel", "timer.sleep_timer"], { from: "user" })
+      cmd.parseAsync(["--cancel", "timer.sleep_timer"], { from: "user" })
     );
 
     expect(result).toContain("cancelled");
@@ -200,7 +200,7 @@ describe("timers command", () => {
 
     const cmd = createTimersCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--finish", "timer.fan_basement"], { from: "user" })
+      cmd.parseAsync(["--finish", "timer.fan_basement"], { from: "user" })
     );
 
     expect(result).toContain("finished");
@@ -211,7 +211,7 @@ describe("timers command", () => {
 
     const cmd = createTimersCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--change", "timer.fan_basement", "--duration", "00:15:00"], { from: "user" })
+      cmd.parseAsync(["--change", "timer.fan_basement", "--duration", "00:15:00"], { from: "user" })
     );
 
     expect(result).toContain("changed");
@@ -226,7 +226,7 @@ describe("timers command", () => {
     console.error = (msg: string) => errors.push(msg);
     const cmd = createTimersCommand();
     try {
-      await cmd.parseAsync(["node", "test", "--change", "timer.fan_basement"], { from: "user" });
+      await cmd.parseAsync(["--change", "timer.fan_basement"], { from: "user" });
     } catch {
       // may throw after mocked exit
     } finally {
@@ -244,7 +244,7 @@ describe("timers command", () => {
 
     const cmd = createTimersCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--reload"], { from: "user" })
+      cmd.parseAsync(["--reload"], { from: "user" })
     );
 
     expect(result).toContain("reloaded");

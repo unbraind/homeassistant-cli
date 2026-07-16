@@ -20,7 +20,7 @@ const mockWsClose = vi.fn();
 const mockGetAddons = vi.fn();
 
 vi.mock("../src/api/index.js", () => ({
-  HomeAssistantClient: vi.fn().mockImplementation(() => ({
+  HomeAssistantClient: vi.fn().mockImplementation(function () { return {
     getStatus: mockGetStatus,
     getConfig: mockGetConfig,
     getServices: mockGetServices,
@@ -34,17 +34,17 @@ vi.mock("../src/api/index.js", () => ({
     getCalendarEvents: mockGetCalendarEvents,
     getState: vi.fn(async () => ({ entity_id: "light.kitchen", state: "on", attributes: {} })),
     renderTemplate: vi.fn(async () => "result"),
-  })),
-  HomeAssistantWebSocketClient: vi.fn().mockImplementation(() => ({
+  }; }),
+  HomeAssistantWebSocketClient: vi.fn().mockImplementation(function () { return {
     connect: mockWsConnect,
     close: mockWsClose,
-  })),
+  }; }),
 }));
 
 vi.mock("../src/api/supervisor.js", () => ({
-  SupervisorApiClient: vi.fn().mockImplementation(() => ({
+  SupervisorApiClient: vi.fn().mockImplementation(function () { return {
     getAddons: mockGetAddons,
-  })),
+  }; }),
 }));
 
 const baseConfig = {

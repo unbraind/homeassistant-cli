@@ -116,7 +116,7 @@ describe("capabilities command", () => {
     const originalLog = console.log;
     console.log = (msg: string) => output.push(msg);
 
-    await cmd.parseAsync(["node", "test"], { from: "user" });
+    await cmd.parseAsync([], { from: "user" });
     console.log = originalLog;
 
     const parsed = JSON.parse(output.join("\n")) as Record<string, unknown>;
@@ -132,7 +132,7 @@ describe("capabilities command", () => {
     const originalLog = console.log;
     console.log = (msg: string) => output.push(msg);
 
-    await cmd.parseAsync(["node", "test", "--refresh", "--count"], { from: "user" });
+    await cmd.parseAsync(["--refresh", "--count"], { from: "user" });
     console.log = originalLog;
 
     const parsed = JSON.parse(output.join("\n")) as Record<string, unknown>;
@@ -171,7 +171,7 @@ describe("capabilities command", () => {
     const originalLog = console.log;
     console.log = (msg: string) => output.push(msg);
 
-    await cmd.parseAsync(["node", "test", "--agent-plan"], { from: "user" });
+    await cmd.parseAsync(["--agent-plan"], { from: "user" });
     console.log = originalLog;
 
     const parsed = JSON.parse(output.join("\n")) as { source: string; plan: { recommended_commands: string[]; avoid_commands: string[] } };
@@ -209,7 +209,7 @@ describe("capabilities command", () => {
     const originalLog = console.log;
     console.log = (msg: string) => output.push(msg);
 
-    await cmd.parseAsync(["node", "test", "--agent-profile"], { from: "user" });
+    await cmd.parseAsync(["--agent-profile"], { from: "user" });
     console.log = originalLog;
 
     const parsed = JSON.parse(output.join("\n")) as {
@@ -251,7 +251,7 @@ describe("capabilities command", () => {
     const originalLog = console.log;
     console.log = (msg: string) => output.push(msg);
 
-    await cmd.parseAsync(["node", "test", "--agent-context"], { from: "user" });
+    await cmd.parseAsync(["--agent-context"], { from: "user" });
     console.log = originalLog;
 
     const parsed = JSON.parse(output.join("\n")) as {
@@ -299,7 +299,7 @@ describe("capabilities command", () => {
     const originalLog = console.log;
     console.log = (msg: string) => output.push(msg);
 
-    await cmd.parseAsync(["node", "test", "--redact-private"], { from: "user" });
+    await cmd.parseAsync(["--redact-private"], { from: "user" });
     console.log = originalLog;
 
     const parsed = JSON.parse(output.join("\n")) as { report: { api: { location: string } } };
@@ -314,7 +314,7 @@ describe("capabilities command", () => {
     const originalLog = console.log;
     console.log = (msg: string) => output.push(msg);
 
-    await cmd.parseAsync(["node", "test", "--api-matrix"], { from: "user" });
+    await cmd.parseAsync(["--api-matrix"], { from: "user" });
     console.log = originalLog;
 
     const parsed = JSON.parse(output.join("\n")) as {
@@ -336,7 +336,7 @@ describe("capabilities command", () => {
     const originalLog = console.log;
     console.log = (msg: string) => output.push(msg);
 
-    await cmd.parseAsync(["node", "test", "--api-matrix", "--count"], { from: "user" });
+    await cmd.parseAsync(["--api-matrix", "--count"], { from: "user" });
     console.log = originalLog;
 
     const parsed = JSON.parse(output.join("\n")) as {

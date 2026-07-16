@@ -40,7 +40,7 @@ describe("logger command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createLoggerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--set-default", "debug"], { from: "user" })
+      cmd.parseAsync(["--set-default", "debug"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.success).toBe(true);
@@ -52,7 +52,7 @@ describe("logger command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createLoggerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--set", "homeassistant.components.http=debug"], { from: "user" })
+      cmd.parseAsync(["--set", "homeassistant.components.http=debug"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.success).toBe(true);
@@ -61,33 +61,33 @@ describe("logger command", () => {
   });
 
   it("rejects invalid default log level", async () => {
-    const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const errSpy = vi.spyOn(console, "error").mockImplementation(function () {});
     const cmd = createLoggerCommand();
-    await cmd.parseAsync(["node", "test", "--set-default", "verbose"], { from: "user" });
+    await cmd.parseAsync(["--set-default", "verbose"], { from: "user" });
     expect(exitSpy).toHaveBeenCalledWith(1);
     errSpy.mockRestore();
   });
 
   it("rejects invalid level in set", async () => {
-    const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const errSpy = vi.spyOn(console, "error").mockImplementation(function () {});
     const cmd = createLoggerCommand();
-    await cmd.parseAsync(["node", "test", "--set", "homeassistant.core=verbose"], { from: "user" });
+    await cmd.parseAsync(["--set", "homeassistant.core=verbose"], { from: "user" });
     expect(exitSpy).toHaveBeenCalledWith(1);
     errSpy.mockRestore();
   });
 
   it("rejects malformed set entry (no =)", async () => {
-    const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const errSpy = vi.spyOn(console, "error").mockImplementation(function () {});
     const cmd = createLoggerCommand();
-    await cmd.parseAsync(["node", "test", "--set", "noequalssign"], { from: "user" });
+    await cmd.parseAsync(["--set", "noequalssign"], { from: "user" });
     expect(exitSpy).toHaveBeenCalledWith(1);
     errSpy.mockRestore();
   });
 
   it("exits with error when no flags given", async () => {
-    const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const errSpy = vi.spyOn(console, "error").mockImplementation(function () {});
     const cmd = createLoggerCommand();
-    await cmd.parseAsync(["node", "test"], { from: "user" });
+    await cmd.parseAsync([], { from: "user" });
     expect(exitSpy).toHaveBeenCalledWith(1);
     errSpy.mockRestore();
   });

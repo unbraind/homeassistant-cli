@@ -40,7 +40,7 @@ describe("mqtt command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createMqttCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--publish", "--topic", "home/light", "--payload", "on"], { from: "user" })
+      cmd.parseAsync(["--publish", "--topic", "home/light", "--payload", "on"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.success).toBe(true);
@@ -53,7 +53,7 @@ describe("mqtt command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createMqttCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--publish", "--topic", "home/temp", "--payload", "22", "--qos", "1", "--retain"], { from: "user" })
+      cmd.parseAsync(["--publish", "--topic", "home/temp", "--payload", "22", "--qos", "1", "--retain"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.success).toBe(true);
@@ -65,17 +65,17 @@ describe("mqtt command", () => {
   });
 
   it("rejects publish without --topic", async () => {
-    const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const errSpy = vi.spyOn(console, "error").mockImplementation(function () {});
     const cmd = createMqttCommand();
-    await cmd.parseAsync(["node", "test", "--publish"], { from: "user" });
+    await cmd.parseAsync(["--publish"], { from: "user" });
     expect(exitSpy).toHaveBeenCalledWith(1);
     errSpy.mockRestore();
   });
 
   it("rejects invalid QoS value", async () => {
-    const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const errSpy = vi.spyOn(console, "error").mockImplementation(function () {});
     const cmd = createMqttCommand();
-    await cmd.parseAsync(["node", "test", "--publish", "--topic", "t", "--qos", "5"], { from: "user" });
+    await cmd.parseAsync(["--publish", "--topic", "t", "--qos", "5"], { from: "user" });
     expect(exitSpy).toHaveBeenCalledWith(1);
     errSpy.mockRestore();
   });
@@ -84,7 +84,7 @@ describe("mqtt command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createMqttCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--reload"], { from: "user" })
+      cmd.parseAsync(["--reload"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.success).toBe(true);
@@ -92,9 +92,9 @@ describe("mqtt command", () => {
   });
 
   it("exits with error when no flags given", async () => {
-    const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const errSpy = vi.spyOn(console, "error").mockImplementation(function () {});
     const cmd = createMqttCommand();
-    await cmd.parseAsync(["node", "test"], { from: "user" });
+    await cmd.parseAsync([], { from: "user" });
     expect(exitSpy).toHaveBeenCalledWith(1);
     errSpy.mockRestore();
   });

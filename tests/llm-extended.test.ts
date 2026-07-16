@@ -52,7 +52,7 @@ describe("LLM Extended Commands", () => {
       const originalLog = console.log;
       console.log = (msg: string) => output.push(msg);
 
-      await cmd.parseAsync(["node", "test", "--commands"], { from: "user" });
+      await cmd.parseAsync(["--commands"], { from: "user" });
 
       console.log = originalLog;
       const result = output.join("\n");
@@ -73,7 +73,7 @@ describe("LLM Extended Commands", () => {
       const originalLog = console.log;
       console.log = (msg: string) => output.push(msg);
 
-      await cmd.parseAsync(["node", "test", "--services"], { from: "user" });
+      await cmd.parseAsync(["--services"], { from: "user" });
 
       console.log = originalLog;
       const result = output.join("\n");
@@ -88,7 +88,7 @@ describe("LLM Extended Commands", () => {
       const originalLog = console.log;
       console.log = (msg: string) => output.push(msg);
 
-      await cmd.parseAsync(["node", "test", "--output-contracts"], { from: "user" });
+      await cmd.parseAsync(["--output-contracts"], { from: "user" });
 
       console.log = originalLog;
       const result = output.join("\n");
@@ -121,7 +121,7 @@ describe("LLM Extended Commands", () => {
       const originalLog = console.log;
       console.log = (msg: string) => output.push(msg);
 
-      await cmd.parseAsync(["node", "test", "turn on living", "--dry-run"], { from: "user" });
+      await cmd.parseAsync(["turn on living", "--dry-run"], { from: "user" });
 
       console.log = originalLog;
       const result = output.join("\n");

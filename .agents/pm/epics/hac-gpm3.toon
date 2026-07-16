@@ -1,0 +1,43 @@
+id: hac-gpm3
+title: Modernize and secure homeassistant-cli delivery
+description: "Eliminate known dependency vulnerabilities, restore reliable automated updates, modernize CI actions, and leave a governed maintenance backlog."
+type: Epic
+status: in_progress
+priority: 0
+tags[5]: ci,dependencies,github,governance,security
+created_at: "2026-07-16T16:52:35.105Z"
+updated_at: "2026-07-16T17:07:03.645Z"
+deadline: "2026-07-18T16:52:35.105Z"
+assignee: codex-root
+author: codex-root
+estimated_minutes: 720
+acceptance_criteria: "Zero actionable Bun audit advisories after supported upgrades; all local quality, coverage, package, and security gates pass; GitHub dependency and security alerts are cleared or explicitly documented; PM tracker is healthy and contains reproducible evidence; changes are reviewed, merged, and verified on the default branch"
+definition_of_ready: "Authenticated GitHub access, clean default-branch baseline, live alert inventory, and repository-local PM tracker available."
+goal: secure-reliable-agent-cli
+objective: 2026-dependency-and-delivery-hardening
+value: Protect Home Assistant operators and keep the agent-facing CLI maintainable.
+impact: Removes exploitable dependency paths and makes future automated upgrades verifiable.
+outcome: "A current, reproducible, security-gated release pipeline with no stale update backlog."
+why_now: "A critical Vitest advisory, multiple high-severity runtime/tooling advisories, and fifteen failing Dependabot PRs are open."
+parent: hac-4s9j
+reviewer: unbraind
+risk: critical
+confidence: 95
+sprint: 2026-07-security
+release: 2026.7.16
+dependencies[1]{id,kind,created_at,author,source_kind}:
+  hac-4s9j,parent,"2026-07-16T17:07:03.618Z",codex-root,null
+comments[1]{created_at,author,text}:
+  "2026-07-16T16:52:35.105Z",codex-root,"Live baseline: 15 open Dependabot PRs; one critical Dependabot alert GHSA-5xrq-8626-4rwp; zero open CodeQL and secret-scanning alerts."
+notes[1]{created_at,author,text}:
+  "2026-07-16T16:52:35.105Z",codex-root,Representative PR checks fail at bun install --frozen-lockfile because package.json and bun.lock diverge.
+learnings[1]{created_at,author,text}:
+  "2026-07-16T16:52:35.105Z",codex-root,Dependency PRs must update bun.lock coherently; otherwise every CI job fails before exercising the proposed update.
+files[1]{path,scope,note}:
+  package.json,project,Dependency policy and scripts
+tests[1]{command,scope,timeout_seconds}:
+  "bun run test:coverage",project,1800
+docs[2]{path,scope,note}:
+  docs/RELEASING.md,project,Release verification contract
+  SECURITY.md,project,Security policy and reporting baseline
+body: "## Scope\\n\\nSecurity remediation, dependency modernization, CI reproducibility, GitHub Actions maintenance, repository inspection, governed delivery, and merged-head proof.\\n\\n## Live baseline\\n\\n- 15 open Dependabot PRs\\n- Critical Vitest alert GHSA-5xrq-8626-4rwp / CVE-2026-47429\\n- 28 local Bun audit findings across runtime and development dependency paths\\n- Representative PRs fail frozen install because bun.lock is stale\\n- No open CodeQL or secret-scanning alerts"

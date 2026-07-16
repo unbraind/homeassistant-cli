@@ -1,0 +1,51 @@
+id: hac-em8a
+title: Restore reproducible Dependabot CI and modernize actions
+description: Fix the shared frozen-lockfile failure and update deprecated GitHub Actions majors.
+type: Issue
+status: in_progress
+priority: 1
+tags[4]: ci,dependabot,github-actions,reproducibility
+created_at: "2026-07-16T16:54:19.097Z"
+updated_at: "2026-07-16T17:17:29.429Z"
+deadline: "2026-07-18T16:54:19.097Z"
+assignee: codex-root
+author: codex-root
+estimated_minutes: 180
+acceptance_criteria: fresh frozen Bun install succeeds; workflows use maintained action majors; CI runs dependency audit; workflow syntax and local gates pass
+parent: hac-gpm3
+reviewer: unbraind
+risk: high
+confidence: 95
+sprint: 2026-07-security
+release: 2026.7.16
+dependencies[1]{id,kind,created_at,author,source_kind}:
+  hac-gpm3,parent,"2026-07-16T16:54:19.097Z",codex-root,null
+comments[5]{created_at,author,text}:
+  "2026-07-16T16:54:19.097Z",codex-root,Representative GitHub Actions runs 26775340556 and 26673365486 fail before tests.
+  "2026-07-16T17:08:03.440Z",codex-root,"Official actionlint 1.7.12 found SC2034 in publish.yml: a shell VERSION assignment was dead because the validator reads the step-level environment variable. Removed the dead assignment and preserved the validation contract."
+  "2026-07-16T17:15:52.133Z",codex-root,"Hosted PR #52 exposed a CI-only commit-audit defect: actions/checkout checks out the synthetic merge ref without a local master branch, so the script's hard-coded master revision failed before inspecting any commits. Fixed the auditor to use origin/..HEAD for pull-request runs and HEAD for complete-history local/push runs; both modes pass locally."
+  "2026-07-16T17:16:00.596Z",codex-root,"Correction to the preceding comment: the pull-request range is origin/${GITHUB_BASE_REF}..HEAD; shell interpolation in the command that recorded the earlier comment omitted the variable name from its rendered text."
+  "2026-07-16T17:17:29.420Z",codex-root,The corrected hosted log then showed GitHub synthetic merge commit b8ac2ff as the sole non-conforming subject. Added git log --no-merges so generated merge commits are excluded while all authored commits in the base-to-head range remain audited.
+notes[2]{created_at,author,text}:
+  "2026-07-16T16:54:19.097Z",codex-root,"The failure is infrastructure-wide,not specific to Vitest or Commander behavior."
+  "2026-07-16T17:10:22.123Z",codex-root,Official actionlint 1.7.12 and YAML 2.9 parsing both pass after removing the dead VERSION assignment and using a folded YAML scalar.
+learnings[1]{created_at,author,text}:
+  "2026-07-16T16:54:19.097Z",codex-root,Inspect one representative failure before changing source; shared pre-test failures usually belong to the dependency workflow.
+files[8]{path,scope,note}:
+  .github/dependabot.yml,project,Modernized and validated GitHub automation
+  .github/workflows/ci.yml,project,Modernized and validated GitHub automation
+  .github/workflows/commit-quality.yml,project,Modernized and validated GitHub automation
+  .github/workflows/publish.yml,project,Modernized and validated GitHub automation
+  .github/workflows/release-dry-run.yml,project,Modernized and validated GitHub automation
+  .github/workflows/security.yml,project,Modernized and validated GitHub automation
+  bun.lock,project,Primary implementation surface
+  scripts/release/verify-release.sh,project,Dependency audit added to release gate
+tests[3]{command,scope,timeout_seconds}:
+  bun install --frozen-lockfile,project,1800
+  bun run lint,project,600
+  "bun run security:audit",project,300
+test_runs[1]{run_id,kind,status,started_at,finished_at,recorded_at,passed,failed,skipped}:
+  test-local-mrnrm7u7-wbxgv0,test,passed,"2026-07-16T17:10:37.192Z","2026-07-16T17:10:41.455Z","2026-07-16T17:10:41.455Z",3,0,0
+docs[1]{path,scope,note}:
+  docs/RELEASING.md,project,Relevant project documentation
+body: "## Reproduction\\n\\nOpen Dependabot PR 51 or 50. Every CI matrix job stops at bun install --frozen-lockfile with lockfile had changes. Runner also warns checkout/setup-node v4 use deprecated Node 20 action runtimes."

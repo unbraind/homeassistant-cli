@@ -85,7 +85,7 @@ describe("select command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(selectStates));
     const cmd = createSelectCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
     expect(result).toContain("select.log_level");
     expect(result).toContain("select.power_on_behavior");
@@ -96,7 +96,7 @@ describe("select command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(selectStates));
     const cmd = createSelectCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--count"], { from: "user" })
+      cmd.parseAsync(["--count"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.selects_count).toBe(2);
@@ -106,7 +106,7 @@ describe("select command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createSelectCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "select.log_level", "--set", "debug"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "select.log_level", "--set", "debug"], { from: "user" })
     );
     expect(result).toContain("selected_option");
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -119,7 +119,7 @@ describe("select command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createSelectCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--next", "select.log_level"], { from: "user" })
+      cmd.parseAsync(["--next", "select.log_level"], { from: "user" })
     );
     expect(result).toContain("select_next");
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -131,7 +131,7 @@ describe("select command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createSelectCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--prev", "select.log_level"], { from: "user" })
+      cmd.parseAsync(["--prev", "select.log_level"], { from: "user" })
     );
     expect(result).toContain("select_previous");
   });
@@ -140,7 +140,7 @@ describe("select command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createSelectCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--first", "select.log_level"], { from: "user" })
+      cmd.parseAsync(["--first", "select.log_level"], { from: "user" })
     );
     expect(result).toContain("select_first");
   });
@@ -149,7 +149,7 @@ describe("select command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createSelectCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--last", "select.log_level"], { from: "user" })
+      cmd.parseAsync(["--last", "select.log_level"], { from: "user" })
     );
     expect(result).toContain("select_last");
   });
@@ -158,7 +158,7 @@ describe("select command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(selectStates));
     const cmd = createSelectCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--state", "info"], { from: "user" })
+      cmd.parseAsync(["--state", "info"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.selects).toHaveLength(1);

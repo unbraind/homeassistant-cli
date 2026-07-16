@@ -111,7 +111,7 @@ describe("device-tracker command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(allStates));
     const cmd = createDeviceTrackerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.device_trackers).toHaveLength(4);
@@ -123,7 +123,7 @@ describe("device-tracker command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(allStates));
     const cmd = createDeviceTrackerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--count"], { from: "user" })
+      cmd.parseAsync(["--count"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.device_trackers_count).toBe(4);
@@ -133,7 +133,7 @@ describe("device-tracker command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(allStates));
     const cmd = createDeviceTrackerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--state", "home"], { from: "user" })
+      cmd.parseAsync(["--state", "home"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.device_trackers).toHaveLength(2);
@@ -144,7 +144,7 @@ describe("device-tracker command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(allStates));
     const cmd = createDeviceTrackerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--state", "not_home"], { from: "user" })
+      cmd.parseAsync(["--state", "not_home"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.device_trackers).toHaveLength(1);
@@ -155,7 +155,7 @@ describe("device-tracker command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(allStates));
     const cmd = createDeviceTrackerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--home"], { from: "user" })
+      cmd.parseAsync(["--home"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.device_trackers).toHaveLength(2);
@@ -166,7 +166,7 @@ describe("device-tracker command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(allStates));
     const cmd = createDeviceTrackerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--away"], { from: "user" })
+      cmd.parseAsync(["--away"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.device_trackers).toHaveLength(2);
@@ -177,7 +177,7 @@ describe("device-tracker command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(allStates));
     const cmd = createDeviceTrackerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--source", "gps"], { from: "user" })
+      cmd.parseAsync(["--source", "gps"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.device_trackers).toHaveLength(3);
@@ -188,7 +188,7 @@ describe("device-tracker command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(allStates));
     const cmd = createDeviceTrackerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--source", "router"], { from: "user" })
+      cmd.parseAsync(["--source", "router"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.device_trackers).toHaveLength(1);
@@ -199,7 +199,7 @@ describe("device-tracker command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(allStates));
     const cmd = createDeviceTrackerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--home", "--source", "gps"], { from: "user" })
+      cmd.parseAsync(["--home", "--source", "gps"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.device_trackers).toHaveLength(2);
@@ -211,7 +211,7 @@ describe("device-tracker command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(allStates));
     const cmd = createDeviceTrackerCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--state", "home"], { from: "user" })
+      cmd.parseAsync(["--state", "home"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     const pixel = parsed.device_trackers.find((d: { entity_id: string }) =>

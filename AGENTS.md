@@ -94,10 +94,10 @@ If a file approaches this limit, split it into focused sub-modules.
 
 | Tool          | Version  | Purpose                        |
 |---------------|----------|--------------------------------|
-| TypeScript    | 5.7+     | Language (strict mode)         |
+| TypeScript    | 5.9      | Language (strict mode)         |
 | Bun           | latest   | Runtime + package manager      |
-| Commander.js  | 12+      | CLI framework                  |
-| undici        | 6+       | HTTP client                    |
+| Commander.js  | 15+      | CLI framework                  |
+| undici        | 8+       | HTTP client                    |
 | ws            | 8+       | WebSocket client               |
 | Vitest        | 2+       | Test framework + coverage      |
 | yaml          | 2+       | YAML serialization             |
@@ -333,3 +333,14 @@ hassio call-service light turn_on --data '{"entity_id":"light.living_room"}'
 # 5. Verify action
 hassio states --entity-id light.living_room --format json-compact
 ```
+
+<!-- pm-cli:agent-guidance:start:v1 -->
+## pm Workflow (Agent Quickstart)
+
+- Orient before mutate: `pm context --limit 10`, `pm search "<keywords>" --limit 10`, `pm list-open --limit 20`.
+- Claim and execute: `pm claim <id>` then `pm update <id> --status in_progress`.
+- Link evidence while coding: `pm files <id> --add ...`, `pm docs <id> --add ...`, `pm test <id> --add command="node scripts/run-tests.mjs test -- ..."`.
+- Verify and close: `pm test <id> --run --progress`, `pm close <id> "<evidence>" --validate-close warn`, `pm release <id>`.
+- Set `PM_AUTHOR=<stable-agent-id>` before mutation commands.
+
+<!-- pm-cli:agent-guidance:end -->

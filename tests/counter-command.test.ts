@@ -93,7 +93,7 @@ describe("counter command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(counterStates));
     const cmd = createCounterCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
     expect(result).toContain("counter.daily_steps");
     expect(result).toContain("counter.button_press");
@@ -104,7 +104,7 @@ describe("counter command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(counterStates));
     const cmd = createCounterCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--count"], { from: "user" })
+      cmd.parseAsync(["--count"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.counters_count).toBe(2);
@@ -114,7 +114,7 @@ describe("counter command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createCounterCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--increment", "counter.daily_steps"], { from: "user" })
+      cmd.parseAsync(["--increment", "counter.daily_steps"], { from: "user" })
     );
     expect(result).toContain("incremented");
     expect(result).toContain("counter.daily_steps");
@@ -127,7 +127,7 @@ describe("counter command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createCounterCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--decrement", "counter.daily_steps"], { from: "user" })
+      cmd.parseAsync(["--decrement", "counter.daily_steps"], { from: "user" })
     );
     expect(result).toContain("decremented");
     expect(result).toContain("counter.daily_steps");
@@ -137,7 +137,7 @@ describe("counter command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createCounterCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--reset", "counter.daily_steps"], { from: "user" })
+      cmd.parseAsync(["--reset", "counter.daily_steps"], { from: "user" })
     );
     expect(result).toContain("reset");
     expect(result).toContain("counter.daily_steps");
@@ -147,7 +147,7 @@ describe("counter command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createCounterCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "counter.daily_steps", "--set", "10"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "counter.daily_steps", "--set", "10"], { from: "user" })
     );
     expect(result).toContain("set_value");
     expect(result).toContain("counter.daily_steps");
@@ -159,7 +159,7 @@ describe("counter command", () => {
   it("exits with error when --set used without --entity-id", async () => {
     const cmd = createCounterCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--set", "10"], { from: "user" })
+      cmd.parseAsync(["--set", "10"], { from: "user" })
     );
     expect(exitSpy).toHaveBeenCalledWith(1);
   });
@@ -167,7 +167,7 @@ describe("counter command", () => {
   it("exits with error when --set value is not an integer", async () => {
     const cmd = createCounterCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "counter.steps", "--set", "notanumber"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "counter.steps", "--set", "notanumber"], { from: "user" })
     );
     expect(exitSpy).toHaveBeenCalledWith(1);
   });
@@ -176,7 +176,7 @@ describe("counter command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(counterStates));
     const cmd = createCounterCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--state", "42"], { from: "user" })
+      cmd.parseAsync(["--state", "42"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.counters).toHaveLength(1);

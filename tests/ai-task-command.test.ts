@@ -75,7 +75,7 @@ describe("ai-task command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(aiTaskStates));
     const cmd = createAiTaskCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
     expect(result).toContain("ai_task.openai_ai_task");
     expect(result).not.toContain("switch.unrelated");
@@ -85,7 +85,7 @@ describe("ai-task command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(aiTaskStates));
     const cmd = createAiTaskCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--count"], { from: "user" })
+      cmd.parseAsync(["--count"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.ai_tasks_count).toBe(1);
@@ -96,7 +96,6 @@ describe("ai-task command", () => {
     const cmd = createAiTaskCommand();
     const result = await captureLog(() =>
       cmd.parseAsync([
-        "node", "test",
         "--entity-id", "ai_task.openai_ai_task",
         "--generate-data", "List 3 home automation ideas",
       ], { from: "user" })
@@ -116,7 +115,6 @@ describe("ai-task command", () => {
     const structure = JSON.stringify({ type: "object", properties: { name: { type: "string" } } });
     const result = await captureLog(() =>
       cmd.parseAsync([
-        "node", "test",
         "--entity-id", "ai_task.openai_ai_task",
         "--generate-data", "Get device name",
         "--structure", structure,
@@ -131,7 +129,7 @@ describe("ai-task command", () => {
   it("exits with error when --generate-data used without --entity-id", async () => {
     const cmd = createAiTaskCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--generate-data", "test prompt"], { from: "user" })
+      cmd.parseAsync(["--generate-data", "test prompt"], { from: "user" })
     );
     expect(exitSpy).toHaveBeenCalledWith(1);
   });
@@ -141,7 +139,6 @@ describe("ai-task command", () => {
     const cmd = createAiTaskCommand();
     const result = await captureLog(() =>
       cmd.parseAsync([
-        "node", "test",
         "--entity-id", "ai_task.openai_ai_task",
         "--generate-image", "A smart home dashboard",
       ], { from: "user" })
@@ -153,7 +150,7 @@ describe("ai-task command", () => {
   it("exits with error when --generate-image used without --entity-id", async () => {
     const cmd = createAiTaskCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--generate-image", "test prompt"], { from: "user" })
+      cmd.parseAsync(["--generate-image", "test prompt"], { from: "user" })
     );
     expect(exitSpy).toHaveBeenCalledWith(1);
   });
@@ -162,7 +159,6 @@ describe("ai-task command", () => {
     const cmd = createAiTaskCommand();
     await captureLog(() =>
       cmd.parseAsync([
-        "node", "test",
         "--entity-id", "ai_task.openai_ai_task",
         "--generate-data", "test",
         "--structure", "not-json",
@@ -175,7 +171,7 @@ describe("ai-task command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(aiTaskStates));
     const cmd = createAiTaskCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--state", "unknown"], { from: "user" })
+      cmd.parseAsync(["--state", "unknown"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.ai_tasks).toHaveLength(1);

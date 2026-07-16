@@ -95,7 +95,7 @@ describe("climate command", () => {
 
     const cmd = createClimateCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
 
     expect(result).toContain("climate.living_room");
@@ -108,7 +108,7 @@ describe("climate command", () => {
 
     const cmd = createClimateCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--count"], { from: "user" })
+      cmd.parseAsync(["--count"], { from: "user" })
     );
 
     const parsed = JSON.parse(result);
@@ -120,7 +120,7 @@ describe("climate command", () => {
 
     const cmd = createClimateCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--state", "heat"], { from: "user" })
+      cmd.parseAsync(["--state", "heat"], { from: "user" })
     );
 
     const parsed = JSON.parse(result);
@@ -133,7 +133,7 @@ describe("climate command", () => {
 
     const cmd = createClimateCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--on", "climate.living_room"], { from: "user" })
+      cmd.parseAsync(["--on", "climate.living_room"], { from: "user" })
     );
 
     expect(result).toContain("turned_on");
@@ -145,7 +145,7 @@ describe("climate command", () => {
 
     const cmd = createClimateCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--off", "climate.bedroom"], { from: "user" })
+      cmd.parseAsync(["--off", "climate.bedroom"], { from: "user" })
     );
 
     expect(result).toContain("turned_off");
@@ -156,7 +156,7 @@ describe("climate command", () => {
 
     const cmd = createClimateCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--toggle", "climate.living_room"], { from: "user" })
+      cmd.parseAsync(["--toggle", "climate.living_room"], { from: "user" })
     );
 
     expect(result).toContain("toggled");
@@ -167,7 +167,7 @@ describe("climate command", () => {
 
     const cmd = createClimateCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "climate.living_room", "--set-temp", "23.5"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "climate.living_room", "--set-temp", "23.5"], { from: "user" })
     );
 
     expect(result).toContain("set_temperature");
@@ -184,7 +184,7 @@ describe("climate command", () => {
 
     const cmd = createClimateCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "climate.living_room", "--set-mode", "cool"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "climate.living_room", "--set-mode", "cool"], { from: "user" })
     );
 
     expect(result).toContain("set_hvac_mode");
@@ -200,7 +200,7 @@ describe("climate command", () => {
 
     const cmd = createClimateCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "climate.bedroom", "--set-preset", "eco"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "climate.bedroom", "--set-preset", "eco"], { from: "user" })
     );
 
     expect(result).toContain("set_preset_mode");
@@ -212,7 +212,7 @@ describe("climate command", () => {
 
     const cmd = createClimateCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "climate.living_room", "--set-humidity", "50"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "climate.living_room", "--set-humidity", "50"], { from: "user" })
     );
 
     expect(result).toContain("set_humidity");
@@ -227,7 +227,7 @@ describe("climate command", () => {
 
     const cmd = createClimateCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "climate.living_room", "--set-fan", "high"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "climate.living_room", "--set-fan", "high"], { from: "user" })
     );
 
     expect(result).toContain("set_fan_mode");
@@ -239,7 +239,7 @@ describe("climate command", () => {
 
     const cmd = createClimateCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "climate.bedroom", "--set-swing", "vertical"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "climate.bedroom", "--set-swing", "vertical"], { from: "user" })
     );
 
     expect(result).toContain("set_swing_mode");

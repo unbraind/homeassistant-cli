@@ -72,7 +72,7 @@ describe("batch command", () => {
     const cmd = createBatchCommand();
     const result = await captureLog(() =>
       cmd.parseAsync(
-        ["node", "test", "--domain", "light", "--service", "turn_on", "--entities", "light.kitchen,light.living"],
+        ["--domain", "light", "--service", "turn_on", "--entities", "light.kitchen,light.living"],
         { from: "user" }
       )
     );
@@ -92,7 +92,7 @@ describe("batch command", () => {
     const cmd = createBatchCommand();
     const result = await captureLog(() =>
       cmd.parseAsync(
-        ["node", "test", "--domain", "light", "--service", "turn_on", "--entities", "light.kitchen,light.broken"],
+        ["--domain", "light", "--service", "turn_on", "--entities", "light.kitchen,light.broken"],
         { from: "user" }
       )
     );
@@ -109,7 +109,7 @@ describe("batch command", () => {
     const cmd = createBatchCommand();
     await captureLog(() =>
       cmd.parseAsync(
-        ["node", "test", "--domain", "light", "--service", "turn_on", "--entities", "light.kitchen", "--data", '{"brightness":255}'],
+        ["--domain", "light", "--service", "turn_on", "--entities", "light.kitchen", "--data", '{"brightness":255}'],
         { from: "user" }
       )
     );
@@ -126,7 +126,7 @@ describe("batch command", () => {
     const cmd = createBatchCommand();
     const result = await captureLog(() =>
       cmd.parseAsync(
-        ["node", "test", "--domain", "switch", "--service", "turn_off", "--entities", "switch.fan"],
+        ["--domain", "switch", "--service", "turn_off", "--entities", "switch.fan"],
         { from: "user" }
       )
     );
@@ -155,7 +155,7 @@ describe("discover command", () => {
 
     const cmd = createDiscoverCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
 
     const parsed = JSON.parse(result);
@@ -169,7 +169,7 @@ describe("discover command", () => {
 
     const cmd = createDiscoverCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--domains"], { from: "user" })
+      cmd.parseAsync(["--domains"], { from: "user" })
     );
 
     const parsed = JSON.parse(result);
@@ -183,7 +183,7 @@ describe("discover command", () => {
 
     const cmd = createDiscoverCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--unavailable"], { from: "user" })
+      cmd.parseAsync(["--unavailable"], { from: "user" })
     );
 
     // Should contain the unavailable sensor entity
@@ -196,7 +196,7 @@ describe("discover command", () => {
 
     const cmd = createDiscoverCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--domains", "--limit", "1"], { from: "user" })
+      cmd.parseAsync(["--domains", "--limit", "1"], { from: "user" })
     );
 
     const parsed = JSON.parse(result);
@@ -208,7 +208,7 @@ describe("discover command", () => {
 
     const cmd = createDiscoverCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
 
     const parsed = JSON.parse(result);

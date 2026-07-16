@@ -43,7 +43,7 @@ describe("command output formatting", () => {
     const originalLog = console.log;
     console.log = (msg: string) => output.push(msg);
 
-    await cmd.parseAsync(["node", "test", "{{ 1 + 1 }}"], { from: "user" });
+    await cmd.parseAsync(["{{ 1 + 1 }}"], { from: "user" });
 
     console.log = originalLog;
     const parsed = JSON.parse(output.join("\n"));
@@ -61,7 +61,7 @@ describe("command output formatting", () => {
     const originalLog = console.log;
     console.log = (msg: string) => output.push(msg);
 
-    await cmd.parseAsync(["node", "test"], { from: "user" });
+    await cmd.parseAsync([], { from: "user" });
 
     console.log = originalLog;
     const parsed = JSON.parse(output.join("\n"));

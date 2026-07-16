@@ -46,11 +46,11 @@ vi.mock("../src/utils/github-star.js", () => ({
 }));
 
 vi.mock("../src/api/index.js", () => ({
-  HomeAssistantClient: vi.fn().mockImplementation(() => ({
+  HomeAssistantClient: vi.fn().mockImplementation(function () { return {
     getStatus: vi.fn(async () => ({ message: "API running." })),
     getConfig: vi.fn(async () => ({ version: "2024.1.0", location_name: "Home" })),
     getStates: vi.fn(async () => [{ entity_id: "light.kitchen" }, { entity_id: "switch.fan" }]),
-  })),
+  }; }),
 }));
 
 function captureLog(fn: () => Promise<void>): Promise<{ stdout: string; stderr: string }> {
@@ -78,7 +78,7 @@ describe("config set command", () => {
   it("saves url and token", async () => {
     const cmd = createConfigSetCommand();
     const { stdout } = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--ha-url", "http://ha.local:8123", "--ha-token", "my-token"], { from: "user" })
+      cmd.parseAsync(["--ha-url", "http://ha.local:8123", "--ha-token", "my-token"], { from: "user" })
     );
 
     expect(mockSaveConfig).toHaveBeenCalledWith(
@@ -91,7 +91,7 @@ describe("config set command", () => {
   it("strips trailing slash from URL", async () => {
     const cmd = createConfigSetCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--ha-url", "http://ha.local:8123/"], { from: "user" })
+      cmd.parseAsync(["--ha-url", "http://ha.local:8123/"], { from: "user" })
     );
 
     expect(mockSaveConfig).toHaveBeenCalledWith(
@@ -103,7 +103,7 @@ describe("config set command", () => {
   it("saves output format", async () => {
     const cmd = createConfigSetCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--default-format", "json"], { from: "user" })
+      cmd.parseAsync(["--default-format", "json"], { from: "user" })
     );
 
     expect(mockSaveConfig).toHaveBeenCalledWith(
@@ -115,7 +115,7 @@ describe("config set command", () => {
   it("saves timeout", async () => {
     const cmd = createConfigSetCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--default-timeout", "45000"], { from: "user" })
+      cmd.parseAsync(["--default-timeout", "45000"], { from: "user" })
     );
 
     expect(mockSaveConfig).toHaveBeenCalledWith(
@@ -127,7 +127,7 @@ describe("config set command", () => {
   it("saves read-only flag", async () => {
     const cmd = createConfigSetCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--read-only", "true"], { from: "user" })
+      cmd.parseAsync(["--read-only", "true"], { from: "user" })
     );
 
     expect(mockSaveConfig).toHaveBeenCalledWith(
@@ -139,7 +139,7 @@ describe("config set command", () => {
   it("exits with 1 when no options provided", async () => {
     const cmd = createConfigSetCommand();
     const { stderr } = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
 
     expect(exitSpy).toHaveBeenCalledWith(1);
@@ -154,7 +154,7 @@ describe("config path command", () => {
   it("shows paths", async () => {
     const cmd = createConfigPathCommand();
     const { stdout } = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
 
     const parsed = JSON.parse(stdout);
@@ -179,7 +179,7 @@ describe("init command", () => {
 
     const cmd = createInitCommand();
     const { stdout } = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
 
     expect(mockSaveConfig).toHaveBeenCalledWith(
@@ -194,7 +194,7 @@ describe("init command", () => {
 
     const cmd = createInitCommand();
     const { stderr } = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
 
     expect(exitSpy).toHaveBeenCalledWith(1);
@@ -209,7 +209,7 @@ describe("validate command", () => {
   it("validates successfully and saves data", async () => {
     const cmd = createValidateCommand();
     const { stdout } = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
 
     expect(stdout).toContain("VALID");
@@ -227,7 +227,7 @@ describe("reset command", () => {
 
     const cmd = createResetCommand();
     const { stdout } = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--force"], { from: "user" })
+      cmd.parseAsync(["--force"], { from: "user" })
     );
 
     expect(mockResetConfig).toHaveBeenCalled();
@@ -239,7 +239,7 @@ describe("reset command", () => {
 
     const cmd = createResetCommand();
     const { stdout } = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
 
     expect(exitSpy).toHaveBeenCalledWith(1);
@@ -251,7 +251,7 @@ describe("reset command", () => {
 
     const cmd = createResetCommand();
     const { stdout } = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--force"], { from: "user" })
+      cmd.parseAsync(["--force"], { from: "user" })
     );
 
     expect(stdout).toContain("NO_CONFIG");
@@ -266,7 +266,7 @@ describe("list command", () => {
   it("lists all configuration options", async () => {
     const cmd = createListCommand();
     const { stdout } = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
 
     expect(stdout).toContain("config_options");

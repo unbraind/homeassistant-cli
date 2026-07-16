@@ -90,7 +90,7 @@ describe("automations command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(automationStates));
 
     const cmd = createAutomationsCommand();
-    const result = await captureLog(() => cmd.parseAsync(["node", "test"], { from: "user" }));
+    const result = await captureLog(() => cmd.parseAsync([], { from: "user" }));
 
     expect(result).toContain("automation.morning_lights");
     expect(result).toContain("Morning Lights");
@@ -100,7 +100,7 @@ describe("automations command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(automationStates));
 
     const cmd = createAutomationsCommand();
-    const result = await captureLog(() => cmd.parseAsync(["node", "test", "--count"], { from: "user" }));
+    const result = await captureLog(() => cmd.parseAsync(["--count"], { from: "user" }));
 
     expect(result).toContain("automations_count");
     expect(result).toContain("1");
@@ -111,7 +111,7 @@ describe("automations command", () => {
 
     const cmd = createAutomationsCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--on", "automation.morning_lights"], { from: "user" })
+      cmd.parseAsync(["--on", "automation.morning_lights"], { from: "user" })
     );
 
     expect(result).toContain("turned_on");
@@ -123,7 +123,7 @@ describe("automations command", () => {
 
     const cmd = createAutomationsCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--off", "automation.morning_lights"], { from: "user" })
+      cmd.parseAsync(["--off", "automation.morning_lights"], { from: "user" })
     );
 
     expect(result).toContain("turned_off");
@@ -134,7 +134,7 @@ describe("automations command", () => {
 
     const cmd = createAutomationsCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--toggle", "automation.morning_lights"], { from: "user" })
+      cmd.parseAsync(["--toggle", "automation.morning_lights"], { from: "user" })
     );
 
     expect(result).toContain("toggled");
@@ -145,7 +145,7 @@ describe("automations command", () => {
 
     const cmd = createAutomationsCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--trigger", "automation.morning_lights"], { from: "user" })
+      cmd.parseAsync(["--trigger", "automation.morning_lights"], { from: "user" })
     );
 
     expect(result).toContain("triggered");
@@ -156,7 +156,7 @@ describe("automations command", () => {
 
     const cmd = createAutomationsCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--reload"], { from: "user" })
+      cmd.parseAsync(["--reload"], { from: "user" })
     );
 
     expect(result).toContain("reloaded");
@@ -178,7 +178,7 @@ describe("scripts command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(scriptStates));
 
     const cmd = createScriptsCommand();
-    const result = await captureLog(() => cmd.parseAsync(["node", "test"], { from: "user" }));
+    const result = await captureLog(() => cmd.parseAsync([], { from: "user" }));
 
     expect(result).toContain("script.bedtime");
     expect(result).toContain("Bedtime");
@@ -188,7 +188,7 @@ describe("scripts command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(scriptStates));
 
     const cmd = createScriptsCommand();
-    const result = await captureLog(() => cmd.parseAsync(["node", "test", "--count"], { from: "user" }));
+    const result = await captureLog(() => cmd.parseAsync(["--count"], { from: "user" }));
 
     expect(result).toContain("scripts_count");
     expect(result).toContain("1");
@@ -199,7 +199,7 @@ describe("scripts command", () => {
 
     const cmd = createScriptsCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--run", "script.bedtime"], { from: "user" })
+      cmd.parseAsync(["--run", "script.bedtime"], { from: "user" })
     );
 
     expect(result).toContain("executed");
@@ -211,7 +211,7 @@ describe("scripts command", () => {
 
     const cmd = createScriptsCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--reload"], { from: "user" })
+      cmd.parseAsync(["--reload"], { from: "user" })
     );
 
     expect(result).toContain("reloaded");
@@ -233,7 +233,7 @@ describe("scenes command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(sceneStates));
 
     const cmd = createScenesCommand();
-    const result = await captureLog(() => cmd.parseAsync(["node", "test"], { from: "user" }));
+    const result = await captureLog(() => cmd.parseAsync([], { from: "user" }));
 
     expect(result).toContain("scene.movie_mode");
     expect(result).toContain("Movie Mode");
@@ -243,7 +243,7 @@ describe("scenes command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(sceneStates));
 
     const cmd = createScenesCommand();
-    const result = await captureLog(() => cmd.parseAsync(["node", "test", "--count"], { from: "user" }));
+    const result = await captureLog(() => cmd.parseAsync(["--count"], { from: "user" }));
 
     expect(result).toContain("scenes_count");
     expect(result).toContain("1");
@@ -254,7 +254,7 @@ describe("scenes command", () => {
 
     const cmd = createScenesCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--apply", "scene.movie_mode"], { from: "user" })
+      cmd.parseAsync(["--apply", "scene.movie_mode"], { from: "user" })
     );
 
     expect(result).toContain("applied");
@@ -266,7 +266,7 @@ describe("scenes command", () => {
 
     const cmd = createScenesCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--reload"], { from: "user" })
+      cmd.parseAsync(["--reload"], { from: "user" })
     );
 
     expect(result).toContain("reloaded");

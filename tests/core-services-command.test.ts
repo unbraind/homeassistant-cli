@@ -57,7 +57,7 @@ describe("core services command", () => {
     const originalLog = console.log;
     console.log = (msg: string) => output.push(msg);
 
-    await cmd.parseAsync(["node", "test"], { from: "user" });
+    await cmd.parseAsync([], { from: "user" });
     console.log = originalLog;
 
     expect(output.join("\n")).toContain("light,turn_on|turn_off");
@@ -76,7 +76,7 @@ describe("core services command", () => {
     const originalLog = console.log;
     console.log = (msg: string) => output.push(msg);
 
-    await cmd.parseAsync(["node", "test", "--count"], { from: "user" });
+    await cmd.parseAsync(["--count"], { from: "user" });
     console.log = originalLog;
 
     const result = output.join("\n");
@@ -96,7 +96,7 @@ describe("core services command", () => {
     const originalLog = console.log;
     console.log = (msg: string) => output.push(msg);
 
-    await cmd.parseAsync(["node", "test", "--flat"], { from: "user" });
+    await cmd.parseAsync(["--flat"], { from: "user" });
     console.log = originalLog;
 
     const result = output.join("\n");
@@ -128,7 +128,7 @@ describe("core services command", () => {
     const originalLog = console.log;
     console.log = (msg: string) => output.push(msg);
 
-    await cmd.parseAsync(["node", "test", "--schema"], { from: "user" });
+    await cmd.parseAsync(["--schema"], { from: "user" });
     console.log = originalLog;
 
     const result = output.join("\n");

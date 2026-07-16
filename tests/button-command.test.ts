@@ -79,7 +79,7 @@ describe("button command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(buttonStates));
     const cmd = createButtonCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
     expect(result).toContain("button.restart_device");
     expect(result).toContain("button.identify");
@@ -90,7 +90,7 @@ describe("button command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(buttonStates));
     const cmd = createButtonCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--count"], { from: "user" })
+      cmd.parseAsync(["--count"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.buttons_count).toBe(2);
@@ -100,7 +100,7 @@ describe("button command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createButtonCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--press", "button.restart_device"], { from: "user" })
+      cmd.parseAsync(["--press", "button.restart_device"], { from: "user" })
     );
     expect(result).toContain("pressed");
     expect(result).toContain("button.restart_device");
@@ -113,7 +113,7 @@ describe("button command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(buttonStates));
     const cmd = createButtonCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--state", "unknown"], { from: "user" })
+      cmd.parseAsync(["--state", "unknown"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.buttons).toHaveLength(2);

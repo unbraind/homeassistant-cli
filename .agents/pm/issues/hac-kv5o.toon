@@ -1,0 +1,35 @@
+id: hac-kv5o
+title: Protect the default branch with required quality checks
+description: Enable GitHub branch protection so unverified commits cannot silently become the default branch.
+type: Issue
+status: in_progress
+priority: 1
+tags[5]: branch-protection,discovered,github,governance,security
+created_at: "2026-07-16T17:09:23.324Z"
+updated_at: "2026-07-16T17:09:24.976Z"
+deadline: "2026-07-18T17:09:23.324Z"
+assignee: codex-root
+author: codex-root
+estimated_minutes: 45
+acceptance_criteria: master blocks force pushes and deletion; current CI/security status checks are required with strict up-to-date branches; owner retains an explicit emergency admin bypass; settings are verified through gh after merge
+parent: hac-gpm3
+reviewer: unbraind
+risk: high
+confidence: 100
+sprint: 2026-07-security
+release: 2026.7.16
+dependencies[1]{id,kind,created_at,author,source_kind}:
+  hac-gpm3,parent,"2026-07-16T17:09:23.324Z",codex-root,null
+comments[1]{created_at,author,text}:
+  "2026-07-16T17:09:23.324Z",codex-root,gh api repos/unbraind/homeassistant-cli/branches/master/protection returned Branch not protected; repository rulesets list is empty.
+notes[1]{created_at,author,text}:
+  "2026-07-16T17:09:23.324Z",codex-root,Apply protection only after the remediation PR merges so new required checks are known-good and do not block this bootstrap delivery.
+learnings[1]{created_at,author,text}:
+  "2026-07-16T17:09:23.324Z",codex-root,Security workflows do not protect the default branch unless repository policy requires their successful contexts.
+files[1]{path,scope,note}:
+  .github/workflows/ci.yml,project,Required quality check definitions
+tests[1]{command,scope,timeout_seconds}:
+  gh api repos/unbraind/homeassistant-cli/branches/master/protection,project,120
+docs[1]{path,scope,note}:
+  SECURITY.md,project,Repository security policy
+body: "## Discovery\\n\\nThe authenticated GitHub branch-protection endpoint reports master is not protected and the repository has no rulesets. This permits force pushes/deletion and does not require the established CI/security checks."

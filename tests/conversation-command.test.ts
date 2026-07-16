@@ -68,7 +68,7 @@ describe("conversation command", () => {
 
     const cmd = createConversationCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--agents"], { from: "user" })
+      cmd.parseAsync(["--agents"], { from: "user" })
     );
 
     expect(result).toContain("homeassistant");
@@ -81,7 +81,7 @@ describe("conversation command", () => {
 
     const cmd = createConversationCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--agents"], { from: "user" })
+      cmd.parseAsync(["--agents"], { from: "user" })
     );
 
     expect(result).toContain("conversation_agents");
@@ -92,7 +92,7 @@ describe("conversation command", () => {
 
     const cmd = createConversationCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--text", "what time is it"], { from: "user" })
+      cmd.parseAsync(["--text", "what time is it"], { from: "user" })
     );
 
     expect(result).toContain("It is 10 PM");
@@ -104,7 +104,7 @@ describe("conversation command", () => {
 
     const cmd = createConversationCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--text", "hello", "--agent-id", "openai"], { from: "user" })
+      cmd.parseAsync(["--text", "hello", "--agent-id", "openai"], { from: "user" })
     );
 
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -117,7 +117,7 @@ describe("conversation command", () => {
 
     const cmd = createConversationCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--text", "follow up", "--conversation-id", "prev-conv"], { from: "user" })
+      cmd.parseAsync(["--text", "follow up", "--conversation-id", "prev-conv"], { from: "user" })
     );
 
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -141,7 +141,7 @@ describe("ask command", () => {
 
     const cmd = createAskCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "what time is it"], { from: "user" })
+      cmd.parseAsync(["what time is it"], { from: "user" })
     );
 
     expect(result).toContain("It is 10 PM");
@@ -153,7 +153,7 @@ describe("ask command", () => {
 
     const cmd = createAskCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "hello", "--agent-id", "openai"], { from: "user" })
+      cmd.parseAsync(["hello", "--agent-id", "openai"], { from: "user" })
     );
 
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };

@@ -58,7 +58,7 @@ describe("sun command", () => {
   it("returns sun position data", async () => {
     mockRequest.mockResolvedValueOnce(mockResponse([sunState]));
     const cmd = createSunCommand();
-    const result = await captureLog(() => cmd.parseAsync(["node", "test"], { from: "user" }));
+    const result = await captureLog(() => cmd.parseAsync([], { from: "user" }));
     const parsed = JSON.parse(result);
     expect(parsed.state).toBe("above_horizon");
     expect(parsed.elevation).toBe(35.27);
@@ -72,7 +72,7 @@ describe("sun command", () => {
   it("returns error when sun.sun entity not found", async () => {
     mockRequest.mockResolvedValueOnce(mockResponse([]));
     const cmd = createSunCommand();
-    const result = await captureLog(() => cmd.parseAsync(["node", "test"], { from: "user" }));
+    const result = await captureLog(() => cmd.parseAsync([], { from: "user" }));
     const parsed = JSON.parse(result);
     expect(parsed.error).toContain("sun.sun entity not found");
   });

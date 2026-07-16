@@ -97,7 +97,7 @@ describe("update command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(updateStates));
     const cmd = createUpdateCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
     expect(result).toContain("update.home_assistant_core");
     expect(result).toContain("update.home_assistant_supervisor");
@@ -108,7 +108,7 @@ describe("update command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(updateStates));
     const cmd = createUpdateCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--count"], { from: "user" })
+      cmd.parseAsync(["--count"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.updates_count).toBe(2);
@@ -118,7 +118,7 @@ describe("update command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(updateStates));
     const cmd = createUpdateCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--pending"], { from: "user" })
+      cmd.parseAsync(["--pending"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.updates).toHaveLength(1);
@@ -129,7 +129,7 @@ describe("update command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createUpdateCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--install", "update.home_assistant_core"], { from: "user" })
+      cmd.parseAsync(["--install", "update.home_assistant_core"], { from: "user" })
     );
     expect(result).toContain("install_started");
     expect(result).toContain("update.home_assistant_core");
@@ -142,7 +142,7 @@ describe("update command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createUpdateCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--install", "update.home_assistant_core", "--version", "2026.2.0"], { from: "user" })
+      cmd.parseAsync(["--install", "update.home_assistant_core", "--version", "2026.2.0"], { from: "user" })
     );
     expect(result).toContain("install_started");
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -154,7 +154,7 @@ describe("update command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createUpdateCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "update.home_assistant_core", "--version", "2026.2.0"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "update.home_assistant_core", "--version", "2026.2.0"], { from: "user" })
     );
     expect(result).toContain("install_started");
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -167,7 +167,7 @@ describe("update command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createUpdateCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--skip", "update.home_assistant_core"], { from: "user" })
+      cmd.parseAsync(["--skip", "update.home_assistant_core"], { from: "user" })
     );
     expect(result).toContain("skipped");
     expect(result).toContain("update.home_assistant_core");
@@ -177,7 +177,7 @@ describe("update command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createUpdateCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--clear-skipped", "update.home_assistant_core"], { from: "user" })
+      cmd.parseAsync(["--clear-skipped", "update.home_assistant_core"], { from: "user" })
     );
     expect(result).toContain("cleared_skipped");
   });

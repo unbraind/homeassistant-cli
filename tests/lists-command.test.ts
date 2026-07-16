@@ -55,7 +55,7 @@ describe("todo command", () => {
     );
 
     const cmd = createTodoCommand();
-    const result = await captureLog(() => cmd.parseAsync(["node", "test", "--lists"], { from: "user" }));
+    const result = await captureLog(() => cmd.parseAsync(["--lists"], { from: "user" }));
 
     expect(result).toContain("todo.groceries");
     expect(result).toContain("Groceries");
@@ -68,7 +68,7 @@ describe("todo command", () => {
 
     const cmd = createTodoCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--lists", "--count"], { from: "user" })
+      cmd.parseAsync(["--lists", "--count"], { from: "user" })
     );
 
     expect(result).toContain("todo_lists_count");
@@ -80,7 +80,7 @@ describe("todo command", () => {
 
     const cmd = createTodoCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "-e", "todo.groceries", "-a", "Buy milk"], { from: "user" })
+      cmd.parseAsync(["-e", "todo.groceries", "-a", "Buy milk"], { from: "user" })
     );
 
     expect(result).toContain("Buy milk");
@@ -92,7 +92,7 @@ describe("todo command", () => {
 
     const cmd = createTodoCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "-e", "todo.groceries", "--remove", "uid-123"], { from: "user" })
+      cmd.parseAsync(["-e", "todo.groceries", "--remove", "uid-123"], { from: "user" })
     );
 
     expect(result).toContain("uid-123");
@@ -105,7 +105,7 @@ describe("todo command", () => {
     const cmd = createTodoCommand();
     const result = await captureLog(() =>
       cmd.parseAsync(
-        ["node", "test", "-e", "todo.groceries", "--update", "uid-123", "-n", "Updated item", "--complete"],
+        ["-e", "todo.groceries", "--update", "uid-123", "-n", "Updated item", "--complete"],
         { from: "user" }
       )
     );
@@ -118,7 +118,7 @@ describe("todo command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ message: "Not Found" }, 404));
 
     const cmd = createTodoCommand();
-    const result = await captureLog(() => cmd.parseAsync(["node", "test", "--lists"], { from: "user" }));
+    const result = await captureLog(() => cmd.parseAsync(["--lists"], { from: "user" }));
 
     expect(result).toContain("Todo endpoint not available");
   });
@@ -143,7 +143,7 @@ describe("shopping-list command", () => {
     );
 
     const cmd = createShoppingListCommand();
-    const result = await captureLog(() => cmd.parseAsync(["node", "test"], { from: "user" }));
+    const result = await captureLog(() => cmd.parseAsync([], { from: "user" }));
 
     expect(result).toContain("Milk");
     expect(result).toContain("Bread");
@@ -158,7 +158,7 @@ describe("shopping-list command", () => {
     );
 
     const cmd = createShoppingListCommand();
-    const result = await captureLog(() => cmd.parseAsync(["node", "test", "--count"], { from: "user" }));
+    const result = await captureLog(() => cmd.parseAsync(["--count"], { from: "user" }));
 
     expect(result).toContain("shopping_list_count");
     expect(result).toContain("2");
@@ -174,7 +174,7 @@ describe("shopping-list command", () => {
 
     const cmd = createShoppingListCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--pending"], { from: "user" })
+      cmd.parseAsync(["--pending"], { from: "user" })
     );
 
     expect(result).toContain("Milk");
@@ -191,7 +191,7 @@ describe("shopping-list command", () => {
 
     const cmd = createShoppingListCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--completed"], { from: "user" })
+      cmd.parseAsync(["--completed"], { from: "user" })
     );
 
     expect(result).not.toContain("Milk");
@@ -205,7 +205,7 @@ describe("shopping-list command", () => {
 
     const cmd = createShoppingListCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "-a", "Eggs"], { from: "user" })
+      cmd.parseAsync(["-a", "Eggs"], { from: "user" })
     );
 
     expect(result).toContain("Eggs");
@@ -216,7 +216,7 @@ describe("shopping-list command", () => {
 
     const cmd = createShoppingListCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "-d", "item-1"], { from: "user" })
+      cmd.parseAsync(["-d", "item-1"], { from: "user" })
     );
 
     expect(result).toContain("item-1");
@@ -228,7 +228,7 @@ describe("shopping-list command", () => {
 
     const cmd = createShoppingListCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--clear-completed"], { from: "user" })
+      cmd.parseAsync(["--clear-completed"], { from: "user" })
     );
 
     expect(result).toContain("cleared");
@@ -241,7 +241,7 @@ describe("shopping-list command", () => {
 
     const cmd = createShoppingListCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--update", "2", "--name", "Updated Milk", "--complete"], { from: "user" })
+      cmd.parseAsync(["--update", "2", "--name", "Updated Milk", "--complete"], { from: "user" })
     );
 
     expect(result).toContain("updated");
@@ -267,7 +267,7 @@ describe("notifications command", () => {
     );
 
     const cmd = createNotificationsCommand();
-    const result = await captureLog(() => cmd.parseAsync(["node", "test"], { from: "user" }));
+    const result = await captureLog(() => cmd.parseAsync([], { from: "user" }));
 
     expect(result).toContain("Test notification");
   });
@@ -281,7 +281,7 @@ describe("notifications command", () => {
 
     const cmd = createNotificationsCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--count"], { from: "user" })
+      cmd.parseAsync(["--count"], { from: "user" })
     );
 
     expect(result).toContain("notifications_count");
@@ -293,7 +293,7 @@ describe("notifications command", () => {
 
     const cmd = createNotificationsCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "-c", "Hello world", "-t", "Greeting"], { from: "user" })
+      cmd.parseAsync(["-c", "Hello world", "-t", "Greeting"], { from: "user" })
     );
 
     expect(result).toContain("Hello world");
@@ -305,7 +305,7 @@ describe("notifications command", () => {
 
     const cmd = createNotificationsCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "-d", "n1"], { from: "user" })
+      cmd.parseAsync(["-d", "n1"], { from: "user" })
     );
 
     expect(result).toContain("n1");
@@ -317,7 +317,7 @@ describe("notifications command", () => {
 
     const cmd = createNotificationsCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--dismiss-all"], { from: "user" })
+      cmd.parseAsync(["--dismiss-all"], { from: "user" })
     );
 
     expect(result).toContain("all");
@@ -341,7 +341,7 @@ describe("notifications command", () => {
       );
 
     const cmd = createNotificationsCommand();
-    const result = await captureLog(() => cmd.parseAsync(["node", "test"], { from: "user" }));
+    const result = await captureLog(() => cmd.parseAsync([], { from: "user" }));
 
     expect(result).toContain("System update available");
     expect(result).not.toContain("light.kitchen");
@@ -364,7 +364,7 @@ describe("notifications command", () => {
 
     const cmd = createNotificationsCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--count"], { from: "user" })
+      cmd.parseAsync(["--count"], { from: "user" })
     );
 
     expect(result).toContain("notifications_count");

@@ -115,7 +115,7 @@ describe("sensor command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(allStates));
     const cmd = createSensorCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
     expect(result).toContain("sensor.temperature_bedroom");
     expect(result).toContain("sensor.humidity_living_room");
@@ -127,7 +127,7 @@ describe("sensor command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(allStates));
     const cmd = createSensorCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--count"], { from: "user" })
+      cmd.parseAsync(["--count"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.sensors_count).toBe(3);
@@ -137,7 +137,7 @@ describe("sensor command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(allStates));
     const cmd = createSensorCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--class", "temperature"], { from: "user" })
+      cmd.parseAsync(["--class", "temperature"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.sensors).toHaveLength(1);
@@ -148,7 +148,7 @@ describe("sensor command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(allStates));
     const cmd = createSensorCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--unit", "%"], { from: "user" })
+      cmd.parseAsync(["--unit", "%"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.sensors).toHaveLength(1);
@@ -159,7 +159,7 @@ describe("sensor command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(allStates));
     const cmd = createSensorCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--state", "unavailable"], { from: "user" })
+      cmd.parseAsync(["--state", "unavailable"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.sensors).toHaveLength(1);
@@ -170,7 +170,7 @@ describe("sensor command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(allStates));
     const cmd = createSensorCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--above", "30"], { from: "user" })
+      cmd.parseAsync(["--above", "30"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.sensors).toHaveLength(1);
@@ -181,7 +181,7 @@ describe("sensor command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(allStates));
     const cmd = createSensorCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--below", "30"], { from: "user" })
+      cmd.parseAsync(["--below", "30"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.sensors).toHaveLength(1);
@@ -203,7 +203,7 @@ describe("binary-sensor command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(allStates));
     const cmd = createBinarySensorCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
     expect(result).toContain("binary_sensor.motion_bedroom");
     expect(result).toContain("binary_sensor.door_front");
@@ -215,7 +215,7 @@ describe("binary-sensor command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(allStates));
     const cmd = createBinarySensorCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--count"], { from: "user" })
+      cmd.parseAsync(["--count"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.binary_sensors_count).toBe(2);
@@ -225,7 +225,7 @@ describe("binary-sensor command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(allStates));
     const cmd = createBinarySensorCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--class", "motion"], { from: "user" })
+      cmd.parseAsync(["--class", "motion"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.binary_sensors).toHaveLength(1);
@@ -236,7 +236,7 @@ describe("binary-sensor command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(allStates));
     const cmd = createBinarySensorCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--state", "on"], { from: "user" })
+      cmd.parseAsync(["--state", "on"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.binary_sensors).toHaveLength(1);
@@ -247,7 +247,7 @@ describe("binary-sensor command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(allStates));
     const cmd = createBinarySensorCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--state", "off"], { from: "user" })
+      cmd.parseAsync(["--state", "off"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.binary_sensors).toHaveLength(1);

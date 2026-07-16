@@ -111,7 +111,7 @@ describe("check-config command", () => {
 
     const cmd = createCheckConfigCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
 
     expect(result).toContain("valid");

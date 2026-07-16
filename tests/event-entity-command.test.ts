@@ -89,7 +89,7 @@ describe("event entity command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(eventStates));
     const cmd = createEventEntityCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
     expect(result).toContain("event.hue_button_1");
     expect(result).toContain("event.backup_automatic");
@@ -100,7 +100,7 @@ describe("event entity command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(eventStates));
     const cmd = createEventEntityCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--count"], { from: "user" })
+      cmd.parseAsync(["--count"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.event_entities_count).toBe(2);
@@ -110,7 +110,7 @@ describe("event entity command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(eventStates));
     const cmd = createEventEntityCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "event.hue_button_1"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "event.hue_button_1"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.event_entities).toHaveLength(1);
@@ -121,7 +121,7 @@ describe("event entity command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(eventStates));
     const cmd = createEventEntityCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--class", "button"], { from: "user" })
+      cmd.parseAsync(["--class", "button"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.event_entities).toHaveLength(1);
@@ -132,7 +132,7 @@ describe("event entity command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(eventStates));
     const cmd = createEventEntityCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
     expect(result).toContain("short_release");
     expect(result).toContain("completed");
@@ -142,7 +142,7 @@ describe("event entity command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(eventStates));
     const cmd = createEventEntityCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--state", "2024-01-01T10:00:00.000+00:00"], { from: "user" })
+      cmd.parseAsync(["--state", "2024-01-01T10:00:00.000+00:00"], { from: "user" })
     );
     const parsed = JSON.parse(result);
     expect(parsed.event_entities).toHaveLength(1);

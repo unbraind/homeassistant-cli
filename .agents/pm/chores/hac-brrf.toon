@@ -1,0 +1,138 @@
+id: hac-brrf
+title: Modernize supported runtime and development dependencies
+description: Upgrade stale direct dependencies in one compatibility-tested bundle.
+type: Chore
+status: in_progress
+priority: 1
+tags[4]: dependencies,maintenance,runtime,tooling
+created_at: "2026-07-16T16:54:18.118Z"
+updated_at: "2026-07-16T17:10:36.651Z"
+deadline: "2026-07-18T16:54:18.118Z"
+assignee: codex-root
+author: codex-root
+estimated_minutes: 180
+acceptance_criteria: "manifest and bun.lock agree; supported latest versions are selected with documented compatibility choices; lint, typecheck, build, and tests pass"
+parent: hac-gpm3
+reviewer: unbraind
+risk: high
+confidence: 95
+sprint: 2026-07-security
+release: 2026.7.16
+dependencies[1]{id,kind,created_at,author,source_kind}:
+  hac-gpm3,parent,"2026-07-16T16:54:18.118Z",codex-root,null
+comments[1]{created_at,author,text}:
+  "2026-07-16T16:54:18.118Z",codex-root,Fifteen separate Dependabot PRs overlap and currently cannot pass frozen installation.
+notes[1]{created_at,author,text}:
+  "2026-07-16T16:54:18.118Z",codex-root,Prefer one coherent graph over merging mutually stale bot branches.
+learnings[1]{created_at,author,text}:
+  "2026-07-16T16:54:18.118Z",codex-root,"Major upgrades must be validated together because test,lint,type and runtime packages share peer constraints."
+files[101]{path,scope,note}:
+  bun.lock,project,Resolved compatibility-tested graph
+  package.json,project,Primary implementation surface
+  tests/ai-task-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/api-base.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/api-conversation-extended.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/api-errors.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/api-extended.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/api-media.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/api-registries-ws.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/api-search-extended.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/api-system-extended.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/api-websocket.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/api.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/automation-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/automation.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/button-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/call-service-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/capabilities-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/capabilities-matrix.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/cli-config-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/cli-config-extended.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/climate-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/command-output-format.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/config-entries-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/config-entries.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/config.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/conversation-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/conversation.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/core-commands.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/core-services-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/counter-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/cover-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/device-tracker-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/event-entity-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/extended-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/extended.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/fan-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/formatters-extended.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/formatters-index.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/formatters.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/github-star-extended.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/github-star.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/global-help.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/help-surface-e2e.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/history-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/input-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/inspect-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/json.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/light-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/lists-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/lists.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/llm-batch-discover-query.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/llm-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/llm-entities-extended.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/llm-extended.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/lock-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/logger-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/media-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/media-player-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/mqtt-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/notify-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/number-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/output-formats-validation.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/pipeline-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/recorder-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/registries-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/registries.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/registry-crud-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/registry-crud.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/remote-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/schedule-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/search-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/search.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/select-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/sensor-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/services-extended.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/services-utils.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/settings-doctor.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/settings-validate.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/settings-wizard.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/siren-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/statistics-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/statistics.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/sun-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/supervisor-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/supervisor-extended.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/switch-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/system-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/system-extended.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/system.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/table.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/timers-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/tts-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/tts.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/update-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/utility-meter-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/vacuum-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/valve-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/water-heater-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/websocket-command.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+  tests/yaml.test.ts,project,Vitest 4 and Commander 15 compatibility harness
+tests[1]{command,scope,timeout_seconds}:
+  bun install --frozen-lockfile,project,1800
+test_runs[1]{run_id,kind,status,started_at,finished_at,recorded_at,passed,failed,skipped}:
+  test-local-mrnrm44h-hl1c07,test,passed,"2026-07-16T17:10:36.440Z","2026-07-16T17:10:36.642Z","2026-07-16T17:10:36.642Z",1,0,0
+docs[2]{path,scope,note}:
+  CHANGELOG.md,project,Dependency and runtime compatibility release notes
+  CONTRIBUTING.md,project,Relevant project documentation
+body: "## Scope\\n\\nUpdate Toon, Commander, Undici, ws, YAML, ESLint stack, Node types, Vitest/coverage, tsx, TypeScript, and TypeScript ESLint where compatible with the supported Node runtime.\n\nCompatibility decision: TypeScript remains on 5.9.3 because typescript-eslint 8.64 declares TypeScript >=4.8.4 <6.1.0. @types/node remains on 22.20.1 to match the declared Node 22 runtime. Commander 15 and Undici 8 require Node 22.19+, so engines and contributor documentation now declare that floor."

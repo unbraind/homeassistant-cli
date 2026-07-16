@@ -1,0 +1,37 @@
+id: hac-d3yc
+title: Remediate critical and high dependency vulnerabilities
+description: Upgrade vulnerable direct and transitive dependency paths and prove the resulting graph is clean.
+type: Issue
+status: in_progress
+priority: 0
+tags[4]: dependencies,github-alert,security,vulnerability
+created_at: "2026-07-16T16:54:17.428Z"
+updated_at: "2026-07-16T17:10:35.943Z"
+deadline: "2026-07-18T16:54:17.428Z"
+assignee: codex-root
+author: codex-root
+estimated_minutes: 180
+acceptance_criteria: bun audit reports no actionable advisories; GHSA-5xrq-8626-4rwp is resolved; runtime dependency tests pass
+parent: hac-gpm3
+reviewer: unbraind
+risk: critical
+confidence: 95
+sprint: 2026-07-security
+release: 2026.7.16
+dependencies[1]{id,kind,created_at,author,source_kind}:
+  hac-gpm3,parent,"2026-07-16T16:54:17.428Z",codex-root,null
+comments[1]{created_at,author,text}:
+  "2026-07-16T16:54:17.428Z",codex-root,GitHub alert 2 is critical and directly affects vitest 2.1.9.
+notes[1]{created_at,author,text}:
+  "2026-07-16T16:54:17.428Z",codex-root,Upgrade direct roots rather than suppressing advisories.
+learnings[1]{created_at,author,text}:
+  "2026-07-16T16:54:17.428Z",codex-root,Audit output must be checked after lockfile resolution because many findings are transitive.
+files[1]{path,scope,note}:
+  package.json,project,Primary implementation surface
+tests[1]{command,scope,timeout_seconds}:
+  bun audit --json,project,1800
+test_runs[1]{run_id,kind,status,started_at,finished_at,recorded_at,passed,failed,skipped}:
+  test-local-mrnrm3kx-8rbw15,test,passed,"2026-07-16T17:10:35.083Z","2026-07-16T17:10:35.937Z","2026-07-16T17:10:35.937Z",1,0,0
+docs[1]{path,scope,note}:
+  SECURITY.md,project,Relevant project documentation
+body: "## Evidence\\n\\nBun audit reports 28 findings: critical Vitest, high Undici/ws/Vite/flatted/picomatch, and moderate/low transitive findings. GitHub Dependabot alert 2 identifies Vitest before 3.2.6."

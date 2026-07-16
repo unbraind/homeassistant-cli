@@ -103,7 +103,7 @@ describe("notify command", () => {
   });
 
   it("fails on invalid JSON data", async () => {
-    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(function () {});
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
 
     const cmd = createNotifyCommand();

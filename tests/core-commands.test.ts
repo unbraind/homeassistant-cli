@@ -63,7 +63,7 @@ describe("status command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ message: "API running." }));
 
     const cmd = createStatusCommand();
-    const result = await captureLog(() => cmd.parseAsync(["node", "test"], { from: "user" }));
+    const result = await captureLog(() => cmd.parseAsync([], { from: "user" }));
 
     expect(result).toContain("message");
   });
@@ -81,7 +81,7 @@ describe("config command", () => {
     }));
 
     const cmd = createConfigCommand();
-    const result = await captureLog(() => cmd.parseAsync(["node", "test"], { from: "user" }));
+    const result = await captureLog(() => cmd.parseAsync([], { from: "user" }));
 
     expect(result).toContain("version");
     expect(result).toContain("2024.1.0");
@@ -96,7 +96,7 @@ describe("components command", () => {
     mockRequest.mockResolvedValueOnce(mockResponse(["light", "switch", "sensor"]));
 
     const cmd = createComponentsCommand();
-    const result = await captureLog(() => cmd.parseAsync(["node", "test"], { from: "user" }));
+    const result = await captureLog(() => cmd.parseAsync([], { from: "user" }));
 
     expect(result).toContain("light");
     expect(result).toContain("switch");
@@ -107,7 +107,7 @@ describe("components command", () => {
 
     const cmd = createComponentsCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--count"], { from: "user" })
+      cmd.parseAsync(["--count"], { from: "user" })
     );
 
     const parsed = JSON.parse(result);
@@ -126,7 +126,7 @@ describe("events command", () => {
     ]));
 
     const cmd = createEventsCommand();
-    const result = await captureLog(() => cmd.parseAsync(["node", "test"], { from: "user" }));
+    const result = await captureLog(() => cmd.parseAsync([], { from: "user" }));
 
     expect(result).toContain("state_changed");
   });
@@ -139,7 +139,7 @@ describe("events command", () => {
 
     const cmd = createEventsCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--count"], { from: "user" })
+      cmd.parseAsync(["--count"], { from: "user" })
     );
 
     const parsed = JSON.parse(result);

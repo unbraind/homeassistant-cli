@@ -8,10 +8,10 @@ const { mockCall, mockClose } = vi.hoisted(() => ({
 }));
 
 vi.mock("../src/api/websocket.js", () => ({
-  HomeAssistantWebSocketClient: vi.fn().mockImplementation(() => ({
+  HomeAssistantWebSocketClient: vi.fn().mockImplementation(function () { return {
     call: mockCall,
     close: mockClose,
-  })),
+  }; }),
 }));
 
 const config: Config = {

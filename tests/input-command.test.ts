@@ -99,7 +99,7 @@ describe("input command", () => {
 
     const cmd = createInputCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
 
     expect(result).toContain("input_boolean.fan");
@@ -113,7 +113,7 @@ describe("input command", () => {
 
     const cmd = createInputCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--domain", "input_boolean"], { from: "user" })
+      cmd.parseAsync(["--domain", "input_boolean"], { from: "user" })
     );
 
     const parsed = JSON.parse(result);
@@ -125,7 +125,7 @@ describe("input command", () => {
 
     const cmd = createInputCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--count"], { from: "user" })
+      cmd.parseAsync(["--count"], { from: "user" })
     );
 
     expect(result).toContain("input_count");
@@ -138,7 +138,7 @@ describe("input command", () => {
 
     const cmd = createInputCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--toggle", "input_boolean.fan"], { from: "user" })
+      cmd.parseAsync(["--toggle", "input_boolean.fan"], { from: "user" })
     );
 
     expect(result).toContain("toggled");
@@ -150,7 +150,7 @@ describe("input command", () => {
 
     const cmd = createInputCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--on", "input_boolean.fan"], { from: "user" })
+      cmd.parseAsync(["--on", "input_boolean.fan"], { from: "user" })
     );
 
     expect(result).toContain("turned_on");
@@ -161,7 +161,7 @@ describe("input command", () => {
 
     const cmd = createInputCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--off", "input_boolean.fan"], { from: "user" })
+      cmd.parseAsync(["--off", "input_boolean.fan"], { from: "user" })
     );
 
     expect(result).toContain("turned_off");
@@ -172,7 +172,7 @@ describe("input command", () => {
 
     const cmd = createInputCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--press", "input_button.restart"], { from: "user" })
+      cmd.parseAsync(["--press", "input_button.restart"], { from: "user" })
     );
 
     expect(result).toContain("pressed");
@@ -183,7 +183,7 @@ describe("input command", () => {
 
     const cmd = createInputCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--increment", "input_number.volume"], { from: "user" })
+      cmd.parseAsync(["--increment", "input_number.volume"], { from: "user" })
     );
 
     expect(result).toContain("incremented");
@@ -194,7 +194,7 @@ describe("input command", () => {
 
     const cmd = createInputCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--decrement", "input_number.volume"], { from: "user" })
+      cmd.parseAsync(["--decrement", "input_number.volume"], { from: "user" })
     );
 
     expect(result).toContain("decremented");
@@ -205,7 +205,7 @@ describe("input command", () => {
 
     const cmd = createInputCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "input_text.greeting", "--set", "Hi there"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "input_text.greeting", "--set", "Hi there"], { from: "user" })
     );
 
     expect(result).toContain("set");
@@ -217,7 +217,7 @@ describe("input command", () => {
 
     const cmd = createInputCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "input_select.mode", "--set", "home"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "input_select.mode", "--set", "home"], { from: "user" })
     );
 
     expect(result).toContain("set");
@@ -231,7 +231,7 @@ describe("input command", () => {
 
     const cmd = createInputCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "input_datetime.birthday", "--set", "2024-06-15"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "input_datetime.birthday", "--set", "2024-06-15"], { from: "user" })
     );
 
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -244,7 +244,7 @@ describe("input command", () => {
 
     const cmd = createInputCommand();
     await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "input_datetime.alarm", "--set", "2024-06-15T07:00:00"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "input_datetime.alarm", "--set", "2024-06-15T07:00:00"], { from: "user" })
     );
 
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
@@ -257,7 +257,7 @@ describe("input command", () => {
 
     const cmd = createInputCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--entity-id", "input_select.mode", "--select", "sleeping"], { from: "user" })
+      cmd.parseAsync(["--entity-id", "input_select.mode", "--select", "sleeping"], { from: "user" })
     );
 
     expect(result).toContain("selected");
@@ -272,7 +272,7 @@ describe("input command", () => {
 
     const cmd = createInputCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--reload"], { from: "user" })
+      cmd.parseAsync(["--reload"], { from: "user" })
     );
 
     expect(result).toContain("reloaded");

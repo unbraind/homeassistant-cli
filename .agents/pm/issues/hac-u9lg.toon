@@ -1,0 +1,42 @@
+id: hac-u9lg
+title: Enforce documented coverage quality floor
+description: Turn the repository documented coverage target into a failing automated threshold.
+type: Issue
+status: closed
+priority: 2
+tags[4]: ci,coverage,discovered,quality
+created_at: "2026-07-16T17:03:28.097Z"
+updated_at: "2026-07-16T17:12:24.639Z"
+deadline: "2026-07-18T17:03:28.097Z"
+closed_at: "2026-07-16T17:12:24.638Z"
+author: codex-root
+estimated_minutes: 45
+acceptance_criteria: "Vitest fails when statements, lines, or functions fall below 90%, or branches fall below 80%; current full coverage run passes; thresholds are documented in configuration history"
+parent: hac-gpm3
+reviewer: unbraind
+risk: medium
+confidence: 100
+sprint: 2026-07-security
+release: 2026.7.16
+resolution: "Added Vitest thresholds for 90 percent statements, functions, and lines plus 80 percent branches."
+expected_result: CI rejects material coverage regressions below documented floors.
+actual_result: "988 tests passed with 95.53 percent statements, 84.69 percent branches, 96.36 percent functions, and 96.1 percent lines; threshold gate passed."
+dependencies[1]{id,kind,created_at,author,source_kind}:
+  hac-gpm3,parent,"2026-07-16T17:03:28.097Z",codex-root,null
+comments[1]{created_at,author,text}:
+  "2026-07-16T17:03:28.097Z",codex-root,"Baseline from Vitest 4 coverage: 95.53 statements,84.69 branches,96.36 functions,96.1 lines."
+notes[1]{created_at,author,text}:
+  "2026-07-16T17:03:28.097Z",codex-root,Use thresholds below the current baseline to avoid unrelated coverage expansion in this security lane while preventing material regressions.
+learnings[2]{created_at,author,text}:
+  "2026-07-16T17:03:28.097Z",codex-root,"Coverage reporting without thresholds is observational,not an enforceable quality gate."
+  "2026-07-16T17:10:22.749Z",codex-root,"The documented statement target was already exceeded, but thresholds were absent. Ratcheted gates now preserve 90 percent statements, functions, and lines plus 80 percent branches."
+files[1]{path,scope,note}:
+  vitest.config.ts,project,Coverage gate configuration
+tests[1]{command,scope,timeout_seconds}:
+  "bun run test:coverage",project,1800
+test_runs[1]{run_id,kind,status,started_at,finished_at,recorded_at,passed,failed,skipped}:
+  test-local-mrnrnjfo-fivb9u,test,passed,"2026-07-16T17:11:07.942Z","2026-07-16T17:11:43.140Z","2026-07-16T17:11:43.140Z",1,0,0
+docs[1]{path,scope,note}:
+  AGENTS.md,project,Documented 90 percent statement target
+close_reason: Coverage thresholds implemented and verified by a PM-recorded full coverage run.
+body: "## Discovery\\n\\nVitest reports 95.53% statements, 84.69% branches, 96.36% functions, and 96.1% lines, but vitest.config.ts defines no thresholds. CI therefore uploads coverage without preventing regressions below the documented 90% statement target."

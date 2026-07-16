@@ -89,7 +89,7 @@ describe("entities command extended", () => {
 
     const cmd = createEntitiesCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test"], { from: "user" })
+      cmd.parseAsync([], { from: "user" })
     );
 
     expect(result).toContain("light.kitchen");
@@ -101,7 +101,7 @@ describe("entities command extended", () => {
 
     const cmd = createEntitiesCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--domain", "sensor"], { from: "user" })
+      cmd.parseAsync(["--domain", "sensor"], { from: "user" })
     );
 
     const parsed = JSON.parse(result);
@@ -114,7 +114,7 @@ describe("entities command extended", () => {
 
     const cmd = createEntitiesCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--state", "on"], { from: "user" })
+      cmd.parseAsync(["--state", "on"], { from: "user" })
     );
 
     const parsed = JSON.parse(result);
@@ -126,7 +126,7 @@ describe("entities command extended", () => {
 
     const cmd = createEntitiesCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--pattern", "kitchen"], { from: "user" })
+      cmd.parseAsync(["--pattern", "kitchen"], { from: "user" })
     );
 
     const parsed = JSON.parse(result);
@@ -139,7 +139,7 @@ describe("entities command extended", () => {
 
     const cmd = createEntitiesCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--count"], { from: "user" })
+      cmd.parseAsync(["--count"], { from: "user" })
     );
 
     const parsed = JSON.parse(result);
@@ -151,7 +151,7 @@ describe("entities command extended", () => {
 
     const cmd = createEntitiesCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--domains"], { from: "user" })
+      cmd.parseAsync(["--domains"], { from: "user" })
     );
 
     const parsed = JSON.parse(result);
@@ -165,7 +165,7 @@ describe("entities command extended", () => {
 
     const cmd = createEntitiesCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--limit", "2"], { from: "user" })
+      cmd.parseAsync(["--limit", "2"], { from: "user" })
     );
 
     const parsed = JSON.parse(result);
@@ -177,7 +177,7 @@ describe("entities command extended", () => {
 
     const cmd = createEntitiesCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--domains", "--limit", "1"], { from: "user" })
+      cmd.parseAsync(["--domains", "--limit", "1"], { from: "user" })
     );
 
     const parsed = JSON.parse(result);
@@ -189,7 +189,7 @@ describe("entities command extended", () => {
 
     const cmd = createEntitiesCommand();
     const result = await captureLog(() =>
-      cmd.parseAsync(["node", "test", "--domain", "light", "--attributes", "brightness"], { from: "user" })
+      cmd.parseAsync(["--domain", "light", "--attributes", "brightness"], { from: "user" })
     );
 
     const parsed = JSON.parse(result);
