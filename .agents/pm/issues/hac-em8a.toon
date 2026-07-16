@@ -2,13 +2,13 @@ id: hac-em8a
 title: Restore reproducible Dependabot CI and modernize actions
 description: Fix the shared frozen-lockfile failure and update deprecated GitHub Actions majors.
 type: Issue
-status: closed
+status: in_progress
 priority: 1
 tags[4]: ci,dependabot,github-actions,reproducibility
 created_at: "2026-07-16T16:54:19.097Z"
-updated_at: "2026-07-16T17:23:21.723Z"
+updated_at: "2026-07-16T17:26:24.590Z"
 deadline: "2026-07-18T16:54:19.097Z"
-closed_at: "2026-07-16T17:23:21.718Z"
+assignee: codex-root
 author: codex-root
 estimated_minutes: 180
 acceptance_criteria: fresh frozen Bun install succeeds; workflows use maintained action majors; CI runs dependency audit; workflow syntax and local gates pass
@@ -23,19 +23,23 @@ expected_result: Frozen installs and maintained Actions permit every CI/security
 actual_result: All PR gates passed at a481464; post-merge CI and Security runs passed at d2c73b2.
 dependencies[1]{id,kind,created_at,author,source_kind}:
   hac-gpm3,parent,"2026-07-16T16:54:19.097Z",codex-root,null
-comments[6]{created_at,author,text}:
+comments[8]{created_at,author,text}:
   "2026-07-16T16:54:19.097Z",codex-root,Representative GitHub Actions runs 26775340556 and 26673365486 fail before tests.
   "2026-07-16T17:08:03.440Z",codex-root,"Official actionlint 1.7.12 found SC2034 in publish.yml: a shell VERSION assignment was dead because the validator reads the step-level environment variable. Removed the dead assignment and preserved the validation contract."
   "2026-07-16T17:15:52.133Z",codex-root,"Hosted PR #52 exposed a CI-only commit-audit defect: actions/checkout checks out the synthetic merge ref without a local master branch, so the script's hard-coded master revision failed before inspecting any commits. Fixed the auditor to use origin/..HEAD for pull-request runs and HEAD for complete-history local/push runs; both modes pass locally."
   "2026-07-16T17:16:00.596Z",codex-root,"Correction to the preceding comment: the pull-request range is origin/${GITHUB_BASE_REF}..HEAD; shell interpolation in the command that recorded the earlier comment omitted the variable name from its rendered text."
   "2026-07-16T17:17:29.420Z",codex-root,The corrected hosted log then showed GitHub synthetic merge commit b8ac2ff as the sole non-conforming subject. Added git log --no-merges so generated merge commits are excluded while all authored commits in the base-to-head range remain audited.
   "2026-07-16T17:23:19.908Z",codex-root,"Exact PR head a481464 passed quality (bun), quality (node), coverage, package-smoke, commit-audit, history-scan, Dependency audit, PR title, and CodeQL before merge. Post-merge CI run 29519298326 and Security run 29519298269 both succeeded at d2c73b2; all stale Dependabot PRs are closed."
-notes[2]{created_at,author,text}:
+  "2026-07-16T17:25:16.027Z",codex-root,Reopened canonical CI/dependency automation item. PR #53 validly updates newly released checkout v7 setup-node v7 and action-gh-release v3 and is green; PR #54 proposes TypeScript 7 and Node 26 typings against the documented TypeScript-ESLint and Node 22 contracts and fails frozen install across all dependency-consuming jobs.
+  "2026-07-16T17:26:24.570Z",codex-root,"Local follow-up validation passes: frozen install lint typecheck build zero-vulnerability audit official actionlint 1.7.12 and YAML parsing. Adopted checkout v7 setup-node v7 and action-gh-release v3 exactly as green PR #53; added major ignores that explain and prevent failing PR #54 churn."
+notes[3]{created_at,author,text}:
   "2026-07-16T16:54:19.097Z",codex-root,"The failure is infrastructure-wide,not specific to Vitest or Commander behavior."
   "2026-07-16T17:10:22.123Z",codex-root,Official actionlint 1.7.12 and YAML 2.9 parsing both pass after removing the dead VERSION assignment and using a folded YAML scalar.
-learnings[1]{created_at,author,text}:
+  "2026-07-16T17:26:24.570Z",codex-root,"Dependabot major ignores are deliberately narrow: TypeScript stays below the typescript-eslint 8.64 peer ceiling and @types/node stays aligned with the supported Node 22 runtime; compatible minor and patch updates remain enabled."
+learnings[2]{created_at,author,text}:
   "2026-07-16T16:54:19.097Z",codex-root,Inspect one representative failure before changing source; shared pre-test failures usually belong to the dependency workflow.
-files[8]{path,scope,note}:
+  "2026-07-16T17:26:24.570Z",codex-root,Immediately after grouping configuration lands Dependabot can regenerate previously closed updates against newer releases; shipping closeout must re-check the bot queue after the default branch changes.
+files[9]{path,scope,note}:
   .github/dependabot.yml,project,Modernized and validated GitHub automation
   .github/workflows/ci.yml,project,Modernized and validated GitHub automation
   .github/workflows/commit-quality.yml,project,Modernized and validated GitHub automation
@@ -44,6 +48,7 @@ files[8]{path,scope,note}:
   .github/workflows/security.yml,project,Modernized and validated GitHub automation
   bun.lock,project,Primary implementation surface
   scripts/release/verify-release.sh,project,Dependency audit added to release gate
+  CHANGELOG.md,project,Current Action majors and compatible-update policy documented; duplicate Unreleased section removed
 tests[3]{command,scope,timeout_seconds}:
   bun install --frozen-lockfile,project,1800
   bun run lint,project,600
@@ -52,5 +57,4 @@ test_runs[1]{run_id,kind,status,started_at,finished_at,recorded_at,passed,failed
   test-local-mrnrm7u7-wbxgv0,test,passed,"2026-07-16T17:10:37.192Z","2026-07-16T17:10:41.455Z","2026-07-16T17:10:41.455Z",3,0,0
 docs[1]{path,scope,note}:
   docs/RELEASING.md,project,Relevant project documentation
-close_reason: CI reproducibility and Actions modernization are merged and green on master.
 body: "## Reproduction\\n\\nOpen Dependabot PR 51 or 50. Every CI matrix job stops at bun install --frozen-lockfile with lockfile had changes. Runner also warns checkout/setup-node v4 use deprecated Node 20 action runtimes."
