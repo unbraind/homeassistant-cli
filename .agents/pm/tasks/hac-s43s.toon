@@ -6,7 +6,7 @@ status: closed
 priority: 0
 tags[6]: bun,bunx,npm,npx,provenance,publish
 created_at: "2026-07-21T17:21:09.524Z"
-updated_at: "2026-07-21T17:51:49.835Z"
+updated_at: "2026-07-21T17:59:59.607Z"
 closed_at: "2026-07-21T17:38:21.091Z"
 author: codex-root
 estimated_minutes: 120
@@ -26,9 +26,10 @@ release: 2026.7.21
 resolution: "Converted publishing to idempotent tag-driven npm provenance publication and added exact-version registry, npx, Bun install, and bunx verification before GitHub release creation."
 expected_result: One tagged artifact is correctly available to npm and Bun consumers.
 actual_result: Packed artifact proof passed through npx and bunx; workflow publishes once to the npm registry and verifies the exact published version separately with npm and Bun.
-comments[2]{created_at,author,text}:
+comments[3]{created_at,author,text}:
   "2026-07-21T17:38:16.562Z",codex-root,"bun run release:dry-run passed installation and launcher checks from the packed tarball through both npx and bunx."
   "2026-07-21T17:51:49.817Z",codex-root,"PR review hardening: registry polling now tolerates invalid or empty JSON and uses Node Atomics.wait instead of a bash sleep subprocess."
+  "2026-07-21T17:59:59.586Z",codex-root,"PR review hardening: published verification now reports clean single-line failures and detects command startup errors; GitHub release creation uses the runner gh CLI with create-or-edit idempotence."
 learnings[1]{created_at,author,text}:
   "2026-07-21T17:32:47.206Z",codex-root,Bun uses the npm registry for this package; one provenance-backed npm publish plus exact-version Bun installation is the correct dual-ecosystem delivery model.
 files[3]{path,scope,note}:

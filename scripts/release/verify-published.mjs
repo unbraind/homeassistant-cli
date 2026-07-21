@@ -17,6 +17,7 @@ const packageName = "@unbrained/homeassistant-cli";
 
 function run(command, args, cwd, capture = false) {
   const result = spawnSync(command, args, { cwd, encoding: "utf8", stdio: capture ? ["ignore", "pipe", "pipe"] : "inherit" });
+  if (result.error) throw new Error(`${command} failed to start: ${result.error.message}`);
   if (result.status !== 0) {
     throw new Error(`${command} ${args.join(" ")} failed\n${result.stderr ?? ""}`);
   }
@@ -39,21 +40,30 @@ function waitForRegistry() {
   throw new Error(`${packageName}@${version} did not become visible on the npm registry.`);
 }
 
-const npmDir = mkdtempSync(path.join(tmpdir(), "hassio-npm-published-"));
-const bunDir = mkdtempSync(path.join(tmpdir(), "hassio-bun-published-"));
-try {
-  waitForRegistry();
-  writeFileSync(path.join(npmDir, "package.json"), JSON.stringify({ private: true }));
-  run("npm", ["install", "--ignore-scripts", `${packageName}@${version}`], npmDir);
-  const npxVersion = run("npx", ["--yes", "--no-install", "homeassistant-cli", "--version"], npmDir, true);
-  if (npxVersion !== version) throw new Error(`npx returned ${npxVersion}; expected ${version}.`);
+function main() {
+  const npmDir = mkdtempSync(path.join(tmpdir(), "hassio-npm-published-"));
+  const bunDir = mkdtempSync(path.join(tmpdir(), "hassio-bun-published-"));
+  try {
+    waitForRegistry();
+    writeFileSync(path.join(npmDir, "package.json"), JSON.stringify({ private: true }));
+    run("npm", ["install", "--ignore-scripts", `${packageName}@${version}`], npmDir);
+    const npxVersion = run("npx", ["--yes", "--no-install", "homeassistant-cli", "--version"], npmDir, true);
+    if (npxVersion !== version) throw new Error(`npx returned ${npxVersion}; expected ${version}.`);
 
-  writeFileSync(path.join(bunDir, "package.json"), JSON.stringify({ private: true }));
-  run("bun", ["add", `${packageName}@${version}`], bunDir);
-  const bunxVersion = run("bunx", ["homeassistant-cli", "--version"], bunDir, true);
-  if (bunxVersion !== version) throw new Error(`bunx returned ${bunxVersion}; expected ${version}.`);
-  console.log(JSON.stringify({ ok: true, package: packageName, version, npm: true, npx: true, bun: true, bunx: true }, null, 2));
-} finally {
-  rmSync(npmDir, { recursive: true, force: true });
-  rmSync(bunDir, { recursive: true, force: true });
+    writeFileSync(path.join(bunDir, "package.json"), JSON.stringify({ private: true }));
+    run("bun", ["add", `${packageName}@${version}`], bunDir);
+    const bunxVersion = run("bunx", ["homeassistant-cli", "--version"], bunDir, true);
+    if (bunxVersion !== version) throw new Error(`bunx returned ${bunxVersion}; expected ${version}.`);
+    console.log(JSON.stringify({ ok: true, package: packageName, version, npm: true, npx: true, bun: true, bunx: true }, null, 2));
+  } finally {
+    rmSync(npmDir, { recursive: true, force: true });
+    rmSync(bunDir, { recursive: true, force: true });
+  }
+}
+
+try {
+  main();
+} catch (error) {
+  console.error(error instanceof Error ? error.message : String(error));
+  process.exit(1);
 }

@@ -1,12 +1,12 @@
 id: hac-r8ds
-title: "Pre-release implementation history preserved in [docs/PROJECT_HISTORY.md](docs/PROJECT_HISTORY.md)."
+title: "Pre-release implementation history preserved in docs/PROJECT_HISTORY.md (https://github.com/unbraind/homeassistant-cli/blob/master/docs/PROJECT_HISTORY.md)."
 description: Preserves the first-release project history pointer.
 type: Task
 status: closed
 priority: 2
 tags[3]: changed,docs,legacy-changelog
 created_at: "2026-07-21T17:22:23.583Z"
-updated_at: "2026-07-21T17:22:24.312Z"
+updated_at: "2026-07-21T17:59:58.042Z"
 closed_at: "2026-07-21T17:22:24.311Z"
 author: codex-root
 estimated_minutes: 5
@@ -26,8 +26,9 @@ release: 2026.3.4
 resolution: Represented the legacy changelog statement as release-assigned pm data for deterministic regeneration.
 expected_result: Generated CHANGELOG.md retains this statement under release 2026.3.4.
 actual_result: Closed tracker item preserves the statement verbatim and assigns it to release 2026.3.4.
-comments[1]{created_at,author,text}:
+comments[2]{created_at,author,text}:
   "2026-07-21T17:22:23.583Z",codex-root,Backfilled verbatim from the hand-maintained CHANGELOG.md before generated replacement.
+  "2026-07-21T17:59:58.023Z",codex-root,"Review correction: pm-changelog intentionally escapes Markdown link syntax in item titles, so the source now uses an explicit public URL that remains clickable in generated output while preserving the original document reference in item history."
 notes[1]{created_at,author,text}:
   "2026-07-21T17:22:23.583Z",codex-root,Release assignment is explicit because the tracker was initialized after the March release tags.
 close_reason: Legacy changelog statement captured without information loss

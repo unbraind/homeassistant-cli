@@ -63,7 +63,7 @@
 
 ### Changed
 
-- Pre-release implementation history preserved in \[docs/PROJECT_HISTORY.md\](docs/PROJECT_HISTORY.md). ([hac-r8ds](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-r8ds.toon))
+- Pre-release implementation history preserved in docs/PROJECT_HISTORY.md (https://github.com/unbraind/homeassistant-cli/blob/master/docs/PROJECT_HISTORY.md). ([hac-r8ds](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-r8ds.toon))
 - Package launch compatibility validated for both `npx` and `bunx`. ([hac-nux2](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-nux2.toon))
 
 ### Security

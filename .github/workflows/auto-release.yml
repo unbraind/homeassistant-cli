@@ -21,11 +21,6 @@ on:
         required: false
         default: false
 
-permissions:
-  actions: read
-  contents: write
-  issues: write
-
 concurrency:
   group: auto-release-${{ github.workflow }}
   cancel-in-progress: false
@@ -35,6 +30,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     environment: release
+    # Read downstream runs, push the checked release commit/tag, and maintain
+    # the single scheduled-release blocker issue.
+    permissions:
+      actions: read
+      contents: write
+      issues: write
     steps:
       - name: Checkout full release history
         uses: actions/checkout@v7
@@ -85,8 +86,9 @@ jobs:
         run: |
           set -euo pipefail
           run_id=""
+          release_sha="$(git rev-list -n 1 "$RELEASE_TAG")"
           for attempt in $(seq 1 30); do
-            run_id="$(gh run list --workflow publish.yml --event push --branch "$RELEASE_TAG" --limit 10 --json databaseId,headBranch --jq ".[] | select(.headBranch == \"$RELEASE_TAG\") | .databaseId" | head -1)"
+            run_id="$(gh run list --workflow publish.yml --event push --limit 20 --json databaseId,headSha --jq ".[] | select(.headSha == \"$release_sha\") | .databaseId" | head -1)"
             [[ -n "$run_id" ]] && break
             sleep 10
           done
