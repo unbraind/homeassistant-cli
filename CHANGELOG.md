@@ -8,6 +8,7 @@
 
 ### Fixed
 
+- Auto-release dry run omits pm-changelog installation on clean runners ([hac-l25p](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/issues/hac-l25p.toon))
 - Raise all-source coverage gates to 100/100/100/100 ([hac-vooo](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/issues/hac-vooo.toon))
 - Undici 8 rejects REST request throwOnError option ([hac-0ay7](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/issues/hac-0ay7.toon))
 
