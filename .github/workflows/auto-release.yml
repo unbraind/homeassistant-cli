@@ -54,6 +54,15 @@ jobs:
           node-version: 22
           registry-url: https://registry.npmjs.org
 
+      - name: Install release verification tools
+        run: sudo apt-get update && sudo apt-get install --yes ripgrep shellcheck
+
+      - name: Setup Trivy
+        uses: aquasecurity/setup-trivy@81e514348e19b6112ce2a7e3ecbafe19c1e1f567 # v0.3.1
+        with:
+          version: v0.72.0
+          cache: true
+
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
