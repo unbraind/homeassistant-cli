@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Added
+
+- Restore live Home Assistant API parity and agent workflows ([hac-n0ix](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/features/hac-n0ix.toon))
+
 ### Fixed
 
 - Raise all-source coverage gates to 100/100/100/100 ([hac-vooo](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/issues/hac-vooo.toon))
@@ -13,6 +17,7 @@
 
 ### Other
 
+- Live Home Assistant API parity delivery plan ([hac-6asb](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/plans/hac-6asb.toon))
 - Enforce erasable zero-escape TypeScript and complete source docstrings ([hac-r4e3](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-r4e3.toon))
 - Align typed WebSocket target discovery with current Home Assistant ([hac-96i2](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-96i2.toon))
 

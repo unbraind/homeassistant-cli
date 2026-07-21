@@ -2,12 +2,12 @@ id: hac-6asb
 title: Live Home Assistant API parity delivery plan
 description: "Ordered research, implementation, verification, review, and merged-head proof for the live API parity feature."
 type: Plan
-status: in_progress
+status: closed
 priority: 0
 tags[3]: delivery,plan,verification
 created_at: "2026-07-21T18:59:09.022Z"
-updated_at: "2026-07-21T20:51:52.093Z"
-assignee: codex-root
+updated_at: "2026-07-21T21:00:38.120Z"
+closed_at: "2026-07-21T21:00:37.365Z"
 author: codex-root
 estimated_minutes: 480
 acceptance_criteria: Every plan step is completed with linked pm evidence and the feature closes only after merged-master proof
@@ -20,17 +20,19 @@ parent: hac-n0ix
 reviewer: unbraind
 risk: high
 confidence: high
-dependencies[5]{id,kind,created_at,author,source_kind}:
-  hac-0ay7,blocked_by,"2026-07-21T19:39:47.270Z",null,null
-  hac-96i2,blocked_by,"2026-07-21T19:39:47.270Z",null,null
-  hac-ak9g,blocked_by,"2026-07-21T19:39:47.270Z",null,null
-  hac-r4e3,blocked_by,"2026-07-21T19:39:47.270Z",null,null
-  hac-vooo,blocked_by,"2026-07-21T19:39:47.270Z",null,null
+release: 2026.7.22
+resolution: "All nine delivery steps completed; PR #60 merged with protected checks, complete bot acknowledgement, exact-master release verification, and live read-only proof."
+expected_result: Reviewed API parity delivery is merged and verified on master with complete linked evidence.
+actual_result: "PR #60 merged at 8c1c67e; all protected contexts were green, no actionable bot findings remained, and exact-master release/live gates passed."
 comments[1]{created_at,author,text}:
   "2026-07-21T20:44:19.131Z",codex-root,Delivery step 6 is active on PR #60. Hosted checks and full paginated review inventory will be recorded before merge; any push will retrigger every requested review agent.
+learnings[1]{created_at,author,text}:
+  "2026-07-21T21:00:35.810Z",codex-root,"GitHub may not enqueue push workflows for a squash merge performed through automation even when the workflows include master push triggers. Keep pull-request protection authoritative, retain an exact-merge local release gate, and expose workflow_dispatch so the final master SHA can receive hosted attestation explicitly."
+close_reason: "All ordered research, implementation, validation, review, merge, and exact-master proof steps completed."
 plan_mode: approved
-plan_decisions[1]{ts,author,decision,rationale,evidence}:
+plan_decisions[2]{ts,author,decision,rationale,evidence}:
   "2026-07-21T19:00:05.325Z",codex-root,Keep raw ws call as the forward-compatible full API surface and add typed helpers only for stable high-value discovery contracts.,Home Assistant WebSocket commands are dynamic and integration-dependent; typed affordances should improve agent UX without pretending the finite CLI can freeze every command.,Official WebSocket docs describe generic command envelopes and current target helper commands; existing ws call accepts arbitrary types.
+  "2026-07-21T21:00:13.808Z",codex-root,Expose manual CI dispatch for exact merged-head verification.,"Protected pull-request checks prove the proposed head, while workflow_dispatch lets maintainers attest the exact post-merge master SHA when GitHub does not enqueue a push run.","PR #60 merged as 8c1c67e; exact merge release verification passed locally, but no push check suite was created."
 plan_discoveries[1]{ts,author,text}:
   "2026-07-21T19:00:04.305Z",codex-root,Live settings validation fails before network I/O because Undici 8 rejects request-level throwOnError.
 plan_steps[9]:
@@ -93,12 +95,13 @@ plan_steps[9]:
   - id: plan-step-006
     order: 6
     title: "Publish reviewed PR, converge bot feedback, merge, and verify master"
-    status: in_progress
+    status: completed
     created_at: "2026-07-21T19:00:01.530Z"
-    updated_at: "2026-07-21T20:41:09.642Z"
+    updated_at: "2026-07-21T21:00:35.130Z"
     body: "Wait for all checks and requested bot reviews, acknowledge every bot thread, iterate until clean, merge, and prove exact master head."
     owner: codex-root
-    evidence: Implementation and local release gates are complete; publishing exact-head PR for hosted checks and bot convergence.
+    evidence: "PR #60 exact head 447a823 passed all protected checks and bot inventory; all available bot comments/reviews were acknowledged with reactions and contextual replies; zero unresolved threads or actionable findings remained; merged as master SHA 8c1c67e8178cdec1e0938744863fd3633bfddeeb; exact merge SHA passed release:verify and live read-only installed-binary REST/WebSocket checks."
+    completed_at: "2026-07-21T21:00:35.130Z"
   - id: plan-step-007
     order: 7
     title: Enforce strict TypeScript and 100-percent docstrings
