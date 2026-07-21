@@ -1,0 +1,120 @@
+name: Auto Release
+
+on:
+  schedule:
+    - cron: "35 2 * * *"
+  workflow_dispatch:
+    inputs:
+      push:
+        description: "Push the checked release commit and tag"
+        type: boolean
+        required: false
+        default: false
+      dry_run:
+        description: "Run the full pipeline without changing git history"
+        type: boolean
+        required: false
+        default: false
+      allow_same_day_release:
+        description: "Allow an additional YYYY.M.D-N release today"
+        type: boolean
+        required: false
+        default: false
+
+concurrency:
+  group: auto-release-${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  auto-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    environment: release
+    # Read downstream runs, push the checked release commit/tag, and maintain
+    # the single scheduled-release blocker issue.
+    permissions:
+      actions: read
+      contents: write
+      issues: write
+    steps:
+      - name: Checkout full release history
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Setup Node and npm registry
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Run conditional release pipeline
+        id: release
+        env:
+          RELEASE_PUSH_TOKEN: ${{ secrets.RELEASE_PAT }}
+          INPUT_PUSH: ${{ github.event_name == 'schedule' && 'true' || (inputs.push && 'true' || 'false') }}
+          INPUT_DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run && 'true' || 'false' }}
+          INPUT_ALLOW_SAME_DAY: ${{ github.event_name == 'workflow_dispatch' && inputs.allow_same_day_release && 'true' || 'false' }}
+        run: |
+          set -euo pipefail
+          if [[ "${INPUT_PUSH}" == "true" && -z "${RELEASE_PUSH_TOKEN:-}" ]]; then
+            echo "RELEASE_PAT is required to push through protected master."
+            exit 1
+          fi
+          args=(--json)
+          [[ "${INPUT_PUSH}" == "true" ]] && args+=(--push)
+          [[ "${INPUT_DRY_RUN}" == "true" ]] && args+=(--dry-run)
+          [[ "${INPUT_ALLOW_SAME_DAY}" == "true" ]] && args+=(--allow-same-day-release)
+          node scripts/release/auto-release.mjs "${args[@]}" | tee "$RUNNER_TEMP/auto-release.json"
+          tag="$(jq -r 'select(.skipped == false and .pushed == true) | .tag // empty' "$RUNNER_TEMP/auto-release.json")"
+          echo "published_tag=${tag}" >> "$GITHUB_OUTPUT"
+
+      - name: Wait for tag-driven publication
+        if: steps.release.outputs.published_tag != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.release.outputs.published_tag }}
+        run: |
+          set -euo pipefail
+          run_id=""
+          release_sha="$(git rev-list -n 1 "$RELEASE_TAG")"
+          for attempt in $(seq 1 30); do
+            run_id="$(gh run list --workflow publish.yml --event push --limit 20 --json databaseId,headSha --jq ".[] | select(.headSha == \"$release_sha\") | .databaseId" | head -1)"
+            [[ -n "$run_id" ]] && break
+            sleep 10
+          done
+          [[ -n "$run_id" ]] || { echo "Release workflow did not appear for $RELEASE_TAG"; exit 1; }
+          gh run watch "$run_id" --compact --exit-status --interval 30
+
+      - name: Resolve stale scheduled release blocker
+        if: success() && steps.release.outputs.published_tag != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.release.outputs.published_tag }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          title="Auto Release blocked: scheduled run failed"
+          existing="$(gh issue list --state open --search \"${title} in:title\" --json number --jq '.[0].number // empty')"
+          if [[ -n "$existing" ]]; then
+            gh issue close "$existing" --reason completed --comment "${RELEASE_TAG} published successfully via ${RUN_URL}."
+          fi
+
+      - name: Report blocked scheduled release
+        if: failure() && github.event_name == 'schedule'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          title="Auto Release blocked: scheduled run failed"
+          body="The scheduled conditional release failed. Inspect ${RUN_URL}. No release should be assumed published until the tag-driven workflow succeeds."
+          existing="$(gh issue list --state open --search \"${title} in:title\" --json number --jq '.[0].number // empty')"
+          if [[ -n "$existing" ]]; then gh issue comment "$existing" --body "$body"; else gh issue create --title "$title" --body "$body"; fi

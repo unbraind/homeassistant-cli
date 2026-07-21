@@ -1,0 +1,40 @@
+id: hac-5n71
+title: Document and verify the automated release operating model
+description: "Document triggers, secrets, skip conditions, changelog ownership, recovery, npm/Bun semantics, and local parity checks; link all implementation and verification evidence in pm."
+type: Task
+status: closed
+priority: 1
+tags[4]: documentation,operations,release,verification
+created_at: "2026-07-21T17:21:10.316Z"
+updated_at: "2026-07-21T17:38:22.205Z"
+closed_at: "2026-07-21T17:38:22.204Z"
+author: codex-root
+estimated_minutes: 60
+acceptance_criteria: "Maintainers can configure, run, inspect, and recover releases from the documentation"
+goal: lossless-automatic-releases
+objective: durable-release-operations
+value: Make the automation maintainable.
+impact: Reduces operational ambiguity and future regressions.
+outcome: Detailed release documentation and tracker evidence.
+why_now: Automated publishing requires explicit secret and recovery guidance.
+parent: hac-wwsi
+reviewer: unbraind
+risk: medium
+confidence: 95
+sprint: release-automation
+release: 2026.7.21
+resolution: "Documented triggers, skip behavior, calendar versions, secrets, changelog ownership, lossless migration lineage, npm/Bun registry semantics, local parity, secret hygiene, and failure reporting; linked docs and workflows through pm."
+expected_result: "Maintainers can configure, run, inspect, and recover automated releases."
+actual_result: "docs/RELEASING.md and docs/INDEX.md now provide the complete operating model and verification commands, with implementation and tests linked on this item."
+comments[1]{created_at,author,text}:
+  "2026-07-21T17:38:17.641Z",codex-root,"GitHub workflow YAML parsed successfully for all workflows; official GitHub Actions guidance was checked for least-privilege permissions, id-token provenance, registry authentication, tag triggers, and GITHUB_TOKEN event behavior."
+files[2]{path,scope,note}:
+  .github/workflows/ci.yml,project,Full-history generated changelog gate
+  .github/workflows/release-dry-run.yml,project,Non-publishing parity validation
+tests[1]{command,scope,timeout_seconds}:
+  "bun run release:verify",project,900
+docs[2]{path,scope,note}:
+  docs/INDEX.md,project,Release documentation discovery
+  docs/RELEASING.md,project,Detailed release operations secrets recovery changelog and registry model
+close_reason: Release operating model documented and linked to implementation evidence
+body: ""

@@ -1,0 +1,42 @@
+id: hac-s43s
+title: Publish tagged releases with npm provenance and Bun consumption proof
+description: "Convert publishing to a tag-driven, idempotent workflow that publishes once to npm with provenance, then verifies registry availability and launch behavior through both npx and bunx before creating the GitHub release."
+type: Task
+status: closed
+priority: 0
+tags[6]: bun,bunx,npm,npx,provenance,publish
+created_at: "2026-07-21T17:21:09.524Z"
+updated_at: "2026-07-21T17:59:59.607Z"
+closed_at: "2026-07-21T17:38:21.091Z"
+author: codex-root
+estimated_minutes: 120
+acceptance_criteria: Published package is available through npm/npx and Bun/bunx
+goal: lossless-automatic-releases
+objective: verified-package-publication
+value: Provide one trustworthy package artifact to both ecosystems.
+impact: Avoids duplicate publication and catches broken Bun consumption.
+outcome: Each release tag maps to one verified npm artifact and GitHub release.
+why_now: The user requires correct npm and Bun publication behavior.
+parent: hac-wwsi
+reviewer: unbraind
+risk: high
+confidence: 95
+sprint: release-automation
+release: 2026.7.21
+resolution: "Converted publishing to idempotent tag-driven npm provenance publication and added exact-version registry, npx, Bun install, and bunx verification before GitHub release creation."
+expected_result: One tagged artifact is correctly available to npm and Bun consumers.
+actual_result: Packed artifact proof passed through npx and bunx; workflow publishes once to the npm registry and verifies the exact published version separately with npm and Bun.
+comments[3]{created_at,author,text}:
+  "2026-07-21T17:38:16.562Z",codex-root,"bun run release:dry-run passed installation and launcher checks from the packed tarball through both npx and bunx."
+  "2026-07-21T17:51:49.817Z",codex-root,"PR review hardening: registry polling now tolerates invalid or empty JSON and uses Node Atomics.wait instead of a bash sleep subprocess."
+  "2026-07-21T17:59:59.586Z",codex-root,"PR review hardening: published verification now reports clean single-line failures and detects command startup errors; GitHub release creation uses the runner gh CLI with create-or-edit idempotence."
+learnings[1]{created_at,author,text}:
+  "2026-07-21T17:32:47.206Z",codex-root,Bun uses the npm registry for this package; one provenance-backed npm publish plus exact-version Bun installation is the correct dual-ecosystem delivery model.
+files[3]{path,scope,note}:
+  .github/workflows/publish.yml,project,Tag-driven provenance publication workflow
+  scripts/release/dry-run.sh,project,Packed artifact npx and bunx smoke verification
+  scripts/release/verify-published.mjs,project,Exact published npm npx Bun and bunx verification
+tests[1]{command,scope,timeout_seconds}:
+  "bun run release:dry-run",project,300
+close_reason: Tag-driven provenance publishing and npm/Bun verification implemented
+body: ""

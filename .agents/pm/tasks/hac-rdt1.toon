@@ -1,0 +1,67 @@
+id: hac-rdt1
+title: Backfill every legacy changelog statement into release-assigned pm items
+description: Create closed release-assigned tracker records for all March release notes and current unreleased statements before replacing CHANGELOG.md with generated output.
+type: Task
+status: closed
+priority: 0
+tags[4]: changelog,history,migration,pm-changelog
+created_at: "2026-07-21T17:21:07.266Z"
+updated_at: "2026-07-21T17:40:13.681Z"
+closed_at: "2026-07-21T17:38:18.870Z"
+author: codex-root
+estimated_minutes: 120
+acceptance_criteria: Full-history pm-changelog output retains every legacy release fact
+goal: lossless-automatic-releases
+objective: lossless-changelog-migration
+value: Preserve release history.
+impact: Prevents destructive changelog regeneration.
+outcome: Generated changelog contains all legacy facts with clickable item links.
+why_now: March releases predate tracker initialization.
+parent: hac-wwsi
+reviewer: unbraind
+risk: high
+confidence: 98
+sprint: release-automation
+release: 2026.7.21
+resolution: "Backfilled each legacy bullet verbatim with explicit release metadata, installed pm-changelog, generated CHANGELOG.md in replace mode, and proved legacy_count=16, preserved_count=16, missing=[]."
+expected_result: No data from the hand-maintained changelog is lost.
+actual_result: All 16 original bullet statements remain visible in generated output with pm item links; the preamble preservation rationale is recorded on this item.
+comments[2]{created_at,author,text}:
+  "2026-07-21T17:32:46.299Z",codex-root,"Lossless comparison against git show HEAD:CHANGELOG.md reported legacy_count=16, preserved_count=16, missing=[]."
+  "2026-07-21T17:38:51.760Z",codex-root,"The first linked changelog check correctly failed after final pm comments and closures made the previously generated file stale. The required recovery is to regenerate after the last tracker mutation, then rerun the same check."
+notes[1]{created_at,author,text}:
+  "2026-07-21T17:22:25.139Z",codex-root,The original preamble stated that all notable changes are documented in CHANGELOG.md; generated ownership now makes closed pm items the source of truth while git history retains the exact hand-maintained snapshot.
+learnings[1]{created_at,author,text}:
+  "2026-07-21T17:32:46.299Z",codex-root,"pm-changelog escapes nested Markdown link brackets in item titles, but retains the visible text and item link; the legacy PROJECT_HISTORY pointer remains present."
+files[22]{path,scope,note}:
+  .agents/pm/tasks/hac-3qi0.toon,project,Tracker-backed legacy and release automation records
+  .agents/pm/tasks/hac-5n71.toon,project,Tracker-backed legacy and release automation records
+  .agents/pm/tasks/hac-cg64.toon,project,Tracker-backed legacy and release automation records
+  .agents/pm/tasks/hac-do7b.toon,project,Tracker-backed legacy and release automation records
+  .agents/pm/tasks/hac-h8g0.toon,project,Tracker-backed legacy and release automation records
+  .agents/pm/tasks/hac-irl3.toon,project,Tracker-backed legacy and release automation records
+  .agents/pm/tasks/hac-l2b4.toon,project,Tracker-backed legacy and release automation records
+  .agents/pm/tasks/hac-l2rz.toon,project,Tracker-backed legacy and release automation records
+  .agents/pm/tasks/hac-m1kj.toon,project,Tracker-backed legacy and release automation records
+  .agents/pm/tasks/hac-ns9h.toon,project,Tracker-backed legacy and release automation records
+  .agents/pm/tasks/hac-nux2.toon,project,Tracker-backed legacy and release automation records
+  .agents/pm/tasks/hac-q1uv.toon,project,Tracker-backed legacy and release automation records
+  .agents/pm/tasks/hac-q1vh.toon,project,Tracker-backed legacy and release automation records
+  .agents/pm/tasks/hac-r5y3.toon,project,Tracker-backed legacy and release automation records
+  .agents/pm/tasks/hac-r8ds.toon,project,Tracker-backed legacy and release automation records
+  .agents/pm/tasks/hac-rdt1.toon,project,Tracker-backed legacy and release automation records
+  .agents/pm/tasks/hac-s43s.toon,project,Tracker-backed legacy and release automation records
+  .agents/pm/tasks/hac-tajb.toon,project,Tracker-backed legacy and release automation records
+  .agents/pm/tasks/hac-wal7.toon,project,Tracker-backed legacy and release automation records
+  .agents/pm/tasks/hac-x41n.toon,project,Tracker-backed legacy and release automation records
+  .agents/pm/tasks/hac-yjzn.toon,project,Tracker-backed legacy and release automation records
+  CHANGELOG.md,project,Generated full-history changelog with all 16 legacy statements preserved
+tests[1]{command,scope,timeout_seconds,pm_context_mode}:
+  "env -u PM_PATH -u PM_GLOBAL_PATH bun run changelog:pm:check",project,180,schema
+test_runs[4]{run_id,kind,status,started_at,finished_at,recorded_at,passed,failed,skipped}:
+  test-local-mruxswji-vsn51r,test,failed,"2026-07-21T17:38:06.366Z","2026-07-21T17:38:14.334Z","2026-07-21T17:38:14.334Z",0,1,0
+  test-local-mruxtya4-b8xov9,test,failed,"2026-07-21T17:38:57.074Z","2026-07-21T17:39:03.244Z","2026-07-21T17:39:03.244Z",0,1,0
+  test-local-mruxuvqx-djkvk3,test,failed,"2026-07-21T17:39:38.493Z","2026-07-21T17:39:46.617Z","2026-07-21T17:39:46.617Z",0,1,0
+  test-local-mruxvgm5-ay8xpx,test,passed,"2026-07-21T17:40:09.710Z","2026-07-21T17:40:13.661Z","2026-07-21T17:40:13.661Z",1,0,0
+close_reason: All 16 legacy changelog statements are tracker-backed and preserved in deterministic full-history output
+body: ""
