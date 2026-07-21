@@ -6,7 +6,7 @@ status: closed
 priority: 0
 tags[4]: automation,calendar-version,github-actions,release
 created_at: "2026-07-21T17:21:08.582Z"
-updated_at: "2026-07-21T17:59:58.854Z"
+updated_at: "2026-07-21T18:09:23.340Z"
 closed_at: "2026-07-21T17:38:19.894Z"
 author: codex-root
 estimated_minutes: 180
@@ -26,11 +26,12 @@ release: 2026.7.21
 resolution: "Added daily/manual workflow, change and tracker-only skips, same-day guard, registry-aware calendar versioning, pm changelog preparation, synchronized version writes, full gates, release commit/tag creation, scoped PAT atomic push, downstream workflow waiting, and blocker issue reporting."
 expected_result: Only publishable changes since the latest tag cause a checked release commit and tag.
 actual_result: "Clean-commit dry run selected v2026.7.21 from v2026.3.6-2, generated the target changelog, passed all gates, and emitted parseable JSON without mutation."
-comments[4]{created_at,author,text}:
+comments[5]{created_at,author,text}:
   "2026-07-21T17:38:15.430Z",codex-root,"Clean-commit end-to-end dry run returned ok=true, skipped=false, dry_run=true, target_version=2026.7.21, tag=v2026.7.21, last_tag=v2026.3.6-2, commits_since_last_tag=5."
   "2026-07-21T17:38:15.430Z",codex-root,"The dry run completed release:verify, 988 tests, 95.55% statement coverage, secret/history checks, and packed npx/bunx smoke checks without mutating the clean worktree."
   "2026-07-21T17:51:49.016Z",codex-root,"PR review hardening: release tag discovery now ignores non-release tags; same-day tag detection filters the wildcard results to exact date or date-ordinal tags; spawn failures expose the underlying OS error."
   "2026-07-21T17:59:58.828Z",codex-root,"PR review hardening: downstream tag publication is correlated by the release commit SHA rather than tag-as-branch metadata; workflow permissions are scoped to the single release job; the read-only changelog checkout does not persist credentials."
+  "2026-07-21T18:09:23.315Z",codex-root,"Production proof: v2026.7.21 was created and the tag-driven publication completed successfully, but the parent run failed afterward because escaped quotes split the stale-blocker gh search into multiple arguments. The workflow now passes the search query as one shell argument in both cleanup and scheduled-failure paths."
 notes[1]{created_at,author,text}:
   "2026-07-21T17:32:48.257Z",codex-root,The JSON mode routes child command output to stderr so the workflow output file remains valid parseable JSON for tag handoff.
 files[4]{path,scope,note}:

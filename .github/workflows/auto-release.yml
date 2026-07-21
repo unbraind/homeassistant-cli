@@ -103,7 +103,7 @@ jobs:
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           title="Auto Release blocked: scheduled run failed"
-          existing="$(gh issue list --state open --search \"${title} in:title\" --json number --jq '.[0].number // empty')"
+          existing="$(gh issue list --state open --search "${title} in:title" --json number --jq '.[0].number // empty')"
           if [[ -n "$existing" ]]; then
             gh issue close "$existing" --reason completed --comment "${RELEASE_TAG} published successfully via ${RUN_URL}."
           fi
@@ -116,5 +116,5 @@ jobs:
         run: |
           title="Auto Release blocked: scheduled run failed"
           body="The scheduled conditional release failed. Inspect ${RUN_URL}. No release should be assumed published until the tag-driven workflow succeeds."
-          existing="$(gh issue list --state open --search \"${title} in:title\" --json number --jq '.[0].number // empty')"
+          existing="$(gh issue list --state open --search "${title} in:title" --json number --jq '.[0].number // empty')"
           if [[ -n "$existing" ]]; then gh issue comment "$existing" --body "$body"; else gh issue create --title "$title" --body "$body"; fi
