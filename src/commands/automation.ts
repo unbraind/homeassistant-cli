@@ -1,3 +1,6 @@
+/**
+ * Defines the automation command surface, options, help, and output behavior.
+ */
 import { Command } from "commander";
 import { AutomationApiClient } from "../api/automation.js";
 import { formatOutput } from "../formatters/index.js";

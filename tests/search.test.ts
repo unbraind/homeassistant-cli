@@ -70,6 +70,15 @@ describe("SearchApiClient", () => {
       expect(result[0]?.platform).toBe("state_fallback");
       expect(mockRequest).toHaveBeenCalledTimes(2);
     });
+
+    it("normalizes sparse fallback state metadata", async () => {
+      mockRequest
+        .mockResolvedValueOnce(mockResponse({ message: "Not Found" }, 404))
+        .mockResolvedValueOnce(mockResponse([{ entity_id: "orphan", state: "unknown", attributes: {} }]));
+      await expect(client.search("orphan")).resolves.toEqual([
+        expect.objectContaining({ name: "orphan", domain: "orphan", area: null, device: null }),
+      ]);
+    });
   });
 
   describe("quickSearch", () => {

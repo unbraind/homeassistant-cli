@@ -150,6 +150,14 @@ describe("update command", () => {
     expect(body.version).toBe("2026.2.0");
   });
 
+  it("requests a backup before a direct install", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
+    await captureLog(() => createUpdateCommand().parseAsync([
+      "--install", "update.home_assistant_core", "--backup",
+    ], { from: "user" }));
+    expect(JSON.parse((mockRequest.mock.calls[0]?.[1] as { body: string }).body).backup).toBe(true);
+  });
+
   it("installs via --entity-id --version", async () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createUpdateCommand();
@@ -161,6 +169,14 @@ describe("update command", () => {
     const body = JSON.parse(callOptions?.body ?? "{}");
     expect(body.entity_id).toBe("update.home_assistant_core");
     expect(body.version).toBe("2026.2.0");
+  });
+
+  it("requests a backup before an entity-version install", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
+    await captureLog(() => createUpdateCommand().parseAsync([
+      "--entity-id", "update.home_assistant_core", "--version", "2026.2.0", "--backup",
+    ], { from: "user" }));
+    expect(JSON.parse((mockRequest.mock.calls[0]?.[1] as { body: string }).body).backup).toBe(true);
   });
 
   it("skips an update via --skip", async () => {

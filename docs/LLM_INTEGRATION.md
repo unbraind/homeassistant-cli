@@ -616,6 +616,7 @@ hassio persons
 8. **Use statistics for trends**: When analyzing historical data
 9. **Count first**: Before fetching full lists
 10. **Check availability**: Not all endpoints available in all installations
+11. **Resolve targets first**: Use `hassio ws target extract|triggers|conditions|services|related` before constructing automation payloads
 
 ## Example Agent Implementation
 

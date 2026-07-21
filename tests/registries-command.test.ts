@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { createRegistriesCommand } from "../src/commands/registries.js";
+import { HomeAssistantApiError } from "../src/api/index.js";
 
 const exitSpy = vi.spyOn(process, "exit").mockImplementation(() => undefined as never);
 
@@ -35,6 +36,7 @@ const getCategoryRegistry = vi.fn(async () => [
   { category_id: "lighting", name: "Lighting" },
 ]);
 const close = vi.fn(async () => undefined);
+const getStates = vi.fn(async () => [] as Array<{ entity_id: string; state: string; attributes: Record<string, unknown> }>);
 
 vi.mock("../src/api/registries.js", () => ({
   WebSocketRegistryClient: vi.fn().mockImplementation(function () { return {
@@ -67,7 +69,7 @@ vi.mock("../src/api/index.js", () => ({
     close,
   }; }),
   HomeAssistantClient: vi.fn().mockImplementation(function () { return {
-    getStates: vi.fn(async () => []),
+    getStates,
   }; }),
   HomeAssistantApiError: class extends Error {
     statusCode: number;
@@ -102,6 +104,7 @@ describe("registries command", () => {
     getLabelRegistry.mockClear();
     getCategoryRegistry.mockClear();
     close.mockClear();
+    getStates.mockReset().mockResolvedValue([]);
     exitSpy.mockClear();
   });
 
@@ -244,5 +247,74 @@ describe("registries command", () => {
 
     const parsed = JSON.parse(result);
     expect(parsed.entity_registry.every((e: { device_id: string }) => e.device_id === "dev1")).toBe(true);
+  });
+
+  it("filters entities by area and supports every singular registry alias", async () => {
+    const entityResult = await captureLog(() =>
+      createRegistriesCommand().parseAsync(["--entity", "--area-id", "bedroom"], { from: "user" })
+    );
+    expect(JSON.parse(entityResult).entity_registry).toEqual([
+      expect.objectContaining({ entity_id: "switch.fan" }),
+    ]);
+
+    for (const alias of ["--area", "--floor", "--label", "--category"]) {
+      const result = await captureLog(() => createRegistriesCommand().parseAsync([alias], { from: "user" }));
+      expect(result).toContain("registry");
+    }
+  });
+
+  it("returns count payloads for every non-entity registry", async () => {
+    for (const option of ["--devices", "--areas", "--floors", "--labels", "--categories"]) {
+      const result = JSON.parse(await captureLog(() =>
+        createRegistriesCommand().parseAsync([option, "--count"], { from: "user" })
+      )) as Record<string, unknown>;
+      expect(Object.values(result)).toEqual([expect.any(Number)]);
+    }
+  });
+
+  it("falls back to unique state area identifiers when websocket areas are unavailable", async () => {
+    getAreaRegistry.mockRejectedValueOnce(new Error("WS failed"));
+    getStates.mockResolvedValueOnce([
+      { entity_id: "light.one", state: "on", attributes: { area_id: "kitchen" } },
+      { entity_id: "light.two", state: "off", attributes: { area_id: "kitchen" } },
+      { entity_id: "sensor.no_area", state: "20", attributes: {} },
+    ]);
+
+    const result = JSON.parse(await captureLog(() =>
+      createRegistriesCommand().parseAsync(["--areas"], { from: "user" })
+    )) as { area_registry: Array<{ area_id: string }>; message: string };
+    expect(result.area_registry).toEqual([{ area_id: "kitchen" }]);
+    expect(result.message).toContain("entity states");
+  });
+
+  it("reports empty areas after an ordinary fallback failure", async () => {
+    getAreaRegistry.mockRejectedValueOnce(new Error("WS failed"));
+    getStates.mockRejectedValueOnce(new Error("REST failed"));
+    const result = await captureLog(() =>
+      createRegistriesCommand().parseAsync(["--areas"], { from: "user" })
+    );
+    expect(result).toContain("Area registry unavailable");
+  });
+
+  it("preserves typed Home Assistant errors from the area fallback", async () => {
+    getAreaRegistry.mockRejectedValueOnce(new Error("WS failed"));
+    getStates.mockRejectedValueOnce(new HomeAssistantApiError("unauthorized", 401));
+    await expect(createRegistriesCommand().parseAsync(["--areas"], { from: "user" })).rejects.toThrow("unauthorized");
+    expect(close).toHaveBeenCalled();
+  });
+
+  it.each([
+    ["entity", getEntityRegistry, "Entity registry unavailable"],
+    ["device", getDeviceRegistry, "Device registry unavailable"],
+    ["floor", getFloorRegistry, "Floor registry unavailable"],
+    ["label", getLabelRegistry, "Label registry unavailable"],
+    ["category", getCategoryRegistry, "Category registry unavailable"],
+  ])("reports a focused %s registry failure", async (option, method, message) => {
+    method.mockRejectedValueOnce(new Error("WS failed"));
+    const result = await captureLog(() =>
+      createRegistriesCommand().parseAsync([`--${option}`], { from: "user" })
+    );
+    expect(result).toContain(message);
+    expect(close).toHaveBeenCalled();
   });
 });

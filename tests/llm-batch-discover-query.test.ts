@@ -103,6 +103,14 @@ describe("batch command", () => {
     expect(parsed.failed).toBe(1);
   });
 
+  it("stringifies non-Error batch failures", async () => {
+    mockRequest.mockRejectedValueOnce("offline");
+    const result = JSON.parse(await captureLog(() => createBatchCommand().parseAsync([
+      "--domain", "light", "--service", "turn_on", "--entities", "light.kitchen",
+    ], { from: "user" })));
+    expect(result.results[0].error).toBe("offline");
+  });
+
   it("passes extra data to each service call", async () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
 
@@ -189,6 +197,25 @@ describe("discover command", () => {
     // Should contain the unavailable sensor entity
     expect(result).toContain("sensor.unavail");
     expect(result).not.toContain("light.kitchen");
+  });
+
+  it("limits unavailable entities", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse([
+      ...sampleStates,
+      { entity_id: "sensor.unknown", state: "unknown", attributes: {}, last_changed: "", last_updated: "" },
+    ]));
+    const result = JSON.parse(await captureLog(() => createDiscoverCommand().parseAsync([
+      "--unavailable", "--limit", "1",
+    ], { from: "user" })));
+    expect(result).toHaveLength(1);
+  });
+
+  it("groups an empty entity id under unknown in domain and summary views", async () => {
+    const malformed = [{ entity_id: "", state: "unknown", attributes: {}, last_changed: "", last_updated: "" }];
+    mockRequest.mockResolvedValueOnce(mockResponse(malformed));
+    expect(await captureLog(() => createDiscoverCommand().parseAsync(["--domains"], { from: "user" }))).toContain("unknown");
+    mockRequest.mockResolvedValueOnce(mockResponse(malformed));
+    expect(await captureLog(() => createDiscoverCommand().parseAsync([], { from: "user" }))).toContain("unknown");
   });
 
   it("limits output with --limit flag", async () => {
@@ -323,6 +350,16 @@ describe("query command", () => {
     expect(parsed.total).toBe(2);
     expect(parsed.by_state).toBeDefined();
     expect(parsed.by_domain).toBeDefined();
+  });
+
+  it("groups an empty entity id under unknown in query summaries", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse([
+      { entity_id: "", state: "unknown", attributes: {}, last_changed: "", last_updated: "" },
+    ]));
+    const result = JSON.parse(await captureLog(() => createQueryCommand().parseAsync([
+      "unknown:condition", "--summary",
+    ], { from: "user" })));
+    expect(result.by_domain.unknown).toBe(1);
   });
 
   it("limits output with --limit flag", async () => {

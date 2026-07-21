@@ -1,3 +1,6 @@
+/**
+ * Defines type-safe options contracts used by the Home Assistant API and CLI.
+ */
 export type OutputFormat = "toon" | "json" | "json-compact" | "yaml" | "table" | "markdown";
 
 export interface Config {

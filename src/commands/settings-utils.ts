@@ -1,3 +1,6 @@
+/**
+ * Defines the settings utils command surface, options, help, and output behavior.
+ */
 import type { Command } from "commander";
 import type { OutputFormat } from "../types/index.js";
 

@@ -17,13 +17,7 @@ vi.mock("undici", () => ({
   request: vi.fn(),
 }));
 
-vi.mock("node:fs", async () => {
-  const actual = await vi.importActual<typeof import("node:fs")>("node:fs");
-  return {
-    ...actual,
-    writeFileSync: vi.fn(),
-  };
-});
+vi.mock("node:fs", () => ({ writeFileSync: vi.fn() }));
 
 import { request } from "undici";
 import { writeFileSync } from "node:fs";

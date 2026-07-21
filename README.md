@@ -34,7 +34,7 @@ Public release `v2026.3.6` was published on March 6, 2026. See:
 - **Fast Topology Snapshot** - `hassio summary` returns domain/state counts for quick agent planning
 - **Search Endpoint Fallback** - Falls back to local entity-state search when `/api/search` is unavailable
 - **Service Schema Intelligence** - Supports modern object-style `/api/services` payloads with filter/flat/count modes
-- **WebSocket API Coverage** - Generic `websocket`/`ws` passthrough plus `websocket status` metadata
+- **WebSocket API Coverage** - Generic passthrough plus typed target extraction, trigger, condition, service, and related-registry discovery
 - **Supervisor API Coverage** - Generic `supervisor api` passthrough + common shortcuts (addons, host, logs)
 - **Full TypeScript Support** - Complete type safety throughout
 - **Comprehensive Testing** - Large automated test suite with strong coverage
@@ -462,8 +462,11 @@ hassio ws call -T get_states
 # Target helper: resolve target selectors to concrete IDs
 hassio ws target extract --area-id kitchen
 
-# Target helper: get available services for a target
+# Discover automation primitives that apply to a target
+hassio ws target triggers --entity-id light.kitchen
+hassio ws target conditions --entity-id light.kitchen
 hassio ws target services --entity-id light.kitchen
+hassio ws target services --entity-id group.downstairs --no-expand-group
 
 # Target helper: resolve and fetch related registries
 hassio ws target related --label-id lighting
@@ -490,6 +493,8 @@ If supervisor commands return `401` or `404`, the CLI now reports actionable gui
 - `404`: installation does not expose supervisor endpoints (common on Core/Container)
 
 ## Development
+
+The release contract requires 100% statements, branches, functions, and lines, 100% source-file docstrings, strict erasable TypeScript, PM integrity, duplicate-code and file-size ratchets, dependency/security scans, and package smoke tests. See [Quality and Security Gates](docs/QUALITY_GATES.md) for the exact local commands and hosted contexts.
 
 > **Note:** This project uses [Bun](https://bun.sh) as the primary package manager and runtime.
 

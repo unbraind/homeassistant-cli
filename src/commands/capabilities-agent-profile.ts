@@ -1,3 +1,6 @@
+/**
+ * Defines the capabilities agent profile command surface, options, help, and output behavior.
+ */
 import type { CapabilityReportSnapshot, AgentPlan } from "./capabilities-agent-plan.js";
 
 type CapabilityStatus = "available" | "unavailable" | "unauthorized" | "error";

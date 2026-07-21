@@ -88,6 +88,12 @@ describe("pipeline command", () => {
     expect(parsed.pipeline_count).toBe(1);
   });
 
+  it("handles a pipeline list response without a pipelines array", async () => {
+    mockCall.mockResolvedValueOnce({ preferred_pipeline: null });
+    const result = await captureLog(() => createPipelineCommand().parseAsync(["list"], { from: "user" }));
+    expect(JSON.parse(result).pipelines).toEqual([]);
+  });
+
   it("gets a specific pipeline", async () => {
     const pipeline = { id: "pipeline-001", name: "Home Assistant", language: "en" };
     mockCall.mockResolvedValueOnce(pipeline);
@@ -110,6 +116,19 @@ describe("pipeline command", () => {
     const parsed = JSON.parse(result);
     expect(parsed.created).toBe(true);
     expect(parsed.pipeline.name).toBe("My Pipeline");
+  });
+
+  it("creates a pipeline with every optional engine", async () => {
+    mockCall.mockResolvedValueOnce({ id: "full", name: "Full", language: "de" });
+    await captureLog(() => createPipelineCommand().parseAsync([
+      "create", "--name", "Full", "--language", "de",
+      "--conversation-engine", "conversation.home_assistant",
+      "--stt-engine", "stt.cloud", "--tts-engine", "tts.cloud",
+    ], { from: "user" }));
+    expect(mockCall).toHaveBeenCalledWith("assist_pipeline/pipeline/create", {
+      name: "Full", language: "de", conversation_engine: "conversation.home_assistant",
+      stt_engine: "stt.cloud", tts_engine: "tts.cloud",
+    });
   });
 
   it("deletes a pipeline", async () => {

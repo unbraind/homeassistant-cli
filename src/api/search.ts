@@ -1,3 +1,6 @@
+/**
+ * Implements typed Home Assistant search API transport operations.
+ */
 import type { Config } from "../types/options.js";
 import type { HaState } from "../types/api.js";
 import { HomeAssistantClient } from "./client.js";

@@ -131,6 +131,16 @@ describe("persons command", () => {
     expect(result).toContain("persons_count");
     expect(result).toContain("2");
   });
+
+  it("uses safe person attribute fallbacks", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse([{
+      entity_id: "person.unknown", state: "unknown", attributes: {}, last_changed: "", last_updated: "",
+    }]));
+    const result = JSON.parse(await captureLog(() => createPersonsCommand().parseAsync([], { from: "user" })));
+    expect(result.persons[0]).toMatchObject({
+      friendly_name: "person.unknown", device_trackers: [], user_id: null,
+    });
+  });
 });
 
 describe("zones command", () => {
@@ -167,6 +177,14 @@ describe("zones command", () => {
 
     expect(result).toContain("zones_count");
     expect(result).toContain("2");
+  });
+
+  it("uses the zone id as a name and preserves a passive zone", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse([{
+      entity_id: "zone.hidden", state: "0", attributes: { passive: true }, last_changed: "", last_updated: "",
+    }]));
+    const result = JSON.parse(await captureLog(() => createZonesCommand().parseAsync([], { from: "user" })));
+    expect(result.zones[0]).toMatchObject({ friendly_name: "zone.hidden", passive: true });
   });
 });
 

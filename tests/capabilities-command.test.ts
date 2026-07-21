@@ -2,10 +2,19 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createCapabilitiesCommand } from "../src/commands/capabilities.js";
 
 const exitSpy = vi.spyOn(process, "exit").mockImplementation(() => undefined as never);
-const { getDataMock, saveDataMock, probeApiMatrixMock } = vi.hoisted(() => ({
+const { getDataMock, saveDataMock, probeApiMatrixMock, apiBehavior } = vi.hoisted(() => ({
   getDataMock: vi.fn(),
   saveDataMock: vi.fn(),
   probeApiMatrixMock: vi.fn(),
+  apiBehavior: {
+    statusMessage: "API running.",
+    installationType: "Home Assistant OS" as string | undefined,
+    websocketError: undefined as Error | undefined,
+    configEntriesError: undefined as Error | undefined,
+    supervisorError: new Error("API request failed: 401 - Unauthorized") as Error | undefined,
+    includeConversation: true,
+    includeTts: false,
+  },
 }));
 
 vi.mock("../src/config/index.js", () => ({
@@ -23,15 +32,16 @@ vi.mock("../src/config/index.js", () => ({
 vi.mock("../src/api/index.js", () => ({
   HomeAssistantClient: class {
     async getStatus() {
-      return { message: "API running." };
+      return { message: apiBehavior.statusMessage };
     }
     async getConfig() {
-      return { version: "2026.1.3", location_name: "Home", installation_type: "Home Assistant OS" };
+      return { version: "2026.1.3", location_name: "Home", installation_type: apiBehavior.installationType };
     }
     async getServices() {
       return [
         { domain: "light", services: { turn_on: {}, turn_off: {} } },
-        { domain: "conversation", services: { process: {} } },
+        ...(apiBehavior.includeConversation ? [{ domain: "conversation", services: { process: {} } }] : []),
+        ...(apiBehavior.includeTts ? [{ domain: "tts", services: { speak: {} } }] : []),
       ];
     }
     async getStates() {
@@ -43,11 +53,13 @@ vi.mock("../src/api/index.js", () => ({
   },
   ConfigEntriesApiClient: class {
     async getConfigEntries() {
+      if (apiBehavior.configEntriesError) throw apiBehavior.configEntriesError;
       return [{ entry_id: "1" }];
     }
   },
   HomeAssistantWebSocketClient: class {
     async connect() {
+      if (apiBehavior.websocketError) throw apiBehavior.websocketError;
       return undefined;
     }
     async close() {
@@ -59,7 +71,8 @@ vi.mock("../src/api/index.js", () => ({
 vi.mock("../src/api/supervisor.js", () => ({
   SupervisorApiClient: class {
     async getAddons() {
-      throw new Error("API request failed: 401 - Unauthorized");
+      if (apiBehavior.supervisorError) throw apiBehavior.supervisorError;
+      return [];
     }
   },
 }));
@@ -81,6 +94,13 @@ describe("capabilities command", () => {
       entries: [],
       recommendations: ["Use --format toon for token-efficient agent workflows."],
     });
+    apiBehavior.statusMessage = "API running.";
+    apiBehavior.installationType = "Home Assistant OS";
+    apiBehavior.websocketError = undefined;
+    apiBehavior.configEntriesError = undefined;
+    apiBehavior.supervisorError = new Error("API request failed: 401 - Unauthorized");
+    apiBehavior.includeConversation = true;
+    apiBehavior.includeTts = false;
   });
 
   afterEach(() => {
@@ -348,5 +368,123 @@ describe("capabilities command", () => {
     expect(parsed.summary.available).toBe(2);
     expect(parsed.recommendation_count).toBe(1);
     expect(probeApiMatrixMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("returns and redacts a live report while probing optional capability failures", async () => {
+    getDataMock.mockReturnValue({});
+    apiBehavior.statusMessage = "API starting";
+    apiBehavior.installationType = undefined;
+    apiBehavior.websocketError = new Error("socket unavailable");
+    apiBehavior.configEntriesError = new Error("API request failed: 404 - Not Found");
+    apiBehavior.supervisorError = undefined;
+
+    const output: string[] = [];
+    const originalLog = console.log;
+    console.log = (message: string) => output.push(message);
+    await createCapabilitiesCommand().parseAsync(["--refresh", "--redact-private"], { from: "user" });
+    console.log = originalLog;
+
+    const parsed = JSON.parse(output.join("\n")) as {
+      source: string;
+      report: {
+        api: { location: string; installation_type: string };
+        counts: { config_entry_count?: number };
+        capabilities: Record<string, { status: string }>;
+      };
+    };
+    expect(parsed.source).toBe("live");
+    expect(parsed.report.api.location).toBe("[REDACTED]");
+    expect(parsed.report.api.installation_type).toBe("unknown");
+    expect(parsed.report.counts.config_entry_count).toBeUndefined();
+    expect(parsed.report.capabilities["rest_api"]?.status).toBe("error");
+    expect(parsed.report.capabilities["websocket"]?.status).toBe("error");
+    expect(parsed.report.capabilities["config_entries"]?.status).toBe("unavailable");
+    expect(parsed.report.capabilities["supervisor"]?.status).toBe("available");
+  });
+
+  it("reports conversation as unavailable and TTS as available from service discovery", async () => {
+    getDataMock.mockReturnValue({});
+    apiBehavior.includeConversation = false;
+    apiBehavior.includeTts = true;
+    const output: string[] = [];
+    const originalLog = console.log;
+    console.log = (message: string) => output.push(message);
+    await createCapabilitiesCommand().parseAsync(["--refresh"], { from: "user" });
+    console.log = originalLog;
+    const capabilities = (JSON.parse(output.join("\n")) as {
+      report: { capabilities: Record<string, { status: string }> };
+    }).report.capabilities;
+    expect(capabilities["conversation"]?.status).toBe("unavailable");
+    expect(capabilities["tts"]?.status).toBe("available");
+  });
+
+  it.each([
+    ["--agent-plan", "plan"],
+    ["--agent-profile", "profile"],
+    ["--agent-context", "summary"],
+  ])("returns a live %s payload", async (option, expectedKey) => {
+    getDataMock.mockReturnValue({});
+    const output: string[] = [];
+    const originalLog = console.log;
+    console.log = (message: string) => output.push(message);
+    await createCapabilitiesCommand().parseAsync(["--refresh", option], { from: "user" });
+    console.log = originalLog;
+
+    const parsed = JSON.parse(output.join("\n")) as Record<string, unknown>;
+    expect(parsed["source"]).toBe("live");
+    expect(parsed[expectedKey]).toBeDefined();
+  });
+
+  it("returns cached counts", async () => {
+    const checkedAt = new Date().toISOString();
+    getDataMock.mockReturnValue({
+      capabilitiesCache: {
+        checkedAt,
+        report: {
+          checked_at: checkedAt,
+          api: { version: "2026.1.3", location: "Home", installation_type: "OS" },
+          counts: { entity_count: 0, service_domain_count: 0, service_count: 0 },
+          service_domains: [], entity_domains: {},
+          capabilities: { rest_api: { status: "available", endpoint: "/api/" } },
+          hints: [],
+        },
+      },
+    });
+    const output: string[] = [];
+    const originalLog = console.log;
+    console.log = (message: string) => output.push(message);
+    await createCapabilitiesCommand().parseAsync(["--count"], { from: "user" });
+    console.log = originalLog;
+    expect(JSON.parse(output.join("\n"))).toMatchObject({ source: "cache", entity_count: 0 });
+  });
+
+  it.each([
+    [{ capabilitiesCache: { checkedAt: "not-a-date", report: { invalid: true } } }],
+    [{ capabilitiesCache: { checkedAt: new Date(0).toISOString(), report: { invalid: true } } }],
+    [{ capabilitiesCache: { checkedAt: new Date().toISOString(), report: null } }],
+  ])("ignores unusable cache data and performs a live probe", async (cachedData) => {
+    getDataMock.mockReturnValue(cachedData);
+    const output: string[] = [];
+    const originalLog = console.log;
+    console.log = (message: string) => output.push(message);
+    await createCapabilitiesCommand().parseAsync([], { from: "user" });
+    console.log = originalLog;
+    expect(JSON.parse(output.join("\n"))).toMatchObject({ source: "live" });
+  });
+
+  it("rejects a fresh cache with an invalid report shape", async () => {
+    getDataMock.mockReturnValue({
+      capabilitiesCache: { checkedAt: new Date().toISOString(), report: { checked_at: "invalid" } },
+    });
+    await expect(createCapabilitiesCommand().parseAsync([], { from: "user" })).rejects.toThrow(
+      "Invalid cached capabilities report shape"
+    );
+  });
+
+  it("rejects a fresh primitive cache report", async () => {
+    getDataMock.mockReturnValue({ capabilitiesCache: { checkedAt: new Date().toISOString(), report: "invalid" } });
+    await expect(createCapabilitiesCommand().parseAsync([], { from: "user" })).rejects.toThrow(
+      "Invalid cached capabilities report shape"
+    );
   });
 });

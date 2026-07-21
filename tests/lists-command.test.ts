@@ -87,6 +87,15 @@ describe("todo command", () => {
     expect(result).toContain("todo.groceries");
   });
 
+  it("adds a todo item with description and due date", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
+    await captureLog(() => createTodoCommand().parseAsync([
+      "-e", "todo.groceries", "-a", "Milk", "--description", "Two cartons", "--due", "2026-07-22",
+    ], { from: "user" }));
+    const body = JSON.parse((mockRequest.mock.calls[0]?.[1] as { body: string }).body);
+    expect(body).toMatchObject({ description: "Two cartons", due_date: "2026-07-22" });
+  });
+
   it("removes a todo item", async () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
 
@@ -114,6 +123,38 @@ describe("todo command", () => {
     expect(result).toContain("updated");
   });
 
+  it("updates every optional todo field and marks the item incomplete", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
+    await captureLog(() => createTodoCommand().parseAsync([
+      "-e", "todo.groceries", "--update", "uid-123", "--description", "Fresh",
+      "--due", "2026-07-22", "--incomplete",
+    ], { from: "user" }));
+    const body = JSON.parse((mockRequest.mock.calls[0]?.[1] as { body: string }).body);
+    expect(body).toMatchObject({ description: "Fresh", due_date: "2026-07-22", status: "needs_action" });
+  });
+
+  it("allows a todo update with no optional mutations", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
+    await captureLog(() => createTodoCommand().parseAsync([
+      "-e", "todo.groceries", "--update", "uid-123",
+    ], { from: "user" }));
+    expect(JSON.parse((mockRequest.mock.calls[0]?.[1] as { body: string }).body)).toEqual({
+      entity_id: "todo.groceries", item_id: "uid-123",
+    });
+  });
+
+  it("lists todo lists by default when no entity is supplied", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse([]));
+    expect(await captureLog(() => createTodoCommand().parseAsync([], { from: "user" }))).toContain("todo_lists");
+  });
+
+  it("performs no implicit list operation when only an entity is supplied", async () => {
+    expect(await captureLog(() => createTodoCommand().parseAsync([
+      "-e", "todo.groceries",
+    ], { from: "user" }))).toBe("");
+    expect(mockRequest).not.toHaveBeenCalled();
+  });
+
   it("handles 404 on todo endpoint", async () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ message: "Not Found" }, 404));
 
@@ -121,6 +162,11 @@ describe("todo command", () => {
     const result = await captureLog(() => cmd.parseAsync(["--lists"], { from: "user" }));
 
     expect(result).toContain("Todo endpoint not available");
+  });
+
+  it("preserves non-404 todo failures", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse({ message: "Failure" }, 400));
+    await expect(createTodoCommand().parseAsync(["--lists"], { from: "user" })).rejects.toThrow("400");
   });
 });
 
@@ -247,6 +293,16 @@ describe("shopping-list command", () => {
     expect(result).toContain("updated");
     expect(result).toContain("Updated Milk");
   });
+
+  it.each([
+    [["--update", "2", "--incomplete"], false],
+    [["--update", "2"], undefined],
+  ])("updates shopping completion with %j", async (args, expectedComplete) => {
+    mockRequest.mockResolvedValueOnce(mockResponse({ id: "2", name: "Milk", complete: expectedComplete }));
+    await captureLog(() => createShoppingListCommand().parseAsync(args, { from: "user" }));
+    const body = JSON.parse((mockRequest.mock.calls[0]?.[1] as { body: string }).body);
+    expect(body.complete).toBe(expectedComplete);
+  });
 });
 
 describe("notifications command", () => {
@@ -298,6 +354,16 @@ describe("notifications command", () => {
 
     expect(result).toContain("Hello world");
     expect(result).toContain("created");
+  });
+
+  it("creates a notification with an explicit id but no title", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
+    await captureLog(() => createNotificationsCommand().parseAsync([
+      "-c", "Hello", "--id", "stable-id",
+    ], { from: "user" }));
+    const body = JSON.parse((mockRequest.mock.calls[0]?.[1] as { body: string }).body);
+    expect(body).toMatchObject({ message: "Hello", notification_id: "stable-id" });
+    expect(body.title).toBeUndefined();
   });
 
   it("dismisses a notification", async () => {
@@ -369,5 +435,20 @@ describe("notifications command", () => {
 
     expect(result).toContain("notifications_count");
     expect(result).toContain("1");
+  });
+
+  it("uses empty strings for absent fallback notification fields", async () => {
+    mockRequest
+      .mockResolvedValueOnce(mockResponse({ message: "Not found" }, 404))
+      .mockResolvedValueOnce(mockResponse([{
+        entity_id: "persistent_notification.empty", state: "notifying", attributes: {}, last_updated: "now",
+      }]));
+    const result = JSON.parse(await captureLog(() => createNotificationsCommand().parseAsync([], { from: "user" })));
+    expect(result.notifications[0]).toMatchObject({ message: "", title: "" });
+  });
+
+  it("preserves non-404 notification failures", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse({ message: "Failure" }, 400));
+    await expect(createNotificationsCommand().parseAsync([], { from: "user" })).rejects.toThrow("400");
   });
 });

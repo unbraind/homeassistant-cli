@@ -1,3 +1,6 @@
+/**
+ * Defines type-safe history contracts used by the Home Assistant API and CLI.
+ */
 export interface HaHistoryState {
   entity_id?: string;
   state: string;

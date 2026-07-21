@@ -1218,7 +1218,10 @@ hassio websocket status
 hassio ws call -T get_states
 hassio ws call -T config/device_registry/list -d '{"area_id":"kitchen"}'
 hassio ws target extract --entity-id light.kitchen
+hassio ws target triggers --area-id kitchen
+hassio ws target conditions --area-id kitchen
 hassio ws target services --area-id kitchen
+hassio ws target services --entity-id group.downstairs --no-expand-group
 hassio ws target related --label-id lighting
 hassio ws subscribe --event-type state_changed --wait-ms 10000 --max-events 20
 ```
@@ -1226,12 +1229,16 @@ hassio ws subscribe --event-type state_changed --wait-ms 10000 --max-events 20
 #### `websocket target`
 Target-resolution helpers built on HA WebSocket commands:
 - `extract` → `extract_from_target`
+- `triggers` → `get_triggers_for_target`
+- `conditions` → `get_conditions_for_target`
 - `services` → `get_services_for_target`
-- `related` → extract IDs, then fetch entity/device/area/floor/label registry entries
+- `related` → extract current `referenced_*` IDs, then return only matching entity/device/area/floor/label registry entries
 
 ```bash
 hassio ws target extract --entity-id light.kitchen
 hassio ws target extract --area-id kitchen --expand-group
+hassio ws target triggers --entity-id light.kitchen
+hassio ws target conditions --area-id kitchen
 hassio ws target services --area-id kitchen,living_room --label-id lighting
 hassio ws target related --entity-id light.kitchen
 ```
@@ -1242,6 +1249,12 @@ Common selector flags (all `target` subcommands):
 - `--area-id <ids>` comma-separated area IDs
 - `--floor-id <ids>` comma-separated floor IDs
 - `--label-id <ids>` comma-separated label IDs
+
+Each target helper requires at least one selector. `extract` preserves Home Assistant's
+`referenced_entities`, `referenced_devices`, `referenced_areas`, and `missing_*`
+response fields. The generic `ws call` command remains the forward-compatible path
+for every integration-specific WebSocket command. See the official
+[WebSocket API contract](https://developers.home-assistant.io/docs/api/websocket/).
 
 ## Supervisor Commands
 

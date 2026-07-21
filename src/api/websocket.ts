@@ -1,3 +1,6 @@
+/**
+ * Implements typed Home Assistant websocket API transport operations.
+ */
 import WebSocket from "ws";
 import type { Config } from "../types/options.js";
 
@@ -44,18 +47,14 @@ export class HomeAssistantWebSocketClient {
       return;
     }
 
-    this.socket = new WebSocket(this.wsUrl, { handshakeTimeout: this.timeout });
+    const socket = new WebSocket(this.wsUrl, { handshakeTimeout: this.timeout });
+    this.socket = socket;
 
     await new Promise<void>((resolve, reject) => {
-      if (!this.socket) {
-        reject(new Error("WebSocket not initialized"));
-        return;
-      }
-
       const onOpen = () => resolve();
       const onError = (err: Error) => reject(err);
-      this.socket.once("open", onOpen);
-      this.socket.once("error", onError);
+      socket.once("open", onOpen);
+      socket.once("error", onError);
     });
 
     const authRequired = await this.waitForMessage<WsConnectMessage>();
@@ -63,13 +62,13 @@ export class HomeAssistantWebSocketClient {
       throw new Error(`Unexpected WebSocket handshake response: ${JSON.stringify(authRequired)}`);
     }
 
-    this.socket.send(JSON.stringify({ type: "auth", access_token: this.token }));
+    socket.send(JSON.stringify({ type: "auth", access_token: this.token }));
     const authResult = await this.waitForMessage<WsConnectMessage>();
     if (authResult.type !== "auth_ok") {
       throw new Error(authResult.message ?? "WebSocket authentication failed");
     }
 
-    this.socket.on("message", (raw: WebSocket.RawData) => {
+    socket.on("message", (raw: WebSocket.RawData) => {
       const parsed = this.parseMessage(raw.toString());
       if (!parsed) return;
 
@@ -103,10 +102,11 @@ export class HomeAssistantWebSocketClient {
   }
 
   async close(): Promise<void> {
-    if (!this.socket) return;
+    const socket = this.socket;
+    if (!socket) return;
     await new Promise<void>((resolve) => {
-      this.socket?.once("close", () => resolve());
-      this.socket?.close();
+      socket.once("close", () => resolve());
+      socket.close();
       setTimeout(() => resolve(), 250);
     });
     this.socket = null;
@@ -134,7 +134,7 @@ export class HomeAssistantWebSocketClient {
     await this.sendAndWait(id, "subscribe_events", options?.eventType ? { event_type: options.eventType } : undefined);
 
     await new Promise((resolve) => setTimeout(resolve, waitMs));
-    const events = this.eventBuffers.get(id) ?? [];
+    const events = this.eventBuffers.get(id) as unknown[];
 
     try {
       await this.call("unsubscribe_events", { subscription: id });
@@ -175,7 +175,8 @@ export class HomeAssistantWebSocketClient {
   }
 
   private async waitForMessage<T>(): Promise<T> {
-    if (!this.socket) {
+    const socket = this.socket;
+    if (!socket) {
       throw new Error("WebSocket not initialized");
     }
 
@@ -190,7 +191,7 @@ export class HomeAssistantWebSocketClient {
           reject(error);
         }
       };
-      this.socket?.once("message", onMessage);
+      socket.once("message", onMessage);
     });
   }
 }

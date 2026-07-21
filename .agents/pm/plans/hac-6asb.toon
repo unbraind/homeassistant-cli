@@ -1,0 +1,134 @@
+id: hac-6asb
+title: Live Home Assistant API parity delivery plan
+description: "Ordered research, implementation, verification, review, and merged-head proof for the live API parity feature."
+type: Plan
+status: in_progress
+priority: 0
+tags[3]: delivery,plan,verification
+created_at: "2026-07-21T18:59:09.022Z"
+updated_at: "2026-07-21T20:41:09.642Z"
+assignee: codex-root
+author: codex-root
+estimated_minutes: 480
+acceptance_criteria: Every plan step is completed with linked pm evidence and the feature closes only after merged-master proof
+definition_of_ready: Feature scope and child issues created from duplicate-safe evidence
+value: "Keeps official research, local implementation, and hosted review as one auditable delivery chain"
+impact: Prevents partial completion at local or PR-only state
+outcome: "One merged, reviewed, fully verified production-ready change"
+why_now: The transport blocker requires an end-to-end shipping lane
+parent: hac-n0ix
+reviewer: unbraind
+risk: high
+confidence: high
+dependencies[5]{id,kind,created_at,author,source_kind}:
+  hac-0ay7,blocked_by,"2026-07-21T19:39:47.270Z",null,null
+  hac-96i2,blocked_by,"2026-07-21T19:39:47.270Z",null,null
+  hac-ak9g,blocked_by,"2026-07-21T19:39:47.270Z",null,null
+  hac-r4e3,blocked_by,"2026-07-21T19:39:47.270Z",null,null
+  hac-vooo,blocked_by,"2026-07-21T19:39:47.270Z",null,null
+plan_mode: approved
+plan_decisions[1]{ts,author,decision,rationale,evidence}:
+  "2026-07-21T19:00:05.325Z",codex-root,Keep raw ws call as the forward-compatible full API surface and add typed helpers only for stable high-value discovery contracts.,Home Assistant WebSocket commands are dynamic and integration-dependent; typed affordances should improve agent UX without pretending the finite CLI can freeze every command.,Official WebSocket docs describe generic command envelopes and current target helper commands; existing ws call accepts arbitrary types.
+plan_discoveries[1]{ts,author,text}:
+  "2026-07-21T19:00:04.305Z",codex-root,Live settings validation fails before network I/O because Undici 8 rejects request-level throwOnError.
+plan_steps[9]:
+  - id: plan-step-001
+    order: 1
+    title: Research official and live API contracts
+    status: completed
+    created_at: "2026-07-21T18:59:56.374Z"
+    updated_at: "2026-07-21T20:40:51.496Z"
+    body: "Compare current official REST/WebSocket docs, live instance behavior, and CLI implementation without recording private values."
+    owner: codex-root
+    evidence: "Reviewed official Home Assistant REST and WebSocket contracts, installed Undici 8 types, live protocol responses, and current CLI surfaces without persisting private values."
+    completed_at: "2026-07-21T20:40:51.496Z"
+    linked_items[1]{id,kind}:
+      hac-n0ix,depends_on
+  - id: plan-step-002
+    order: 2
+    title: Repair REST transport and strengthen regression coverage
+    status: completed
+    created_at: "2026-07-21T18:59:57.433Z"
+    updated_at: "2026-07-21T20:40:52.757Z"
+    body: "Remove unsupported Undici options, retain explicit status/retry/error semantics, and add a real transport-boundary regression test."
+    owner: codex-root
+    evidence: "hac-0ay7 closed: supported Undici request contract restored; 34 transport tests plus live read-only E2E passed."
+    completed_at: "2026-07-21T20:40:52.757Z"
+    linked_items[1]{id,kind}:
+      hac-0ay7,depends_on
+  - id: plan-step-003
+    order: 3
+    title: Expand typed WebSocket target discovery
+    status: completed
+    created_at: "2026-07-21T18:59:58.455Z"
+    updated_at: "2026-07-21T20:40:53.852Z"
+    body: Correct response keys and add official trigger/condition/service discovery helpers with typed output.
+    owner: codex-root
+    evidence: "hac-96i2 closed: typed target extract/triggers/conditions/services/related helpers passed 58 unit tests and live current-instance verification."
+    completed_at: "2026-07-21T20:40:53.852Z"
+    linked_items[1]{id,kind}:
+      hac-96i2,depends_on
+  - id: plan-step-004
+    order: 4
+    title: "Update help, schemas, docs, and private configuration proof"
+    status: completed
+    created_at: "2026-07-21T18:59:59.462Z"
+    updated_at: "2026-07-21T20:40:54.650Z"
+    body: Keep all command help and docs accurate; prove credentials remain in 0600 global files and outputs redact private fields.
+    owner: codex-root
+    evidence: Command help E2E passed; API/agent/quality/review docs updated; setup wizard isolated config validated; global settings/auth/data remain outside repository at mode 0600; diff privacy scan passed.
+    completed_at: "2026-07-21T20:40:54.650Z"
+  - id: plan-step-005
+    order: 5
+    title: "Run full unit, coverage, release, format, help, and live E2E validation"
+    status: completed
+    created_at: "2026-07-21T19:00:00.383Z"
+    updated_at: "2026-07-21T20:40:55.356Z"
+    body: Exercise actual built hassio commands against the local instance in read-only mode and run all release gates.
+    owner: codex-root
+    evidence: "Full release verification passed, including 1186 tests, 100/100/100/100 coverage, all formats, help surfaces, global-installed hassio smoke, live read-only E2E, PM integrity, audits, Trivy, and history scan."
+    completed_at: "2026-07-21T20:40:55.356Z"
+  - id: plan-step-006
+    order: 6
+    title: "Publish reviewed PR, converge bot feedback, merge, and verify master"
+    status: in_progress
+    created_at: "2026-07-21T19:00:01.530Z"
+    updated_at: "2026-07-21T20:41:09.642Z"
+    body: "Wait for all checks and requested bot reviews, acknowledge every bot thread, iterate until clean, merge, and prove exact master head."
+    owner: codex-root
+    evidence: Implementation and local release gates are complete; publishing exact-head PR for hosted checks and bot convergence.
+  - id: plan-step-007
+    order: 7
+    title: Enforce strict TypeScript and 100-percent docstrings
+    status: completed
+    created_at: "2026-07-21T19:13:58.231Z"
+    updated_at: "2026-07-21T20:40:55.979Z"
+    body: "Remove escape hatches and dynamic imports, enforce erasable syntax and meaningful source/public API JSDoc coverage."
+    owner: codex-root
+    evidence: "hac-r4e3 closed: strict erasable TypeScript and ESLint pass; dynamic imports and explicit any prohibited; 115/115 source docstrings enforced."
+    completed_at: "2026-07-21T20:40:55.979Z"
+    linked_items[1]{id,kind}:
+      hac-r4e3,depends_on
+  - id: plan-step-008
+    order: 8
+    title: Achieve all-source 100/100/100/100 coverage
+    status: completed
+    created_at: "2026-07-21T19:13:59.103Z"
+    updated_at: "2026-07-21T20:40:56.661Z"
+    body: Include all source entrypoints and close every uncovered behavior with efficient legitimate tests.
+    owner: codex-root
+    evidence: "hac-vooo closed: 1186 behavior-focused tests cover 100% of statements, branches, functions, and lines including CLI bootstrap and package exports."
+    completed_at: "2026-07-21T20:40:56.661Z"
+    linked_items[1]{id,kind}:
+      hac-vooo,depends_on
+  - id: plan-step-009
+    order: 9
+    title: "Require static, duplication, security, and pm integrity gates"
+    status: pending
+    created_at: "2026-07-21T19:13:59.923Z"
+    updated_at: "2026-07-21T19:13:59.923Z"
+    body: Add local and hosted enforcement using only applicable free tooling and document parity.
+    owner: codex-root
+    linked_items[1]{id,kind}:
+      hac-ak9g,depends_on
+body: ""

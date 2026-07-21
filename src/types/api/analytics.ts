@@ -1,3 +1,6 @@
+/**
+ * Defines type-safe analytics contracts used by the Home Assistant API and CLI.
+ */
 export interface HaAddonInfo {
   name: string;
   slug: string;

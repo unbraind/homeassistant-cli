@@ -1,3 +1,6 @@
+/**
+ * Defines the schema output contracts command surface, options, help, and output behavior.
+ */
 export interface OutputContractSpec {
   media_type: string;
   parseability: "strict" | "best_effort";

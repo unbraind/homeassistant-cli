@@ -69,6 +69,11 @@ describe("energy command", () => {
 
     expect(result).toContain("Energy dashboard not configured");
   });
+
+  it("preserves non-404 energy failures", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse({ message: "Failure" }, 400));
+    await expect(createEnergyCommand().parseAsync([], { from: "user" })).rejects.toThrow("400");
+  });
 });
 
 describe("weather command", () => {
@@ -131,6 +136,14 @@ describe("weather command", () => {
     expect(result).toContain("1");
   });
 
+  it("lists by default and falls back to the entity id as its name", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse([{
+      entity_id: "weather.patio", state: "cloudy", attributes: {}, last_changed: "", last_updated: "",
+    }]));
+    const result = await captureLog(() => createWeatherCommand().parseAsync([], { from: "user" }));
+    expect(result).toContain("weather.patio");
+  });
+
   it("gets forecast for specific entity", async () => {
     mockRequest.mockResolvedValueOnce(
       mockResponse({
@@ -154,13 +167,16 @@ describe("weather command", () => {
     expect(result).toContain("forecasts");
   });
 
-  it("throws on weather forecast error", async () => {
+  it("handles a missing weather forecast entity", async () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ message: "Not Found" }, 404));
+    const result = await captureLog(() => createWeatherCommand().parseAsync(["weather.nonexistent"], { from: "user" }));
+    expect(result).toContain("Weather entity not found");
+  });
 
-    const cmd = createWeatherCommand();
-    await expect(
-      cmd.parseAsync(["weather.nonexistent"], { from: "user" })
-    ).rejects.toThrow("Weather forecast failed");
+  it("preserves non-404 weather failures and forwards an explicit forecast type", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse({ message: "Failure" }, 400));
+    await expect(createWeatherCommand().parseAsync(["weather.home", "--type", "hourly"], { from: "user" }))
+      .rejects.toThrow("400");
   });
 });
 
@@ -192,6 +208,11 @@ describe("health command", () => {
     const result = await captureLog(() => cmd.parseAsync([], { from: "user" }));
 
     expect(result).toContain("System health endpoint not available");
+  });
+
+  it("preserves non-404 health failures", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse({ message: "Failure" }, 400));
+    await expect(createHealthCommand().parseAsync([], { from: "user" })).rejects.toThrow("400");
   });
 });
 
@@ -234,5 +255,14 @@ describe("info command", () => {
     expect(result).toContain("Home");
     expect(result).toContain("RUNNING");
     expect(result).toContain("top_domains");
+  });
+
+  it("categorizes malformed entity ids under unknown", async () => {
+    mockRequest
+      .mockResolvedValueOnce(mockResponse({ message: "API running." }))
+      .mockResolvedValueOnce(mockResponse({ version: "1", location_name: "Home" }))
+      .mockResolvedValueOnce(mockResponse([{ entity_id: "", state: "on", attributes: {} }]));
+    const result = await captureLog(() => createInfoCommand().parseAsync([], { from: "user" }));
+    expect(result).toContain("unknown");
   });
 });

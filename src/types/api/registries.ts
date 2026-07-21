@@ -1,3 +1,6 @@
+/**
+ * Defines type-safe registries contracts used by the Home Assistant API and CLI.
+ */
 export interface HaEntityRegistryEntry {
   area_id: string | null;
   categories: Record<string, string>;

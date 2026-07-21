@@ -1,3 +1,6 @@
+/**
+ * Defines the discover command surface, options, help, and output behavior.
+ */
 import { Command } from "commander";
 import { formatOutput, formatStates } from "../../formatters/index.js";
 import { withExit } from "../../utils/exit.js";

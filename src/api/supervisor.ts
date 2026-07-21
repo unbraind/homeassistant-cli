@@ -1,3 +1,6 @@
+/**
+ * Implements typed Home Assistant supervisor API transport operations.
+ */
 import type { Config } from "../types/options.js";
 import { HomeAssistantClient } from "./client.js";
 

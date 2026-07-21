@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- Raise all-source coverage gates to 100/100/100/100 ([hac-vooo](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/issues/hac-vooo.toon))
+- Undici 8 rejects REST request throwOnError option ([hac-0ay7](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/issues/hac-0ay7.toon))
+
+### Other
+
+- Enforce erasable zero-escape TypeScript and complete source docstrings ([hac-r4e3](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-r4e3.toon))
+- Align typed WebSocket target discovery with current Home Assistant ([hac-96i2](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-96i2.toon))
+
 ## 2026.7.21-2 - 2026-07-21
 
 ### Fixed

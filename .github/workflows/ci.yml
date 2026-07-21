@@ -77,6 +77,9 @@ jobs:
         run: npm run test
 
   coverage:
+    permissions:
+      contents: read
+      id-token: write
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -101,6 +104,35 @@ jobs:
           path: coverage/
           if-no-files-found: error
           retention-days: 14
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v7
+        with:
+          files: coverage/coverage-final.json
+          fail_ci_if_error: true
+          use_oidc: true
+
+  static-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Install ShellCheck
+        run: sudo apt-get update && sudo apt-get install --yes shellcheck
+      - name: Enforce static contracts
+        run: bun run quality:static
+      - name: Validate PM tracker integrity
+        run: bun run quality:pm
 
   package-smoke:
     runs-on: ubuntu-latest

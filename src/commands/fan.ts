@@ -1,3 +1,6 @@
+/**
+ * Defines the fan command surface, options, help, and output behavior.
+ */
 import { Command } from "commander";
 import { HomeAssistantClient } from "../api/client.js";
 import { formatOutput } from "../formatters/index.js";
@@ -16,7 +19,7 @@ export function createFanCommand(): Command {
     .option("--increase-speed <entityId>", "Increase fan speed")
     .option("--decrease-speed <entityId>", "Decrease fan speed")
     .option("--oscillate <entityId>", "Enable oscillation")
-    .option("--no-oscillate", "Disable oscillation (use with --entity-id)")
+    .option("--disable-oscillation", "Disable oscillation (use with --entity-id)")
     .option("--direction <forward|reverse>", "Set fan direction (use with --entity-id)")
     .option("--count", "Only return count of fan entities")
     .option("-s, --state <state>", "Filter by state (on, off)");
@@ -31,7 +34,7 @@ export function createFanCommand(): Command {
     increaseSpeed?: string;
     decreaseSpeed?: string;
     oscillate?: string;
-    noOscillate?: boolean;
+    disableOscillation?: boolean;
     direction?: string;
     count?: boolean;
     state?: string;
@@ -94,7 +97,7 @@ export function createFanCommand(): Command {
       return;
     }
 
-    if (options.noOscillate && options.entityId) {
+    if (options.disableOscillation && options.entityId) {
       await client.callService("fan", "oscillate", { entity_id: options.entityId, oscillating: false });
       console.log(formatOutput({ success: true, action: "oscillate_off", entity_id: options.entityId }, format));
       return;

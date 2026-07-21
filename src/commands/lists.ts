@@ -1,6 +1,8 @@
+/**
+ * Defines the lists command surface, options, help, and output behavior.
+ */
 import { Command } from "commander";
-import { getConfig } from "../config/index.js";
-import { ListsApiClient, HomeAssistantApiError } from "../api/index.js";
+import { HomeAssistantApiError, HomeAssistantClient, ListsApiClient } from "../api/index.js";
 import { formatOutput } from "../formatters/index.js";
 import { withExit } from "../utils/exit.js";
 import { resolveCommandOptions } from "../utils/command-helpers.js";
@@ -219,7 +221,7 @@ export function createNotificationsCommand(): Command {
       }
     } catch (error) {
       if (error instanceof HomeAssistantApiError && error.statusCode === 404) {
-        const baseClient = new (await import("../api/client.js")).HomeAssistantClient(getConfig(globalOpts));
+        const baseClient = new HomeAssistantClient(config);
         const states = await baseClient.getStates();
         const notifications = states
           .filter(s => s.entity_id.startsWith("persistent_notification."))

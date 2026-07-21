@@ -1,3 +1,6 @@
+/**
+ * Defines the capabilities agent context command surface, options, help, and output behavior.
+ */
 import { buildAgentPlan, type CapabilityReportSnapshot } from "./capabilities-agent-plan.js";
 import { buildAgentProfile } from "./capabilities-agent-profile.js";
 import { countSummary } from "./capabilities-summary.js";

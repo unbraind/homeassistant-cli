@@ -1,3 +1,6 @@
+/**
+ * Defines the statistics command surface, options, help, and output behavior.
+ */
 import { Command } from "commander";
 import { HomeAssistantApiError, StatisticsApiClient } from "../api/index.js";
 import { formatOutput } from "../formatters/index.js";
@@ -20,7 +23,7 @@ export function createStatisticsCommand(): Command {
     entityId?: string;
     startTime?: string;
     endTime?: string;
-    period?: "5minute" | "hour" | "day" | "week" | "month";
+    period: "5minute" | "hour" | "day" | "week" | "month";
     types?: string;
     duringPeriod?: boolean;
     metadata?: boolean;
@@ -73,7 +76,7 @@ export function createStatisticsCommand(): Command {
         endTime: options.endTime,
         statisticIds: entityIds,
       };
-      if (options.period) periodOptions.period = options.period;
+      periodOptions.period = options.period;
       if (types) periodOptions.types = types;
       
       result = await client.getStatisticsDuringPeriod(periodOptions);
@@ -83,7 +86,7 @@ export function createStatisticsCommand(): Command {
       };
       if (options.startTime) statsOptions.startTime = options.startTime;
       if (options.endTime) statsOptions.endTime = options.endTime;
-      if (options.period) statsOptions.period = options.period;
+      statsOptions.period = options.period;
       
       result = await client.getStatistics(statsOptions);
     }

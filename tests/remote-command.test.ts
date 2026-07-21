@@ -156,6 +156,16 @@ describe("remote command", () => {
     expect(body.num_repeats).toBe(3);
   });
 
+  it("sends a command with delay and hold timing", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
+    await captureLog(() => createRemoteCommand().parseAsync([
+      "--entity-id", "remote.bedroom_ir", "--send", "power, enter",
+      "--delay-secs", "0.5", "--hold-secs", "1.25",
+    ], { from: "user" }));
+    const body = JSON.parse((mockRequest.mock.calls[0]?.[1] as { body: string }).body);
+    expect(body).toMatchObject({ command: ["power", "enter"], delay_secs: 0.5, hold_secs: 1.25 });
+  });
+
   it("learns a command via --entity-id --learn", async () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createRemoteCommand();
@@ -165,6 +175,14 @@ describe("remote command", () => {
     expect(result).toContain("learning_command");
   });
 
+  it("learns a device-scoped command", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
+    await captureLog(() => createRemoteCommand().parseAsync([
+      "--entity-id", "remote.bedroom_ir", "--learn", "power", "--learn-device", "TV",
+    ], { from: "user" }));
+    expect(JSON.parse((mockRequest.mock.calls[0]?.[1] as { body: string }).body).device).toBe("TV");
+  });
+
   it("deletes a command via --entity-id --delete", async () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createRemoteCommand();
@@ -172,6 +190,14 @@ describe("remote command", () => {
       cmd.parseAsync(["--entity-id", "remote.bedroom_ir", "--delete", "power"], { from: "user" })
     );
     expect(result).toContain("command_deleted");
+  });
+
+  it("deletes a device-scoped command", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
+    await captureLog(() => createRemoteCommand().parseAsync([
+      "--entity-id", "remote.bedroom_ir", "--delete", "power", "--delete-device", "TV",
+    ], { from: "user" }));
+    expect(JSON.parse((mockRequest.mock.calls[0]?.[1] as { body: string }).body).device).toBe("TV");
   });
 
   it("filters by state", async () => {

@@ -50,6 +50,7 @@ describe("HomeAssistantConnectionError", () => {
     expect(err.envelope.code).toBe("CONNECTION_FAILED");
     expect(err.envelope.retriable).toBe(true);
     expect(err.envelope.endpoint).toBe("/api/");
+    expect(err.toAgentEnvelope()).toBe(err.envelope);
   });
 });
 
@@ -60,6 +61,7 @@ describe("HomeAssistantReadOnlyError", () => {
     expect(err.envelope.code).toBe("READ_ONLY_MODE");
     expect(err.envelope.retriable).toBe(false);
     expect(err.message).toContain("Read-only mode blocked");
+    expect(err.toAgentEnvelope()).toBe(err.envelope);
   });
 });
 
@@ -70,6 +72,7 @@ describe("HomeAssistantTimeoutError", () => {
     expect(err.envelope.code).toBe("TIMEOUT");
     expect(err.envelope.retriable).toBe(true);
     expect(err.message).toContain("30000ms");
+    expect(err.toAgentEnvelope()).toBe(err.envelope);
   });
 });
 
@@ -94,6 +97,14 @@ describe("formatErrorForAgent", () => {
     const result = formatErrorForAgent(apiErr, "yaml");
     expect(result).toContain("code: NOT_FOUND");
     expect(result).toContain("retriable: false");
+  });
+
+  it("omits absent optional fields from yaml and toon", () => {
+    const error = new HomeAssistantConnectionError("offline");
+    expect(formatErrorForAgent(error, "yaml")).not.toContain("statusCode:");
+    expect(formatErrorForAgent(error, "yaml")).not.toContain("endpoint:");
+    expect(formatErrorForAgent(error, "toon")).not.toContain("statusCode:");
+    expect(formatErrorForAgent(error, "toon")).not.toContain("endpoint:");
   });
 
   it("formats as toon", () => {

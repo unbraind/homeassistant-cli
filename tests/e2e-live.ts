@@ -1,4 +1,4 @@
-import { mkdtempSync, readFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { execFileSync } from "node:child_process";
@@ -16,6 +16,7 @@ const repoRoot = process.cwd();
 const cliPath = join(repoRoot, "dist", "cli.js");
 const configDir = mkdtempSync(join(tmpdir(), "hassio-cli-e2e-"));
 const configPath = join(configDir, "settings.json");
+process.once("exit", () => rmSync(configDir, { recursive: true, force: true }));
 
 function run(args: string[], env?: NodeJS.ProcessEnv): string {
   try {
@@ -74,12 +75,11 @@ run([
   "toon",
   "--default-timeout",
   "30000",
-  "--read-only",
-  "false",
   "--skip-test",
 ], {
   HASSIO_URL: process.env.HASSIO_URL,
   HASSIO_TOKEN: process.env.HASSIO_TOKEN,
+  HASSIO_READONLY: "true",
 });
 
 const paths = parseJson(run(["settings", "path"])) as Record<string, string>;
@@ -156,6 +156,20 @@ const wsTargetServices = parseJson(
 ) as Record<string, unknown>;
 assert(typeof wsTargetServices["target"] === "object", "invalid ws target services target shape");
 assert(typeof wsTargetServices["result"] === "object", "invalid ws target services result shape");
+
+for (const discovery of ["triggers", "conditions"] as const) {
+  const response = parseJson(
+    run(["ws", "target", discovery, "--entity-id", sampleEntityId, "--format", "json"])
+  ) as Record<string, unknown>;
+  assert(Array.isArray(response["result"]), `invalid ws target ${discovery} result shape`);
+}
+
+const wsTargetRelated = parseJson(
+  run(["ws", "target", "related", "--entity-id", sampleEntityId, "--format", "json"])
+) as Record<string, unknown>;
+const related = wsTargetRelated["related"] as Record<string, unknown> | undefined;
+assert(Array.isArray(related?.["entities"]), "invalid ws target related entity shape");
+assert(Array.isArray(related?.["devices"]), "invalid ws target related device shape");
 
 const doctor = parseJson(run(["settings", "doctor", "--format", "json"])) as Record<string, unknown>;
 assert(typeof doctor["healthy"] === "boolean", "invalid settings doctor JSON shape");

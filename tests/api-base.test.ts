@@ -194,6 +194,26 @@ describe("BaseClient via HomeAssistantClient", () => {
       mockRequest.mockRejectedValueOnce(new Error("timeout"));
       await expect(zeroRetryClient.getStatus()).rejects.toThrow(HomeAssistantTimeoutError);
     });
+
+    it("retries connection and timeout failures before succeeding", async () => {
+      const fastClient = new HomeAssistantClient({
+        url: "http://localhost:8123", token: "test-token", outputFormat: "toon", timeout: 30000, readOnly: false,
+      });
+      const retryConfig = (fastClient as unknown as { retryConfig: { initialDelayMs: number; maxDelayMs: number } }).retryConfig;
+      retryConfig.initialDelayMs = 0;
+      retryConfig.maxDelayMs = 0;
+      mockRequest
+        .mockRejectedValueOnce(new Error("ECONNRESET"))
+        .mockRejectedValueOnce(new Error("timeout"))
+        .mockResolvedValueOnce(mockResponse({ message: "API running." }));
+      await expect(fastClient.getStatus()).resolves.toEqual({ message: "API running." });
+      expect(mockRequest).toHaveBeenCalledTimes(3);
+    });
+
+    it("rethrows errors outside the connection and timeout families", async () => {
+      mockRequest.mockRejectedValueOnce("non-error rejection");
+      await expect(client.getStatus()).rejects.toBe("non-error rejection");
+    });
   });
 
   describe("request returns undefined for empty body", () => {

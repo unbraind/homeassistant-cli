@@ -190,6 +190,17 @@ describe("search command", () => {
     expect(result).toContain("1");
   });
 
+  it.each([
+    ["1", 1],
+    ["-1", 2],
+  ])("applies quick-search limit %s safely", async (limit, expectedCount) => {
+    mockRequest.mockResolvedValueOnce(mockResponse(statesList));
+    const result = JSON.parse(await captureLog(() => createSearchCommand().parseAsync([
+      "light", "--quick", "--limit", limit, "--count",
+    ], { from: "user" })));
+    expect(result.count).toBe(expectedCount);
+  });
+
   it("searches with --limit", async () => {
     mockRequest.mockResolvedValueOnce(mockResponse(searchResults));
 

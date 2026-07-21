@@ -1,3 +1,6 @@
+/**
+ * Defines the capabilities summary command surface, options, help, and output behavior.
+ */
 type CapabilityStatus = "available" | "unavailable" | "unauthorized" | "error";
 
 interface CountSummaryInput {

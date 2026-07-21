@@ -1,3 +1,6 @@
+/**
+ * Defines the system command surface, options, help, and output behavior.
+ */
 import { Command } from "commander";
 import { HomeAssistantClient, SystemApiClient, HomeAssistantApiError } from "../api/index.js";
 import { formatOutput } from "../formatters/index.js";
@@ -132,7 +135,7 @@ export function createBackupsCommand(): Command {
     delete?: string;
     download?: string;
     output?: string;
-    compressed?: boolean;
+    compressed: boolean;
     password?: string;
     count?: boolean;
   }, cmd) => {
@@ -142,7 +145,7 @@ export function createBackupsCommand(): Command {
 
     if (options.create) {
       const data: Record<string, unknown> = { name: options.create };
-      if (options.compressed !== undefined) data["compressed"] = options.compressed;
+      data["compressed"] = options.compressed;
       if (options.password) data["password"] = options.password;
       
       try {
@@ -199,8 +202,8 @@ export function createSystemLogCommand(): Command {
   command.action(withExit(async (options: {
     clear?: boolean;
     write?: string;
-    level?: string;
-    logger?: string;
+    level: string;
+    logger: string;
   }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
     const { config, format } = resolveCommandOptions(globalOpts);
@@ -215,8 +218,8 @@ export function createSystemLogCommand(): Command {
     if (options.write) {
       const data: Record<string, string> = {
         message: options.write,
-        level: options.level ?? "warning",
-        logger: options.logger ?? "custom",
+        level: options.level,
+        logger: options.logger,
       };
       await client.callService("system_log", "write", data);
       console.log(formatOutput({ success: true, written: options.write, level: data["level"] }, format));

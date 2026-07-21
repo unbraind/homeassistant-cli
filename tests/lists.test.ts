@@ -163,4 +163,46 @@ describe("ListsApiClient", () => {
       );
     });
   });
+
+  it("covers notification and todo service workflows with optional data", async () => {
+    mockRequest.mockResolvedValue(mockResponse({ context: { id: "ctx" } }));
+    await client.createNotification("message", { title: "Title", notificationId: "notice" });
+    await client.dismissAllNotifications();
+    await client.sendNotification("mobile_app_phone", "hello", {
+      title: "Title", target: ["phone"], data: { importance: "high" },
+    });
+    await client.addTodoItem("todo.tasks", "ship", "description", "2026-07-22");
+    await client.updateTodoItem("todo.tasks", "uid", {
+      summary: "shipped", description: "done", due: "2026-07-23", status: "completed",
+    });
+    await client.removeTodoItem("todo.tasks", "uid");
+    await client.completeShoppingItemByName("Milk");
+    await client.incompleteShoppingItemByName("Milk");
+    await client.clearShoppingList();
+    expect(mockRequest).toHaveBeenCalledTimes(9);
+  });
+
+  it("omits optional service data and returns empty todo responses safely", async () => {
+    mockRequest
+      .mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }))
+      .mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }))
+      .mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }))
+      .mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
+    await client.createNotification("message");
+    await client.sendNotification("notify", "hello");
+    await client.addTodoItem("todo.tasks", "ship");
+    await client.updateTodoItem("todo.tasks", "uid", {});
+
+    mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
+    await expect(client.getTodoItemsViaService("todo.tasks")).resolves.toEqual([]);
+  });
+
+  it("returns todo items from a service response", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse({
+      context: { id: "ctx" }, response: { items: [{ uid: "1", summary: "Ship", status: "needs_action" }] },
+    }));
+    await expect(client.getTodoItemsViaService("todo.tasks")).resolves.toEqual([
+      { uid: "1", summary: "Ship", status: "needs_action" },
+    ]);
+  });
 });

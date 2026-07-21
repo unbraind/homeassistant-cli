@@ -1,3 +1,6 @@
+/**
+ * Provides shared github star behavior for the Home Assistant CLI runtime.
+ */
 import { execFile } from "node:child_process";
 import { createInterface } from "node:readline";
 import { getData, saveData } from "../config/index.js";

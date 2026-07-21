@@ -110,6 +110,11 @@ describe("analytics command", () => {
 
     expect(result).toContain("Analytics endpoint not available");
   });
+
+  it("preserves non-404 analytics failures", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse({ message: "Failure" }, 400));
+    await expect(createAnalyticsCommand().parseAsync([], { from: "user" })).rejects.toThrow("400");
+  });
 });
 
 describe("backups command", () => {
@@ -158,6 +163,14 @@ describe("backups command", () => {
 
     expect(result).toContain("restored");
     expect(result).toContain("backup-slug-123");
+  });
+
+  it("restores a password-protected backup", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
+    await captureLog(() => createBackupsCommand().parseAsync([
+      "--restore", "backup-slug-123", "--password", "secret",
+    ], { from: "user" }));
+    expect(JSON.parse((mockRequest.mock.calls[0]?.[1] as { body: string }).body).password).toBe("secret");
   });
 
   it("handles 404 on backup restore gracefully", async () => {

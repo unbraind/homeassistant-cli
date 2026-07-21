@@ -1,3 +1,6 @@
+/**
+ * Defines the utility meter command surface, options, help, and output behavior.
+ */
 import { Command } from "commander";
 import { HomeAssistantClient } from "../api/client.js";
 import { formatOutput } from "../formatters/index.js";

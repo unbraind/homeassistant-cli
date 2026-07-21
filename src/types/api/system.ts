@@ -1,3 +1,6 @@
+/**
+ * Defines type-safe system contracts used by the Home Assistant API and CLI.
+ */
 export interface HaPerson {
   id: string;
   name: string;

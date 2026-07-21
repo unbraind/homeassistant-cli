@@ -1,3 +1,6 @@
+/**
+ * Implements typed Home Assistant errors API transport operations.
+ */
 export interface AgentErrorEnvelope {
   code: string;
   message: string;
@@ -10,15 +13,19 @@ export interface AgentErrorEnvelope {
 
 export class HomeAssistantApiError extends Error {
   public readonly envelope: AgentErrorEnvelope;
+  public readonly statusCode: number;
+  public readonly body: string;
 
   constructor(
     message: string,
-    public readonly statusCode: number,
-    public readonly body: string,
+    statusCode: number,
+    body: string,
     endpoint?: string
   ) {
     super(message);
     this.name = "HomeAssistantApiError";
+    this.statusCode = statusCode;
+    this.body = body;
     
     const retriable = statusCode >= 500 || statusCode === 429;
     const hint = this.generateHint(statusCode, body);

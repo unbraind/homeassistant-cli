@@ -1,3 +1,6 @@
+/**
+ * Implements typed Home Assistant base API transport operations.
+ */
 import { request } from "undici";
 import { HomeAssistantApiError, HomeAssistantConnectionError, HomeAssistantReadOnlyError, HomeAssistantTimeoutError } from "./errors.js";
 import type { Config } from "../types/options.js";
@@ -71,27 +74,23 @@ export abstract class BaseClient {
     path: string,
     headers: Record<string, string>,
     body: string | null,
-    processResponse: (statusCode: number, response: { body: { text(): Promise<string>; arrayBuffer(): Promise<ArrayBuffer> } }) => Promise<T>,
-    skipRetry: boolean
+    processResponse: (statusCode: number, response: { body: { text(): Promise<string>; arrayBuffer(): Promise<ArrayBuffer> } }) => Promise<T>
   ): Promise<T> {
     const endpoint = `/api${path}`;
     const url = `${this.baseUrl}${endpoint}`;
-    let lastError: Error | null = null;
-    const maxAttempts = skipRetry ? 1 : this.retryConfig.maxRetries + 1;
+    const maxAttempts = this.retryConfig.maxRetries + 1;
 
-    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    for (let attempt = 0; ; attempt++) {
       try {
         const requestOptions: {
           method: HttpMethod;
           headers: Record<string, string>;
           body?: string;
-          throwOnError: boolean;
           headersTimeout: number;
           bodyTimeout: number;
         } = {
           method,
           headers,
-          throwOnError: false,
           headersTimeout: this.timeout,
           bodyTimeout: this.timeout,
         };
@@ -111,7 +110,6 @@ export abstract class BaseClient {
           );
 
           if (this.retryConfig.retryableStatusCodes.includes(response.statusCode) && attempt < maxAttempts - 1) {
-            lastError = error;
             await this.sleep(this.calculateDelay(attempt));
             continue;
           }
@@ -133,7 +131,6 @@ export abstract class BaseClient {
           );
 
           if (attempt < maxAttempts - 1) {
-            lastError = connError;
             await this.sleep(this.calculateDelay(attempt));
             continue;
           }
@@ -145,7 +142,6 @@ export abstract class BaseClient {
           const timeoutError = new HomeAssistantTimeoutError(this.timeout, endpoint);
 
           if (attempt < maxAttempts - 1) {
-            lastError = timeoutError;
             await this.sleep(this.calculateDelay(attempt));
             continue;
           }
@@ -156,15 +152,12 @@ export abstract class BaseClient {
         throw error;
       }
     }
-
-    throw lastError || new Error("Max retries exceeded");
   }
 
   protected async request<T>(
     method: HttpMethod,
     path: string,
-    body?: unknown,
-    skipRetry = false
+    body?: unknown
   ): Promise<T> {
     this.assertMethodAllowed(method, path);
     const headers: Record<string, string> = {
@@ -181,8 +174,7 @@ export abstract class BaseClient {
           return undefined as T;
         }
         return JSON.parse(responseText) as T;
-      },
-      skipRetry
+      }
     );
   }
 
@@ -197,8 +189,7 @@ export abstract class BaseClient {
 
     return this.executeWithRetry<string>(
       method, path, headers, bodyContent,
-      async (_statusCode, response) => response.body.text(),
-      false
+      async (_statusCode, response) => response.body.text()
     );
   }
 
@@ -213,8 +204,7 @@ export abstract class BaseClient {
       async (_statusCode, response) => {
         const arrayBuffer = await response.body.arrayBuffer();
         return Buffer.from(arrayBuffer);
-      },
-      false
+      }
     );
   }
 }

@@ -222,6 +222,14 @@ describe("states command", () => {
     const parsed = JSON.parse(result);
     expect(parsed.states_count).toBe(1);
   });
+
+  it("returns count zero if the API yields no specific state", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse(null));
+    const result = await captureLog(() => createStatesCommand().parseAsync([
+      "sensor.missing", "--count",
+    ], { from: "user" }));
+    expect(JSON.parse(result).states_count).toBe(0);
+  });
 });
 
 describe("set-state command", () => {

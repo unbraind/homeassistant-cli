@@ -113,6 +113,15 @@ describe("tts command", () => {
     expect(result).toContain("url");
   });
 
+  it("gets a localized TTS URL", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse({ url: "http://localhost/tts/de.mp3" }));
+    await captureLog(() => createTtsCommand().parseAsync([
+      "--message", "Hallo", "--engine", "tts.cloud", "--language", "de",
+    ], { from: "user" }));
+    const body = JSON.parse((mockRequest.mock.calls[0]?.[1] as { body: string }).body);
+    expect(body.language).toBe("de");
+  });
+
   it("speaks through player with --message and --player", async () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
 
@@ -142,6 +151,11 @@ describe("tts command", () => {
     // Should succeed and report the player entity
     expect(result).toContain("media_player.living_room");
     expect(mockRequest).toHaveBeenCalledTimes(1);
+  });
+
+  it("shows help when no TTS operation is supplied", async () => {
+    await createTtsCommand().parseAsync([], { from: "user" });
+    expect(exitSpy).toHaveBeenCalled();
   });
 });
 

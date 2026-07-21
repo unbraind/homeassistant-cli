@@ -58,6 +58,15 @@ describe("SearchApiClient extended", () => {
       expect(results[0]?.platform).toBe("state_fallback");
     });
 
+    it("categorizes an empty fallback entity id as unknown", async () => {
+      mockRequest
+        .mockResolvedValueOnce(mockResponse({ message: "Not Found" }, 404))
+        .mockResolvedValueOnce(mockResponse([{
+          entity_id: "", state: "unknown", attributes: { friendly_name: "Mystery" }, last_changed: "", last_updated: "",
+        }]));
+      expect((await client.search("Mystery"))[0]?.domain).toBe("unknown");
+    });
+
     it("rethrows non-404 errors", async () => {
       mockRequest.mockResolvedValueOnce(mockResponse({ message: "Server Error" }, 500));
 

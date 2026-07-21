@@ -54,6 +54,13 @@ describe("TtsApiClient", () => {
       const result = await client.getTtsUrl("tts.cloud", "Hello world");
       expect(result).toBe("http://localhost:8123/tts/test.mp3");
     });
+
+    it("passes language and engine options", async () => {
+      mockRequest.mockResolvedValueOnce(mockResponse({ url: "http://ha/voice.mp3", path: "/voice.mp3" }));
+      await client.getTtsUrl("tts.cloud", "Hello", { language: "en", options: { voice: "Jenny" } });
+      expect(mockRequest.mock.calls[0]?.[1]?.body).toContain('"language":"en"');
+      expect(mockRequest.mock.calls[0]?.[1]?.body).toContain('"voice":"Jenny"');
+    });
   });
 
   describe("speak", () => {
@@ -66,6 +73,12 @@ describe("TtsApiClient", () => {
       const callBody = callOptions?.body ? JSON.parse(callOptions.body) : {};
       expect(callBody.entity_id).toBe("media_player.living_room");
       expect(callBody.message).toBe("Hello");
+    });
+
+    it("preserves an explicit false cache option", async () => {
+      mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "123" } }));
+      await client.speak("media_player.living_room", "Hello", { cache: false });
+      expect(mockRequest.mock.calls[0]?.[1]?.body).toContain('"cache":false');
     });
   });
 

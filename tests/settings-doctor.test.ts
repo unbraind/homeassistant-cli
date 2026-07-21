@@ -130,4 +130,45 @@ describe("settings doctor command", () => {
     const outputValidation = parsed["output_validation"] as Record<string, unknown>;
     expect(outputValidation["skipped"]).toBe(true);
   });
+
+  it("classifies unsupported and unknown supervisor failures", async () => {
+    for (const scenario of [
+      { status: 404, expectedCode: "not_supported" },
+      { rejection: "network offline", expectedCode: "unknown_error" },
+    ] as const) {
+      mockRequest
+        .mockResolvedValueOnce(mockJson({ message: "API starting" }))
+        .mockResolvedValueOnce(mockJson({ version: "2026.1.3", location_name: "Home" }))
+        .mockResolvedValueOnce(mockJson([]));
+      if ("rejection" in scenario) mockRequest.mockRejectedValueOnce(scenario.rejection);
+      else mockRequest.mockResolvedValueOnce(mockJson({ message: "Not Found" }, scenario.status));
+
+      const output: string[] = [];
+      const originalLog = console.log;
+      console.log = (message: string) => output.push(message);
+      await createDoctorCommand().parseAsync([], { from: "user" });
+      console.log = originalLog;
+
+      const result = JSON.parse(output.join("\n")) as {
+        healthy: boolean;
+        supervisor: { code: string };
+      };
+      expect(result.healthy).toBe(false);
+      expect(result.supervisor.code).toBe(scenario.expectedCode);
+    }
+  });
+
+  it("omits addon count when the supervisor response has no addon array", async () => {
+    mockRequest
+      .mockResolvedValueOnce(mockJson({ message: "API running." }))
+      .mockResolvedValueOnce(mockJson({ version: "2026.1.3", location_name: "Home" }))
+      .mockResolvedValueOnce(mockJson([]))
+      .mockResolvedValueOnce(mockJson({ result: "ok" }));
+    const output: string[] = [];
+    const originalLog = console.log;
+    console.log = (message: string) => output.push(message);
+    await createDoctorCommand().parseAsync([], { from: "user" });
+    console.log = originalLog;
+    expect((JSON.parse(output.join("\n")) as { supervisor: { addon_count?: number } }).supervisor.addon_count).toBeUndefined();
+  });
 });

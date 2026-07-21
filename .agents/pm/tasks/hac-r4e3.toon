@@ -1,0 +1,154 @@
+id: hac-r4e3
+title: Enforce erasable zero-escape TypeScript and complete source docstrings
+description: "Remove explicit any and dynamic imports, inline trivial one-use helpers, verify external API types from installed packages, prohibit non-erasable syntax, and require high-quality documentation coverage for every source file and public contract."
+type: Task
+status: closed
+priority: 0
+tags[4]: docstrings,eslint,type-safety,typescript
+created_at: "2026-07-21T19:13:47.535Z"
+updated_at: "2026-07-21T20:37:15.768Z"
+closed_at: "2026-07-21T20:37:14.862Z"
+author: codex-root
+estimated_minutes: 720
+acceptance_criteria: No explicit any or dynamic import remains in src; erasable-only TypeScript rules are mandatory; every source file and exported API has a meaningful JSDoc contract; automated lint/doc coverage gates report 100%; no trivial one-call helper remains
+definition_of_ready: Source pattern inventory and installed dependency types reviewed
+value: Makes implementation intent and type contracts inspectable by maintainers and agents
+impact: Prevents unsafe escape hatches and undocumented behavior from entering production
+outcome: "Strict, fully documented, erasable TypeScript across the source tree"
+why_now: The current source contains explicit any and seven dynamic import sites and has no enforced doc coverage
+parent: hac-n0ix
+reviewer: unbraind
+risk: high
+confidence: high
+release: 2026.7.22
+resolution: "Enabled zero-explicit-any, no dynamic or inline imports, erasable-only syntax, and a deterministic 115/115 source docstring gate while removing trivial redundant branches."
+expected_result: "All source is type-safe, erasable, documented, lint-clean, and free of trivial one-use wrappers introduced by this work."
+actual_result: Typecheck and ESLint pass; docstring coverage is 115/115; all source remains under 300 code lines; full behavioral coverage is 100%.
+comments[2]{created_at,author,text}:
+  "2026-07-21T19:13:56.436Z",codex-root,"Initial source inventory found explicit any in src/utils/exit.ts and src/api/system.ts plus dynamic imports in cli-config, extended, settings-wizard, services, and lists. Installed Undici types will be used for the multipart body instead of a guessed cast."
+  "2026-07-21T19:19:12.559Z",codex-root,"2026-07-21 strict scan: bun typecheck passes with erasableSyntaxOnly; source and test scans now contain no explicit any casts/types or dynamic import expressions after replacing formatter fixtures with exact HA types and the fs mock with a static module mock."
+learnings[1]{created_at,author,text}:
+  "2026-07-21T20:37:13.023Z",codex-root,Erasable TypeScript enforcement is most reliable as a lint contract paired with installed-package type inspection; branch coverage also exposed redundant defaults whose removal simplified runtime semantics.
+files[116]{path,scope,note}:
+  eslint.config.mjs,project,Mandatory no-any no-dynamic-import and erasable-syntax lint rules
+  src/api/automation.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/api/base.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/api/client.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/api/config-entries.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/api/conversation.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/api/errors.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/api/extended.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/api/index.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/api/lists.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/api/media.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/api/registries-crud.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/api/registries.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/api/search.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/api/statistics.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/api/supervisor.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/api/system.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/api/tts.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/api/websocket.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/cli.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/ai-task.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/automation.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/button.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/capabilities-agent-context.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/capabilities-agent-plan.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/capabilities-agent-profile.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/capabilities-api-matrix.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/capabilities-redact.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/capabilities-summary.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/capabilities-utils.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/capabilities.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/cli-config.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/climate.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/config-entries.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/conversation.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/core.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/counter.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/cover.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/device-tracker.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/event-entity.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/extended.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/fan.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/history.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/index.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/input.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/inspect.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/light.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/lists.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/llm-extended.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/llm.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/llm/batch.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/llm/discover.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/llm/entities.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/llm/query.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/lock.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/logger.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/media-player.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/media.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/mqtt.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/notify.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/number.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/pipeline.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/recorder.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/registries.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/registry-crud.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/remote.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/schedule.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/schema-output-contracts.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/search.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/select.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/sensor.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/services.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/settings-doctor.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/settings-utils.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/settings-wizard.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/siren.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/statistics.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/sun.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/supervisor.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/switch.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/system.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/timers.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/tts.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/update.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/utility-meter.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/vacuum.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/valve.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/water-heater.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/websocket-target.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/commands/websocket.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/config/index.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/config/loader.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/formatters/index.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/formatters/json.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/formatters/markdown.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/formatters/table.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/formatters/toon.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/formatters/yaml.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/index.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/types/api.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/types/api/analytics.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/types/api/config.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/types/api/core.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/types/api/extended.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/types/api/history.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/types/api/lists.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/types/api/media.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/types/api/registries.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/types/api/statistics.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/types/api/system.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/types/index.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/types/options.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/utils/command-helpers.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/utils/exit.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/utils/github-star.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+  src/utils/services.ts,project,All source modules carry enforced module-level documentation and erasable strict TypeScript
+tests[1]{command,scope,timeout_seconds,note}:
+  "bun run quality:static",project,600,Strict erasable TypeScript lint docstrings duplication file-size and shell gate
+test_runs[1]{run_id,kind,status,started_at,finished_at,recorded_at,passed,failed,skipped}:
+  test-local-mrv42qb1-md42hh,test,passed,"2026-07-21T20:33:39.933Z","2026-07-21T20:33:50.509Z","2026-07-21T20:33:50.509Z",1,0,0
+close_reason: Strict erasable type safety and complete source-file documentation are enforced and locally green.
+body: ""

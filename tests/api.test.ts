@@ -56,6 +56,20 @@ describe("HomeAssistantClient", () => {
     });
   });
 
+  it.each([
+    ["stopHomeAssistant", "stop"],
+    ["savePersistentStates", "save_persistent_states"],
+    ["reloadCoreConfig", "reload_core_config"],
+    ["reloadAll", "reload_all"],
+  ] as const)("calls the %s lifecycle service", async (method, service) => {
+    mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
+    await client[method]();
+    expect(mockRequest).toHaveBeenCalledWith(
+      expect.stringContaining(`/services/homeassistant/${service}`),
+      expect.objectContaining({ method: "POST" })
+    );
+  });
+
   describe("getConfig", () => {
     it("should return HA config", async () => {
       const configData = {

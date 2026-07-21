@@ -1,3 +1,6 @@
+/**
+ * Implements typed Home Assistant index API transport operations.
+ */
 export * from "./client.js";
 export { HomeAssistantApiError, HomeAssistantConnectionError } from "./client.js";
 export * from "./registries.js";

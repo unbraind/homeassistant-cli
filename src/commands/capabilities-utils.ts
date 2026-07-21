@@ -1,3 +1,6 @@
+/**
+ * Defines the capabilities utils command surface, options, help, and output behavior.
+ */
 import type { HaService, HaState } from "../types/index.js";
 import { getServiceNames } from "../utils/services.js";
 

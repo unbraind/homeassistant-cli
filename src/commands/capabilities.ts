@@ -1,3 +1,6 @@
+/**
+ * Defines the capabilities command surface, options, help, and output behavior.
+ */
 import { Command } from "commander";
 import { ConfigEntriesApiClient, HomeAssistantClient, HomeAssistantWebSocketClient } from "../api/index.js";
 import { SupervisorApiClient } from "../api/supervisor.js";

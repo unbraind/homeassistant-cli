@@ -120,6 +120,14 @@ describe("input command", () => {
     expect(parsed.inputs.every((i: { entity_id: string }) => i.entity_id.startsWith("input_boolean."))).toBe(true);
   });
 
+  it("filters the listing by an exact entity id", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse(allStates));
+    const result = JSON.parse(await captureLog(() => createInputCommand().parseAsync([
+      "--entity-id", "input_text.greeting",
+    ], { from: "user" })));
+    expect(result.inputs).toEqual([expect.objectContaining({ entity_id: "input_text.greeting" })]);
+  });
+
   it("returns input count with --count flag", async () => {
     mockRequest.mockResolvedValueOnce(mockResponse(allStates));
 

@@ -205,6 +205,15 @@ describe("vacuum command", () => {
     expect(body.params).toEqual({ zone: 1 });
   });
 
+  it("sends a custom command without parameters", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
+    await captureLog(() => createVacuumCommand().parseAsync([
+      "--entity-id", "vacuum.roomba", "--command", "return_to_base",
+    ], { from: "user" }));
+    const body = JSON.parse((mockRequest.mock.calls[0]?.[1] as { body: string }).body);
+    expect(body.params).toBeUndefined();
+  });
+
   it("errors on invalid --params JSON", async () => {
     const cmd = createVacuumCommand();
     await captureLog(() =>

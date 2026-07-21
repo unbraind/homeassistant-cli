@@ -11,12 +11,14 @@ Complete documentation for the Home Assistant CLI tool.
 - [LLM Integration Guide](./LLM_INTEGRATION.md) - Agent/LLM optimized features
 - [Agent Optimization Guide](./AGENT_OPTIMIZATION.md) - Agent-specific optimization features
 - [Releasing Guide](./RELEASING.md) - Release process, CI/CD, npm publish workflow
+- [Pull Request Review Loop](./PR_REVIEW_LOOP.md) - Exact-head checks, complete review inventory, reactions, and replies
+- [Quality and Security Gates](./QUALITY_GATES.md) - Local/hosted parity, strict thresholds, and tool applicability
 - [Project History](./PROJECT_HISTORY.md) - Pre-release development timeline and audit notes
 - [Security Policy](../SECURITY.md) - Vulnerability reporting and secret handling rules
 
 ## Release Status
 
-Current public release: **v2026.3.6-2** (2026-03-06).
+Current public release: **v2026.7.21-2** (2026-07-21).
 
 - `CHANGELOG.md` tracks released and unreleased changes.
 - Pre-release implementation progress and history audits are documented in `docs/PROJECT_HISTORY.md`.
@@ -221,7 +223,7 @@ All commands support global flags (`--url`, `--token`, `--format`, `--timeout`, 
 
 | Command | Description |
 |---------|-------------|
-| `websocket` / `ws` | Full WebSocket API passthrough (`status`, `call`, `subscribe`, `target`, `--connect-test`) |
+| `websocket` / `ws` | Full WebSocket passthrough plus typed target extraction/trigger/condition/service/registry discovery |
 | `supervisor api` | Raw Supervisor proxy passthrough |
 | `supervisor addons` | Add-on list/info/start/stop/restart |
 | `supervisor host` | Host reboot/shutdown |

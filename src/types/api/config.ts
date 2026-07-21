@@ -1,3 +1,6 @@
+/**
+ * Defines type-safe config contracts used by the Home Assistant API and CLI.
+ */
 export interface HaConfigFlow {
   handler: string;
   step_id: string;

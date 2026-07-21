@@ -1,4 +1,7 @@
 #!/usr/bin/env node
+/**
+ * Builds and runs the complete Home Assistant command-line interface.
+ */
 
 import { Command, Option } from "commander";
 import {
@@ -113,6 +116,8 @@ import { createInspectCommand, createSummaryCommand } from "./commands/inspect.j
 import { attachGlobalFlagsHelp } from "./utils/command-helpers.js";
 import { maybePromptToStarRepo } from "./utils/github-star.js";
 
+/** Build a fresh Commander program for embedding, testing, or CLI execution. */
+export function createProgram(): Command {
 const program = new Command();
 
 program
@@ -261,8 +266,11 @@ program.addCommand(createScheduleCommand());
 program.addCommand(createUtilityMeterCommand());
 
 attachGlobalFlagsHelp(program);
+return program;
+}
 
-function getConfigPathFromArgv(argv: string[]): string | undefined {
+/** Resolve the config path before Commander parsing so startup prompts use the same files. */
+export function getConfigPathFromArgv(argv: string[]): string | undefined {
   for (let i = 0; i < argv.length; i += 1) {
     const current = argv[i];
     if (current === "--config" || current === "-c") {
@@ -275,10 +283,19 @@ function getConfigPathFromArgv(argv: string[]): string | undefined {
   return undefined;
 }
 
-const configPath = getConfigPathFromArgv(process.argv);
-await maybePromptToStarRepo(configPath ? { configPath } : undefined);
+/** Execute the CLI with an injectable argv vector. */
+export async function runCli(argv: string[] = process.argv): Promise<void> {
+  const configPath = getConfigPathFromArgv(argv);
+  await maybePromptToStarRepo(configPath ? { configPath } : undefined);
+  await createProgram().parseAsync(argv);
+}
 
-program.parseAsync(process.argv).catch((err) => {
-  console.error("Error:", err.message);
+/** Render an uncaught CLI failure consistently and select the failing exit status. */
+export function reportCliError(error: unknown): void {
+  console.error("Error:", error instanceof Error ? error.message : String(error));
   process.exit(1);
-});
+}
+
+if (process.env["HASSIO_CLI_SKIP_AUTO_RUN"] !== "1") {
+  runCli().catch(reportCliError);
+}

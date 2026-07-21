@@ -96,6 +96,13 @@ describe("automations command", () => {
     expect(result).toContain("Morning Lights");
   });
 
+  it("falls back to the automation entity id when no friendly name exists", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse([{
+      entity_id: "automation.unnamed", state: "on", attributes: {}, last_changed: "", last_updated: "",
+    }]));
+    expect(await captureLog(() => createAutomationsCommand().parseAsync([], { from: "user" }))).toContain("automation.unnamed");
+  });
+
   it("lists automations with --count", async () => {
     mockRequest.mockResolvedValueOnce(mockResponse(automationStates));
 
@@ -206,6 +213,21 @@ describe("scripts command", () => {
     expect(result).toContain("script.bedtime");
   });
 
+  it("executes a script with variables", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
+    await captureLog(() => createScriptsCommand().parseAsync([
+      "--run", "script.bedtime", "--data", '{"volume":5}',
+    ], { from: "user" }));
+    expect(JSON.parse((mockRequest.mock.calls[0]?.[1] as { body: string }).body).volume).toBe(5);
+  });
+
+  it("falls back to the script entity id when no friendly name exists", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse([{
+      entity_id: "script.unnamed", state: "off", attributes: {}, last_changed: "", last_updated: "",
+    }]));
+    expect(await captureLog(() => createScriptsCommand().parseAsync([], { from: "user" }))).toContain("script.unnamed");
+  });
+
   it("reloads scripts", async () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
 
@@ -237,6 +259,13 @@ describe("scenes command", () => {
 
     expect(result).toContain("scene.movie_mode");
     expect(result).toContain("Movie Mode");
+  });
+
+  it("falls back to the scene entity id when no friendly name exists", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse([{
+      entity_id: "scene.unnamed", state: "scening", attributes: {}, last_changed: "", last_updated: "",
+    }]));
+    expect(await captureLog(() => createScenesCommand().parseAsync([], { from: "user" }))).toContain("scene.unnamed");
   });
 
   it("lists scenes with --count", async () => {

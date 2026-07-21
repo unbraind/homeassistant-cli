@@ -263,6 +263,16 @@ describe("HomeAssistantWebSocketClient – connect()", () => {
     const client = new HomeAssistantWebSocketClient(baseConfig);
     await expect(client.connect()).rejects.toThrow("ECONNREFUSED");
   });
+
+  it("rejects malformed JSON during the authentication handshake", async () => {
+    const ws = new FakeWs(1);
+    setImmediate(() => {
+      ws.emit("open");
+      setImmediate(() => ws.emit("message", Buffer.from("not-json")));
+    });
+    wsHelpers.setNextWs(ws);
+    await expect(new HomeAssistantWebSocketClient(baseConfig).connect()).rejects.toThrow();
+  });
 });
 
 // ──────────────────────────────────────────────────────────────
@@ -292,6 +302,18 @@ describe("HomeAssistantWebSocketClient – close() with socket", () => {
     await client.connect();
     await client.close();
     await expect(client.close()).resolves.toBeUndefined();
+  });
+
+  it("uses the close timeout when the socket never emits close", async () => {
+    vi.useFakeTimers();
+    const client = new HomeAssistantWebSocketClient(baseConfig);
+    const ws = new FakeWs(1);
+    ws.close = vi.fn();
+    (client as unknown as InternalClient).socket = ws;
+    const closing = client.close();
+    await vi.advanceTimersByTimeAsync(250);
+    await expect(closing).resolves.toBeUndefined();
+    vi.useRealTimers();
   });
 });
 
@@ -363,6 +385,14 @@ describe("HomeAssistantWebSocketClient – call()", () => {
   it("ignores messages with unknown pending IDs", async () => {
     const { client, ws } = await connectedClient();
     ws.emit("message", Buffer.from(JSON.stringify({ id: 9999, type: "result", success: true, result: null })));
+    await client.close();
+  });
+
+  it("ignores malformed, id-less, and orphan event messages after connection", async () => {
+    const { client, ws } = await connectedClient();
+    ws.emit("message", Buffer.from("not-json"));
+    ws.emit("message", Buffer.from(JSON.stringify({ type: "pong" })));
+    ws.emit("message", Buffer.from(JSON.stringify({ id: 999, type: "event", event: { value: 1 } })));
     await client.close();
   });
 
@@ -453,6 +483,15 @@ describe("HomeAssistantWebSocketClient – subscribeEvents()", () => {
     expect(events).toHaveLength(3);
   });
 
+  it("preserves the full event envelope when no event payload is present", async () => {
+    const { ws, promise } = await setupSubscribedClient({ waitMs: 30 });
+    const subscription = ws.sentMessages
+      .map((message) => JSON.parse(message) as { id?: number; type?: string })
+      .find((message) => message.type === "subscribe_events")?.id;
+    ws.emit("message", Buffer.from(JSON.stringify({ id: subscription, type: "event" })));
+    expect(await promise).toEqual([expect.objectContaining({ type: "event" })]);
+  });
+
   it("caps returned events at maxEvents", async () => {
     const { deliverEvent, promise } = await setupSubscribedClient({ maxEvents: 3, waitMs: 50 });
     for (let i = 0; i < 10; i++) deliverEvent({ n: i });
@@ -483,5 +522,17 @@ describe("HomeAssistantWebSocketClient – subscribeEvents()", () => {
     for (let i = 0; i < 15; i++) deliverEvent({ n: i });
     const events = await promise;
     expect(events.length).toBeLessThanOrEqual(10);
+  });
+
+  it("uses all subscription defaults when options are omitted", async () => {
+    vi.useFakeTimers();
+    const client = new HomeAssistantWebSocketClient(baseConfig);
+    vi.spyOn(client, "connect").mockResolvedValue(undefined);
+    (client as unknown as InternalClient).sendAndWait = vi.fn(async () => null);
+    vi.spyOn(client, "call").mockResolvedValue(null);
+    const promise = client.subscribeEvents();
+    await vi.advanceTimersByTimeAsync(5000);
+    await expect(promise).resolves.toEqual([]);
+    vi.useRealTimers();
   });
 });

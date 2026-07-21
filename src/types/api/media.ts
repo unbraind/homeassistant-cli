@@ -1,3 +1,6 @@
+/**
+ * Defines type-safe media contracts used by the Home Assistant API and CLI.
+ */
 export interface HaCalendar {
   entity_id: string;
   name: string;

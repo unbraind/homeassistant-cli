@@ -136,4 +136,18 @@ describe("core services command", () => {
     expect(result).toContain("accepts_target");
     expect(result).toContain("entity_id");
   });
+
+  it("filters by domain and service name", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse([
+      { domain: "light", services: ["turn_on", "turn_off"] },
+      { domain: "switch", services: ["turn_on"] },
+    ]));
+    const output: string[] = [];
+    const originalLog = console.log;
+    console.log = (message: string) => output.push(message);
+    await createServicesCommand().parseAsync(["--domain", "light", "--service", "turn_off"], { from: "user" });
+    console.log = originalLog;
+    expect(output.join("\n")).toContain("light");
+    expect(output.join("\n")).not.toContain("switch");
+  });
 });

@@ -1,3 +1,6 @@
+/**
+ * Serializes Home Assistant results through the yaml output contract.
+ */
 import { stringify } from "yaml";
 import type { HaState, HaService, HaEvent, HaConfig, HaLogbookEntry, HaCalendar, HaCalendarEvent } from "../types/api.js";
 

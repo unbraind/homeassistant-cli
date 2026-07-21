@@ -1,3 +1,6 @@
+/**
+ * Provides shared services behavior for the Home Assistant CLI runtime.
+ */
 import type { HaService, HaServiceDefinition, HaServiceList } from "../types/api.js";
 
 export interface FlattenedServiceSchema {

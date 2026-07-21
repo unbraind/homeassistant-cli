@@ -205,6 +205,13 @@ describe("TOON Formatter", () => {
       expect(result).toContain("logbook[1]{when,domain,entity_id,name,message}:");
       expect(result).toContain("light,light.living_room");
     });
+
+    it("uses null placeholders for optional logbook identity fields", () => {
+      const result = formatLogbookToon([{
+        domain: "homeassistant", message: "started", when: "2024-01-01T00:00:00Z",
+      }]);
+      expect(result).toContain("homeassistant,null,null,started");
+    });
   });
 
   describe("formatCalendarsToon", () => {
@@ -252,6 +259,13 @@ describe("TOON Formatter", () => {
       ];
       const result = formatCalendarEventsToon(events);
       expect(result).toContain("Holiday,2024-01-01,2024-01-02");
+    });
+
+    it("uses null dates when a sparse event omits both date variants", () => {
+      const result = formatCalendarEventsToon([{
+        summary: "Unscheduled", start: {}, end: {}, description: "Pending",
+      }]);
+      expect(result).toContain("Unscheduled,null,null,null,Pending");
     });
   });
 });

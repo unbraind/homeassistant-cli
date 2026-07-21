@@ -190,6 +190,14 @@ describe("light command", () => {
     expect(body.transition).toBe(2.5);
   });
 
+  it("turns on a light with a transition", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
+    await captureLog(() => createLightCommand().parseAsync([
+      "--on", "light.living_room", "--transition", "1.5",
+    ], { from: "user" }));
+    expect(JSON.parse((mockRequest.mock.calls[0]?.[1] as { body: string }).body).transition).toBe(1.5);
+  });
+
   it("toggles a light", async () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
 

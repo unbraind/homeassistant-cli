@@ -137,6 +137,11 @@ describe("supervisor command extended", () => {
     expect(url).toContain("/host/shutdown");
   });
 
+  it("shows host help when no host operation is supplied", async () => {
+    await createSupervisorCommand().parseAsync(["host"], { from: "user" });
+    expect(exitSpy).toHaveBeenCalled();
+  });
+
   it("fetches supervisor logs", async () => {
     mockRequest.mockResolvedValueOnce(mockResponse({
       result: "ok",
@@ -167,6 +172,12 @@ describe("supervisor command extended", () => {
     await expect(
       cmd.parseAsync(["addons", "--list"], { from: "user" })
     ).rejects.toThrow("Network error");
+  });
+
+  it("preserves non-Error supervisor failures", async () => {
+    mockRequest.mockRejectedValueOnce("network unavailable");
+    await expect(createSupervisorCommand().parseAsync(["addons", "--list"], { from: "user" }))
+      .rejects.toBe("network unavailable");
   });
 
   it("calls raw api with POST method and data", async () => {

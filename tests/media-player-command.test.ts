@@ -336,6 +336,16 @@ describe("media-player command", () => {
     expect(body.media_content_type).toBe("video");
   });
 
+  it("defaults media content type to music", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
+    const result = await captureLog(() => createMediaPlayerCommand().parseAsync([
+      "--entity-id", "media_player.bedroom_speaker", "--play-media", "--media-url", "media-source://song",
+    ], { from: "user" }));
+    const body = JSON.parse((mockRequest.mock.calls[0]?.[1] as { body: string }).body);
+    expect(body.media_content_type).toBe("music");
+    expect(result).toContain("music");
+  });
+
   it("joins media players", async () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
     const cmd = createMediaPlayerCommand();
@@ -346,6 +356,14 @@ describe("media-player command", () => {
     const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
     const body = JSON.parse(callOptions?.body ?? "{}");
     expect(body.group_members).toContain("media_player.bedroom_speaker");
+  });
+
+  it("falls through to an entity-filtered listing when no entity action is supplied", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse(mediaPlayerStates));
+    const result = await captureLog(() => createMediaPlayerCommand().parseAsync([
+      "--entity-id", "media_player.bedroom_speaker",
+    ], { from: "user" }));
+    expect(result).toContain("media_player.bedroom_speaker");
   });
 
   it("unjoins a media player", async () => {
