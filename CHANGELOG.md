@@ -7,6 +7,10 @@
 - Raise all-source coverage gates to 100/100/100/100 ([hac-vooo](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/issues/hac-vooo.toon))
 - Undici 8 rejects REST request throwOnError option ([hac-0ay7](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/issues/hac-0ay7.toon))
 
+### Security
+
+- Make static quality, duplication, security, and pm integrity gates mandatory ([hac-ak9g](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-ak9g.toon))
+
 ### Other
 
 - Enforce erasable zero-escape TypeScript and complete source docstrings ([hac-r4e3](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-r4e3.toon))

@@ -6,7 +6,7 @@ status: in_progress
 priority: 0
 tags[3]: delivery,plan,verification
 created_at: "2026-07-21T18:59:09.022Z"
-updated_at: "2026-07-21T20:44:19.131Z"
+updated_at: "2026-07-21T20:51:52.093Z"
 assignee: codex-root
 author: codex-root
 estimated_minutes: 480
@@ -126,11 +126,13 @@ plan_steps[9]:
   - id: plan-step-009
     order: 9
     title: "Require static, duplication, security, and pm integrity gates"
-    status: pending
+    status: completed
     created_at: "2026-07-21T19:13:59.923Z"
-    updated_at: "2026-07-21T19:13:59.923Z"
+    updated_at: "2026-07-21T20:51:52.089Z"
     body: Add local and hosted enforcement using only applicable free tooling and document parity.
     owner: codex-root
+    evidence: "hac-ak9g closed after fresh-clone proof and exact-head GitHub success; strict master protection requires static-contracts, changelog, Trivy, coverage/Codecov, CodeQL, dependency, runtime, package, history, commit, and title contexts."
+    completed_at: "2026-07-21T20:51:52.089Z"
     linked_items[1]{id,kind}:
       hac-ak9g,depends_on
 body: ""
