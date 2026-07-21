@@ -1,3 +1,6 @@
+/**
+ * Defines the core command surface, options, help, and output behavior.
+ */
 import { Command } from "commander";
 import { HomeAssistantClient } from "../api/index.js";
 import { formatOutput, formatServices, formatStates } from "../formatters/index.js";

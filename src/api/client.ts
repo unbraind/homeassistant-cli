@@ -1,3 +1,6 @@
+/**
+ * Implements typed Home Assistant client API transport operations.
+ */
 import type {
   HaApiStatus,
   HaCalendar,

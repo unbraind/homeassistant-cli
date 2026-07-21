@@ -1,3 +1,6 @@
+/**
+ * Defines the index command surface, options, help, and output behavior.
+ */
 export * from "./core.js";
 export * from "./services.js";
 export * from "./history.js";

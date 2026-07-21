@@ -1,3 +1,6 @@
+/**
+ * Defines the cli config command surface, options, help, and output behavior.
+ */
 import { Command } from "commander";
 import {
   getAuthPath,
@@ -6,9 +9,12 @@ import {
   getConfigSnapshot,
   getData,
   getDataPath,
+  configExists,
+  resetConfig,
   saveConfig,
   saveData,
 } from "../config/index.js";
+import { HomeAssistantClient } from "../api/index.js";
 import { formatOutput } from "../formatters/index.js";
 import { withExit } from "../utils/exit.js";
 import { maybePromptToStarRepo } from "../utils/github-star.js";
@@ -175,7 +181,6 @@ export function createValidateCommand(): Command {
         };
         const config = getConfig({ ...globalOptions, ...withConfigPath(configPath) });
 
-        const { HomeAssistantClient } = await import("../api/index.js");
         const client = new HomeAssistantClient(config);
 
         const status = await client.getStatus();
@@ -212,8 +217,6 @@ export function createResetCommand(): Command {
     .action(withExit(async (options: { force?: boolean }, cmd) => {
       await maybePromptToStarRepo();
       const configPath = getConfigPathFromCommand(cmd as Command);
-      const { resetConfig, configExists } = await import("../config/index.js");
-
       if (!configExists(configPath)) {
         console.log("status: NO_CONFIG");
         return;

@@ -47,6 +47,15 @@ describe("AutomationApiClient", () => {
       expect(result).toHaveLength(1);
       expect(result[0]?.entity_id).toBe("automation.test");
     });
+
+    it("normalizes missing last-triggered metadata", async () => {
+      mockRequest.mockResolvedValueOnce(mockResponse([
+        { entity_id: "automation.never", state: "off", attributes: {} },
+      ]));
+      await expect(client.getAutomations()).resolves.toEqual([
+        expect.objectContaining({ entity_id: "automation.never", last_triggered: null }),
+      ]);
+    });
   });
 
   describe("triggerAutomation", () => {

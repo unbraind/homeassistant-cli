@@ -1,3 +1,6 @@
+/**
+ * Defines the query command surface, options, help, and output behavior.
+ */
 import { Command } from "commander";
 import { formatOutput, formatStates } from "../../formatters/index.js";
 import { withExit } from "../../utils/exit.js";
@@ -23,9 +26,11 @@ function applyCondition(states: HaState[], condition: string): HaState[] {
 
   if (condition.startsWith("attributes:")) {
     const attrSpec = condition.slice(11);
-    const [attrName, attrValue] = attrSpec.split("=");
+    const attrParts = attrSpec.split("=");
+    const attrName = attrParts[0] as string;
+    const attrValue = attrParts[1];
     return states.filter((s: HaState) => {
-      const val = s.attributes[attrName ?? ""];
+      const val = s.attributes[attrName];
       if (attrValue === undefined) {
         return val !== undefined;
       }

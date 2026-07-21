@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { SystemApiClient } from "../src/api/system.js";
 
 vi.mock("undici", () => ({
+  FormData: globalThis.FormData,
   request: vi.fn(),
 }));
 

@@ -14,6 +14,9 @@ const mockSaveConfig = vi.fn();
 const mockSaveData = vi.fn();
 const mockResetConfig = vi.fn();
 const mockConfigExists = vi.fn(() => true);
+const mockGetStatus = vi.fn(async () => ({ message: "API running." }));
+const mockGetHaConfig = vi.fn(async () => ({ version: "2024.1.0", location_name: "Home" }));
+const mockGetStates = vi.fn(async () => [{ entity_id: "light.kitchen" }, { entity_id: "switch.fan" }]);
 const mockGetConfigSnapshot = vi.fn(() => ({
   url: "http://localhost:8123",
   token: "test-token",
@@ -47,9 +50,9 @@ vi.mock("../src/utils/github-star.js", () => ({
 
 vi.mock("../src/api/index.js", () => ({
   HomeAssistantClient: vi.fn().mockImplementation(function () { return {
-    getStatus: vi.fn(async () => ({ message: "API running." })),
-    getConfig: vi.fn(async () => ({ version: "2024.1.0", location_name: "Home" })),
-    getStates: vi.fn(async () => [{ entity_id: "light.kitchen" }, { entity_id: "switch.fan" }]),
+    getStatus: mockGetStatus,
+    getConfig: mockGetHaConfig,
+    getStates: mockGetStates,
   }; }),
 }));
 
@@ -59,7 +62,7 @@ function captureLog(fn: () => Promise<void>): Promise<{ stdout: string; stderr: 
   const origLog = console.log;
   const origErr = console.error;
   console.log = (msg: string) => out.push(msg);
-  console.error = (msg: string) => err.push(msg);
+  console.error = (...messages: unknown[]) => err.push(messages.map(String).join(" "));
   return fn().then(() => {
     console.log = origLog;
     console.error = origErr;
@@ -203,7 +206,13 @@ describe("init command", () => {
 });
 
 describe("validate command", () => {
-  beforeEach(() => { mockSaveData.mockClear(); exitSpy.mockClear(); });
+  beforeEach(() => {
+    mockSaveData.mockClear();
+    mockGetStatus.mockReset().mockResolvedValue({ message: "API running." });
+    mockGetHaConfig.mockReset().mockResolvedValue({ version: "2024.1.0", location_name: "Home" });
+    mockGetStates.mockReset().mockResolvedValue([{ entity_id: "light.kitchen" }, { entity_id: "switch.fan" }]);
+    exitSpy.mockClear();
+  });
   afterEach(() => { vi.clearAllMocks(); });
 
   it("validates successfully and saves data", async () => {
@@ -215,6 +224,16 @@ describe("validate command", () => {
     expect(stdout).toContain("VALID");
     expect(stdout).toContain("2024.1.0");
     expect(mockSaveData).toHaveBeenCalled();
+  });
+
+  it("reports Error and non-Error validation failures", async () => {
+    for (const failure of [new Error("offline"), "unavailable"]) {
+      mockGetStatus.mockRejectedValueOnce(failure);
+      const { stderr } = await captureLog(() => createValidateCommand().parseAsync([], { from: "user" }));
+      expect(stderr).toContain(String(failure instanceof Error ? failure.message : failure));
+      expect(exitSpy).toHaveBeenCalledWith(1);
+      exitSpy.mockClear();
+    }
   });
 });
 
@@ -256,6 +275,17 @@ describe("reset command", () => {
 
     expect(stdout).toContain("NO_CONFIG");
     expect(mockResetConfig).not.toHaveBeenCalled();
+  });
+
+  it("reports Error and non-Error reset failures", async () => {
+    mockConfigExists.mockReturnValue(true);
+    for (const failure of [new Error("permission denied"), "filesystem unavailable"]) {
+      mockResetConfig.mockImplementationOnce(() => { throw failure; });
+      const { stderr } = await captureLog(() => createResetCommand().parseAsync(["--force"], { from: "user" }));
+      expect(stderr).toContain(failure instanceof Error ? failure.message : failure);
+      expect(exitSpy).toHaveBeenCalledWith(1);
+      exitSpy.mockClear();
+    }
   });
 });
 

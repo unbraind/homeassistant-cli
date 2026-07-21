@@ -1,3 +1,6 @@
+/**
+ * Defines the registries command surface, options, help, and output behavior.
+ */
 import { Command } from "commander";
 import { WebSocketRegistryClient, HomeAssistantClient, HomeAssistantApiError } from "../api/index.js";
 import { formatOutput } from "../formatters/index.js";

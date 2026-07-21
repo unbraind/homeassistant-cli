@@ -10,11 +10,11 @@ bun install --frozen-lockfile
 echo "[2/10] Auditing dependency graph"
 bun run security:audit
 
-echo "[3/10] Type checking"
-bun run typecheck
+echo "[3/10] Static quality, documentation, duplication, and shell gates"
+bun run quality:static
 
-echo "[4/10] Linting"
-bun run lint
+echo "[4/10] PM tracker integrity"
+bun run quality:pm
 
 echo "[5/10] Building"
 bun run build
@@ -30,6 +30,8 @@ if git diff --cached -U0 | rg -n '^\+.*(ghp_[A-Za-z0-9]{36}|github_pat_[A-Za-z0-
   echo "ERROR: possible secret pattern found in staged changes"
   exit 1
 fi
+
+bun run security:trivy
 
 echo "[9/10] Security scan (full git history)"
 bash scripts/security/scan-history.sh

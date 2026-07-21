@@ -4,10 +4,24 @@ import {
   formatServicesTable,
   formatEventsTable,
   formatConfigTable,
+  formatTable,
 } from "../src/formatters/table.js";
 import type { HaState, HaService, HaEvent, HaConfig } from "../src/types/api.js";
 
 describe("Table Formatter", () => {
+  it("formats null, strings, primitives, empty arrays, and primitive arrays", () => {
+    expect(formatTable(null)).toBe("null");
+    expect(formatTable("plain")).toBe("plain");
+    expect(formatTable(42)).toBe("42");
+    expect(formatTable([])).toBe("No data.");
+    expect(formatTable([1, 2])).toBe("1\n2");
+  });
+
+  it("formats generic records including null and nested values", () => {
+    expect(formatTable({ missing: null, nested: { ok: true }, scalar: 2 }))
+      .toBe('missing: null\nnested: {"ok":true}\nscalar: 2');
+    expect(formatTable([{ a: null, b: { ok: true } }])).toContain('{"ok":true}');
+  });
   describe("formatStatesTable", () => {
     it("should format empty states", () => {
       expect(formatStatesTable([])).toBe("No states found.");

@@ -1,3 +1,6 @@
+/**
+ * Defines the capabilities redact command surface, options, help, and output behavior.
+ */
 interface RedactableApiSection {
   location: string;
 }

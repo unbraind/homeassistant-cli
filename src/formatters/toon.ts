@@ -1,3 +1,6 @@
+/**
+ * Serializes Home Assistant results through the toon output contract.
+ */
 import { encode } from "@toon-format/toon";
 import type { HaState, HaService, HaEvent, HaConfig, HaHistoryState, HaLogbookEntry, HaCalendar, HaCalendarEvent } from "../types/api.js";
 import { getServiceNames } from "../utils/services.js";
@@ -43,7 +46,7 @@ export function formatHistoryToon(history: HaHistoryState[][]): string {
   const entries = history
     .filter((h) => h.length > 0)
     .map((entityHistory) => ({
-      entity_id: entityHistory[0]?.entity_id ?? "unknown",
+      entity_id: entityHistory[0]!.entity_id,
       changes: entityHistory.map((s) => ({
         last_changed: s.last_changed,
         state: s.state,
@@ -56,8 +59,8 @@ export function formatLogbookToon(entries: HaLogbookEntry[]): string {
   const rows = entries.map((e) => ({
     when: e.when,
     domain: e.domain,
-    entity_id: e.entity_id ?? null,
-    name: e.name ?? null,
+    entity_id: e.entity_id === undefined ? null : e.entity_id,
+    name: e.name === undefined ? null : e.name,
     message: e.message,
   }));
   return encode({ logbook: rows });

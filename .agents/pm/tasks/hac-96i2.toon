@@ -1,0 +1,46 @@
+id: hac-96i2
+title: Align typed WebSocket target discovery with current Home Assistant
+description: "Correct target extraction field handling and add typed trigger and condition discovery alongside services, while retaining the generic WebSocket passthrough for the full dynamic API."
+type: Task
+status: closed
+priority: 0
+tags[4]: agent-discovery,home-assistant,targeting,websocket
+created_at: "2026-07-21T18:59:08.180Z"
+updated_at: "2026-07-21T20:36:57.869Z"
+closed_at: "2026-07-21T20:36:57.075Z"
+author: codex-root
+estimated_minutes: 180
+acceptance_criteria: "extract output uses current referenced_entities/referenced_devices/referenced_areas and missing fields; related registry lookups consume current fields; target triggers, conditions, and services commands are documented, help-complete, type-safe, unit-tested, and live-tested"
+definition_of_ready: Official current WebSocket target helper contract and live instance behavior captured
+value: Agents can reason about valid automations for a target without constructing raw WebSocket JSON
+impact: "Improves deterministic planning, reduces invalid service calls, and fixes empty related results"
+outcome: Target selectors resolve to correct related resources and applicable automation primitives
+why_now: Current helper reads obsolete keys and omits two official discovery commands
+parent: hac-n0ix
+reviewer: unbraind
+risk: medium
+confidence: high
+release: 2026.7.22
+resolution: "Added typed extract, trigger, condition, service, and related-registry commands using current Home Assistant response fields and selector semantics."
+expected_result: Typed WebSocket target helpers match the current Home Assistant protocol and provide complete agent discovery primitives.
+actual_result: All 58 linked WebSocket tests and the complete live target-discovery E2E workflow pass on the local instance.
+comments[1]{created_at,author,text}:
+  "2026-07-21T19:39:49.688Z",codex-root,Live target discovery confirms extract_from_target returns referenced_entities referenced_devices referenced_areas and missing arrays; get_triggers_for_target get_conditions_for_target and get_services_for_target return arrays and default expand_group to true.
+notes[1]{created_at,author,text}:
+  "2026-07-21T18:59:13.629Z",codex-root,"The official response contract uses referenced_entities, referenced_devices, referenced_areas plus missing_* arrays; the current related helper reads entity_ids/device_ids/area_ids/floor_ids/label_ids."
+learnings[2]{created_at,author,text}:
+  "2026-07-21T18:59:14.729Z",codex-root,"Generic ws call preserves forward compatibility, while typed target commands are still valuable for discoverability, validation, and low-token agent workflows."
+  "2026-07-21T20:36:55.132Z",codex-root,"Current Home Assistant target extraction returns referenced entity/device/area sets plus missing selectors; related registry lookup must consume those current fields, and agent planning benefits from typed trigger, condition, and service discovery beside extraction."
+files[2]{path,scope,note}:
+  src/commands/websocket-target.ts,project,Typed target extraction discovery and related-registry implementation
+  tests/websocket-command.test.ts,project,Command contract coverage for target helpers and current response shapes
+tests[2]{command,scope,timeout_seconds,note}:
+  bun run test -- tests/api-websocket.test.ts tests/websocket-command.test.ts,project,300,Typed WebSocket transport and target discovery behavior
+  "HASSIO_URL=\"$(jq -r .url ~/.hassio-cli/settings.json)\" HASSIO_TOKEN=\"$(jq -r .token ~/.hassio-cli/auth.json)\" HASSIO_READONLY=true bun run test:e2e:live",project,600,Live current Home Assistant target helper contract acceptance
+test_runs[1]{run_id,kind,status,started_at,finished_at,recorded_at,passed,failed,skipped}:
+  test-local-mrv42hlu-vc90ro,test,passed,"2026-07-21T20:33:16.016Z","2026-07-21T20:33:39.234Z","2026-07-21T20:33:39.234Z",2,0,0
+docs[2]{path,scope,note}:
+  docs/AGENT_OPTIMIZATION.md,project,Low-token target discovery workflow for agents
+  docs/API.md,project,Canonical target command and option reference
+close_reason: "Current typed Home Assistant WebSocket target discovery is implemented, documented, unit-tested, help-tested, and live-tested."
+body: ""

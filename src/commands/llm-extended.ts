@@ -1,3 +1,6 @@
+/**
+ * Defines the llm extended command surface, options, help, and output behavior.
+ */
 import { Command } from "commander";
 import { HomeAssistantClient } from "../api/index.js";
 import { formatOutput } from "../formatters/index.js";
@@ -191,7 +194,7 @@ export function createActionCommand(): Command {
 
       for (const state of states) {
         const domain = state.entity_id.split(".")[0];
-        if (!relevantDomains.includes(domain || "")) continue;
+        if (!domain || !relevantDomains.includes(domain)) continue;
 
         const friendlyName = (state.attributes["friendly_name"] as string || state.entity_id).toLowerCase();
         const entityIdLower = state.entity_id.toLowerCase();
@@ -203,7 +206,7 @@ export function createActionCommand(): Command {
               type: "service_call",
               entity: state.entity_id,
               service: `${domain}.${action}`,
-              domain: domain || undefined,
+              domain,
               confidence: keyword.length > 5 ? 0.9 : 0.7,
             });
           }

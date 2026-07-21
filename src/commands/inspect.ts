@@ -1,3 +1,6 @@
+/**
+ * Defines the inspect command surface, options, help, and output behavior.
+ */
 import { Command } from "commander";
 import { HomeAssistantClient } from "../api/index.js";
 import { formatOutput } from "../formatters/index.js";
@@ -11,7 +14,7 @@ export function createInspectCommand(): Command {
     .option("--history", "Include recent history")
     .option("-l, --limit <n>", "History entries limit", "10");
 
-  command.action(withExit(async (entityId: string, options: { history?: boolean; limit?: string }, cmd) => {
+  command.action(withExit(async (entityId: string, options: { history?: boolean; limit: string }, cmd) => {
     const globalOpts = cmd.optsWithGlobals();
     const { config, format } = resolveCommandOptions(globalOpts);
     const client = new HomeAssistantClient(config);
@@ -29,7 +32,7 @@ export function createInspectCommand(): Command {
     if (options.history) {
       const endTime = new Date().toISOString();
       const startTime = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-      const limit = parseInt(options.limit || "10", 10);
+      const limit = parseInt(options.limit, 10);
       
       try {
         const history = await client.getHistory({
@@ -59,7 +62,7 @@ export function createSummaryCommand(): Command {
     .option("--full-states", "Include complete state distribution without truncation");
 
   command.action(withExit(async (
-    options: { topStates?: string; fullStates?: boolean },
+    options: { topStates: string; fullStates?: boolean },
     cmd,
   ) => {
     const globalOpts = cmd.optsWithGlobals();
@@ -80,7 +83,7 @@ export function createSummaryCommand(): Command {
     }, {});
     const sortedStates = Object.entries(byState)
       .sort(([, leftCount], [, rightCount]) => rightCount - leftCount);
-    const parsedTopStates = parseInt(options.topStates || "20", 10);
+    const parsedTopStates = parseInt(options.topStates, 10);
     const topStateLimit = Number.isFinite(parsedTopStates) && parsedTopStates > 0 ? parsedTopStates : 20;
     const stateEntries = options.fullStates ? sortedStates : sortedStates.slice(0, topStateLimit);
     const topStates = stateEntries.reduce<Record<string, number>>((acc, [state, count]) => {

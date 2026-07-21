@@ -233,6 +233,16 @@ describe("fan command", () => {
     expect(body.oscillating).toBe(true);
   });
 
+  it("disables oscillation for an explicit entity", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
+    const result = await captureLog(() => createFanCommand().parseAsync([
+      "--entity-id", "fan.bedroom_fan", "--disable-oscillation",
+    ], { from: "user" }));
+    expect(result).toContain("oscillate_off");
+    const body = JSON.parse((mockRequest.mock.calls[0]?.[1] as { body: string }).body);
+    expect(body.oscillating).toBe(false);
+  });
+
   it("increases fan speed", async () => {
     mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
 

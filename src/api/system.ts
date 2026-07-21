@@ -1,4 +1,7 @@
-import { request } from "undici";
+/**
+ * Implements typed Home Assistant system API transport operations.
+ */
+import { FormData, request } from "undici";
 import type { Config } from "../types/options.js";
 import type {
   HaPerson,
@@ -133,7 +136,7 @@ export class SystemApiClient extends HomeAssistantClient {
       headers: {
         Authorization: `Bearer ${this.token}`,
       },
-      body: formData as any,
+      body: formData,
     });
 
     const text = await response.body.text();

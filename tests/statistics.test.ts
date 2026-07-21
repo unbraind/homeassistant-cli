@@ -52,6 +52,12 @@ describe("StatisticsApiClient", () => {
       expect(result["sensor.temperature"][0]?.mean).toBe(22.5);
     });
 
+    it("supports the default empty query", async () => {
+      mockRequest.mockResolvedValueOnce(mockResponse({}));
+      await client.getStatistics();
+      expect(mockRequest.mock.calls[0]?.[1]?.body).toBe("{}");
+    });
+
     it("should include time range when provided", async () => {
       mockRequest.mockResolvedValueOnce(mockResponse({}));
       await client.getStatistics({

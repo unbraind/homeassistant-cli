@@ -101,6 +101,12 @@ describe("probeApiMatrix", () => {
     expect(Array.isArray(result.recommendations)).toBe(true);
   });
 
+  it("skips the history call when no sample entity is available", async () => {
+    mockGetStates.mockResolvedValue([]);
+    await probeApiMatrix(baseConfig);
+    expect(mockGetHistory).not.toHaveBeenCalled();
+  });
+
   it("marks REST endpoints as available when they succeed", async () => {
     const result = await probeApiMatrix(baseConfig);
 

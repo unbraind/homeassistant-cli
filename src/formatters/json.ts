@@ -1,3 +1,6 @@
+/**
+ * Serializes Home Assistant results through the json output contract.
+ */
 import type { HaState, HaService, HaEvent, HaConfig } from "../types/api.js";
 
 export function formatJson(data: unknown, compact = false): string {

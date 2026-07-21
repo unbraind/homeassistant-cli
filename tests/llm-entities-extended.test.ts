@@ -160,6 +160,16 @@ describe("entities command extended", () => {
     expect(parsed.some((d: { domain: string }) => d.domain === "light")).toBe(true);
   });
 
+  it("groups an empty entity id under unknown", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse([
+      { entity_id: "", state: "unknown", attributes: {}, last_changed: "", last_updated: "" },
+    ]));
+    const result = JSON.parse(await captureLog(() => createEntitiesCommand().parseAsync([
+      "--domains",
+    ], { from: "user" })));
+    expect(result).toEqual([{ domain: "unknown", count: 1 }]);
+  });
+
   it("limits results with --limit flag", async () => {
     mockRequest.mockResolvedValueOnce(mockResponse(sampleStates));
 

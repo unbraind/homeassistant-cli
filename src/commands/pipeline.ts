@@ -1,3 +1,6 @@
+/**
+ * Defines the pipeline command surface, options, help, and output behavior.
+ */
 import { Command } from "commander";
 import { HomeAssistantWebSocketClient } from "../api/websocket.js";
 import { formatOutput } from "../formatters/index.js";

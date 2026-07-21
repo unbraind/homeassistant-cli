@@ -1,3 +1,6 @@
+/**
+ * Defines type-safe lists contracts used by the Home Assistant API and CLI.
+ */
 export interface HaTodoList {
   entity_id: string;
   name: string;

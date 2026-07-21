@@ -97,6 +97,18 @@ describe("render-template command", () => {
 
     expect(result).toContain("Hello World");
   });
+
+  it("reads a template from a file", async () => {
+    mockRequest.mockResolvedValueOnce({
+      statusCode: 200,
+      body: { text: () => Promise.resolve("rendered"), arrayBuffer: () => Promise.resolve(new ArrayBuffer(0)) },
+    });
+    await captureLog(() => createRenderTemplateCommand().parseAsync([
+      "ignored", "--file", "AGENTS.md",
+    ], { from: "user" }));
+    const body = JSON.parse((mockRequest.mock.calls[0]?.[1] as { body: string }).body);
+    expect(body.template).toContain("AGENTS.md");
+  });
 });
 
 describe("check-config command", () => {

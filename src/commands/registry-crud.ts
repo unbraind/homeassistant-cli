@@ -1,3 +1,6 @@
+/**
+ * Defines the registry crud command surface, options, help, and output behavior.
+ */
 import { Command } from "commander";
 import { RegistryCrudClient } from "../api/registries-crud.js";
 import { formatOutput } from "../formatters/index.js";

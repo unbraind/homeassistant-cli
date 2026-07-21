@@ -1,0 +1,46 @@
+id: hac-0ay7
+title: Undici 8 rejects REST request throwOnError option
+description: The live setup validator and all REST-backed commands fail locally with invalid throwOnError because Undici 8 removed the request-level option while the transport still supplies it.
+type: Issue
+status: closed
+priority: 0
+tags[5]: bug,regression,rest,transport,undici
+created_at: "2026-07-21T18:59:07.335Z"
+updated_at: "2026-07-21T20:36:54.167Z"
+closed_at: "2026-07-21T20:36:53.340Z"
+author: codex-root
+estimated_minutes: 90
+acceptance_criteria: "Remove the obsolete option without weakening explicit status handling; add a regression test that fails on unsupported request options; validate setup, status, config, states, and doctor against the live instance"
+parent: hac-n0ix
+reviewer: unbraind
+risk: critical
+confidence: 100
+release: 2026.7.22
+reporter: codex-root
+severity: critical
+environment: homeassistant-cli 2026.7.21-2; Node 22/Bun 1.3.11; undici 8.7.0; Home Assistant at private LAN endpoint
+repro_steps: Build current master; configure HASSIO_URL and HASSIO_TOKEN; run hassio settings validate; observe invalid throwOnError before any API result
+resolution: Removed the unsupported throwOnError request option while retaining explicit status/error-envelope handling and added transport regressions.
+expected_result: REST requests authenticate and return structured Home Assistant responses
+actual_result: All 34 linked transport tests and the complete live read-only E2E workflow pass against the local Home Assistant instance.
+affected_version: 2026.7.21-2
+fixed_version: 2026.7.22
+component: src/api/base.ts
+regression: true
+customer_impact: All REST-backed CLI commands and setup validation are unusable
+comments[1]{created_at,author,text}:
+  "2026-07-21T18:59:12.517Z",codex-root,"Live reproduction: settings init securely created 0600 settings/auth files outside the repository, then settings validate failed immediately with invalid throwOnError."
+learnings[3]{created_at,author,text}:
+  "2026-07-21T18:59:11.564Z",codex-root,Mocked undici request functions accepted an extra request option that real Undici 8 rejects; transport tests must exercise option shape or use a real local HTTP server boundary.
+  "2026-07-21T19:39:48.610Z",codex-root,Installed Undici 8 rejects request-level throwOnError before network I/O; explicit response.statusCode handling already preserves the intended error semantics without that option.
+  "2026-07-21T20:36:51.535Z",codex-root,Undici request option compatibility must be verified from installed package types and exercised by an integration request; carrying forward an older throwOnError option broke every live REST command before HTTP status handling ran.
+files[2]{path,scope,note}:
+  src/api/base.ts,project,Removes the unsupported Undici request option at the real transport boundary
+  tests/api-base-integration.test.ts,project,Exercises the installed Undici runtime against a real local HTTP server
+tests[2]{command,scope,timeout_seconds,note}:
+  bun run test -- tests/api-base.test.ts tests/api-base-integration.test.ts tests/api-errors.test.ts,project,300,Undici transport and API error contract regression suite
+  "HASSIO_URL=\"$(jq -r .url ~/.hassio-cli/settings.json)\" HASSIO_TOKEN=\"$(jq -r .token ~/.hassio-cli/auth.json)\" HASSIO_READONLY=true bun run test:e2e:live",project,600,Live read-only REST setup and output contract acceptance test
+test_runs[1]{run_id,kind,status,started_at,finished_at,recorded_at,passed,failed,skipped}:
+  test-local-mrv41z15-47xnse,test,passed,"2026-07-21T20:32:46.017Z","2026-07-21T20:33:15.161Z","2026-07-21T20:33:15.161Z",2,0,0
+close_reason: "Supported Undici 8 request contract restored and verified through unit, integration, and live read-only API tests."
+body: ""

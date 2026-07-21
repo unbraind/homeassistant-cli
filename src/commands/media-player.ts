@@ -1,3 +1,6 @@
+/**
+ * Defines the media player command surface, options, help, and output behavior.
+ */
 import { Command } from "commander";
 import { HomeAssistantClient } from "../api/client.js";
 import { formatOutput } from "../formatters/index.js";
@@ -56,7 +59,6 @@ export function createMediaPlayerCommand(): Command {
     source?: string;
     soundMode?: string;
     shuffle?: boolean;
-    noShuffle?: boolean;
     repeat?: string;
     playMedia?: boolean;
     mediaUrl?: string;
@@ -219,7 +221,7 @@ export function createMediaPlayerCommand(): Command {
         return;
       }
 
-      if (options.join && options.join.length > 0) {
+      if (options.join) {
         await client.callService("media_player", "join", {
           entity_id: options.entityId,
           group_members: options.join,

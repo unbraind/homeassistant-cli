@@ -9,7 +9,10 @@ if ! git rev-parse --git-dir >/dev/null 2>&1; then
   exit 1
 fi
 
+# Shell expansion is intentionally disabled inside these JavaScript snippets.
+# shellcheck disable=SC2016
 DATE="$(node -e 'const d=new Date(); console.log(`${d.getFullYear()}.${d.getMonth()+1}.${d.getDate()}`)')"
+# shellcheck disable=SC2016
 TODAY="$(node -e 'const d=new Date(); const p=n=>String(n).padStart(2,"0"); console.log(`${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`)')"
 
 # Release sequence is based on number of release commits for the day,

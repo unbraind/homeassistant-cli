@@ -1,4 +1,9 @@
+/**
+ * Defines the settings wizard command surface, options, help, and output behavior.
+ */
 import { Command } from "commander";
+import { createInterface } from "node:readline";
+import { HomeAssistantClient } from "../api/index.js";
 import { getAuthPath, getConfigPath, getConfigSnapshot, getDataPath, saveConfig, saveData } from "../config/index.js";
 import { withExit } from "../utils/exit.js";
 import { maybePromptToStarRepo } from "../utils/github-star.js";
@@ -23,7 +28,6 @@ async function testConnection(config: {
   readOnly: boolean;
 }, configPath?: string): Promise<void> {
   console.log("\nTesting connection...");
-  const { HomeAssistantClient } = await import("../api/index.js");
   const client = new HomeAssistantClient(config);
   try {
     const status = await client.getStatus();
@@ -65,13 +69,12 @@ export function createWizardCommand(): Command {
         const nonInteractive = options.nonInteractive === true;
         let urlInput = options.haUrl || existing.url;
         let token = options.haToken || existing.token;
-        let format = parseFormat(options.defaultFormat || existing.outputFormat || "toon") ?? "toon";
-        let timeout = parseTimeout(options.defaultTimeout || String(existing.timeout ?? 30000)) ?? 30000;
-        let readOnly = parseBoolean(options.readOnly || (existing.readOnly ? "yes" : "no")) ?? false;
+        let format = parseFormat(options.defaultFormat || existing.outputFormat || "toon") as OutputFormat;
+        let timeout = parseTimeout(options.defaultTimeout || String(existing.timeout ?? 30000)) as number;
+        let readOnly = parseBoolean(options.readOnly || (existing.readOnly ? "yes" : "no")) as boolean;
 
         if (!nonInteractive) {
-          const readline = await import("node:readline");
-          const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+          const rl = createInterface({ input: process.stdin, output: process.stdout });
           const question = (prompt: string): Promise<string> => new Promise((resolve) => {
             rl.question(prompt, (answer) => resolve(answer.trim()));
           });
@@ -100,11 +103,11 @@ export function createWizardCommand(): Command {
           console.log("3. Click 'Create Token' and copy\n");
           token = await promptSecretRequired("Long-Lived Access Token", existing.token);
           console.log("\nFormats: toon, json, json-compact, yaml, table, markdown");
-          format = parseFormat(await question(`Default format [${existing.outputFormat ?? "toon"}]: `) || existing.outputFormat || "toon") ?? "toon";
-          timeout = parseTimeout(await question(`Timeout in ms [${existing.timeout ?? 30000}]: `) || String(existing.timeout ?? 30000)) ?? 30000;
+          format = parseFormat(await question(`Default format [${existing.outputFormat ?? "toon"}]: `) || existing.outputFormat || "toon") as OutputFormat;
+          timeout = parseTimeout(await question(`Timeout in ms [${existing.timeout ?? 30000}]: `) || String(existing.timeout ?? 30000)) as number;
           readOnly = parseBoolean(await question(
             `Enable read-only safety mode (blocks write commands) [${existing.readOnly ? "yes" : "no"}]: `
-          ) || (existing.readOnly ? "yes" : "no")) ?? false;
+          ) || (existing.readOnly ? "yes" : "no")) as boolean;
           rl.close();
         }
 

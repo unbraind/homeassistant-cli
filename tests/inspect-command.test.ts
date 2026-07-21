@@ -94,6 +94,23 @@ describe("inspect and summary commands", () => {
     expect(parsed["history_error"]).toBe("history unavailable");
   });
 
+  it("uses empty history and stringifies non-Error history failures", async () => {
+    getHistory.mockResolvedValueOnce([]);
+    const emptyOutput: string[] = [];
+    const originalLog = console.log;
+    console.log = (message: string) => emptyOutput.push(message);
+    await createInspectCommand().parseAsync(["light.kitchen", "--history"], { from: "user" });
+    console.log = originalLog;
+    expect((JSON.parse(emptyOutput.join("\n")) as { recent_history: unknown[] }).recent_history).toEqual([]);
+
+    getHistory.mockRejectedValueOnce("offline");
+    const errorOutput: string[] = [];
+    console.log = (message: string) => errorOutput.push(message);
+    await createInspectCommand().parseAsync(["light.kitchen", "--history"], { from: "user" });
+    console.log = originalLog;
+    expect((JSON.parse(errorOutput.join("\n")) as { history_error: string }).history_error).toBe("offline");
+  });
+
   it("returns state and domain summary", async () => {
     const cmd = createSummaryCommand();
     const output: string[] = [];
@@ -123,5 +140,21 @@ describe("inspect and summary commands", () => {
     const parsed = JSON.parse(output.join("\n")) as Record<string, unknown>;
     expect(parsed["by_state"]).toBeTruthy();
     expect(parsed["by_state_other_count"]).toBeUndefined();
+  });
+
+  it("uses the safe default for an invalid top-state limit and reports truncated totals", async () => {
+    getStates.mockResolvedValueOnce(Array.from({ length: 22 }, (_, index) => ({
+      entity_id: index === 0 ? "" : `sensor.value_${index}`,
+      state: `state-${index}`,
+      attributes: {}, last_changed: "a", last_updated: "a",
+    })));
+    const output: string[] = [];
+    const originalLog = console.log;
+    console.log = (message: string) => output.push(message);
+    await createSummaryCommand().parseAsync(["--top-states", "invalid"], { from: "user" });
+    console.log = originalLog;
+    const parsed = JSON.parse(output.join("\n")) as { domains: number; by_state_other_count: number };
+    expect(parsed.domains).toBe(2);
+    expect(parsed.by_state_other_count).toBe(2);
   });
 });

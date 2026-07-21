@@ -1,5 +1,8 @@
+/**
+ * Defines the extended command surface, options, help, and output behavior.
+ */
 import { Command } from "commander";
-import { ExtendedApiClient, HomeAssistantApiError } from "../api/index.js";
+import { ExtendedApiClient, HomeAssistantApiError, HomeAssistantClient } from "../api/index.js";
 import { formatOutput } from "../formatters/index.js";
 import { withExit } from "../utils/exit.js";
 import { resolveCommandOptions } from "../utils/command-helpers.js";
@@ -38,7 +41,7 @@ export function createWeatherCommand(): Command {
     .option("--count", "Only return count");
 
   command.action(withExit(async (entityId: string | undefined, options: {
-    type?: "daily" | "hourly" | "twice_daily";
+    type: "daily" | "hourly" | "twice_daily";
     list?: boolean;
     count?: boolean;
   }, cmd) => {
@@ -47,7 +50,6 @@ export function createWeatherCommand(): Command {
     const client = new ExtendedApiClient(config);
 
     if (options.list || !entityId) {
-      const { HomeAssistantClient } = await import("../api/index.js");
       const baseClient = new HomeAssistantClient(config);
       const states = await baseClient.getStates();
       const weatherEntities = states
@@ -69,7 +71,7 @@ export function createWeatherCommand(): Command {
     }
 
     try {
-      const forecasts = await client.getWeatherForecasts(entityId, options.type || "daily");
+      const forecasts = await client.getWeatherForecasts(entityId, options.type);
       console.log(formatOutput({ entity_id: entityId, forecasts }, format));
     } catch (error) {
       if (error instanceof HomeAssistantApiError && error.statusCode === 404) {
@@ -117,7 +119,6 @@ export function createInfoCommand(): Command {
       const globalOpts = cmd.optsWithGlobals();
       const { config, format } = resolveCommandOptions(globalOpts);
 
-      const { HomeAssistantClient } = await import("../api/index.js");
       const baseClient = new HomeAssistantClient(config);
 
       const [status, haConfig, states] = await Promise.all([

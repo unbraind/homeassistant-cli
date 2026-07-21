@@ -1,3 +1,6 @@
+/**
+ * Provides shared command helpers behavior for the Home Assistant CLI runtime.
+ */
 import type { Command } from "commander";
 import { getConfig } from "../config/index.js";
 import type { Config, OutputFormat } from "../types/index.js";
@@ -52,10 +55,8 @@ export function attachGlobalFlagsHelp(program: Command): void {
   const stack: Command[] = [program];
 
   while (stack.length > 0) {
-    const command = stack.pop();
-    if (!command) {
-      continue;
-    }
+    // The non-empty stack condition guarantees pop returns a command.
+    const command = stack.pop() as Command;
 
     if (command.parent) {
       command.addHelpText("after", GLOBAL_FLAGS_HELP);

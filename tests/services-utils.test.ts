@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   flattenServices,
+  findServiceDefinition,
   getServiceDefinition,
   getServiceNames,
   normalizeServices,
@@ -31,6 +32,13 @@ describe("services utils", () => {
       fields: { brightness: {} },
       response: { optional: true },
     });
+  });
+
+  it("returns no definitions for array schemas or missing domains", () => {
+    const service: HaService = { domain: "light", services: ["turn_on"] };
+    expect(getServiceDefinition(service, "turn_on")).toBeUndefined();
+    expect(findServiceDefinition([service], "switch", "turn_on")).toBeUndefined();
+    expect(findServiceDefinition([service], "light", "turn_on")).toBeUndefined();
   });
 
   it("flattens mixed service schemas", () => {
@@ -118,5 +126,24 @@ describe("services utils", () => {
     expect(validation.ok).toBe(false);
     expect(validation.errors).toContain("Missing required field: 'entity_id'");
     expect(validation.errors).toContain("Unknown field: 'random_field'");
+  });
+
+  it("handles missing schemas, malformed fields, targets, and omitted payloads", () => {
+    expect(validateServiceData(undefined, undefined).warnings[0]).toContain("No structured schema");
+    expect(validateServiceData({ fields: [] }, undefined).known_fields).toEqual([]);
+    expect(validateServiceData({ target: {}, fields: {} }, { target: { entity_id: "light.kitchen" } }, true).ok).toBe(true);
+  });
+
+  it("normalizes array schemas and sorts across domains", () => {
+    expect(normalizeServices([
+      { domain: "switch", services: ["turn_on"] },
+      { domain: "light", services: ["turn_on"] },
+    ]).map((row) => row.domain)).toEqual(["light", "switch"]);
+  });
+
+  it("sorts multiple services within the same domain", () => {
+    expect(normalizeServices([
+      { domain: "light", services: ["turn_on", "turn_off"] },
+    ]).map((row) => row.service)).toEqual(["turn_off", "turn_on"]);
   });
 });

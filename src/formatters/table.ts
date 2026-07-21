@@ -1,3 +1,6 @@
+/**
+ * Serializes Home Assistant results through the table output contract.
+ */
 import type { HaState, HaService, HaEvent, HaConfig } from "../types/api.js";
 import { getServiceNames } from "../utils/services.js";
 

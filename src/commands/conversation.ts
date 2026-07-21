@@ -1,3 +1,6 @@
+/**
+ * Defines the conversation command surface, options, help, and output behavior.
+ */
 import { Command } from "commander";
 import { ConversationApiClient } from "../api/conversation.js";
 import { formatOutput } from "../formatters/index.js";

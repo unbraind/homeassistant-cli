@@ -102,6 +102,32 @@ describe("github-star extended", () => {
     );
   });
 
+  it("records an already-starred repository without prompting", async () => {
+    const prompt = vi.fn(async () => "yes");
+    const exec = createExecStub((key) => {
+      if (key.includes("repo view")) return { ok: true, stdout: "true\n", stderr: "" };
+      return { ok: true, stdout: "ok", stderr: "" };
+    });
+    await maybePromptToStarRepo({ exec, prompt, isInteractive: true });
+    expect(prompt).not.toHaveBeenCalled();
+    expect(mockSaveData).toHaveBeenCalledWith(expect.objectContaining({
+      githubStarPrompt: expect.objectContaining({ outcome: "already_starred", lastStatus: "starred" }),
+    }), undefined);
+  });
+
+  it("warns when star status cannot be determined", async () => {
+    const warn = vi.fn();
+    const exec = createExecStub((key) => {
+      if (key.includes("repo view")) return { ok: false, stdout: "", stderr: "failure" };
+      return { ok: true, stdout: "ok", stderr: "" };
+    });
+    await maybePromptToStarRepo({ exec, warn, isInteractive: true });
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("Unable to check GitHub star status"));
+    expect(mockSaveData).toHaveBeenCalledWith(expect.objectContaining({
+      githubStarPrompt: expect.objectContaining({ outcome: "manual_link", lastStatus: "error" }),
+    }), undefined);
+  });
+
   it("caches decline path so user is not prompted repeatedly", async () => {
     const prompt = vi.fn(async () => "n");
     const exec = createExecStub((key) => {

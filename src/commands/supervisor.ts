@@ -1,3 +1,6 @@
+/**
+ * Defines the supervisor command surface, options, help, and output behavior.
+ */
 import { Command } from "commander";
 import { SupervisorApiClient } from "../api/supervisor.js";
 import { formatOutput } from "../formatters/index.js";
@@ -109,10 +112,7 @@ function createSupervisorAddonsCommand(): Command {
       return;
     }
 
-    if (options.list || (!options.info && !options.start && !options.stop && !options.restart)) {
-      console.log(formatOutput(await runSupervisorAction(() => client.getAddons()), format));
-      return;
-    }
+    console.log(formatOutput(await runSupervisorAction(() => client.getAddons()), format));
   }));
 
   return cmd;

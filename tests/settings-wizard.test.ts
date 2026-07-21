@@ -219,6 +219,18 @@ describe("settings wizard command", () => {
     expect(errText).toContain("Connection test failed");
   });
 
+  it("stringifies non-Error connection failures", async () => {
+    mockGetStatus.mockRejectedValueOnce("connection unavailable");
+    const errors: string[] = [];
+    const originalError = console.error;
+    console.error = (...messages: unknown[]) => errors.push(messages.map(String).join(" "));
+    await createWizardCommand().parseAsync([
+      "--non-interactive", "--ha-url", "http://localhost:8123", "--ha-token", "token-123",
+    ], { from: "user" });
+    console.error = originalError;
+    expect(errors.join("\n")).toContain("connection unavailable");
+  });
+
   it("normalizes URL by removing trailing slash", async () => {
     const cmd = createWizardCommand();
 
@@ -361,6 +373,32 @@ describe("settings wizard command", () => {
       undefined
     );
     expect(errorOutput.some(e => e.includes("Value is required"))).toBe(true);
+  });
+
+  it("keeps every saved value when interactive answers are empty", async () => {
+    mockGetConfigSnapshot.mockReturnValue({
+      url: "http://saved.local:8123", token: "saved-token", outputFormat: "yaml",
+      timeout: 45000, readOnly: true,
+    });
+    mockRlQuestion.mockImplementation((_prompt: string, callback: (answer: string) => void) => callback(""));
+    await createWizardCommand().parseAsync(["--skip-test"], { from: "user" });
+    expect(mockSaveConfig).toHaveBeenCalledWith({
+      url: "http://saved.local:8123", token: "saved-token", outputFormat: "yaml",
+      timeout: 45000, readOnly: true,
+    }, undefined);
+  });
+
+  it("stringifies non-Error setup failures", async () => {
+    mockSaveConfig.mockImplementationOnce(() => { throw "storage unavailable"; });
+    const errors: string[] = [];
+    const originalError = console.error;
+    console.error = (...messages: unknown[]) => errors.push(messages.map(String).join(" "));
+    await createWizardCommand().parseAsync([
+      "--non-interactive", "--ha-url", "http://localhost:8123", "--ha-token", "token", "--skip-test",
+    ], { from: "user" });
+    console.error = originalError;
+    expect(errors.join("\n")).toContain("storage unavailable");
+    expect(exitSpy).toHaveBeenCalledWith(1);
   });
 
   it("setup alias runs the same non-interactive flow", async () => {

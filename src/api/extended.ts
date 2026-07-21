@@ -1,3 +1,6 @@
+/**
+ * Implements typed Home Assistant extended API transport operations.
+ */
 import type { Config } from "../types/options.js";
 import type {
   HaEnergyPreferences,
@@ -35,7 +38,12 @@ export class ExtendedApiClient extends HomeAssistantClient {
       return Array.isArray(forecast) ? forecast : [];
     } catch (error) {
       if (error instanceof HomeAssistantApiError) {
-        throw new Error(`Weather forecast failed: ${error.message}`);
+        throw new HomeAssistantApiError(
+          `Weather forecast failed: ${error.message}`,
+          error.statusCode,
+          error.body,
+          error.envelope.endpoint,
+        );
       }
       throw error;
     }

@@ -1,3 +1,6 @@
+/**
+ * Defines type-safe extended contracts used by the Home Assistant API and CLI.
+ */
 export interface HaEnergyPreferences {
   energy_default_device_capacity: number | null;
   device_consumption: Array<{

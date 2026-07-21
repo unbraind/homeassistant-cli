@@ -1,3 +1,6 @@
+/**
+ * Defines type-safe core contracts used by the Home Assistant API and CLI.
+ */
 export interface HaConfig {
   components: string[];
   config_dir: string;

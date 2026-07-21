@@ -1,3 +1,6 @@
+/**
+ * Defines the tts command surface, options, help, and output behavior.
+ */
 import { Command } from "commander";
 import { TtsApiClient } from "../api/tts.js";
 import { formatOutput } from "../formatters/index.js";

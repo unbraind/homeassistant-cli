@@ -1,3 +1,6 @@
+/**
+ * Defines type-safe statistics contracts used by the Home Assistant API and CLI.
+ */
 export interface HaStatistics {
   [statisticId: string]: HaStatisticData[];
 }

@@ -168,6 +168,20 @@ describe("Config Loader", () => {
       expect(config.readOnly).toBe(true);
     });
 
+    it("should parse false read-only aliases", () => {
+      process.env.HASSIO_URL = "http://localhost:8123";
+      process.env.HASSIO_TOKEN = "test-token";
+      for (const value of ["0", "false", "no", "off"]) {
+        process.env.HASSIO_READONLY = value;
+        expect(getConfig({ configPath }).readOnly).toBe(false);
+      }
+    });
+
+    it("ignores malformed persisted JSON", () => {
+      writeFileSync(configPath, "not-json");
+      expect(getConfigSnapshot({ configPath })).toEqual(expect.objectContaining({ outputFormat: "toon" }));
+    });
+
     it("should use HASSIO_CONFIG path when no explicit path is provided", () => {
       writeFileSync(
         configPath,
@@ -184,10 +198,12 @@ describe("Config Loader", () => {
     });
 
     it("should throw on invalid timeout values", () => {
-      process.env.HASSIO_TIMEOUT = "0";
       process.env.HASSIO_URL = "http://localhost:8123";
       process.env.HASSIO_TOKEN = "test-token";
-      expect(() => getConfig({ configPath })).toThrow("Invalid timeout");
+      for (const value of ["0", "12.5", "12seconds", "Infinity"]) {
+        process.env.HASSIO_TIMEOUT = value;
+        expect(() => getConfig({ configPath })).toThrow("Invalid timeout");
+      }
     });
 
     it("should throw on invalid format values", () => {

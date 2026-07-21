@@ -124,6 +124,13 @@ describe("conversation command", () => {
     const body = JSON.parse(callOptions?.body ?? "{}");
     expect(body.conversation_id).toBe("prev-conv");
   });
+
+  it("shows command help when no operation is supplied", async () => {
+    const helpSpy = vi.spyOn(console, "log").mockImplementation(() => undefined);
+    await createConversationCommand().parseAsync([], { from: "user" });
+    expect(exitSpy).toHaveBeenCalled();
+    helpSpy.mockRestore();
+  });
 });
 
 describe("ask command", () => {

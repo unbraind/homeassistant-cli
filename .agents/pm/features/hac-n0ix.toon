@@ -1,0 +1,36 @@
+id: hac-n0ix
+title: Restore live Home Assistant API parity and agent workflows
+description: "Research current official Home Assistant REST and WebSocket contracts, validate this CLI against the local production instance, repair runtime/API drift, expand typed agent discovery helpers, and leave setup/output/help/docs fully production-ready."
+type: Feature
+status: in_progress
+priority: 0
+tags[6]: agents,api,home-assistant,live-e2e,setup,websocket
+created_at: "2026-07-21T18:59:06.582Z"
+updated_at: "2026-07-21T20:44:18.266Z"
+assignee: codex-root
+author: codex-root
+estimated_minutes: 480
+acceptance_criteria: "Every REST command reaches the live API through the supported Undici contract; typed WebSocket target helpers match current Home Assistant response fields and expose triggers, conditions, and services; setup wizard and global settings validate against the local instance without persisting private data in the repository; all formats, help paths, unit/coverage/release gates, and live read-only E2E checks pass; reviewed PR is merged and verified on master"
+definition_of_ready: "Official API docs, complete pm inventory, current code, and live failure evidence reviewed"
+value: A reliable agent-first CLI that works against current Home Assistant rather than only mocked tests
+impact: Restores all REST functionality and improves deterministic target discovery for automation agents
+outcome: Current Home Assistant can be discovered and operated safely through typed and passthrough CLI surfaces
+why_now: Undici 8 currently makes every REST command fail before network I/O
+parent: hac-4s9j
+reviewer: unbraind
+risk: high
+confidence: high
+dependencies[6]{id,kind,created_at,author,source_kind}:
+  hac-0ay7,blocked_by,"2026-07-21T19:39:45.849Z",null,null
+  hac-6asb,blocked_by,"2026-07-21T19:39:45.849Z",null,null
+  hac-96i2,blocked_by,"2026-07-21T19:39:45.849Z",null,null
+  hac-ak9g,blocked_by,"2026-07-21T19:39:45.849Z",null,null
+  hac-r4e3,blocked_by,"2026-07-21T19:39:45.849Z",null,null
+  hac-vooo,blocked_by,"2026-07-21T19:39:45.849Z",null,null
+comments[3]{created_at,author,text}:
+  "2026-07-21T18:59:09.873Z",codex-root,"Official Home Assistant REST and WebSocket docs were reviewed on 2026-07-21; the live instance will be the compatibility oracle for supported, integration-dependent surfaces."
+  "2026-07-21T19:39:45.849Z",codex-root,Official Home Assistant REST and WebSocket documentation plus current core source were cross-checked against live 2026.4.4 behavior. The generic ws call remains the complete dynamic escape surface; stable typed helpers cover target extraction and automation primitive discovery.
+  "2026-07-21T20:44:18.265Z",codex-root,"PR #60 opened at https://github.com/unbraind/homeassistant-cli/pull/60 from verified commit a07bdcb. The PR description links the complete PM lineage; Greptile, Gemini, and CodeRabbit reviews were requested for the exact head."
+notes[1]{created_at,author,text}:
+  "2026-07-21T18:59:10.686Z",codex-root,"Never persist the LAN URL, access token, username, password, entity names, location, or other private instance data in repository files or pm evidence. Record only redacted capability counts and contract-level findings."
+body: ""

@@ -82,6 +82,24 @@ describe("LLM Extended Commands", () => {
       expect(result).toContain("turn_on");
     });
 
+    it("exports entity domains without requesting service schemas", async () => {
+      mockRequest.mockResolvedValueOnce(mockResponse([
+        { entity_id: "sensor.one", state: "1", attributes: {} },
+        { entity_id: "sensor.two", state: "2", attributes: {} },
+        { entity_id: "", state: "unknown", attributes: {} },
+      ]));
+      const output: string[] = [];
+      const originalLog = console.log;
+      console.log = (message: string) => output.push(message);
+      await createSchemaCommand().parseAsync(["--entities", "--count"], { from: "user" });
+      console.log = originalLog;
+      const result = output.join("\n");
+      expect(result).toContain("entity_domain_count: 2");
+      expect(result).toContain("total_entities: 3");
+      expect(result).toContain("command_count: 0");
+      expect(result).toContain("output_contract_count: 0");
+    });
+
     it("should export formatter output contracts", async () => {
       const cmd = createSchemaCommand();
       const output: string[] = [];
@@ -96,6 +114,39 @@ describe("LLM Extended Commands", () => {
       expect(result).toContain("toon");
       expect(result).toContain("json-compact");
       expect(result).toContain("default_for_agents");
+    });
+
+    it("exports the full schema and reports precise section counts", async () => {
+      mockRequest
+        .mockResolvedValueOnce(mockResponse([{ domain: "light", services: ["turn_on"] }]))
+        .mockResolvedValueOnce(mockResponse([
+          { entity_id: "light.kitchen", state: "on", attributes: {} },
+          { entity_id: "sensor.temperature", state: "20", attributes: {} },
+          { entity_id: "malformed", state: "unknown", attributes: {} },
+        ]));
+
+      const output: string[] = [];
+      const originalLog = console.log;
+      console.log = (message: string) => output.push(message);
+      await createSchemaCommand().parseAsync(["--full", "--count"], { from: "user" });
+      console.log = originalLog;
+
+      const result = output.join("\n");
+      expect(result).toContain("service_domain_count: 1");
+      expect(result).toContain("entity_domain_count: 3");
+      expect(result).toContain("total_entities: 3");
+      expect(result).toContain("output_contract_count: 6");
+    });
+
+    it("reports zero counts for a deliberately empty selection", async () => {
+      const output: string[] = [];
+      const originalLog = console.log;
+      console.log = (message: string) => output.push(message);
+      await createSchemaCommand().parseAsync(["--count"], { from: "user" });
+      console.log = originalLog;
+
+      expect(output.join("\n")).toContain("service_domain_count: 0");
+      expect(output.join("\n")).toContain("total_entities: 0");
     });
   });
 
@@ -187,6 +238,38 @@ describe("LLM Extended Commands", () => {
       console.log = originalLog;
       const result = output.join("\n");
       expect(result).toContain("toggle");
+    });
+
+    it("ignores unsupported domains, short words, and duplicate entity matches", async () => {
+      mockRequest.mockResolvedValueOnce(mockResponse([
+        { entity_id: "light.living_room", state: "off", attributes: {} },
+        { entity_id: "sensor.living_room", state: "20", attributes: { friendly_name: "Living Sensor" } },
+        { entity_id: "", state: "unknown", attributes: { friendly_name: "Living orphan" } },
+      ]));
+
+      const output: string[] = [];
+      const originalLog = console.log;
+      console.log = (message: string) => output.push(message);
+      await createActionCommand().parseAsync(["turn on living room", "--dry-run"], { from: "user" });
+      console.log = originalLog;
+
+      const result = output.join("\n");
+      expect(result.match(/light\.living_room/g)).toHaveLength(1);
+      expect(result).not.toContain("sensor.living_room");
+    });
+
+    it("returns no suggestions when the intent has no supported action", async () => {
+      mockRequest.mockResolvedValueOnce(mockResponse([
+        { entity_id: "light.kitchen", state: "off", attributes: {} },
+      ]));
+
+      const output: string[] = [];
+      const originalLog = console.log;
+      console.log = (message: string) => output.push(message);
+      await createActionCommand().parseAsync(["describe kitchen", "--dry-run"], { from: "user" });
+      console.log = originalLog;
+
+      expect(output.join("\n")).toContain("suggestions: []");
     });
   });
 });

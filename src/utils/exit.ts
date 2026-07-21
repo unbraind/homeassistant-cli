@@ -1,6 +1,10 @@
-export function withExit<T extends (...args: any[]) => Promise<any>>(fn: T): T {
-  return (async (...args: Parameters<T>) => {
+/**
+ * Provides shared exit behavior for the Home Assistant CLI runtime.
+ */
+export function withExit<Arguments extends unknown[]>(
+  fn: (...args: Arguments) => Promise<void>
+): (...args: Arguments) => Promise<void> {
+  return async (...args: Arguments): Promise<void> => {
     await fn(...args);
-    process.exit(0);
-  }) as any as T;
+  };
 }

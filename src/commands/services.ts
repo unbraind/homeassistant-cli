@@ -1,4 +1,8 @@
+/**
+ * Defines the services command surface, options, help, and output behavior.
+ */
 import { Command } from "commander";
+import { readFile } from "node:fs/promises";
 import { HomeAssistantClient } from "../api/index.js";
 import { formatOutput } from "../formatters/index.js";
 import { withExit } from "../utils/exit.js";
@@ -108,8 +112,7 @@ export function createRenderTemplateCommand(): Command {
 
       let template = templateArg;
       if (options.file) {
-        const fs = await import("node:fs/promises");
-        template = await fs.readFile(options.file, "utf-8");
+        template = await readFile(options.file, "utf-8");
       }
 
       const result = await client.renderTemplate(template);

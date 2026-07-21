@@ -92,6 +92,15 @@ describe("formatCalendarEvents all formats", () => {
       expect(result).toBeTruthy();
     });
   }
+
+  it("normalizes date-only and missing optional calendar fields in TOON", () => {
+    const result = formatCalendarEvents([{
+      summary: "Holiday", start: { date: "2026-07-21" }, end: {}, location: undefined, description: undefined,
+    }], "toon");
+    expect(result).toContain("2026-07-21");
+    expect(result).toContain("location,description");
+    expect(result).toContain("Holiday,2026-07-21,null,null,null");
+  });
 });
 
 describe("formatMarkdown", () => {

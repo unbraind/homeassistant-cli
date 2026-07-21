@@ -1,3 +1,6 @@
+/**
+ * Defines the search command surface, options, help, and output behavior.
+ */
 import { Command } from "commander";
 import { SearchApiClient } from "../api/search.js";
 import { formatOutput, formatStates } from "../formatters/index.js";

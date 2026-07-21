@@ -133,6 +133,16 @@ describe("area CRUD commands", () => {
     );
   });
 
+  it("updates every optional area field with a concrete floor", async () => {
+    await captureLog(() => createAreaUpdateCommand().parseAsync([
+      "--area-id", "kitchen", "--icon", "mdi:pot", "--floor-id", "ground",
+      "--labels", "food,downstairs", "--aliases", "Kitchenette,Cooking",
+    ], { from: "user" }));
+    expect(updateArea).toHaveBeenCalledWith(expect.objectContaining({
+      icon: "mdi:pot", floor_id: "ground", labels: ["food", "downstairs"], aliases: ["Kitchenette", "Cooking"],
+    }));
+  });
+
   it("deletes an area with --yes flag", async () => {
     const cmd = createAreaDeleteCommand();
     await captureLog(() =>
@@ -206,6 +216,15 @@ describe("floor CRUD commands", () => {
     expect(updateFloor).toHaveBeenCalledWith(expect.objectContaining({ level: null }));
   });
 
+  it("updates every optional floor field with a numeric level", async () => {
+    await captureLog(() => createFloorUpdateCommand().parseAsync([
+      "--floor-id", "ground", "--icon", "mdi:home", "--level", "2", "--aliases", "Upper,Second",
+    ], { from: "user" }));
+    expect(updateFloor).toHaveBeenCalledWith(expect.objectContaining({
+      icon: "mdi:home", level: 2, aliases: ["Upper", "Second"],
+    }));
+  });
+
   it("deletes a floor with --yes", async () => {
     const cmd = createFloorDeleteCommand();
     await captureLog(() =>
@@ -260,6 +279,13 @@ describe("label CRUD commands", () => {
     );
   });
 
+  it("creates a label with an icon", async () => {
+    await captureLog(() => createLabelCreateCommand().parseAsync([
+      "--name", "Icon label", "--icon", "mdi:tag",
+    ], { from: "user" }));
+    expect(createLabel).toHaveBeenCalledWith(expect.objectContaining({ icon: "mdi:tag" }));
+  });
+
   it("updates a label", async () => {
     const cmd = createLabelUpdateCommand();
     await captureLog(() =>
@@ -285,6 +311,15 @@ describe("label CRUD commands", () => {
     );
 
     expect(updateLabel).toHaveBeenCalledWith(expect.objectContaining({ description: null }));
+  });
+
+  it("updates label icon, color, and description to concrete values", async () => {
+    await captureLog(() => createLabelUpdateCommand().parseAsync([
+      "--label-id", "lbl1", "--icon", "mdi:tag", "--color", "blue", "--description", "Visible",
+    ], { from: "user" }));
+    expect(updateLabel).toHaveBeenCalledWith(expect.objectContaining({
+      icon: "mdi:tag", color: "blue", description: "Visible",
+    }));
   });
 
   it("deletes a label with --yes", async () => {

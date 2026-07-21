@@ -1,0 +1,53 @@
+id: hac-vooo
+title: Raise all-source coverage gates to 100/100/100/100
+description: "Replace the earlier 90/80/90/90 regression floor with legitimate complete coverage of every src TypeScript file, including CLI bootstrap and package exports, without ignore directives, artificial branches, duplicate tests, or coverage exclusions."
+type: Issue
+status: closed
+priority: 0
+tags[4]: coverage,quality-gate,testing,vitest
+created_at: "2026-07-21T19:13:46.346Z"
+updated_at: "2026-07-21T20:37:19.911Z"
+closed_at: "2026-07-21T20:37:18.950Z"
+author: codex-root
+estimated_minutes: 900
+acceptance_criteria: "Vitest includes every src/**/*.ts file; statements, branches, functions, and lines each report exactly 100%; tests cover real behavior at the narrowest useful unit/integration/E2E boundary; CI and release verification fail below 100 in any dimension"
+parent: hac-n0ix
+reviewer: unbraind
+risk: critical
+confidence: 100
+release: 2026.7.22
+reporter: unbraind
+severity: critical
+environment: "Current baseline 95.44 statements, 84.75 branches, 96.30 functions, 96.11 lines with src/cli.ts and src/index.ts excluded"
+repro_steps: "Run bun run test:coverage and inspect the all-files summary plus vitest.config.ts exclusions"
+resolution: "Included CLI bootstrap and exports in V8 coverage, added focused unit/integration/command tests, removed unreachable branches, and raised all four thresholds to exactly 100."
+expected_result: Every src TypeScript file is measured and all four coverage metrics are exactly 100 without exclusions or ignore directives.
+actual_result: "Vitest passes 1,186 tests in 110 files at 100% statements, 100% branches, 100% functions, and 100% lines."
+affected_version: 2026.7.21-2
+component: vitest.config.ts and tests/
+regression: false
+customer_impact: Untested branches and excluded entrypoints can regress without blocking delivery
+comments[1]{created_at,author,text}:
+  "2026-07-21T20:26:50.702Z",codex-root,"Verification milestone: bun run test:coverage passes 1186 tests in 110 files with statements 100%, branches 100%, functions 100%, and lines 100%. Tests exercise production branches and failure semantics; no coverage exclusions or threshold escapes were added."
+notes[1]{created_at,author,text}:
+  "2026-07-21T19:13:54.759Z",codex-root,"Do not use c8/v8 ignore directives, exclude source entrypoints, lower thresholds, or create assertions that merely execute lines without checking behavior."
+learnings[2]{created_at,author,text}:
+  "2026-07-21T19:13:55.600Z",codex-root,The current full run has 991 tests but only 95.44/84.75/96.30/96.11 coverage; test count is not a substitute for measured behavioral completeness.
+  "2026-07-21T20:37:16.699Z",codex-root,"Honest 100% branch coverage improved production design: unreachable fallbacks, Commander option collisions, entrypoint side effects, non-Error catches, and sparse formatter shapes all became explicit and testable rather than hidden behind exclusions."
+files[10]{path,scope,note}:
+  tests/api-supervisor.test.ts,project,Closes uncovered Supervisor API behavior with typed response assertions
+  tests/capabilities-utils.test.ts,project,Covers capability utility edge cases and empty identifiers
+  tests/cli-entrypoint.test.ts,project,Exercises the production CLI entrypoint without dynamic imports
+  tests/cli.test.ts,project,Covers CLI program construction execution and error reporting
+  tests/command-helpers.test.ts,project,Covers shared command parsing and global help behavior
+  tests/github-star-runtime.test.ts,project,Covers GitHub prompt runtime and terminal edge cases
+  tests/index.test.ts,project,Verifies the public library export surface
+  tests/settings-doctor-format-error.test.ts,project,Covers formatter Error diagnostics in settings doctor
+  tests/settings-doctor-nonerror-format.test.ts,project,Covers non-Error formatter diagnostics in settings doctor
+  tests/settings-utils.test.ts,project,Covers settings prompts and validation helpers
+tests[1]{command,scope,timeout_seconds,note}:
+  "bun run test:coverage",project,900,Mandatory complete all-source 100/100/100/100 coverage gate
+test_runs[1]{run_id,kind,status,started_at,finished_at,recorded_at,passed,failed,skipped}:
+  test-local-mrv43ytc-frvs3x,test,passed,"2026-07-21T20:33:51.378Z","2026-07-21T20:34:48.193Z","2026-07-21T20:34:48.193Z",1,0,0
+close_reason: "Every source statement, branch, function, and line is covered by behavior-focused tests with mandatory 100% thresholds."
+body: ""

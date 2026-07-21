@@ -1,3 +1,6 @@
+/**
+ * Provides loader configuration loading, validation, and persistence behavior.
+ */
 import { chmodSync, existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
@@ -43,6 +46,14 @@ interface ConfigFiles {
   data: string;
 }
 
+interface RawConfig {
+  url?: string;
+  token?: string;
+  outputFormat: OutputFormat;
+  timeout: number;
+  readOnly: boolean;
+}
+
 function resolveSettingsPath(path?: string): string {
   return path ?? process.env["HASSIO_CONFIG"] ?? SETTINGS_FILE;
 }
@@ -84,31 +95,22 @@ function writeJsonFile(path: string, data: object): void {
   }
 }
 
-function parseOutputFormat(format?: string): OutputFormat | undefined {
-  if (!format) {
-    return undefined;
-  }
+function parseOutputFormat(format: string): OutputFormat {
   if (VALID_OUTPUT_FORMATS.includes(format as OutputFormat)) {
     return format as OutputFormat;
   }
   throw new Error(`Invalid output format: '${format}'. Valid formats: ${VALID_OUTPUT_FORMATS.join(", ")}`);
 }
 
-function parseTimeout(timeout?: number | string): number | undefined {
-  if (timeout === undefined) {
-    return undefined;
-  }
-  const parsed = typeof timeout === "number" ? timeout : parseInt(timeout, 10);
-  if (!Number.isFinite(parsed) || parsed <= 0) {
+function parseTimeout(timeout: number | string): number {
+  const parsed = typeof timeout === "number" ? timeout : Number(timeout);
+  if (!Number.isInteger(parsed) || parsed <= 0) {
     throw new Error(`Invalid timeout: '${String(timeout)}'. Must be a positive integer.`);
   }
   return parsed;
 }
 
-function parseBoolean(value?: boolean | string): boolean | undefined {
-  if (value === undefined) {
-    return undefined;
-  }
+function parseBoolean(value: boolean | string): boolean {
   if (typeof value === "boolean") {
     return value;
   }
@@ -131,7 +133,7 @@ function getRawConfig(options?: {
   readOnly?: boolean | string;
   configPath?: string;
   config?: string;
-}): Partial<Config> {
+}): RawConfig {
   const files = resolveConfigFiles(options?.configPath ?? options?.config);
   const settings = loadJsonFile<SettingsFile>(files.settings);
   const auth = loadJsonFile<AuthFile>(files.auth);
@@ -161,10 +163,10 @@ function getRawConfig(options?: {
     process.env["HOMEASSISTANT_URL"] ??
     settings.url;
 
-  const raw: Partial<Config> = {
-    outputFormat: outputFormat ?? "toon",
-    timeout: timeout ?? 30000,
-    readOnly: readOnly ?? false,
+  const raw: RawConfig = {
+    outputFormat,
+    timeout,
+    readOnly,
   };
 
   if (url) {
@@ -205,9 +207,9 @@ export function getConfig(options?: {
   return {
     url: raw.url.replace(/\/$/, ""),
     token: raw.token,
-    outputFormat: raw.outputFormat ?? "toon",
-    timeout: raw.timeout ?? 30000,
-    readOnly: raw.readOnly ?? false,
+    outputFormat: raw.outputFormat,
+    timeout: raw.timeout,
+    readOnly: raw.readOnly,
   };
 }
 

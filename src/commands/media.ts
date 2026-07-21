@@ -1,3 +1,6 @@
+/**
+ * Defines the media command surface, options, help, and output behavior.
+ */
 import { Command } from "commander";
 import { writeFileSync } from "node:fs";
 import { HomeAssistantClient } from "../api/index.js";

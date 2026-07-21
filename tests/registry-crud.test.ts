@@ -100,4 +100,15 @@ describe("RegistryCrudClient", () => {
       await expect(client.deleteLabel("important")).resolves.toBeUndefined();
     });
   });
+
+  it("updates entity and device registry entries", async () => {
+    mockCall
+      .mockResolvedValueOnce({ entity_id: "light.kitchen", name: "Kitchen" })
+      .mockResolvedValueOnce({ id: "device-1", name: "Controller" });
+    await expect(client.updateEntity({ entity_id: "light.kitchen", name: "Kitchen" }))
+      .resolves.toEqual(expect.objectContaining({ entity_id: "light.kitchen" }));
+    await expect(client.updateDevice({ device_id: "device-1", name: "Controller" }))
+      .resolves.toEqual(expect.objectContaining({ id: "device-1" }));
+    expect(mockClose).toHaveBeenCalledTimes(2);
+  });
 });

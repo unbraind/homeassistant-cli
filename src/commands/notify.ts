@@ -1,3 +1,6 @@
+/**
+ * Defines the notify command surface, options, help, and output behavior.
+ */
 import { Command } from "commander";
 import { ListsApiClient } from "../api/lists.js";
 import { formatOutput } from "../formatters/index.js";

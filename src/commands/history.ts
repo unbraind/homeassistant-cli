@@ -1,3 +1,6 @@
+/**
+ * Defines the history command surface, options, help, and output behavior.
+ */
 import { Command } from "commander";
 import { HomeAssistantClient } from "../api/index.js";
 import { formatHistory, formatLogbook, formatOutput } from "../formatters/index.js";

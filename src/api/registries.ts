@@ -1,3 +1,6 @@
+/**
+ * Implements typed Home Assistant registries API transport operations.
+ */
 import type { Config } from "../types/options.js";
 import type {
   HaEntityRegistryEntry,

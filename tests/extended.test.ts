@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { ExtendedApiClient } from "../src/api/extended.js";
+import { HomeAssistantApiError } from "../src/api/errors.js";
 import type { Config } from "../src/types/options.js";
 
 const mockConfig: Config = {
@@ -169,6 +170,18 @@ describe("ExtendedApiClient", () => {
         "/services/weather/get_forecasts?return_response",
         { entity_id: "weather.test", type: "twice_daily" }
       );
+    });
+
+    it("adds weather-specific context to Home Assistant API failures", async () => {
+      mockRequest.mockRejectedValue(new HomeAssistantApiError("unsupported", 400, "bad request"));
+      await expect(client.getWeatherForecasts("weather.test")).rejects.toThrow(
+        "Weather forecast failed: unsupported"
+      );
+    });
+
+    it("preserves non-API failures", async () => {
+      mockRequest.mockRejectedValue(new TypeError("invalid response"));
+      await expect(client.getWeatherForecasts("weather.test")).rejects.toThrow("invalid response");
     });
   });
 });

@@ -1,3 +1,6 @@
+/**
+ * Defines the capabilities api matrix command surface, options, help, and output behavior.
+ */
 import { HomeAssistantClient, HomeAssistantWebSocketClient } from "../api/index.js";
 import { SupervisorApiClient } from "../api/supervisor.js";
 import type { OutputFormat } from "../types/index.js";

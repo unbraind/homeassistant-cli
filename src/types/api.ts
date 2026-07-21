@@ -1,3 +1,6 @@
+/**
+ * Defines type-safe api contracts used by the Home Assistant API and CLI.
+ */
 export * from "./api/core.js";
 export * from "./api/history.js";
 export * from "./api/media.js";

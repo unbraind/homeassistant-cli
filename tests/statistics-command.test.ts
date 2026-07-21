@@ -111,6 +111,11 @@ describe("statistics command", () => {
     expect(result).toContain("statistics_metadata");
   });
 
+  it("preserves non-404 metadata failures", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse({ message: "Failure" }, 400));
+    await expect(createStatisticsCommand().parseAsync(["--metadata"], { from: "user" })).rejects.toThrow("400");
+  });
+
   it("returns statistics for an entity", async () => {
     mockRequest.mockResolvedValueOnce(mockResponse(sampleStats));
 
@@ -176,6 +181,36 @@ describe("statistics command", () => {
     );
 
     expect(result).toContain("sensor.temperature");
+  });
+
+  it("queries during-period with a period and no type filter", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse(sampleStats));
+    const result = await captureLog(() => createStatisticsCommand().parseAsync([
+      "--entity-id", "sensor.temperature", "--during-period",
+      "--start-time", "2024-01-01T00:00:00Z", "--end-time", "2024-01-02T00:00:00Z", "--period", "day",
+    ], { from: "user" }));
+    expect(result).toContain("sensor.temperature");
+  });
+
+  it("supports one-sided ordinary range filters", async () => {
+    for (const args of [
+      ["--start-time", "2024-01-01T00:00:00Z"],
+      ["--end-time", "2024-01-02T00:00:00Z"],
+    ]) {
+      mockRequest.mockResolvedValueOnce(mockResponse(sampleStats));
+      await captureLog(() => createStatisticsCommand().parseAsync([
+        "--entity-id", "sensor.temperature", ...args,
+      ], { from: "user" }));
+      expect(mockRequest).toHaveBeenCalled();
+    }
+  });
+
+  it("ignores malformed rows while counting statistics", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse({ "sensor.temperature": null }));
+    const result = JSON.parse(await captureLog(() => createStatisticsCommand().parseAsync([
+      "--entity-id", "sensor.temperature", "--count",
+    ], { from: "user" })));
+    expect(result.statistics_rows).toBe(0);
   });
 
   it("exits with error when entity-id missing (without --metadata)", async () => {

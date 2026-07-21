@@ -1,3 +1,6 @@
+/**
+ * Defines the config entries command surface, options, help, and output behavior.
+ */
 import { Command } from "commander";
 import { ConfigEntriesApiClient } from "../api/config-entries.js";
 import { formatOutput } from "../formatters/index.js";

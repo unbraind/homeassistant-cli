@@ -1,3 +1,6 @@
+/**
+ * Serializes Home Assistant results through the index output contract.
+ */
 import type { OutputFormat } from "../types/index.js";
 import type {
   HaState,
