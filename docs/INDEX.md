@@ -1,5 +1,7 @@
 # Documentation Index
 
+- [Automated releases](RELEASING.md) — conditional daily release preparation, pm-generated changelog ownership, npm provenance, and Bun consumption verification.
+
 Complete documentation for the Home Assistant CLI tool.
 
 ## Table of Contents
@@ -14,7 +16,7 @@ Complete documentation for the Home Assistant CLI tool.
 
 ## Release Status
 
-Current public release: **v2026.3.6** (2026-03-06).
+Current public release: **v2026.3.6-2** (2026-03-06).
 
 - `CHANGELOG.md` tracks released and unreleased changes.
 - Pre-release implementation progress and history audits are documented in `docs/PROJECT_HISTORY.md`.

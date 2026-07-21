@@ -36,6 +36,9 @@ jobs:
       - name: Verify release quality gates
         run: bun run release:verify
 
+      - name: Verify generated pm changelog
+        run: bun run changelog:pm:check
+
       - name: Package smoke (npx + bunx)
         run: bun run release:dry-run
 

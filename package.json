@@ -34,6 +34,13 @@
     "release:verify": "bash scripts/release/verify-release.sh",
     "release:dry-run": "bash scripts/release/dry-run.sh",
     "release:notes": "bash scripts/release/generate-release-notes.sh",
+    "release:auto": "node scripts/release/auto-release.mjs",
+    "release:auto:dry-run": "node scripts/release/auto-release.mjs --dry-run --json",
+    "version:check": "node scripts/release/version.mjs check",
+    "version:next": "node scripts/release/version.mjs next",
+    "changelog:pm:install": "bunx @unbrained/pm-cli@latest install npm:pm-changelog --project",
+    "changelog:pm": "bun run changelog:pm:install && bunx @unbrained/pm-cli@latest changelog generate --output CHANGELOG.md --title Changelog --mode replace --all-release-tags --status closed --item-url-base https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm",
+    "changelog:pm:check": "bun run changelog:pm:install && bunx @unbrained/pm-cli@latest changelog generate --output CHANGELOG.md --title Changelog --mode replace --all-release-tags --status closed --item-url-base https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm --check",
     "commit:audit": "bash scripts/git/audit-commit-messages.sh",
     "security:scan:history": "bash scripts/security/scan-history.sh",
     "prepack": "tsc"

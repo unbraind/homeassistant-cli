@@ -1,97 +1,83 @@
-# Releasing
+# Automated releases
 
-This project uses date-based versions with daily sequence:
+`homeassistant-cli` follows the same split release model as `pm-cli`:
 
-- First release of a day: `YYYY.M.D`
-- Additional releases that same day: `YYYY.M.D-N`
+1. `Auto Release` decides whether a release is needed and prepares a checked calendar-version commit and tag.
+2. `Release` reacts to that tag, validates the exact tagged tree, publishes the package, verifies registry consumers, and creates the GitHub release.
 
-- `YYYY.M.D`: release date (no zero-padding; SemVer compatible)
-- `N`: release sequence number for that calendar day on `master` (2, 3, 4, ...)
+## Conditional daily release
 
-Examples:
-- First release on March 4, 2026: `2026.3.4`
-- Third release on March 4, 2026: `2026.3.4-3`
+`.github/workflows/auto-release.yml` runs daily at 02:35 UTC and by manual dispatch. It uses complete git history and performs these checks before changing files:
 
-## Current Release State
+- No commits after the latest `v*` tag: exit successfully with `no_changes_since_last_tag`.
+- Only `.agents/pm/**` changed: exit successfully with `tracker_only_changes_since_last_tag`; tracker closeout alone does not create a package release.
+- A release tag already exists for the current UTC day: exit successfully with `release_already_cut_today` unless a maintainer explicitly selects `allow_same_day_release`.
+- Otherwise, compute `YYYY.M.D` (or registry-aware `YYYY.M.D-N` for an allowed additional release), install the latest `pm-changelog`, rebuild the full changelog from closed pm items and release-tag windows, synchronize `package.json` and `src/cli.ts`, run all release gates, create `chore(release): v<version>`, tag it, and optionally push both refs atomically.
 
-Latest public release: `v2026.3.6` (2026-03-06).
+Scheduled runs always use the production push path. Manual dispatch defaults to a non-pushing validation run; `dry_run` performs the gates without changing git history. `push` and `dry_run` are mutually exclusive.
 
-- `CHANGELOG.md` contains release notes and current unreleased changes.
-- `docs/PROJECT_HISTORY.md` preserves pre-release implementation history and audit notes.
+The release environment must define:
 
-## Local Release Workflow
+- `RELEASE_PAT`: a maintainer token with `contents:write` and permission to bypass the protected `master` branch for the checked release commit/tag push. The workflow does not persist this token in checkout; the script scopes it to the push command.
+- `NPM_TOKEN`: a read-write npm token for the public `@unbrained/homeassistant-cli` package.
 
-1. Prepare version fields:
-   ```bash
-   bun run release:prepare
-   ```
-2. Verify quality and security gates:
-   ```bash
-   bun run release:verify
-   ```
-3. Validate package launchers from packed tarball:
-   ```bash
-   bun run release:dry-run
-   ```
-4. Generate release notes draft:
-   ```bash
-   bun run release:notes
-   ```
+A failed scheduled run opens or updates `Auto Release blocked: scheduled run failed` with the run URL.
 
-Equivalent npm commands are available (`npm run release:prepare`, `npm run release:verify`, `npm run release:dry-run`, `npm run release:notes`), but Bun remains the primary package manager for this repository.
+The version format remains `YYYY.M.D[-N]`, with no zero-padding. The first release on a UTC date omits the suffix; later explicitly allowed releases use `-2`, `-3`, and so on. `package.json` and the Commander `.version()` call in `src/cli.ts` must always match.
 
-## CI/CD Workflows
+## Changelog ownership and lossless migration
 
-- `CI` (`.github/workflows/ci.yml`)
-  - lint, typecheck, build, unit tests
-  - coverage artifact upload
-  - packaged launcher smoke test (`npx` + `bunx`)
-- `Security` (`.github/workflows/security.yml`)
-  - full history secret signature scan
-  - CodeQL analysis for JS/TS
-- `Release Dry Run` (`.github/workflows/release-dry-run.yml`)
-  - full release-quality gates + release notes preview artifact
-- `Publish to npm` (`.github/workflows/publish.yml`)
-  - manual trigger only
-  - supports dry-run and real publish
-  - enforces `master` branch, valid `YYYY.M.D[-N]` version, and non-existing release tag
-  - publishes with npm provenance
-  - creates GitHub release notes for non-dry-run
-- `Commit Quality` (`.github/workflows/commit-quality.yml`)
-  - enforces Conventional Commit-style PR titles
-
-## Required Repository Setup
-
-- `NPM_TOKEN` repository secret (required for real publish)
-- `release` GitHub Environment with approvers (recommended)
-- Branch protection on `master` (required checks: CI + Security)
-
-## npx + bunx Compatibility
-
-Compatibility is enforced in automation:
-
-- `scripts/release/dry-run.sh` packs the package and tests:
-  - `npx --no-install hassio --help`
-  - `bunx hassio --help`
-
-## Standard Release Steps
-
-1. Run `bun run release:verify` locally.
-2. Trigger `Release Dry Run` workflow.
-3. Run `bun run release:prepare` and commit:
-   ```text
-   chore(release): vYYYY.M.D[-N]
-   ```
-4. Push `master`.
-5. Trigger `Publish to npm` with `dry_run=true`.
-6. Trigger `Publish to npm` with `dry_run=false`.
-
-## Secret Hygiene
-
-Before pushing release commits:
+`CHANGELOG.md` is generated by the latest published `pm-changelog` extension through the pm CLI. Do not edit generated release entries by hand. Add or correct closed pm items, their `release` metadata, titles, types, and classification tags, then regenerate:
 
 ```bash
-git diff --cached -U0 | rg -n '^\+.*(ghp_[A-Za-z0-9]{36}|github_pat_[A-Za-z0-9_]{40,}|npm_[A-Za-z0-9]{36}|eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9._-]{10,}\.[A-Za-z0-9._-]{10,}|-----BEGIN (RSA|OPENSSH|EC|DSA|PGP) PRIVATE KEY-----|_authToken\s*=)'
+bun run changelog:pm
+bun run changelog:pm:check
+```
+
+Full-history generation requires all release tags (`actions/checkout` uses `fetch-depth: 0`). Historical notes that predate repo-local pm tracking are represented by closed, explicitly release-assigned items under `hac-rdt1`; this is what prevents the March 2026 sections from disappearing when replace mode runs.
+
+## npm and Bun publication
+
+There is one package publication, not two registries. Bun installs JavaScript packages from npm-compatible registries, so `npm publish --access public --provenance` creates the artifact consumed by both ecosystems. Running `bun publish` after `npm publish` would target the same package/version and fail as a duplicate.
+
+The tag-driven `.github/workflows/publish.yml` therefore:
+
+1. checks that the tag, `package.json`, and Commander version match;
+2. runs release verification, generated-changelog verification, and packed `npx`/`bunx` smoke tests;
+3. publishes once to npm with GitHub provenance (or safely skips an already published version);
+4. waits for registry visibility and installs the exact version in separate npm and Bun temporary projects;
+5. verifies `npx homeassistant-cli --version` and `bunx homeassistant-cli --version` both return the tag version;
+6. creates the GitHub release only after those checks pass.
+
+GitHub requires `id-token: write` for npm provenance and the npm registry authentication configured by `actions/setup-node`; the workflow grants only `contents: write` and `id-token: write`.
+
+## Local parity
+
+From a clean full clone:
+
+```bash
+bun install --frozen-lockfile
+bun run changelog:pm:check
+bun run version:check
+bun run release:verify
+bun run release:dry-run
+bun run release:auto:dry-run
+```
+
+To inspect the next additional same-day version without mutating files:
+
+```bash
+bun run version:next
+```
+
+Never point release smoke tests at a live Home Assistant token. All package checks use `--help` or `--version` and isolated temporary directories.
+
+Before any push, scan the staged diff and full history for credentials:
+
+```bash
+git diff --cached -U0 | rg -n '^\+.*(ghp_|github_pat_|npm_|_authToken|-----BEGIN (RSA|OPENSSH|EC|DSA|PGP) PRIVATE KEY-----|eyJ[A-Za-z0-9_-]{10,}\.)'
 bun run security:scan:history
 bun run commit:audit
 ```
+
+The separate `Release Dry Run` workflow remains available for a non-publishing full-gate and release-notes preview. `Commit Quality`, `CI`, and `Security` continue to enforce commit naming, build/test/coverage behavior, dependency auditing, secret scanning, and CodeQL independently of the privileged release environment.

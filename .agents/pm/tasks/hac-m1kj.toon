@@ -1,0 +1,36 @@
+id: hac-m1kj
+title: Add conditional daily release preparation and tag orchestration
+description: "Adapt pm-cli's auto-release flow to Bun: detect publishable changes after the latest tag, compute the next registry-aware calendar version, generate changelog, verify, commit, tag, and atomically push."
+type: Task
+status: in_progress
+priority: 0
+tags[4]: automation,calendar-version,github-actions,release
+created_at: "2026-07-21T17:21:08.582Z"
+updated_at: "2026-07-21T17:32:48.290Z"
+assignee: codex-root
+author: codex-root
+estimated_minutes: 180
+acceptance_criteria: No-change and tracker-only changes skip without mutation; Changed product tree produces a checked release commit and tag
+goal: lossless-automatic-releases
+objective: conditional-release-orchestration
+value: Automate release preparation safely.
+impact: Prevents empty and duplicate releases.
+outcome: Daily and manual release orchestration matches pm-cli behavior.
+why_now: Current workflow is manual-only.
+parent: hac-wwsi
+reviewer: unbraind
+risk: high
+confidence: 92
+sprint: release-automation
+release: 2026.7.21
+notes[1]{created_at,author,text}:
+  "2026-07-21T17:32:48.257Z",codex-root,The JSON mode routes child command output to stderr so the workflow output file remains valid parseable JSON for tag handoff.
+files[4]{path,scope,note}:
+  .github/workflows/auto-release.yml,project,Scheduled and manual conditional release orchestration
+  package.json,project,Release and changelog command surface
+  scripts/release/auto-release.mjs,project,Change detection version changelog gate commit tag and push pipeline
+  scripts/release/version.mjs,project,Registry-aware calendar version policy and synchronization
+tests[2]{command,scope,timeout_seconds}:
+  "bun run version:check",project,60
+  node --check scripts/release/version.mjs && node --check scripts/release/auto-release.mjs && node --check scripts/release/verify-published.mjs,project,60
+body: ""

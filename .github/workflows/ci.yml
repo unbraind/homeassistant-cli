@@ -125,6 +125,26 @@ jobs:
       - name: Release dry-run (npx + bunx smoke)
         run: bun run release:dry-run
 
+  changelog:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout full release history
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Verify generated pm changelog
+        run: bun run changelog:pm:check
+
   commit-audit:
     runs-on: ubuntu-latest
     timeout-minutes: 10
