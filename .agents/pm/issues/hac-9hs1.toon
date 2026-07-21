@@ -1,0 +1,54 @@
+id: hac-9hs1
+title: Auto Release blocker issue lookup split a quoted search query
+description: "The first production auto-release published v2026.7.21 successfully, then the parent workflow failed while searching for a stale blocker issue because escaped quotes were passed literally to gh."
+type: Issue
+status: closed
+priority: 0
+tags[4]: automation,github-actions,production-follow-up,release
+created_at: "2026-07-21T18:17:11.729Z"
+updated_at: "2026-07-21T18:18:08.979Z"
+closed_at: "2026-07-21T18:18:08.973Z"
+author: codex-root
+estimated_minutes: 30
+acceptance_criteria: Both blocker issue lookups pass the complete title search as one argument; a production same-day release completes the parent workflow
+goal: lossless-automatic-releases
+objective: conditional-release-orchestration
+value: Keep successful scheduled releases green and make blocker issue maintenance reliable.
+impact: Prevents false failed runs after successful publication.
+outcome: The parent Auto Release workflow completes after the tag publisher succeeds.
+why_now: Production run 29855651273 exposed the post-publication failure.
+parent: hac-wwsi
+reviewer: unbraind
+risk: high
+confidence: 100
+sprint: release-automation
+release: 2026.7.21-2
+reporter: codex-root
+severity: medium
+environment: GitHub Actions Auto Release workflow
+repro_steps: "Publish a release, then execute the stale scheduled release blocker cleanup step."
+resolution: Introduced an explicit search_query variable and passed it as one quoted argument in both stale-blocker cleanup and scheduled-failure reporting.
+expected_result: Both blocker lookup paths accept the complete title query and the parent workflow can finish after publication.
+actual_result: The linked structural command passed for both paths; PR 57 merged with all CI and security checks green.
+affected_version: 2026.7.21
+fixed_version: 2026.7.21-2
+component: release-automation
+regression: false
+customer_impact: No package outage; the successfully published release was reported as a failed parent workflow.
+comments[1]{created_at,author,text}:
+  "2026-07-21T18:17:11.729Z",codex-root,"Production evidence is public: Auto Release run 29855651273 reached successful tag publication, then failed only in stale-blocker cleanup; tag-driven Release run 29855763180 succeeded."
+notes[1]{created_at,author,text}:
+  "2026-07-21T18:17:11.729Z",codex-root,The release guard correctly rejected an empty 2026.7.21-2 section until this distinct production fix had explicit release lineage.
+learnings[1]{created_at,author,text}:
+  "2026-07-21T18:17:11.729Z",codex-root,A post-publication maintenance step can make the parent run red even when the artifact is healthy; it must be tested as part of end-to-end release proof.
+files[1]{path,scope,note}:
+  .github/workflows/auto-release.yml,project,Quote blocker issue search queries explicitly
+tests[1]{command,scope,timeout_seconds,note}:
+  test $(rg -c 'existing=.*--search.*search_query' .github/workflows/auto-release.yml) -eq 2,project,60,Both blocker lookup paths pass the named search query variable
+test_runs[2]{run_id,kind,status,started_at,finished_at,recorded_at,passed,failed,skipped}:
+  test-local-mruz7jgi-36mv1a,test,passed,"2026-07-21T18:17:36.535Z","2026-07-21T18:17:36.834Z","2026-07-21T18:17:36.834Z",0,0,0
+  test-local-mruz7vlz-i3gx8g,test,passed,"2026-07-21T18:17:52.118Z","2026-07-21T18:17:52.584Z","2026-07-21T18:17:52.584Z",1,0,0
+docs[1]{path,scope,note}:
+  docs/RELEASING.md,project,Automated release operating model
+close_reason: "Quoted blocker issue lookup fixed, locally exercised, reviewed, merged, and assigned to the corrective release."
+body: ""

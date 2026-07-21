@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- Auto Release blocker issue lookup split a quoted search query ([hac-9hs1](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/issues/hac-9hs1.toon))
+
 ## 2026.7.21 - 2026-07-21
 
 ### Added
