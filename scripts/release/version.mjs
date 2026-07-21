@@ -9,6 +9,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..")
 const packagePath = path.join(root, "package.json");
 const cliPath = path.join(root, "src/cli.ts");
 const pattern = /^([1-9]\d{3})\.([1-9]\d*)\.([1-9]\d*)(?:-([2-9]|[1-9]\d+))?$/;
+const commanderVersionPattern = /\.version\(\s*(['"])([^'"]+)\1\s*\)/;
 
 function fail(message) {
   console.error(message);
@@ -38,9 +39,9 @@ function packageJson() {
 }
 
 function cliVersion() {
-  const match = readFileSync(cliPath, "utf8").match(/\.version\("([^"]+)"\)/);
+  const match = readFileSync(cliPath, "utf8").match(commanderVersionPattern);
   if (!match) fail("Could not find Commander .version() in src/cli.ts.");
-  return match[1];
+  return match[2];
 }
 
 function publishedVersions(name) {
@@ -93,7 +94,7 @@ function apply(args) {
   pkg.version = version;
   writeFileSync(packagePath, `${JSON.stringify(pkg, null, 2)}\n`);
   const cli = readFileSync(cliPath, "utf8");
-  const updated = cli.replace(/\.version\("[^"]+"\)/, `.version("${version}")`);
+  const updated = cli.replace(commanderVersionPattern, `.version("${version}")`);
   if (updated === cli) fail("Commander version replacement did not change src/cli.ts.");
   writeFileSync(cliPath, updated);
   check([]);

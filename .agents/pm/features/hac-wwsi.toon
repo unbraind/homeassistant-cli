@@ -6,7 +6,7 @@ status: closed
 priority: 0
 tags[6]: automation,bun,github-actions,npm,pm-changelog,release
 created_at: "2026-07-21T17:20:42.790Z"
-updated_at: "2026-07-21T17:38:24.685Z"
+updated_at: "2026-07-21T17:51:50.711Z"
 closed_at: "2026-07-21T17:38:23.446Z"
 author: codex-root
 estimated_minutes: 480
@@ -26,8 +26,9 @@ release: 2026.7.21
 resolution: "Delivered the pm-cli-style split auto-release/tag-publish model, lossless pm-changelog migration, npm provenance, Bun consumer verification, CI drift gate, detailed pm evidence, and clean end-to-end dry-run proof."
 expected_result: "Changes after the latest release produce at most one checked daily release by default without losing changelog history, and the artifact works through npm and Bun."
 actual_result: All child work is closed with evidence; 16/16 legacy statements are preserved; 988 tests and 95.55% statement coverage pass; packed npx/bunx smoke and conditional dry-run pass.
-comments[1]{created_at,author,text}:
+comments[2]{created_at,author,text}:
   "2026-07-21T17:20:42.790Z",codex-root,The legacy changelog is a migration source of truth and must not be overwritten until every statement has tracker-backed coverage.
+  "2026-07-21T17:51:50.692Z",codex-root,"PR review hardening: Commander version discovery and replacement now accept single or double quotes and optional whitespace."
 notes[1]{created_at,author,text}:
   "2026-07-21T17:20:42.790Z",codex-root,"Bun consumes packages from the npm registry; publish exactly once to npm, then verify Bun installation and bunx execution instead of attempting a duplicate registry publish."
 learnings[1]{created_at,author,text}:

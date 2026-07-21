@@ -27,6 +27,9 @@ function run(command, commandArgs, options = {}) {
         : "inherit",
     env: { ...process.env, ...options.env },
   });
+  if (result.error) {
+    throw new Error(`${command} ${commandArgs.join(" ")} failed to start: ${result.error.message}`);
+  }
   if (result.status !== 0) {
     const detail = `${result.stdout ?? ""}\n${result.stderr ?? ""}`.trim();
     throw new Error(`${command} ${commandArgs.join(" ")} failed${detail ? `\n${detail}` : ""}`);
@@ -54,7 +57,10 @@ function ensureClean() {
 }
 
 function latestTag() {
-  const found = spawnSync("git", ["describe", "--tags", "--abbrev=0"], { cwd: root, encoding: "utf8" });
+  const found = spawnSync("git", ["describe", "--tags", "--abbrev=0", "--match", "v*"], {
+    cwd: root,
+    encoding: "utf8",
+  });
   return found.status === 0 ? found.stdout.trim() : null;
 }
 
@@ -119,7 +125,9 @@ function main() {
   if (relevant.length === 0) return result({ ok: true, skipped: true, reason: "tracker_only_changes_since_last_tag", last_tag: tag, ignored_change_paths: changed }, "Only tracker changes exist since the last release tag.");
 
   const today = utcDate();
-  const todayTags = git(["tag", "--list", `v${today}*`]).split(/\r?\n/).filter(Boolean);
+  const todayTags = git(["tag", "--list", `v${today}*`])
+    .split(/\r?\n/)
+    .filter((candidate) => candidate === `v${today}` || candidate.startsWith(`v${today}-`));
   if (!allowSameDay && todayTags.length > 0) return result({ ok: true, skipped: true, reason: "release_already_cut_today", tags_today: todayTags }, `Release already exists for ${today}.`);
   const version = allowSameDay
     ? run(process.execPath, ["scripts/release/version.mjs", "next"], { capture: true })

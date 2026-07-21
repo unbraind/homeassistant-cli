@@ -24,10 +24,17 @@ function run(command, args, cwd, capture = false) {
 }
 
 function waitForRegistry() {
+  const sleepState = new Int32Array(new SharedArrayBuffer(4));
   for (let attempt = 1; attempt <= 24; attempt += 1) {
     const result = spawnSync("npm", ["view", `${packageName}@${version}`, "version", "--json"], { encoding: "utf8" });
-    if (result.status === 0 && JSON.parse(result.stdout) === version) return;
-    if (attempt < 24) run("bash", ["-c", "sleep 5"], process.cwd());
+    if (result.status === 0) {
+      try {
+        if (JSON.parse(result.stdout) === version) return;
+      } catch {
+        // Registry error pages and transient empty responses are retried below.
+      }
+    }
+    if (attempt < 24) Atomics.wait(sleepState, 0, 0, 5000);
   }
   throw new Error(`${packageName}@${version} did not become visible on the npm registry.`);
 }
