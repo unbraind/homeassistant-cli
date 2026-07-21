@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Added
+
+- Automate conditional daily releases with lossless pm changelog generation ([hac-wwsi](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/features/hac-wwsi.toon))
+- Add conditional daily release preparation and tag orchestration ([hac-m1kj](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-m1kj.toon))
+
 ### Changed
 
 - Dependabot keeps TypeScript and Node typings on compatible major lines while continuing to propose supported updates. ([hac-l2rz](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-l2rz.toon))
@@ -25,6 +30,9 @@
 
 ### Other
 
+- Document and verify the automated release operating model ([hac-5n71](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-5n71.toon))
+- Publish tagged releases with npm provenance and Bun consumption proof ([hac-s43s](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-s43s.toon))
+- Backfill every legacy changelog statement into release-assigned pm items ([hac-rdt1](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-rdt1.toon))
 - Modernize supported runtime and development dependencies ([hac-brrf](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/chores/hac-brrf.toon))
 - Initialize and validate repository-local PM governance ([hac-cg64](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-cg64.toon))
 
