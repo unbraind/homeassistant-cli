@@ -1,0 +1,53 @@
+id: hac-l25p
+title: Auto-release dry run omits pm-changelog installation on clean runners
+description: "The exact-master non-publishing Auto Release dispatch fails on a clean GitHub runner because scripts/release/auto-release.mjs skips installLatestChangelog() when --dry-run is set, then invokes an unavailable pm changelog command."
+type: Issue
+status: in_progress
+priority: 0
+tags[7]: automation,changelog,dry-run,github-actions,pm-changelog,production-follow-up,release
+created_at: "2026-07-21T21:11:50.143Z"
+updated_at: "2026-07-21T21:11:57.740Z"
+deadline: "2026-07-22T21:11:50.143Z"
+assignee: codex-root
+author: codex-root
+estimated_minutes: 45
+acceptance_criteria: "A clean-runner workflow_dispatch with dry_run=true and allow_same_day_release=true installs the latest pm-changelog, generates the candidate changelog, completes all release gates, and does not commit, tag, push, or publish"
+definition_of_ready: Exact failed workflow job log identifies Unknown command changelog after the dry-run-only installation branch
+goal: lossless-automatic-releases
+objective: clean-runner-dry-run-parity
+value: Keep the non-publishing release rehearsal trustworthy on clean infrastructure.
+impact: Prevents false release failures and ensures scheduled release prerequisites are exercised before publication.
+outcome: Hosted auto-release dry runs complete end to end while preserving their no-publish contract.
+why_now: Exact final master proof run 29868743104 exposed the clean-runner gap.
+parent: hac-wwsi
+reviewer: unbraind
+risk: high
+confidence: high
+reporter: codex-root
+severity: high
+environment: GitHub Actions Auto Release workflow_dispatch on a clean ubuntu runner
+repro_steps: "Dispatch auto-release.yml on master with push=false, dry_run=true, allow_same_day_release=true; observe scripts/release/auto-release.mjs invoke pm changelog without first installing pm-changelog."
+expected_result: Dry-run and publishing modes both provision the latest changelog generator before generating release notes.
+actual_result: Dry-run mode skips installLatestChangelog and fails with Unknown command changelog.
+affected_version: 2026.7.21-2
+component: release-automation
+regression: false
+customer_impact: No publication occurred; maintainers cannot rely on the hosted dry-run rehearsal.
+dependencies[3]{id,kind,created_at,author,source_kind}:
+  hac-9hs1,related,"2026-07-21T21:11:50.143Z",null,null
+  hac-m1kj,related,"2026-07-21T21:11:50.143Z",null,null
+  hac-n0ix,discovered_from,"2026-07-21T21:11:50.143Z",null,null
+comments[1]{created_at,author,text}:
+  "2026-07-21T21:11:50.143Z",codex-root,"Exact public evidence: https://github.com/unbraind/homeassistant-cli/actions/runs/29868743104 job 88763366091. The failure occurs before version mutation or publication and contains no private data."
+notes[1]{created_at,author,text}:
+  "2026-07-21T21:11:50.143Z",codex-root,Keep dry-run non-publishing. Installing a build-time pm extension is permitted; commit/tag/push/package publication remain disabled.
+learnings[1]{created_at,author,text}:
+  "2026-07-21T21:11:50.143Z",codex-root,Clean local workspaces can mask missing extension provisioning because pm-changelog is already installed; release rehearsals require clean-runner proof.
+files[2]{path,scope,note}:
+  scripts/release/auto-release.mjs,project,Provision latest pm-changelog before both dry-run and release generation
+  .github/workflows/auto-release.yml,project,Hosted exact-master reproduction and proof
+tests[1]{command,path,scope,timeout_seconds,note}:
+  node scripts/release/auto-release.mjs --dry-run --json --allow-same-day-release,scripts/release/auto-release.mjs,project,1200,Exercise full non-publishing release candidate
+docs[1]{path,scope,note}:
+  docs/RELEASING.md,project,Dry-run no-history contract
+body: "## Evidence\\n\\nExact master run 29868743104 failed before version mutation or publication with Unknown command changelog.\\n\\n## Definition of done\\n\\n- Provision latest pm-changelog in dry-run and publishing paths.\\n- Pass local and clean hosted non-publishing rehearsal.\\n- Retain zero commit, tag, push, or package publication in dry-run mode."

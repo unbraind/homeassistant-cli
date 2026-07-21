@@ -135,7 +135,7 @@ function main() {
   const temp = mkdtempSync(path.join(tmpdir(), "homeassistant-cli-release-"));
   const preview = path.join(temp, "CHANGELOG.md");
   try {
-    if (!dryRun) installLatestChangelog();
+    installLatestChangelog();
     generateChangelog(preview, version);
     if (!dryRun) {
       run(process.execPath, ["scripts/release/version.mjs", "apply", "--version", version]);
