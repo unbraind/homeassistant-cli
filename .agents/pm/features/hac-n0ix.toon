@@ -2,12 +2,12 @@ id: hac-n0ix
 title: Restore live Home Assistant API parity and agent workflows
 description: "Research current official Home Assistant REST and WebSocket contracts, validate this CLI against the local production instance, repair runtime/API drift, expand typed agent discovery helpers, and leave setup/output/help/docs fully production-ready."
 type: Feature
-status: in_progress
+status: closed
 priority: 0
 tags[6]: agents,api,home-assistant,live-e2e,setup,websocket
 created_at: "2026-07-21T18:59:06.582Z"
-updated_at: "2026-07-21T20:44:18.266Z"
-assignee: codex-root
+updated_at: "2026-07-21T21:00:41.983Z"
+closed_at: "2026-07-21T21:00:40.989Z"
 author: codex-root
 estimated_minutes: 480
 acceptance_criteria: "Every REST command reaches the live API through the supported Undici contract; typed WebSocket target helpers match current Home Assistant response fields and expose triggers, conditions, and services; setup wizard and global settings validate against the local instance without persisting private data in the repository; all formats, help paths, unit/coverage/release gates, and live read-only E2E checks pass; reviewed PR is merged and verified on master"
@@ -20,17 +20,18 @@ parent: hac-4s9j
 reviewer: unbraind
 risk: high
 confidence: high
-dependencies[6]{id,kind,created_at,author,source_kind}:
-  hac-0ay7,blocked_by,"2026-07-21T19:39:45.849Z",null,null
-  hac-6asb,blocked_by,"2026-07-21T19:39:45.849Z",null,null
-  hac-96i2,blocked_by,"2026-07-21T19:39:45.849Z",null,null
-  hac-ak9g,blocked_by,"2026-07-21T19:39:45.849Z",null,null
-  hac-r4e3,blocked_by,"2026-07-21T19:39:45.849Z",null,null
-  hac-vooo,blocked_by,"2026-07-21T19:39:45.849Z",null,null
-comments[3]{created_at,author,text}:
+release: 2026.7.22
+resolution: "Current Home Assistant REST transport and typed target discovery were restored and expanded, agent/help/setup/output/docs/quality surfaces hardened, and PR #60 merged after complete hosted and live verification."
+expected_result: Current Home Assistant can be safely discovered and operated through an intuitive typed and passthrough CLI with complete production gates.
+actual_result: "Live REST and WebSocket workflows pass through the installed hassio release; 1186 tests provide 100/100/100/100 coverage; strict docs, static, PM, security, release, format, help, and bot-review gates pass; PR #60 is merged."
+comments[4]{created_at,author,text}:
   "2026-07-21T18:59:09.873Z",codex-root,"Official Home Assistant REST and WebSocket docs were reviewed on 2026-07-21; the live instance will be the compatibility oracle for supported, integration-dependent surfaces."
   "2026-07-21T19:39:45.849Z",codex-root,Official Home Assistant REST and WebSocket documentation plus current core source were cross-checked against live 2026.4.4 behavior. The generic ws call remains the complete dynamic escape surface; stable typed helpers cover target extraction and automation primitive discovery.
   "2026-07-21T20:44:18.265Z",codex-root,"PR #60 opened at https://github.com/unbraind/homeassistant-cli/pull/60 from verified commit a07bdcb. The PR description links the complete PM lineage; Greptile, Gemini, and CodeRabbit reviews were requested for the exact head."
+  "2026-07-21T21:00:14.530Z",codex-root,"PR #60 merged to master as 8c1c67e8178cdec1e0938744863fd3633bfddeeb after every required protected context passed and all bot feedback surfaces were inventoried, acknowledged, and left with zero actionable findings. Exact merge-head release:verify then passed locally: 1186 tests, 100/100/100/100 coverage, static/docstring/duplication/PM/security/history/commit gates, plus live read-only REST and WebSocket smoke through the installed hassio binary."
 notes[1]{created_at,author,text}:
   "2026-07-21T18:59:10.686Z",codex-root,"Never persist the LAN URL, access token, username, password, entity names, location, or other private instance data in repository files or pm evidence. Record only redacted capability counts and contract-level findings."
+learnings[1]{created_at,author,text}:
+  "2026-07-21T21:00:39.023Z",codex-root,"For dynamic Home Assistant WebSocket coverage, a typed command for every integration is neither stable nor complete. The robust agent interface combines typed helpers for durable discovery contracts with a schema-validating generic passthrough for integration-defined command types."
+close_reason: All acceptance criteria met in merged PR #60 and exact-master/live proof; publishing remains intentionally manual.
 body: ""
