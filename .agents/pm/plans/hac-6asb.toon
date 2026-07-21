@@ -6,7 +6,7 @@ status: in_progress
 priority: 0
 tags[3]: delivery,plan,verification
 created_at: "2026-07-21T18:59:09.022Z"
-updated_at: "2026-07-21T20:41:09.642Z"
+updated_at: "2026-07-21T20:44:19.131Z"
 assignee: codex-root
 author: codex-root
 estimated_minutes: 480
@@ -26,6 +26,8 @@ dependencies[5]{id,kind,created_at,author,source_kind}:
   hac-ak9g,blocked_by,"2026-07-21T19:39:47.270Z",null,null
   hac-r4e3,blocked_by,"2026-07-21T19:39:47.270Z",null,null
   hac-vooo,blocked_by,"2026-07-21T19:39:47.270Z",null,null
+comments[1]{created_at,author,text}:
+  "2026-07-21T20:44:19.131Z",codex-root,Delivery step 6 is active on PR #60. Hosted checks and full paginated review inventory will be recorded before merge; any push will retrigger every requested review agent.
 plan_mode: approved
 plan_decisions[1]{ts,author,decision,rationale,evidence}:
   "2026-07-21T19:00:05.325Z",codex-root,Keep raw ws call as the forward-compatible full API surface and add typed helpers only for stable high-value discovery contracts.,Home Assistant WebSocket commands are dynamic and integration-dependent; typed affordances should improve agent UX without pretending the finite CLI can freeze every command.,Official WebSocket docs describe generic command envelopes and current target helper commands; existing ws call accepts arbitrary types.

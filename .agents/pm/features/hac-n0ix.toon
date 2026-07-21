@@ -6,7 +6,7 @@ status: in_progress
 priority: 0
 tags[6]: agents,api,home-assistant,live-e2e,setup,websocket
 created_at: "2026-07-21T18:59:06.582Z"
-updated_at: "2026-07-21T19:39:45.897Z"
+updated_at: "2026-07-21T20:44:18.266Z"
 assignee: codex-root
 author: codex-root
 estimated_minutes: 480
@@ -27,9 +27,10 @@ dependencies[6]{id,kind,created_at,author,source_kind}:
   hac-ak9g,blocked_by,"2026-07-21T19:39:45.849Z",null,null
   hac-r4e3,blocked_by,"2026-07-21T19:39:45.849Z",null,null
   hac-vooo,blocked_by,"2026-07-21T19:39:45.849Z",null,null
-comments[2]{created_at,author,text}:
+comments[3]{created_at,author,text}:
   "2026-07-21T18:59:09.873Z",codex-root,"Official Home Assistant REST and WebSocket docs were reviewed on 2026-07-21; the live instance will be the compatibility oracle for supported, integration-dependent surfaces."
   "2026-07-21T19:39:45.849Z",codex-root,Official Home Assistant REST and WebSocket documentation plus current core source were cross-checked against live 2026.4.4 behavior. The generic ws call remains the complete dynamic escape surface; stable typed helpers cover target extraction and automation primitive discovery.
+  "2026-07-21T20:44:18.265Z",codex-root,"PR #60 opened at https://github.com/unbraind/homeassistant-cli/pull/60 from verified commit a07bdcb. The PR description links the complete PM lineage; Greptile, Gemini, and CodeRabbit reviews were requested for the exact head."
 notes[1]{created_at,author,text}:
   "2026-07-21T18:59:10.686Z",codex-root,"Never persist the LAN URL, access token, username, password, entity names, location, or other private instance data in repository files or pm evidence. Record only redacted capability counts and contract-level findings."
 body: ""
