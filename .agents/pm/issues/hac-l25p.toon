@@ -2,13 +2,13 @@ id: hac-l25p
 title: Auto-release dry run omits pm-changelog installation on clean runners
 description: "The exact-master non-publishing Auto Release dispatch fails on a clean GitHub runner because scripts/release/auto-release.mjs skips installLatestChangelog() when --dry-run is set, then invokes an unavailable pm changelog command."
 type: Issue
-status: in_progress
+status: closed
 priority: 0
 tags[7]: automation,changelog,dry-run,github-actions,pm-changelog,production-follow-up,release
 created_at: "2026-07-21T21:11:50.143Z"
-updated_at: "2026-07-21T21:18:37.608Z"
+updated_at: "2026-07-21T21:23:14.573Z"
 deadline: "2026-07-22T21:11:50.143Z"
-assignee: codex-root
+closed_at: "2026-07-21T21:23:02.938Z"
 author: codex-root
 estimated_minutes: 45
 acceptance_criteria: "A clean-runner workflow_dispatch with dry_run=true and allow_same_day_release=true installs the latest pm-changelog, generates the candidate changelog, completes all release gates, and does not commit, tag, push, or publish"
@@ -23,13 +23,16 @@ parent: hac-wwsi
 reviewer: unbraind
 risk: high
 confidence: high
+release: 2026.7.22
 reporter: codex-root
 severity: high
 environment: GitHub Actions Auto Release workflow_dispatch on a clean ubuntu runner
 repro_steps: "Dispatch auto-release.yml on master with push=false, dry_run=true, allow_same_day_release=true; observe scripts/release/auto-release.mjs invoke pm changelog without first installing pm-changelog."
-expected_result: Dry-run and publishing modes both provision the latest changelog generator before generating release notes.
-actual_result: Dry-run mode skips installLatestChangelog and fails with Unknown command changelog.
+resolution: Provision pm-changelog in both release modes and install pinned clean-runner verification prerequisites before the Auto Release pipeline.
+expected_result: "Hosted dry-run provisions the changelog generator and complete verification toolchain, then validates a release candidate without publishing."
+actual_result: "Fresh local clone and hosted run 29869474842 completed the entire candidate pipeline; pushed=false and no commit, tag, package, or release was created."
 affected_version: 2026.7.21-2
+fixed_version: 2026.7.22
 component: release-automation
 regression: false
 customer_impact: No publication occurred; maintainers cannot rely on the hosted dry-run rehearsal.
@@ -37,18 +40,33 @@ dependencies[3]{id,kind,created_at,author,source_kind}:
   hac-9hs1,related,"2026-07-21T21:11:50.143Z",null,null
   hac-m1kj,related,"2026-07-21T21:11:50.143Z",null,null
   hac-n0ix,discovered_from,"2026-07-21T21:11:50.143Z",null,null
-comments[2]{created_at,author,text}:
+comments[4]{created_at,author,text}:
   "2026-07-21T21:11:50.143Z",codex-root,"Exact public evidence: https://github.com/unbraind/homeassistant-cli/actions/runs/29868743104 job 88763366091. The failure occurs before version mutation or publication and contains no private data."
   "2026-07-21T21:18:37.608Z",codex-root,"First hosted repair run 29869217387 proved pm-changelog now installs and generation starts on a clean runner. The full release gate then exposed missing runner prerequisites: scripts/release/verify-release.sh could not find rg or trivy. The workflow now provisions ripgrep, shellcheck, and the current official setup-trivy v0.3.1 pinned to commit 81e5143, with current Trivy v0.72.0."
+  "2026-07-21T21:23:00.827Z",codex-root,"Final hosted acceptance proof: Auto Release run https://github.com/unbraind/homeassistant-cli/actions/runs/29869474842 succeeded on exact branch head fb2b6af7810e5102f01152fdd082f90218e4a6ca. It installed latest pm-changelog, ripgrep, ShellCheck, and pinned Trivy; completed all release gates and packed npm/Bun smoke; produced a dry-run candidate only, with no commit, tag, push, or publication."
+  "2026-07-21T21:23:14.573Z",codex-root,"The recorded failed linked-test run is not a product regression: pm 2026.7.21 --only-last selected the older test instead of the newly added hosted assertion. Existing upstream issue https://github.com/unbraind/pm-cli/issues/515 was found before filing; the current-version reproduction was added there, and explicit --only-index 1 passed."
 notes[1]{created_at,author,text}:
   "2026-07-21T21:11:50.143Z",codex-root,Keep dry-run non-publishing. Installing a build-time pm extension is permitted; commit/tag/push/package publication remain disabled.
-learnings[1]{created_at,author,text}:
+learnings[2]{created_at,author,text}:
   "2026-07-21T21:11:50.143Z",codex-root,Clean local workspaces can mask missing extension provisioning because pm-changelog is already installed; release rehearsals require clean-runner proof.
+  "2026-07-21T21:23:01.504Z",codex-root,A release workflow must provision every tool used transitively by its aggregate verification script. Green standalone CI jobs do not put their binaries into a separate Auto Release runner.
 files[2]{path,scope,note}:
   scripts/release/auto-release.mjs,project,Provision latest pm-changelog before both dry-run and release generation
   .github/workflows/auto-release.yml,project,Hosted exact-master reproduction and proof
-tests[1]{command,path,scope,timeout_seconds,note}:
-  node scripts/release/auto-release.mjs --dry-run --json --allow-same-day-release,scripts/release/auto-release.mjs,project,1200,Exercise full non-publishing release candidate
+tests[2]:
+  - command: "test \"$(gh run view 29869474842 --json conclusion --jq .conclusion)\" = success"
+    scope: project
+    timeout_seconds: 60
+    note: Exact branch clean-runner Auto Release dry run succeeds without publication
+  - command: node scripts/release/auto-release.mjs --dry-run --json --allow-same-day-release
+    path: scripts/release/auto-release.mjs
+    scope: project
+    timeout_seconds: 1200
+    note: Exercise full non-publishing release candidate
+test_runs[2]{run_id,kind,status,started_at,finished_at,recorded_at,passed,failed,skipped}:
+  test-local-mrv5su3j-grr7vk,test,failed,"2026-07-21T21:22:07.660Z","2026-07-21T21:22:08.095Z","2026-07-21T21:22:08.095Z",0,1,0
+  test-local-mrv5tq4k-7njzsp,test,passed,"2026-07-21T21:22:48.434Z","2026-07-21T21:22:49.605Z","2026-07-21T21:22:49.605Z",1,0,0
 docs[1]{path,scope,note}:
   docs/RELEASING.md,project,Dry-run no-history contract
+close_reason: Clean-runner dry-run now completes the full release and package-smoke pipeline without publishing.
 body: "## Evidence\\n\\nExact master run 29868743104 failed before version mutation or publication with Unknown command changelog.\\n\\n## Definition of done\\n\\n- Provision latest pm-changelog in dry-run and publishing paths.\\n- Pass local and clean hosted non-publishing rehearsal.\\n- Retain zero commit, tag, push, or package publication in dry-run mode."
