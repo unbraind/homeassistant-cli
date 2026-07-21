@@ -32,7 +32,7 @@
     "quality:duplication": "jscpd src --min-lines 5 --min-tokens 50 --threshold 4.36 --reporters console",
     "quality:file-size": "node scripts/quality/file-size.mjs",
     "quality:shell": "find scripts -name '*.sh' -print0 | xargs -0 shellcheck",
-    "quality:pm": "bunx @unbrained/pm-cli@latest validate --check-files --check-resolution --check-history-drift --strict-exit --json && bunx @unbrained/pm-cli@latest health --check-only --strict-exit --json",
+    "quality:pm": "PM_TELEMETRY_DISABLED=1 bun run changelog:pm:install && PM_TELEMETRY_DISABLED=1 bunx @unbrained/pm-cli@latest validate --check-files --check-resolution --check-history-drift --strict-exit --json && PM_TELEMETRY_DISABLED=1 bunx @unbrained/pm-cli@latest health --check-only --strict-exit --json",
     "quality:static": "bun run typecheck && bun run lint && bun run quality:docstrings && bun run quality:duplication && bun run quality:file-size && bun run quality:shell",
     "review:loop": "node scripts/reviews/pr-review-loop.mjs",
     "review:inventory": "bun run review:loop -- inventory",

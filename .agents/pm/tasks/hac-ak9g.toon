@@ -6,7 +6,7 @@ status: in_progress
 priority: 0
 tags[6]: ci,codecov,jscpd,pm,security,static-analysis
 created_at: "2026-07-21T19:13:48.497Z"
-updated_at: "2026-07-21T20:44:19.997Z"
+updated_at: "2026-07-21T20:47:51.002Z"
 assignee: codex-root
 author: codex-root
 estimated_minutes: 540
@@ -26,11 +26,12 @@ dependencies[5]{id,kind,created_at,author,source_kind}:
   hac-m1kj,blocked_by,"2026-07-21T19:39:52.792Z",null,null
   hac-r4e3,blocked_by,"2026-07-21T19:39:52.792Z",null,null
   hac-vooo,blocked_by,"2026-07-21T19:39:52.792Z",null,null
-comments[4]{created_at,author,text}:
+comments[5]{created_at,author,text}:
   "2026-07-21T19:19:14.143Z",codex-root,"2026-07-21 jscpd baseline against all 111 src TypeScript files: 70 clone groups, 527 duplicated lines, 4.36% line duplication / 5.17% token duplication at min 5 lines and 50 tokens. No exclusions or skip directives will be used; this inventory drives shared command/action abstractions and a zero-new-duplication mandatory gate while legacy clones are removed."
   "2026-07-21T19:39:52.792Z",codex-root,"The mandatory gate stack now includes strict ESLint and erasable syntax,100-percent source-file docstrings,jscpd ratcheting,300-code-line enforcement,ShellCheck,PM validate and health,Codecov,Trivy,dependency audit,history secret scanning,CodeQL,build test package smoke and generated changelog verification. PSScriptAnalyzer remains explicitly inapplicable because the repository has no PowerShell."
   "2026-07-21T20:36:04.464Z",codex-root,"Local aggregate gate passes: strict TypeScript and ESLint, 115/115 docstring coverage, jscpd 4.22% below the 4.36% ratchet, every source file at or below 300 code lines, ShellCheck, strict PM validation/health, Bun audit, and Trivy with zero high/critical findings. New hosted contexts will be added to strict branch protection after this PR registers them once."
   "2026-07-21T20:44:19.997Z",codex-root,"PR #60 is registering the new static-contracts, changelog, and Trivy contexts. After they pass once, strict master protection will be updated to require them and that exact protection state will close this task."
+  "2026-07-21T20:47:51.001Z",codex-root,"Hosted static-contracts failed only on fresh-runner PM bootstrap: Git omitted five empty required directories and pm-changelog had not yet been installed. The gate now preserves those directories and installs the latest extension with telemetry disabled before strict validation."
 notes[1]{created_at,author,text}:
   "2026-07-21T19:13:57.356Z",codex-root,PSScriptAnalyzer is inapplicable because the repository contains no PowerShell. Greptile is an external review integration rather than a local deterministic binary; it remains a PR review gate. All other applicable free gates must have local parity.
 files[8]{path,scope,note}:
