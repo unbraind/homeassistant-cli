@@ -21,6 +21,7 @@
 
 ### Other
 
+- Typed WebSocket session controls delivery plan ([hac-km4t](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/plans/hac-km4t.toon))
 - Live Home Assistant API parity delivery plan ([hac-6asb](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/plans/hac-6asb.toon))
 - Enforce erasable zero-escape TypeScript and complete source docstrings ([hac-r4e3](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-r4e3.toon))
 - Align typed WebSocket target discovery with current Home Assistant ([hac-96i2](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-96i2.toon))

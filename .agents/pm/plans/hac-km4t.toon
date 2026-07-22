@@ -2,13 +2,13 @@ id: hac-km4t
 title: Typed WebSocket session controls delivery plan
 description: "Research, implement, document, validate, publish, review, merge, and prove stable typed WebSocket session and exposure operations."
 type: Plan
-status: in_progress
+status: closed
 priority: 0
 tags[4]: api,delivery,live-e2e,websocket
 created_at: "2026-07-22T04:42:32.842Z"
-updated_at: "2026-07-22T04:58:10.288Z"
+updated_at: "2026-07-22T05:22:13.284Z"
 deadline: "2026-07-23T04:42:32.842Z"
-assignee: codex-root
+closed_at: "2026-07-22T05:22:12.657Z"
 author: codex-root
 estimated_minutes: 360
 acceptance_criteria: Every step has evidence and linked implementation or validation artifacts
@@ -24,6 +24,9 @@ risk: medium
 confidence: 95
 sprint: websocket-contracts
 release: 2026.7.22
+resolution: "Delivered typed panels, ping, signed-path, and assistant-exposure commands plus the setup wizard flag correction through PR #63."
+expected_result: "Production-ready typed commands, complete docs/tests, safe live validation, green review/check evidence, and merged-master verification."
+actual_result: "PR #63 merged as cf882e18; 1,202 tests and 100/100/100/100 coverage passed; exact-head CI 29893493701 and Security 29893495589 passed."
 dependencies[3]{id,kind,created_at,author,source_kind}:
   hac-6asb,discovered_from,"2026-07-22T04:42:32.842Z",codex-root,null
   hac-ak9g,related,"2026-07-22T04:42:32.842Z",codex-root,null
@@ -44,6 +47,7 @@ tests[1]{command,path,scope,note}:
   "bun run release:verify",scripts/release/verify-release.sh,project,Full production readiness gate
 docs[1]{path,scope,note}:
   docs/API.md,project,Primary API contract documentation
+close_reason: Typed WebSocket session controls and wizard correction merged and exact-head verified.
 plan_mode: approved
 plan_decisions[1]{ts,author,decision,rationale,evidence}:
   "2026-07-22T04:42:59.148Z",codex-root,Add dedicated typed helpers for stable documented WebSocket commands while retaining ws call for integration-specific commands.,This preserves forward compatibility and improves validation and help for security-sensitive common workflows.,"Official WebSocket and authentication docs plus successful live get_panels, ping, expose_entity/list, and auth/sign_path calls."
@@ -136,11 +140,13 @@ plan_steps[8]:
   - id: plan-step-007
     order: 7
     title: Publish PR and resolve every review thread
-    status: in_progress
+    status: completed
     created_at: "2026-07-22T04:42:57.223Z"
-    updated_at: "2026-07-22T04:58:10.287Z"
+    updated_at: "2026-07-22T05:22:10.774Z"
     body: Wait for checks and requested bots; acknowledge every bot comment.
     owner: codex-root
+    evidence: PR #63 merged at cf882e18 after final thread inventory found zero review threads/findings; all received bot notices were reacted to and acknowledged; all repository-owned checks passed.
+    completed_at: "2026-07-22T05:22:10.774Z"
     linked_items[1]{id,kind}:
       hac-kv5o,depends_on
     files[1]{path,scope,note}:
@@ -148,11 +154,13 @@ plan_steps[8]:
   - id: plan-step-008
     order: 8
     title: Merge and verify exact master head
-    status: pending
+    status: completed
     created_at: "2026-07-22T04:42:57.833Z"
-    updated_at: "2026-07-22T04:42:57.833Z"
+    updated_at: "2026-07-22T05:22:11.971Z"
     body: "Prove protected merge, exact-head checks, release automation, and clean tracker."
     owner: codex-root
+    evidence: "Exact master head cf882e18: CI run 29893493701 and Security run 29893495589 completed successfully, including coverage, dual-runtime quality, package smoke, CodeQL, Trivy, dependency audit, and history scan."
+    completed_at: "2026-07-22T05:22:11.971Z"
     linked_items[1]{id,kind}:
       hac-m1kj,depends_on
 body: Execution plan for the typed WebSocket feature. Resume from branch agent/typed-websocket-session-controls and feature hac-sv5f. Preserve all 100 percent gates and redact live private data.
