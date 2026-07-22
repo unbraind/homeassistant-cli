@@ -8,12 +8,15 @@
 
 ### Fixed
 
+- Wizard read-only option collides with global boolean flag ([hac-0zez](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/issues/hac-0zez.toon))
 - Auto-release dry run omits pm-changelog installation on clean runners ([hac-l25p](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/issues/hac-l25p.toon))
 - Raise all-source coverage gates to 100/100/100/100 ([hac-vooo](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/issues/hac-vooo.toon))
 - Undici 8 rejects REST request throwOnError option ([hac-0ay7](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/issues/hac-0ay7.toon))
 
 ### Security
 
+- Add typed WebSocket session and exposure controls ([hac-sv5f](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/features/hac-sv5f.toon))
+- Implement typed WebSocket session and exposure commands ([hac-soop](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-soop.toon))
 - Make static quality, duplication, security, and pm integrity gates mandatory ([hac-ak9g](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-ak9g.toon))
 
 ### Other

@@ -84,7 +84,7 @@ describe("settings wizard command", () => {
         "toon",
         "--default-timeout",
         "25000",
-        "--read-only",
+        "--config-read-only",
         "true",
         "--skip-test",
       ],

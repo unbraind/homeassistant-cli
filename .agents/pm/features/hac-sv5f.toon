@@ -1,0 +1,49 @@
+id: hac-sv5f
+title: Add typed WebSocket session and exposure controls
+description: "Expose stable official Home Assistant WebSocket operations for panels, heartbeat, signed paths, and voice-assistant entity exposure through intuitive typed hassio commands while retaining raw ws call passthrough."
+type: Feature
+status: closed
+priority: 0
+tags[6]: agents,api,home-assistant,security,voice,websocket
+created_at: "2026-07-22T04:41:38.730Z"
+updated_at: "2026-07-22T04:57:39.496Z"
+closed_at: "2026-07-22T04:57:38.366Z"
+author: codex-root
+estimated_minutes: 360
+acceptance_criteria: "Typed commands cover get_panels, ping, auth/sign_path, and homeassistant/expose_entity list/update; Every command has detailed help and validates inputs before network mutation; All output formats remain schema-valid and source coverage stays 100/100/100/100; Live read-only operations and a reversible exposure update are verified against the configured Home Assistant instance"
+definition_of_ready: Official API contract and live instance behavior are captured; duplicate search finds no existing item; existing WebSocket architecture and tests are understood.
+goal: best-agent-home-assistant-cli
+objective: typed-stable-websocket-operations
+value: Agents can use security-sensitive stable WebSocket capabilities without hand-authoring protocol payloads.
+impact: "Improves discoverability, validation, and automation safety for WebSocket workflows."
+outcome: "A documented, type-safe command family with live and automated proof."
+why_now: The July parity work intentionally retained raw passthrough; current official docs and live 2026.4.4 behavior now identify the next stable high-value helpers.
+parent: hac-4s9j
+reviewer: unbraind
+risk: medium
+confidence: 95
+sprint: websocket-contracts
+release: 2026.7.22
+resolution: "Delivered typed commands, bounded agent output, security guidance, complete documentation, and live verification."
+expected_result: All acceptance criteria pass without private data entering the repository or tracker.
+actual_result: "Release verification, 100 percent coverage, installed CLI, six formats, live reads, reversible mutation, and secret scans passed."
+dependencies[4]{id,kind,created_at,author,source_kind}:
+  hac-96i2,related,"2026-07-22T04:41:38.730Z",codex-root,null
+  hac-n0ix,discovered_from,"2026-07-22T04:41:38.730Z",codex-root,null
+  hac-r4e3,related,"2026-07-22T04:41:38.730Z",codex-root,null
+  hac-vooo,related,"2026-07-22T04:41:38.730Z",codex-root,null
+comments[1]{created_at,author,text}:
+  "2026-07-22T04:41:38.730Z",codex-root,"Official Home Assistant REST, WebSocket, and authentication docs were refreshed on 2026-07-22; live raw calls confirm these four command families on Home Assistant 2026.4.4."
+notes[1]{created_at,author,text}:
+  "2026-07-22T04:41:38.730Z",codex-root,"Never persist signed paths, tokens, entity inventories, coordinates, user IDs, or exposure payloads in pm evidence, repository files, logs, or PR text."
+learnings[1]{created_at,author,text}:
+  "2026-07-22T04:41:38.730Z",codex-root,"The generic ws call surface provides forward compatibility, while stable documented operations benefit from typed validation and dedicated help."
+files[2]{path,scope,note}:
+  src/commands/websocket.ts,project,Existing WebSocket command composition
+  src/api/websocket.ts,project,Typed transport layer
+tests[1]{command,path,scope,note}:
+  "bun run test:coverage",tests/websocket-command.test.ts,project,100 percent source coverage gate
+docs[1]{path,scope,note}:
+  docs/API.md,project,WebSocket command reference
+close_reason: Typed WebSocket session and exposure controls are production-ready
+body: ""

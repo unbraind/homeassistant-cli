@@ -53,10 +53,16 @@ Use `hassio schema --output-contracts --format json` to retrieve:
 - parser hints
 - baseline schema contracts for CI and agent tooling
 
-7. Cursor-based pagination (future):
+7. Token-bounded WebSocket exposure discovery (implemented):
+Use `hassio ws exposure list --assistant conversation --limit 25` for normalized
+rows, or `--count` before requesting detail. Use `ws panels` and `ws ping` for
+typed discovery and liveness. Signed-path output is a short-lived credential and
+must not be persisted in prompts, logs, or tracker evidence.
+
+8. Cursor-based pagination (future):
 Add `--cursor` + `--limit` for entity-heavy installations so agents can page deterministically.
 
-8. Stable machine error envelope (future):
+9. Stable machine error envelope (future):
 Standardize failures to `{ code, message, hint, retriable }` across all commands and formats.
 
 ## TOON Format Explained

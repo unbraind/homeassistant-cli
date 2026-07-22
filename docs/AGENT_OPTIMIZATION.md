@@ -198,6 +198,22 @@ hassio ws target services --entity-id group.downstairs --no-expand-group
 hassio ws target related --label-id lighting
 ```
 
+### 8. Bounded WebSocket Session Discovery
+
+Prefer typed commands for stable protocol operations and bound large exposure
+inventories before adding them to an agent context:
+
+```bash
+hassio ws ping
+hassio ws panels --format json-compact
+hassio ws exposure list --count
+hassio ws exposure list --assistant conversation --limit 25
+```
+
+Global `--read-only` blocks `ws exposure enable|disable`. A value returned by
+`ws sign-path` is a short-lived credential: consume it immediately and never
+persist it in prompts, logs, pm items, or source control.
+
 ## Best Practices for Agents
 
 ### 1. Use Appropriate Output Format

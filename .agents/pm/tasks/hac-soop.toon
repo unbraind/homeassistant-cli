@@ -1,0 +1,51 @@
+id: hac-soop
+title: Implement typed WebSocket session and exposure commands
+description: "Implement panels, ping, signed-path, and bounded voice-exposure commands with read-only mutation enforcement."
+type: Task
+status: closed
+priority: 0
+tags[5]: agents,api,security,voice,websocket
+created_at: "2026-07-22T04:54:29.179Z"
+updated_at: "2026-07-22T05:01:16.079Z"
+deadline: "2026-07-23T04:54:29.179Z"
+closed_at: "2026-07-22T04:57:34.043Z"
+author: codex-root
+estimated_minutes: 180
+acceptance_criteria: "Commands are typed, documented, below 300 LOC, fully covered, and live verified"
+definition_of_ready: Official and live schemas confirmed
+goal: best-agent-home-assistant-cli
+objective: typed-websocket-operations
+value: Safe discoverable automation primitives
+impact: Eliminates raw payload construction for common stable operations
+outcome: Four typed operation families with bounded output
+why_now: Confirmed gap after prior parity delivery
+parent: hac-km4t
+reviewer: unbraind
+risk: medium
+confidence: 98
+sprint: websocket-contracts
+release: 2026.7.22
+resolution: "Added stable typed panels, ping, signed-path, and bounded voice-exposure commands with read-only enforcement."
+expected_result: "Commands are typed, documented, below 300 LOC, fully covered, and live verified."
+actual_result: "All requirements passed focused, full-suite, release, installed-binary, and reversible live-instance validation."
+dependencies[3]{id,kind,created_at,author,source_kind}:
+  hac-96i2,discovered_from,"2026-07-22T04:54:29.179Z",codex-root,null
+  hac-r4e3,related,"2026-07-22T04:54:29.179Z",codex-root,null
+  hac-vooo,related,"2026-07-22T04:54:29.179Z",codex-root,null
+comments[2]{created_at,author,text}:
+  "2026-07-22T04:54:29.179Z",codex-root,Implementation includes explicit short-lived credential guidance and read-only enforcement.
+  "2026-07-22T05:01:16.079Z",codex-root,Final self-review added explicit assistant-ID validation against the three official values; unsupported IDs fail before network mutation.
+notes[1]{created_at,author,text}:
+  "2026-07-22T04:54:29.179Z",codex-root,Exposure list normalizes large maps into filterable rows.
+learnings[1]{created_at,author,text}:
+  "2026-07-22T04:54:29.179Z",codex-root,Live exposure inventories require count/filter/limit controls for agent token efficiency.
+files[3]{path,scope,note}:
+  src/commands/websocket-session.ts,project,Typed command implementation
+  src/commands/websocket.ts,project,Command registration
+  tests/websocket-session-command.test.ts,project,Focused typed WebSocket behavior and coverage
+tests[1]{command,path,scope,note}:
+  bunx vitest run tests/websocket-session-command.test.ts,tests/websocket-session-command.test.ts,project,Focused behavior coverage
+docs[1]{path,scope,note}:
+  docs/API.md,project,Complete command contract
+close_reason: Typed WebSocket operations implemented and verified
+body: Stable official WebSocket operations receive dedicated typed UX while raw ws call remains the integration-specific escape hatch.
