@@ -17,7 +17,7 @@ interface WizardOptions {
   haToken?: string;
   defaultFormat?: string;
   defaultTimeout?: string;
-  readOnly?: string;
+  configReadOnly?: string;
 }
 
 async function testConnection(config: {
@@ -56,7 +56,7 @@ export function createWizardCommand(): Command {
     .option("--ha-token <token>", "Long-lived access token for non-interactive mode")
     .option("--default-format <format>", "Output format for non-interactive mode")
     .option("--default-timeout <ms>", "Timeout for non-interactive mode")
-    .option("--read-only <boolean>", "Read-only safety mode for non-interactive mode")
+    .option("--config-read-only <boolean>", "Saved read-only safety mode for non-interactive setup")
     .option("--skip-test", "Skip connection test after configuration")
     .action(withExit(async (options: WizardOptions, cmd) => {
       await maybePromptToStarRepo();
@@ -71,7 +71,7 @@ export function createWizardCommand(): Command {
         let token = options.haToken || existing.token;
         let format = parseFormat(options.defaultFormat || existing.outputFormat || "toon") as OutputFormat;
         let timeout = parseTimeout(options.defaultTimeout || String(existing.timeout ?? 30000)) as number;
-        let readOnly = parseBoolean(options.readOnly || (existing.readOnly ? "yes" : "no")) as boolean;
+        let readOnly = parseBoolean(options.configReadOnly || (existing.readOnly ? "yes" : "no")) as boolean;
 
         if (!nonInteractive) {
           const rl = createInterface({ input: process.stdin, output: process.stdout });

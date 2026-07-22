@@ -1,0 +1,158 @@
+id: hac-km4t
+title: Typed WebSocket session controls delivery plan
+description: "Research, implement, document, validate, publish, review, merge, and prove stable typed WebSocket session and exposure operations."
+type: Plan
+status: in_progress
+priority: 0
+tags[4]: api,delivery,live-e2e,websocket
+created_at: "2026-07-22T04:42:32.842Z"
+updated_at: "2026-07-22T04:58:10.288Z"
+deadline: "2026-07-23T04:42:32.842Z"
+assignee: codex-root
+author: codex-root
+estimated_minutes: 360
+acceptance_criteria: Every step has evidence and linked implementation or validation artifacts
+goal: best-agent-home-assistant-cli
+objective: ship-typed-websocket-controls
+value: Creates a resumable end-to-end delivery record.
+impact: "Coordinates code, docs, live validation, review, merge, and merged-head proof."
+outcome: Feature merged with exact-head evidence and no unresolved bot feedback.
+why_now: The implementation surface is confirmed and ready.
+parent: hac-sv5f
+reviewer: unbraind
+risk: medium
+confidence: 95
+sprint: websocket-contracts
+release: 2026.7.22
+dependencies[3]{id,kind,created_at,author,source_kind}:
+  hac-6asb,discovered_from,"2026-07-22T04:42:32.842Z",codex-root,null
+  hac-ak9g,related,"2026-07-22T04:42:32.842Z",codex-root,null
+  hac-sv5f,related,"2026-07-22T04:42:32.842Z",codex-root,null
+comments[5]{created_at,author,text}:
+  "2026-07-22T04:42:32.842Z",codex-root,Only this actively executed plan starts in progress; child work items remain open until their code surface is actively edited.
+  "2026-07-22T04:54:49.410Z",codex-root,Filed pm-cli issue #641 after open/closed duplicate searches because promoted plan implements links are rejected by the item dependency validator.
+  "2026-07-22T04:55:17.281Z",codex-root,"First release verification stopped at pm file ownership: the new WebSocket test was linked as a test command but not as an owned file. Added explicit file ownership before rerunning."
+  "2026-07-22T04:57:42.477Z",codex-root,"Implementation feature hac-sv5f and child work hac-soop/hac-0zez closed with release-verification evidence. Plan remains the only in-progress item for publication, review, merge, and exact-head proof."
+  "2026-07-22T04:58:02.181Z",codex-root,"Correction: the first hac-0zez close attempt rejected close-only use of --fixed-version; updated the issue field through pm update, then closed it successfully."
+notes[1]{created_at,author,text}:
+  "2026-07-22T04:42:32.842Z",codex-root,Use official docs plus redacted live proof; do not store raw instance output.
+learnings[1]{created_at,author,text}:
+  "2026-07-22T04:42:32.842Z",codex-root,"The prior parity plan deliberately limited typed helpers to stable contracts, which defines the selection threshold for this follow-up."
+files[1]{path,scope,note}:
+  src/commands/websocket.ts,project,Primary command implementation
+tests[1]{command,path,scope,note}:
+  "bun run release:verify",scripts/release/verify-release.sh,project,Full production readiness gate
+docs[1]{path,scope,note}:
+  docs/API.md,project,Primary API contract documentation
+plan_mode: approved
+plan_decisions[1]{ts,author,decision,rationale,evidence}:
+  "2026-07-22T04:42:59.148Z",codex-root,Add dedicated typed helpers for stable documented WebSocket commands while retaining ws call for integration-specific commands.,This preserves forward compatibility and improves validation and help for security-sensitive common workflows.,"Official WebSocket and authentication docs plus successful live get_panels, ping, expose_entity/list, and auth/sign_path calls."
+plan_discoveries[1]{ts,author,text}:
+  "2026-07-22T04:42:59.768Z",codex-root,"homeassistant/expose_entity/list can exceed large formatter limits on the live instance, so typed output should support filtering or summaries to remain agent-efficient."
+plan_steps[8]:
+  - id: plan-step-001
+    order: 1
+    title: Capture official and live protocol contracts
+    status: completed
+    created_at: "2026-07-22T04:42:53.339Z"
+    updated_at: "2026-07-22T04:54:44.145Z"
+    body: Confirm stable schemas without retaining private instance data.
+    owner: codex-root
+    evidence: Official WebSocket and authentication docs plus redacted live Home Assistant 2026.4.4 raw-call validation confirmed schemas.
+    completed_at: "2026-07-22T04:54:44.145Z"
+    linked_items[1]{id,kind}:
+      hac-n0ix,discovered_from
+    files[1]{path,scope,note}:
+      src/commands/websocket.ts,project,Current generic surface
+  - id: plan-step-002
+    order: 2
+    title: Implement typed transport and intuitive commands
+    status: completed
+    created_at: "2026-07-22T04:42:53.945Z"
+    updated_at: "2026-07-22T04:54:45.454Z"
+    body: "Add panels, ping, signed path, and exposure list/update helpers with validation."
+    owner: codex-root
+    evidence: "Added src/commands/websocket-session.ts and registered panels, ping, sign-path, bounded exposure list, and read-only exposure mutations."
+    completed_at: "2026-07-22T04:54:45.454Z"
+    linked_items[1]{id,kind}:
+      hac-96i2,depends_on
+    files[1]{path,scope,note}:
+      src/commands/websocket-session.ts,project,Focused command module
+  - id: plan-step-003
+    order: 3
+    title: Add focused automated tests
+    status: completed
+    created_at: "2026-07-22T04:42:54.646Z"
+    updated_at: "2026-07-22T04:54:46.769Z"
+    body: Keep legitimate all-source 100/100/100/100 coverage.
+    owner: codex-root
+    evidence: Focused suite passed 35 WebSocket tests at 100 percent; full suite passed 1201 tests at 100/100/100/100.
+    completed_at: "2026-07-22T04:54:46.769Z"
+    linked_items[1]{id,kind}:
+      hac-vooo,depends_on
+    tests[1]{command,path,note}:
+      "bun run test:coverage",tests/websocket-session-command.test.ts,Coverage and behavior
+  - id: plan-step-004
+    order: 4
+    title: Update complete documentation
+    status: completed
+    created_at: "2026-07-22T04:42:55.332Z"
+    updated_at: "2026-07-22T04:54:48.115Z"
+    body: "Document help, security, schemas, examples, and agent guidance."
+    owner: codex-root
+    evidence: "README and docs/API, INDEX, LLM_INTEGRATION, and AGENT_OPTIMIZATION document commands, security, bounded output, and wizard semantics."
+    completed_at: "2026-07-22T04:54:48.115Z"
+    docs[2]{path,scope,note}:
+      docs/API.md,project,Command reference
+      docs/LLM_INTEGRATION.md,project,Agent workflows
+  - id: plan-step-005
+    order: 5
+    title: "Run local, installed, wizard, and live validation"
+    status: completed
+    created_at: "2026-07-22T04:42:55.959Z"
+    updated_at: "2026-07-22T04:57:32.780Z"
+    body: "Exercise formats, setup paths, safe live reads, reversible mutation, and all strict gates."
+    owner: codex-root
+    evidence: Release verification passed all 10 gates; 1201 tests and 100/100/100/100 coverage; installed help/formats/live reads/read-only/reversible mutation and isolated wizard/doctor/validate passed.
+    completed_at: "2026-07-22T04:57:32.780Z"
+    linked_items[1]{id,kind}:
+      hac-ak9g,depends_on
+    tests[1]{command,path,note}:
+      "bun run release:verify",scripts/release/verify-release.sh,Release readiness
+  - id: plan-step-006
+    order: 6
+    title: Generate changelog and close delivery lineage
+    status: completed
+    created_at: "2026-07-22T04:42:56.609Z"
+    updated_at: "2026-07-22T04:58:09.182Z"
+    body: Generate package-owned changelog after final tracker mutation.
+    owner: codex-root
+    evidence: Closed release-assigned implementation items and regenerated CHANGELOG.md with latest pm-changelog 2026.7.18 after the final implementation tracker mutation.
+    completed_at: "2026-07-22T04:58:09.182Z"
+    linked_items[1]{id,kind}:
+      hac-l25p,depends_on
+    docs[1]{path,scope,note}:
+      CHANGELOG.md,project,Generated release notes
+  - id: plan-step-007
+    order: 7
+    title: Publish PR and resolve every review thread
+    status: in_progress
+    created_at: "2026-07-22T04:42:57.223Z"
+    updated_at: "2026-07-22T04:58:10.287Z"
+    body: Wait for checks and requested bots; acknowledge every bot comment.
+    owner: codex-root
+    linked_items[1]{id,kind}:
+      hac-kv5o,depends_on
+    files[1]{path,scope,note}:
+      scripts/reviews/pr-review-loop.mjs,project,Review inventory automation
+  - id: plan-step-008
+    order: 8
+    title: Merge and verify exact master head
+    status: pending
+    created_at: "2026-07-22T04:42:57.833Z"
+    updated_at: "2026-07-22T04:42:57.833Z"
+    body: "Prove protected merge, exact-head checks, release automation, and clean tracker."
+    owner: codex-root
+    linked_items[1]{id,kind}:
+      hac-m1kj,depends_on
+body: Execution plan for the typed WebSocket feature. Resume from branch agent/typed-websocket-session-controls and feature hac-sv5f. Preserve all 100 percent gates and redact live private data.

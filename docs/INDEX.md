@@ -223,7 +223,7 @@ All commands support global flags (`--url`, `--token`, `--format`, `--timeout`, 
 
 | Command | Description |
 |---------|-------------|
-| `websocket` / `ws` | Full WebSocket passthrough plus typed target extraction/trigger/condition/service/registry discovery |
+| `websocket` / `ws` | Full passthrough plus typed target, panel, ping, signed-path, and voice-exposure operations |
 | `supervisor api` | Raw Supervisor proxy passthrough |
 | `supervisor addons` | Add-on list/info/start/stop/restart |
 | `supervisor host` | Host reboot/shutdown |

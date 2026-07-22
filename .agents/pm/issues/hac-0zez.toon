@@ -1,0 +1,59 @@
+id: hac-0zez
+title: Wizard read-only option collides with global boolean flag
+description: Full-program non-interactive setup rejects the wizard value because its --read-only <boolean> option conflicts with the root --read-only boolean.
+type: Issue
+status: closed
+priority: 0
+tags[5]: cli,commander,regression,settings,wizard
+created_at: "2026-07-22T04:54:29.842Z"
+updated_at: "2026-07-22T04:58:01.313Z"
+deadline: "2026-07-23T04:54:29.842Z"
+closed_at: "2026-07-22T04:58:01.312Z"
+author: codex-root
+estimated_minutes: 45
+acceptance_criteria: Non-interactive full-program wizard saves read-only true and validates the live connection
+definition_of_ready: Failure reproduced through installed hassio binary
+goal: best-agent-home-assistant-cli
+objective: reliable-setup-wizard
+value: Agents and CI can provision safety settings non-interactively
+impact: Restores production setup workflow
+outcome: Unambiguous --config-read-only option with regression and live proof
+why_now: Live acceptance testing exposed the production-only collision
+parent: hac-km4t
+reviewer: unbraind
+risk: medium
+confidence: 100
+sprint: websocket-contracts
+release: 2026.7.22
+severity: high
+environment: Installed hassio root program with Commander 15
+repro_steps: Run hassio settings wizard --non-interactive with --read-only true
+resolution: Renamed the saved wizard setting to --config-read-only while preserving global --read-only invocation semantics.
+expected_result: Non-interactive full-program wizard saves readOnly=true.
+actual_result: Installed wizard saved isolated settings/auth/data with auth mode 0600; validate and doctor passed live.
+affected_version: 2026.7.21-2
+fixed_version: 2026.7.22
+component: settings-wizard
+regression: false
+customer_impact: Non-interactive safety configuration fails
+dependencies[3]{id,kind,created_at,author,source_kind}:
+  hac-h8g0,discovered_from,"2026-07-22T04:54:29.842Z",codex-root,null
+  hac-ns9h,related,"2026-07-22T04:54:29.842Z",codex-root,null
+  hac-r4e3,related,"2026-07-22T04:54:29.842Z",codex-root,null
+comments[2]{created_at,author,text}:
+  "2026-07-22T04:54:29.842Z",codex-root,Renamed the saved setting option; global --read-only retains per-invocation semantics.
+  "2026-07-22T04:54:50.068Z",codex-root,Installed full-program acceptance test reproduced the inherited-option collision; --config-read-only now saves the intended setting while root --read-only remains invocation-only.
+notes[1]{created_at,author,text}:
+  "2026-07-22T04:54:29.842Z",codex-root,Full root-program validation is required for inherited Commander option collisions.
+learnings[2]{created_at,author,text}:
+  "2026-07-22T04:54:29.842Z",codex-root,Subcommand-only tests cannot detect root and child option-name ambiguity.
+  "2026-07-22T04:54:50.767Z",codex-root,Production Commander trees must be tested as a whole when global and child options can overlap.
+files[2]{path,scope,note}:
+  src/commands/settings-wizard.ts,project,Collision fix
+  tests/settings-wizard.test.ts,project,Wizard configuration regression coverage
+tests[1]{command,path,scope,note}:
+  bunx vitest run tests/settings-wizard.test.ts tests/help-surface-e2e.test.ts,tests/settings-wizard.test.ts,project,Wizard and full help validation
+docs[1]{path,scope,note}:
+  README.md,project,Non-interactive setup example
+close_reason: Production wizard option collision fixed and accepted
+body: Unit construction of the isolated wizard masked Commander inherited-option parsing in the production root program.

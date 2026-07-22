@@ -34,7 +34,7 @@ Public release `v2026.3.6` was published on March 6, 2026. See:
 - **Fast Topology Snapshot** - `hassio summary` returns domain/state counts for quick agent planning
 - **Search Endpoint Fallback** - Falls back to local entity-state search when `/api/search` is unavailable
 - **Service Schema Intelligence** - Supports modern object-style `/api/services` payloads with filter/flat/count modes
-- **WebSocket API Coverage** - Generic passthrough plus typed target extraction, trigger, condition, service, and related-registry discovery
+- **WebSocket API Coverage** - Generic passthrough plus typed targets, panels, heartbeat, signed paths, and voice-assistant exposure
 - **Supervisor API Coverage** - Generic `supervisor api` passthrough + common shortcuts (addons, host, logs)
 - **Full TypeScript Support** - Complete type safety throughout
 - **Comprehensive Testing** - Large automated test suite with strong coverage
@@ -87,6 +87,7 @@ hassio settings setup   # alias
 hassio settings wizard --non-interactive \
   --ha-url "http://homeassistant.local:8123" \
   --ha-token "your-long-lived-access-token" \
+  --config-read-only true \
   --skip-test
 
 # Test connection
@@ -455,6 +456,16 @@ hassio websocket --connect-test
 
 # WebSocket status metadata
 hassio websocket status
+
+# Typed session discovery and liveness
+hassio ws panels
+hassio ws ping
+
+# Filter explicit Assist exposure without fetching an unbounded payload
+hassio ws exposure list --assistant conversation --limit 20
+
+# Create a short-lived path; treat the output as a credential
+hassio ws sign-path --path /api/states --expires 20
 
 # Generic WS command
 hassio ws call -T get_states

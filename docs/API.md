@@ -276,11 +276,14 @@ Interactive setup wizard.
 hassio settings wizard [--skip-test]
 hassio settings setup [--skip-test]
 hassio settings wizard --non-interactive --ha-url <url> --ha-token <token> [options]
+hassio settings wizard --non-interactive --ha-url <url> --ha-token <token> --config-read-only true
 ```
 
 Guides through URL, token, output format, and connection testing.
 If `gh` is installed/authenticated and the repo is not starred yet, prompts to star `https://github.com/unbraind/homeassistant-cli`.
 Use `--non-interactive` for agent/CI setup to avoid prompts.
+Use `--config-read-only true|false` to save the safety setting; the global
+boolean `--read-only` flag applies only to the current invocation.
 
 #### `capabilities`
 Probe and cache runtime capabilities for this Home Assistant instance.
@@ -1215,6 +1218,10 @@ Access Home Assistant WebSocket API with full passthrough support.
 ```bash
 hassio websocket --connect-test
 hassio websocket status
+hassio ws panels
+hassio ws ping
+hassio ws sign-path --path /api/states --expires 20
+hassio ws exposure list --assistant conversation --limit 20
 hassio ws call -T get_states
 hassio ws call -T config/device_registry/list -d '{"area_id":"kitchen"}'
 hassio ws target extract --entity-id light.kitchen
@@ -1255,6 +1262,33 @@ Each target helper requires at least one selector. `extract` preserves Home Assi
 response fields. The generic `ws call` command remains the forward-compatible path
 for every integration-specific WebSocket command. See the official
 [WebSocket API contract](https://developers.home-assistant.io/docs/api/websocket/).
+
+#### Typed session and exposure operations
+
+- `ws panels` returns the registered frontend panels via `get_panels`.
+- `ws ping` verifies protocol liveness and returns the server `pong` envelope.
+- `ws sign-path --path <path> [--expires <seconds>]` creates a short-lived
+  authenticated path via `auth/sign_path`. The path must start with `/`; Home
+  Assistant defaults the lifetime to 30 seconds. Treat the output as a credential
+  and never write it to logs, tracker items, or source control.
+- `ws exposure list` normalizes `homeassistant/expose_entity/list` into
+  `{entity_id, assistant, exposed}` rows. Use `--entity-id`, `--assistant`,
+  `--limit`, or `--count` to constrain large installations.
+- `ws exposure enable|disable --entity-id <ids> --assistant <ids>` changes
+  explicit voice-assistant exposure. Supported assistant IDs are `conversation`,
+  `cloud.alexa`, and `cloud.google_assistant`. Global `--read-only` blocks changes.
+
+```bash
+hassio ws panels --format json
+hassio ws ping
+hassio ws sign-path --path /api/camera_proxy/camera.front --expires 15
+hassio ws exposure list --entity-id light.kitchen --format json-compact
+hassio ws exposure enable --entity-id light.kitchen --assistant conversation
+hassio ws exposure disable --entity-id light.kitchen --assistant conversation
+```
+
+Exposure changes take effect immediately. Use `exposure list` before mutation and
+restore the prior value after temporary validation.
 
 ## Supervisor Commands
 
