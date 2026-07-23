@@ -2,13 +2,13 @@ id: hac-suj3
 title: Add typed automation validation and release-safe version contracts
 description: Expose the official Home Assistant WebSocket automation validation contract through a typed agent-friendly command and repair scheduled releases so candidate version bumps cannot invalidate the test suite.
 type: Feature
-status: open
+status: closed
 priority: 0
 tags[7]: agents,api,automation,github-actions,home-assistant,release,websocket
 created_at: "2026-07-23T04:54:32.200Z"
-updated_at: "2026-07-23T05:21:38.152Z"
+updated_at: "2026-07-23T05:29:22.693Z"
 deadline: "2026-07-24T04:54:32.200Z"
-assignee: codex-root
+closed_at: "2026-07-23T05:29:21.829Z"
 author: codex-root
 estimated_minutes: 240
 acceptance_criteria: "hassio ws validate-config accepts trigger, condition, and action JSON plus a combined file and maps them to the server-supported plural payload contract; empty and malformed validation input fails before network I/O with actionable errors; scheduled release candidate version mutation passes the complete release test suite without weakening package/src version parity; all help, output formats, docs, live redacted checks, 100/100/100/100 coverage, docstrings, file-size, security, pm, and release gates pass"
@@ -25,14 +25,18 @@ risk: medium
 confidence: 95
 sprint: api-contracts-2026-07-23
 release: 2026.7.23
+resolution: Agents can validate trigger condition and action definitions without execution; scheduled release verification no longer depends on a stale version literal.
+expected_result: Safe typed validation plus reliable daily release preparation.
+actual_result: Live Home Assistant 2026.4.4 validation passed; PR #66 merged; hosted dry-run target v2026.7.23 passed without publication.
 dependencies[4]{id,kind,created_at,author,source_kind}:
   hac-km4t,discovered_from,"2026-07-23T04:54:32.200Z",codex-root,null
   hac-l25p,related,"2026-07-23T04:54:32.200Z",codex-root,null
   hac-r4e3,related,"2026-07-23T04:54:32.200Z",codex-root,null
   hac-vooo,related,"2026-07-23T04:54:32.200Z",codex-root,null
-comments[2]{created_at,author,text}:
+comments[3]{created_at,author,text}:
   "2026-07-23T04:54:32.200Z",codex-root,Duplicate-safe searches found adjacent closed lineage but no existing typed validate_config or hard-coded candidate-version regression item.
   "2026-07-23T05:21:38.133Z",codex-root,Implementation is published for review in GitHub PR #66 with permanent master-relative links to this feature and every child item.
+  "2026-07-23T05:29:17.085Z",codex-root,PR #66 merged to master as ad7b961a88ecc0bc65603c015028551fab79f44c. Hosted Auto Release run 29982134051 passed on that exact head with dry_run true pushed false target 2026.7.23 and tag v2026.7.23; GitHub issue #65 closed through the merged PR.
 notes[1]{created_at,author,text}:
   "2026-07-23T04:54:32.200Z",codex-root,"Never store live automation contents,entity inventories,tokens,user IDs,signed paths,or raw server responses in tracker or repository evidence."
 learnings[1]{created_at,author,text}:
@@ -40,8 +44,10 @@ learnings[1]{created_at,author,text}:
 files[2]{path,scope,note}:
   src/commands/websocket.ts,project,WebSocket command registration
   tests/cli.test.ts,project,Release-safe version parity assertion
-tests[1]{command,scope,timeout_seconds}:
+tests[2]{command,scope,timeout_seconds}:
   "bun run release:verify",project,1800
+  gh run watch 29982134051 --repo unbraind/homeassistant-cli --exit-status,project,1200
 docs[1]{path,scope,note}:
   docs/API.md,project,Typed WebSocket contract reference
+close_reason: Typed automation validation and release-safe candidate verification are merged and proven on master.
 body: "## Scope\n\nResearch the current WebSocket validation contract against official documentation, current Home Assistant Core source, and the configured live instance. Add typed trigger, condition, and action validation with local JSON/file checks, keep generic passthrough, repair release-time version assertions, update docs, preserve 100 percent coverage, and prove the scheduled workflow on a clean hosted runner without publishing from the development PR."

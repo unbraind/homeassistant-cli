@@ -2,13 +2,13 @@ id: hac-7q84
 title: Automation validation and release reliability delivery plan
 description: "Execute contract research, typed command implementation, scheduled-release regression repair, exhaustive local/live validation, documentation, publication, bot review closure, merge, and exact-master proof."
 type: Plan
-status: in_progress
+status: closed
 priority: 0
 tags[6]: api,automation,delivery,live-e2e,release,websocket
 created_at: "2026-07-23T04:55:47.297Z"
-updated_at: "2026-07-23T05:21:40.198Z"
+updated_at: "2026-07-23T05:30:00.838Z"
 deadline: "2026-07-24T04:55:47.297Z"
-assignee: codex-root
+closed_at: "2026-07-23T05:29:19.122Z"
 author: codex-root
 estimated_minutes: 240
 acceptance_criteria: Every step carries implementation or validation evidence and linked artifacts
@@ -25,6 +25,9 @@ risk: medium
 confidence: 95
 sprint: api-contracts-2026-07-23
 release: 2026.7.23
+resolution: Delivered the typed validator and release invariant through reviewed PR #66 then verified the non-publishing Auto Release workflow on exact merged master.
+expected_result: Green reviewed merge with exact-master hosted release rehearsal and complete PM evidence.
+actual_result: PR #66 merged as ad7b961; run 29982134051 succeeded with pushed false; issue #65 closed.
 dependencies[4]{id,kind,created_at,author,source_kind}:
   hac-6asb,related,"2026-07-23T04:55:47.297Z",null,null
   hac-km4t,related,"2026-07-23T04:55:47.297Z",null,null
@@ -42,10 +45,11 @@ tests[1]{command,scope,note}:
   "bun run release:verify",project,Aggregate production gate
 docs[1]{path,scope,note}:
   docs/API.md,project,Primary API reference
-plan_mode: executing
+close_reason: All eight delivery steps are complete with merged-master review release and privacy proof.
+plan_mode: completed
 plan_scope: Typed validate_config command plus candidate-safe scheduled Auto Release
 plan_harness: codex
-plan_resume_context: "Continue on master from hac-suj3 with child task hac-3n6e and issue hac-jwim; no code edits existed when the plan was created; official docs, current Core source, live 2026.4.4 plural validate_config payload, and Actions failure 29894187971 are confirmed."
+plan_resume_context: Completed in PR #66 with merged master ad7b961 and hosted Auto Release run 29982134051.
 plan_steps[8]:
   - id: plan-step-001
     order: 1
@@ -102,13 +106,17 @@ plan_steps[8]:
   - id: plan-step-007
     order: 7
     title: "Wait for exact-head checks and all bot feedback; react, reply, fix, and retrigger"
-    status: in_progress
+    status: completed
     created_at: "2026-07-23T04:55:47.367Z"
-    updated_at: "2026-07-23T05:21:40.197Z"
+    updated_at: "2026-07-23T05:29:15.385Z"
+    evidence: PR #66 exact head 6e40ce0 passed every CI security CodeQL Codecov package changelog static and title context. Thread-aware inventory found zero inline threads. All eight bot artifacts were individually reacted to and acknowledged; CodeRabbit and Sourcery were quota-limited; Gemini was retired; Codecov confirmed full patch coverage; Greptile produced no artifact.
+    completed_at: "2026-07-23T05:29:15.385Z"
   - id: plan-step-008
     order: 8
     title: "Merge green PR and prove merged master, scheduled release, tracker, and privacy state"
-    status: pending
+    status: completed
     created_at: "2026-07-23T04:55:47.367Z"
-    updated_at: "2026-07-23T04:55:47.367Z"
+    updated_at: "2026-07-23T05:29:18.019Z"
+    evidence: Squash-merged PR #66 as ad7b961a88ecc0bc65603c015028551fab79f44c; master and origin/master match; issue #65 is closed; hosted Auto Release run 29982134051 passed on exact merged head with target 2026.7.23 tag v2026.7.23 and pushed=false; installed hassio remains intentionally unpublished at 2026.7.21-2.
+    completed_at: "2026-07-23T05:29:18.019Z"
 body: "Only actively edited work may be in progress. Keep secrets external, preserve raw ws call, use Bun, retain 100/100/100/100 and docstring gates, regenerate the pm-owned changelog at final tracker state, and use exact-head review/check evidence."
