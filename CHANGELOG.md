@@ -4,6 +4,7 @@
 
 ### Added
 
+- Add typed automation validation and release-safe version contracts ([hac-suj3](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/features/hac-suj3.toon))
 - Restore live Home Assistant API parity and agent workflows ([hac-n0ix](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/features/hac-n0ix.toon))
 
 ### Fixed
@@ -22,6 +23,7 @@
 
 ### Other
 
+- Automation validation and release reliability delivery plan ([hac-7q84](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/plans/hac-7q84.toon))
 - Implement typed WebSocket automation validation ([hac-3n6e](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-3n6e.toon))
 - Typed WebSocket session controls delivery plan ([hac-km4t](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/plans/hac-km4t.toon))
 - Live Home Assistant API parity delivery plan ([hac-6asb](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/plans/hac-6asb.toon))
