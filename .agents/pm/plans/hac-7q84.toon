@@ -1,0 +1,114 @@
+id: hac-7q84
+title: Automation validation and release reliability delivery plan
+description: "Execute contract research, typed command implementation, scheduled-release regression repair, exhaustive local/live validation, documentation, publication, bot review closure, merge, and exact-master proof."
+type: Plan
+status: in_progress
+priority: 0
+tags[6]: api,automation,delivery,live-e2e,release,websocket
+created_at: "2026-07-23T04:55:47.297Z"
+updated_at: "2026-07-23T05:21:40.198Z"
+deadline: "2026-07-24T04:55:47.297Z"
+assignee: codex-root
+author: codex-root
+estimated_minutes: 240
+acceptance_criteria: Every step carries implementation or validation evidence and linked artifacts
+definition_of_ready: "All project PM data, repo state, official/live contracts, failed workflow logs, and duplicate searches are complete"
+goal: Ship a safe agent-oriented Home Assistant validation surface
+objective: Deliver hac-suj3 and close GitHub issue #65
+value: Automation payloads can be verified without execution and releases remain automatic
+impact: Improves agent safety and release availability
+outcome: Reviewed merged implementation with exact-master proof
+why_now: The API gap and production release regression are both currently verified
+parent: hac-suj3
+reviewer: unbraind
+risk: medium
+confidence: 95
+sprint: api-contracts-2026-07-23
+release: 2026.7.23
+dependencies[4]{id,kind,created_at,author,source_kind}:
+  hac-6asb,related,"2026-07-23T04:55:47.297Z",null,null
+  hac-km4t,related,"2026-07-23T04:55:47.297Z",null,null
+  hac-l25p,related,"2026-07-23T04:55:47.297Z",null,null
+  hac-suj3,parent,"2026-07-23T04:55:47.297Z",null,null
+comments[1]{created_at,author,text}:
+  "2026-07-23T04:55:47.297Z",codex-root,The plan is the only item initially placed in progress; child items move to in_progress only while their files are actively edited.
+notes[1]{created_at,author,text}:
+  "2026-07-23T04:55:47.297Z",codex-root,"Never persist credentials,raw live payloads,private entity data,or signed paths."
+learnings[1]{created_at,author,text}:
+  "2026-07-23T04:55:47.297Z",codex-root,Hosted release candidate mutation must be included in acceptance proof because ordinary CI never changes the version before tests.
+files[1]{path,scope,note}:
+  src/commands/websocket.ts,project,Primary command registration
+tests[1]{command,scope,note}:
+  "bun run release:verify",project,Aggregate production gate
+docs[1]{path,scope,note}:
+  docs/API.md,project,Primary API reference
+plan_mode: executing
+plan_scope: Typed validate_config command plus candidate-safe scheduled Auto Release
+plan_harness: codex
+plan_resume_context: "Continue on master from hac-suj3 with child task hac-3n6e and issue hac-jwim; no code edits existed when the plan was created; official docs, current Core source, live 2026.4.4 plural validate_config payload, and Actions failure 29894187971 are confirmed."
+plan_steps[8]:
+  - id: plan-step-001
+    order: 1
+    title: Record official current and live Home Assistant validation contract evidence
+    status: completed
+    created_at: "2026-07-23T04:55:47.367Z"
+    updated_at: "2026-07-23T04:56:27.206Z"
+    evidence: Official WebSocket docs describe validate_config; current Home Assistant Core dev and 2026.4.4 source require plural triggers conditions actions keys; redacted live 2026.4.4 validation returned actions.valid=true. Actions run 29894187971 proves the release candidate version assertion regression.
+    completed_at: "2026-07-23T04:56:27.206Z"
+  - id: plan-step-002
+    order: 2
+    title: Implement and unit-test typed ws validate-config
+    status: completed
+    created_at: "2026-07-23T04:55:47.367Z"
+    updated_at: "2026-07-23T04:58:44.574Z"
+    evidence: "Added src/commands/websocket-validation.ts and complete command tests; registered ws validate-config; focused command/WebSocket/help tests, typecheck, lint, and file-size gates pass."
+    completed_at: "2026-07-23T04:58:44.574Z"
+    linked_items[1]{id,kind,note}:
+      hac-3n6e,implements,Typed validation implementation item
+  - id: plan-step-003
+    order: 3
+    title: Repair candidate-safe CLI version contract testing
+    status: completed
+    created_at: "2026-07-23T04:55:47.367Z"
+    updated_at: "2026-07-23T05:07:38.740Z"
+    evidence: CLI version test now derives Commander expectation from package.json. A detached candidate probe changed both version surfaces to 2099.12.31 and passed the CLI suite plus version check.
+    completed_at: "2026-07-23T05:07:38.740Z"
+    linked_items[1]{id,kind,note}:
+      hac-jwim,verifies,Scheduled release regression item
+  - id: plan-step-004
+    order: 4
+    title: "Update complete API, agent, setup, and release documentation"
+    status: completed
+    created_at: "2026-07-23T04:55:47.367Z"
+    updated_at: "2026-07-23T05:07:44.904Z"
+    evidence: Updated README API reference documentation index LLM integration agent optimization and release guidance with typed validation contracts examples output behavior and candidate-safe version invariants.
+    completed_at: "2026-07-23T05:07:44.904Z"
+  - id: plan-step-005
+    order: 5
+    title: "Run focused, full, format, help, live, security, pm, and release gates"
+    status: completed
+    created_at: "2026-07-23T04:55:47.367Z"
+    updated_at: "2026-07-23T05:20:12.731Z"
+    evidence: "Committed head 03dbae9 passed live E2E on Home Assistant 2026.4.4 and release:verify. A detached 2099.12.31 candidate passed 1209 tests in 112 suites; 100 percent statements branches functions lines; 117 of 117 docstrings; PM graph 47 nodes 87 edges one component no orphans or audit findings; Bun audit Trivy history secret scan package and commit gates all passed."
+    completed_at: "2026-07-23T05:20:12.731Z"
+  - id: plan-step-006
+    order: 6
+    title: Regenerate pm changelog and publish a descriptive PR
+    status: completed
+    created_at: "2026-07-23T04:55:47.367Z"
+    updated_at: "2026-07-23T05:21:39.235Z"
+    evidence: Installed pm-changelog 2026.7.22; canonical generation and check passed; committed secret-scanned tracker and changelog state; pushed agent/automation-validation-release-version-contracts and opened descriptive draft PR #66 with permanent PM Markdown links.
+    completed_at: "2026-07-23T05:21:39.235Z"
+  - id: plan-step-007
+    order: 7
+    title: "Wait for exact-head checks and all bot feedback; react, reply, fix, and retrigger"
+    status: in_progress
+    created_at: "2026-07-23T04:55:47.367Z"
+    updated_at: "2026-07-23T05:21:40.197Z"
+  - id: plan-step-008
+    order: 8
+    title: "Merge green PR and prove merged master, scheduled release, tracker, and privacy state"
+    status: pending
+    created_at: "2026-07-23T04:55:47.367Z"
+    updated_at: "2026-07-23T04:55:47.367Z"
+body: "Only actively edited work may be in progress. Keep secrets external, preserve raw ws call, use Bun, retain 100/100/100/100 and docstring gates, regenerate the pm-owned changelog at final tracker state, and use exact-head review/check evidence."

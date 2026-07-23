@@ -8,6 +8,7 @@
 
 ### Fixed
 
+- Scheduled release candidate bump breaks hard-coded CLI version test ([hac-jwim](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/issues/hac-jwim.toon))
 - Wizard read-only option collides with global boolean flag ([hac-0zez](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/issues/hac-0zez.toon))
 - Auto-release dry run omits pm-changelog installation on clean runners ([hac-l25p](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/issues/hac-l25p.toon))
 - Raise all-source coverage gates to 100/100/100/100 ([hac-vooo](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/issues/hac-vooo.toon))
@@ -21,6 +22,7 @@
 
 ### Other
 
+- Implement typed WebSocket automation validation ([hac-3n6e](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-3n6e.toon))
 - Typed WebSocket session controls delivery plan ([hac-km4t](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/plans/hac-km4t.toon))
 - Live Home Assistant API parity delivery plan ([hac-6asb](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/plans/hac-6asb.toon))
 - Enforce erasable zero-escape TypeScript and complete source docstrings ([hac-r4e3](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-r4e3.toon))

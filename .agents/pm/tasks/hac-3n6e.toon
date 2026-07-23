@@ -1,0 +1,75 @@
+id: hac-3n6e
+title: Implement typed WebSocket automation validation
+description: "Add a dedicated ws validate-config command that accepts locally parsed trigger, condition, and action definitions, sends the compatible plural Home Assistant payload, and returns format-valid validation results."
+type: Task
+status: closed
+priority: 0
+tags[6]: agents,api,automation,typescript,validation,websocket
+created_at: "2026-07-23T04:55:08.230Z"
+updated_at: "2026-07-23T05:15:24.973Z"
+deadline: "2026-07-24T04:55:08.230Z"
+closed_at: "2026-07-23T05:15:23.214Z"
+author: codex-root
+estimated_minutes: 120
+acceptance_criteria: JSON flags and a combined file are supported with deterministic merge precedence and detailed help; payload keys are triggers conditions actions and live 2026.4.4 validation succeeds; all format and coverage gates remain at 100 percent
+definition_of_ready: Live plural payload behavior is proven and adjacent typed command patterns are understood
+goal: Complete stable Home Assistant WebSocket coverage
+objective: Typed validate_config UX
+value: Safe preflight validation for agent-authored automations
+impact: Reduces invalid or risky automation mutations
+outcome: A stable hassio ws validate-config command
+why_now: The official command exists but only raw passthrough is available
+parent: hac-suj3
+reviewer: unbraind
+risk: medium
+confidence: 95
+sprint: api-contracts-2026-07-23
+release: 2026.7.23
+resolution: Added hassio ws validate-config with singular CLI inputs plural wire normalization combined-file support defensive validation and all supported output formats.
+expected_result: Agents can validate trigger condition and action definitions without executing an automation.
+actual_result: Live 2026.4.4 returned actions.valid true and all repository gates remained green.
+dependencies[6]{id,kind,created_at,author,source_kind}:
+  hac-96i2,discovered_from,"2026-07-23T04:55:08.230Z",codex-root,null
+  hac-ak9g,related,"2026-07-23T04:55:08.230Z",codex-root,null
+  hac-r4e3,related,"2026-07-23T04:55:08.230Z",codex-root,null
+  hac-soop,related,"2026-07-23T04:55:08.230Z",codex-root,null
+  hac-jwim,related,"2026-07-23T04:56:05.036Z",codex-root,null
+  hac-suj3,related,"2026-07-23T04:56:05.036Z",codex-root,null
+comments[4]{created_at,author,text}:
+  "2026-07-23T04:55:08.230Z",codex-root,Use top-level imports and direct logic; do not add one-use wrapper helpers or dynamic imports.
+  "2026-07-23T04:58:43.073Z",codex-root,"Focused command,WebSocket regression,help-surface,typecheck,lint,and file-size gates pass. The command accepts singular CLI/file fields and emits plural wire keys proven by live 2026.4.4 and current Core source."
+  "2026-07-23T05:07:41.820Z",codex-root,The public command accepts singular CLI terminology but sends the plural triggers conditions actions contract required by current Core. Empty action arrays are intentionally valid and ideal for non-mutating live acceptance.
+  "2026-07-23T05:15:20.367Z",codex-root,"Acceptance is complete: seven command tests pass; compiled live E2E validates an empty actions array without mutation; six formats were decoded or structurally checked; aggregate release verification passed with 1208 pre-final tests and 100 percent across all four metrics."
+notes[1]{created_at,author,text}:
+  "2026-07-23T04:55:08.230Z",codex-root,"Live evidence records only validation booleans and server version,never submitted private definitions or raw responses."
+learnings[1]{created_at,author,text}:
+  "2026-07-23T04:55:08.230Z",codex-root,Stable CLI option names can normalize wire-contract inconsistencies without removing the raw ws call escape hatch.
+files[4]{path,scope,note}:
+  src/commands/websocket.ts,project,Register typed validation command
+  src/commands/websocket-validation.ts,project,Typed validation implementation
+  tests/websocket-validation-command.test.ts,project,Command contract and error coverage
+  tests/e2e-live.ts,project,Live non-mutating automation validation proof
+tests[4]:
+  - command: "bun run release:verify"
+    scope: project
+    timeout_seconds: 1200
+  - command: bunx vitest run tests/websocket-validation-command.test.ts
+    scope: project
+    timeout_seconds: 300
+  - command: bunx vitest run tests/websocket-validation-command.test.ts tests/websocket-command.test.ts tests/help-surface-e2e.test.ts
+    scope: project
+    timeout_seconds: 600
+  - command: "bun run test:e2e:live"
+    path: tests/e2e-live.ts
+    scope: project
+    timeout_seconds: 300
+test_runs[1]{run_id,kind,status,started_at,finished_at,recorded_at,passed,failed,skipped}:
+  test-local-mrx22c19-7ir9w0,test,passed,"2026-07-23T05:11:38.029Z","2026-07-23T05:13:05.133Z","2026-07-23T05:13:05.133Z",2,0,0
+docs[5]{path,scope,note}:
+  docs/AGENT_OPTIMIZATION.md,project,Agent optimization guidance
+  docs/API.md,project,Command options and examples
+  docs/INDEX.md,project,Documentation navigation
+  docs/LLM_INTEGRATION.md,project,Agent validation workflow
+  README.md,project,User discovery and examples
+close_reason: Typed automation validation is implemented documented unit-tested and proven against live Home Assistant 2026.4.4 without executing actions.
+body: "The command must hide server-version payload quirks behind stable singular CLI option names, support a combined JSON file for programmatic workflows, reject empty or structurally invalid input before connecting, and remain below 300 code lines with complete unit and live coverage."

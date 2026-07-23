@@ -198,7 +198,22 @@ hassio ws target services --entity-id group.downstairs --no-expand-group
 hassio ws target related --label-id lighting
 ```
 
-### 8. Bounded WebSocket Session Discovery
+### 8. Validate Automations Before Execution
+
+Use the typed WebSocket validator before an agent proposes or applies an
+automation. It does not execute actions or create configuration:
+
+```bash
+hassio ws validate-config --file automation.json --format json-compact
+hassio ws validate-config \
+  --trigger '{"trigger":"state","entity_id":"binary_sensor.door"}' \
+  --action '[{"action":"light.turn_on","target":{"entity_id":"light.kitchen"}}]'
+```
+
+CLI values override matching fields in the file. Treat a `valid: false` result as
+a hard stop and surface the corresponding `error` to the planning loop.
+
+### 9. Bounded WebSocket Session Discovery
 
 Prefer typed commands for stable protocol operations and bound large exposure
 inventories before adding them to an agent context:

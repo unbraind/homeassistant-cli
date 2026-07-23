@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 
 const { promptMock } = vi.hoisted(() => {
@@ -8,6 +9,10 @@ vi.mock("../src/utils/github-star.js", () => ({ maybePromptToStarRepo: promptMoc
 
 import { createProgram, getConfigPathFromArgv, reportCliError, runCli } from "../src/cli.js";
 
+const packageVersion = (JSON.parse(
+  readFileSync(new URL("../package.json", import.meta.url), "utf8"),
+) as { version: string }).version;
+
 describe("CLI composition", () => {
   beforeAll(() => {
     vi.spyOn(process, "exit").mockImplementation(() => undefined as never);
@@ -16,7 +21,7 @@ describe("CLI composition", () => {
   it("registers the complete command tree and version", () => {
     const program = createProgram();
     expect(program.name()).toBe("hassio");
-    expect(program.version()).toBe("2026.7.21-2");
+    expect(program.version()).toBe(packageVersion);
     expect(program.commands.map((command) => command.name())).toEqual(expect.arrayContaining([
       "status", "settings", "capabilities", "websocket", "supervisor", "fan",
     ]));
