@@ -2,13 +2,13 @@ id: hac-jwim
 title: Scheduled release candidate bump breaks hard-coded CLI version test
 description: "Auto Release run 29894187971 correctly changed package.json and src/cli.ts from 2026.7.21-2 to the 2026.7.22 candidate, then release verification failed because tests/cli.test.ts asserted the old literal version."
 type: Issue
-status: in_progress
+status: closed
 priority: 0
 tags[6]: automation,github-actions,regression,release,testing,versioning
 created_at: "2026-07-23T04:55:09.217Z"
-updated_at: "2026-07-23T05:13:58.296Z"
+updated_at: "2026-07-23T05:20:11.808Z"
 deadline: "2026-07-24T04:55:09.217Z"
-assignee: codex-root
+closed_at: "2026-07-23T05:20:10.780Z"
 author: codex-root
 estimated_minutes: 45
 acceptance_criteria: CLI composition verifies the Commander version against package.json rather than a stale literal; version.mjs check continues to enforce package.json and src/cli.ts parity; a dry-run candidate mutation proves the complete suite without publishing
@@ -29,9 +29,11 @@ reporter: github-actions
 severity: high
 environment: GitHub-hosted ubuntu-24.04 scheduled Auto Release at merged master 27187f3
 repro_steps: "Run node scripts/release/auto-release.mjs --push after a date transition with unreleased commits; release:verify fails in tests/cli.test.ts after version apply"
-expected_result: Candidate version mutation passes tests because version parity is checked dynamically
-actual_result: Expected 2026.7.21-2 but received candidate 2026.7.22
+resolution: CLI composition now derives its expected version from package.json while version.mjs retains parity enforcement across package.json and src/cli.ts.
+expected_result: Candidate version mutation passes the entire release suite without stale assertions.
+actual_result: Synthetic 2099.12.31 candidate passed 1209 tests 100 percent four-metric coverage and every release gate.
 affected_version: 2026.7.21-2
+fixed_version: 2026.7.23
 component: release-automation
 regression: true
 customer_impact: Daily releases are blocked and GitHub issue #65 remains open
@@ -42,10 +44,11 @@ dependencies[6]{id,kind,created_at,author,source_kind}:
   hac-vooo,related,"2026-07-23T04:55:09.217Z",codex-root,null
   hac-3n6e,related,"2026-07-23T04:56:06.421Z",codex-root,null
   hac-suj3,related,"2026-07-23T04:56:06.421Z",codex-root,null
-comments[3]{created_at,author,text}:
+comments[4]{created_at,author,text}:
   "2026-07-23T04:55:09.217Z",codex-root,"This is distinct from hac-l25p: extension/tool provisioning passed; failure occurred after the candidate version was applied during the test gate."
   "2026-07-23T05:07:43.242Z",codex-root,A detached worktree candidate bump to 2099.12.31 passed the CLI test and version check. Full repository candidate verification follows after the implementation commit.
   "2026-07-23T05:13:52.742Z",codex-root,PM linked-test execution correctly exposed an invalid cross-repository scripts/run-tests.mjs path added during evidence linking. The nonexistent path was removed and the repository-native Vitest command remains authoritative.
+  "2026-07-23T05:20:09.582Z",codex-root,"Decisive acceptance passed on committed head 03dbae9 in a detached worktree after applying synthetic candidate 2099.12.31: 1209 tests and 112 suites passed; coverage was 4467 of 4467 statements 2192 of 2192 branches 897 of 897 functions and 4115 of 4115 lines; audit PM Trivy history secret packaging and commit gates passed. No publication occurred."
 notes[1]{created_at,author,text}:
   "2026-07-23T04:55:09.217Z",codex-root,Keep dry-run and PR verification non-publishing; use temporary worktree or reversible apply evidence.
 learnings[2]{created_at,author,text}:
@@ -54,11 +57,13 @@ learnings[2]{created_at,author,text}:
 files[2]{path,scope,note}:
   tests/cli.test.ts,project,Stale literal assertion
   scripts/release/version.mjs,project,Authoritative parity and candidate application logic
-tests[1]{command,scope,timeout_seconds}:
+tests[2]{command,scope,timeout_seconds}:
+  "bun run release:verify",project,1200
   bunx vitest run tests/cli.test.ts,project,300
 test_runs[2]{run_id,kind,status,started_at,finished_at,recorded_at,passed,failed,skipped}:
   test-local-mrx22g3q-6n20j2,test,failed,"2026-07-23T05:13:06.298Z","2026-07-23T05:13:10.406Z","2026-07-23T05:13:10.406Z",1,1,0
   test-local-mrx23h1f-nyvuh5,test,passed,"2026-07-23T05:13:54.436Z","2026-07-23T05:13:58.275Z","2026-07-23T05:13:58.275Z",1,0,0
 docs[1]{path,scope,note}:
   docs/RELEASING.md,project,Candidate verification model
+close_reason: The scheduled candidate-version regression is fixed and a fully mutated synthetic candidate passed the complete production release verifier.
 body: "## Reproduction\n\nRun the non-dry release pipeline on a clean checkout with release-relevant commits after the last tag. version.mjs applies the daily candidate before release:verify, so a test literal tied to the previous release fails despite package.json and src/cli.ts matching.\n\n## GitHub evidence\n\nIssue #65 and Actions run 29894187971 on merged head 27187f3."

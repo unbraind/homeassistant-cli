@@ -6,7 +6,7 @@ status: in_progress
 priority: 0
 tags[6]: api,automation,delivery,live-e2e,release,websocket
 created_at: "2026-07-23T04:55:47.297Z"
-updated_at: "2026-07-23T05:07:46.166Z"
+updated_at: "2026-07-23T05:20:13.671Z"
 deadline: "2026-07-24T04:55:47.297Z"
 assignee: codex-root
 author: codex-root
@@ -86,15 +86,17 @@ plan_steps[8]:
   - id: plan-step-005
     order: 5
     title: "Run focused, full, format, help, live, security, pm, and release gates"
-    status: in_progress
+    status: completed
     created_at: "2026-07-23T04:55:47.367Z"
-    updated_at: "2026-07-23T05:07:46.165Z"
+    updated_at: "2026-07-23T05:20:12.731Z"
+    evidence: "Committed head 03dbae9 passed live E2E on Home Assistant 2026.4.4 and release:verify. A detached 2099.12.31 candidate passed 1209 tests in 112 suites; 100 percent statements branches functions lines; 117 of 117 docstrings; PM graph 47 nodes 87 edges one component no orphans or audit findings; Bun audit Trivy history secret scan package and commit gates all passed."
+    completed_at: "2026-07-23T05:20:12.731Z"
   - id: plan-step-006
     order: 6
     title: Regenerate pm changelog and publish a descriptive PR
-    status: pending
+    status: in_progress
     created_at: "2026-07-23T04:55:47.367Z"
-    updated_at: "2026-07-23T04:55:47.367Z"
+    updated_at: "2026-07-23T05:20:13.670Z"
   - id: plan-step-007
     order: 7
     title: "Wait for exact-head checks and all bot feedback; react, reply, fix, and retrigger"
