@@ -223,7 +223,8 @@ All commands support global flags (`--url`, `--token`, `--format`, `--timeout`, 
 
 | Command | Description |
 |---------|-------------|
-| `websocket` / `ws` | Full passthrough plus typed target, panel, ping, signed-path, and voice-exposure operations |
+| `websocket` / `ws` | Full passthrough plus typed target, automation-validation, panel, ping, signed-path, and voice-exposure operations |
+| `ws validate-config` | Validate trigger, condition, and action definitions without executing them |
 | `supervisor api` | Raw Supervisor proxy passthrough |
 | `supervisor addons` | Add-on list/info/start/stop/restart |
 | `supervisor host` | Host reboot/shutdown |
@@ -298,6 +299,7 @@ The CLI is optimized for use by LLMs and AI agents:
 - **Capability Matrix**: `hassio capabilities` exposes per-instance API availability and scope hints
 - **API Matrix Probe**: `hassio capabilities --api-matrix` returns live endpoint checks with mapped CLI commands and recommendations
 - **Service Input Validation**: `call-service --validate-input` checks payloads against live HA service definitions before execution
+- **Automation Validation**: `ws validate-config` checks triggers, conditions, and actions without executing them
 - **Agent Plan Output**: `hassio capabilities --agent-plan` returns command recommendations and avoid-lists based on live capability probes
 - **Agent Profile Output**: `hassio capabilities --agent-profile` returns a stable execution profile (`preferred_output_format`, `capabilities`, `planning.fast_path`, `streaming_ready`)
 - **Agent Context Output**: `hassio capabilities --agent-context` returns combined summary + plan + profile for one-shot agent bootstrap
@@ -425,9 +427,10 @@ bun run dev -- <command>
 
 ### Test Coverage
 
-Current test run (2026-03-04): **975 tests passing across 97 test files** — coverage: **96%**.
-Latest coverage run (v8): available via `bun run test:coverage`.
-Live E2E result (2026-03-04): **passed** (`bun run test:e2e:live`, using installed `hassio` binary against HA 2026.1.3).
+Current test run (2026-07-23): **1,209 tests passing across 112 test files** — coverage:
+**100% statements, branches, functions, and lines**.
+Live E2E result (2026-07-23): **passed** (`bun run test:e2e:live`, using the
+compiled CLI against Home Assistant 2026.4.4).
 
 ## Security
 

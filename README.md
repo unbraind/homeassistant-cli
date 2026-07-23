@@ -34,7 +34,7 @@ Public release `v2026.3.6` was published on March 6, 2026. See:
 - **Fast Topology Snapshot** - `hassio summary` returns domain/state counts for quick agent planning
 - **Search Endpoint Fallback** - Falls back to local entity-state search when `/api/search` is unavailable
 - **Service Schema Intelligence** - Supports modern object-style `/api/services` payloads with filter/flat/count modes
-- **WebSocket API Coverage** - Generic passthrough plus typed targets, panels, heartbeat, signed paths, and voice-assistant exposure
+- **WebSocket API Coverage** - Generic passthrough plus typed targets, automation validation, panels, heartbeat, signed paths, and voice-assistant exposure
 - **Supervisor API Coverage** - Generic `supervisor api` passthrough + common shortcuts (addons, host, logs)
 - **Full TypeScript Support** - Complete type safety throughout
 - **Comprehensive Testing** - Large automated test suite with strong coverage
@@ -478,6 +478,10 @@ hassio ws target triggers --entity-id light.kitchen
 hassio ws target conditions --entity-id light.kitchen
 hassio ws target services --entity-id light.kitchen
 hassio ws target services --entity-id group.downstairs --no-expand-group
+
+# Validate automation definitions without executing them
+hassio ws validate-config --action '[{"action":"light.turn_on","target":{"entity_id":"light.kitchen"}}]'
+hassio ws validate-config --file automation.json
 
 # Target helper: resolve and fetch related registries
 hassio ws target related --label-id lighting

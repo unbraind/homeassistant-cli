@@ -1230,6 +1230,8 @@ hassio ws target conditions --area-id kitchen
 hassio ws target services --area-id kitchen
 hassio ws target services --entity-id group.downstairs --no-expand-group
 hassio ws target related --label-id lighting
+hassio ws validate-config --action '[{"action":"light.turn_on","target":{"entity_id":"light.kitchen"}}]'
+hassio ws validate-config --file automation.json
 hassio ws subscribe --event-type state_changed --wait-ms 10000 --max-events 20
 ```
 
@@ -1262,6 +1264,41 @@ Each target helper requires at least one selector. `extract` preserves Home Assi
 response fields. The generic `ws call` command remains the forward-compatible path
 for every integration-specific WebSocket command. See the official
 [WebSocket API contract](https://developers.home-assistant.io/docs/api/websocket/).
+
+#### `websocket validate-config`
+
+Validate automation definitions without executing them:
+
+```bash
+hassio ws validate-config [options]
+
+Options:
+  --trigger <json>    Trigger object or array
+  --condition <json>  Condition object or array
+  --action <json>     Action object or array
+  --file <path>       JSON automation file; CLI values override matching fields
+```
+
+The file form accepts normal Home Assistant automation fields (`trigger`,
+`condition`, and `action`) as well as the WebSocket wire names (`triggers`,
+`conditions`, and `actions`). Other automation metadata such as `alias`, `mode`,
+and `description` is ignored. At least one definition is required, and every
+inline value must decode to a JSON object or array. CLI definitions take
+precedence over the matching file fields.
+
+The command sends the plural wire keys required by current Home Assistant Core,
+then returns the server validation results in the selected global output format.
+It is read-only and safe to use when global `--read-only` is enabled.
+
+```bash
+hassio ws validate-config \
+  --trigger '{"trigger":"state","entity_id":"binary_sensor.door"}' \
+  --condition '{"condition":"state","entity_id":"sun.sun","state":"above_horizon"}'
+hassio ws validate-config \
+  --action '[{"action":"light.turn_on","target":{"entity_id":"light.kitchen"}}]' \
+  --format json-compact
+hassio ws validate-config --file automation.json --format yaml
+```
 
 #### Typed session and exposure operations
 

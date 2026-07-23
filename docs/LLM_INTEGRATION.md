@@ -59,10 +59,18 @@ rows, or `--count` before requesting detail. Use `ws panels` and `ws ping` for
 typed discovery and liveness. Signed-path output is a short-lived credential and
 must not be persisted in prompts, logs, or tracker evidence.
 
-8. Cursor-based pagination (future):
+8. Non-executing automation validation (implemented):
+Use `hassio ws validate-config --file automation.json` before creating or
+updating an automation. Agents can instead supply `--trigger`, `--condition`,
+or `--action` JSON independently. The CLI maps ordinary singular automation
+fields to the plural WebSocket payload required by current Home Assistant Core,
+rejects malformed or empty input locally, and returns per-section
+`{ valid, error }` results in the selected output format.
+
+9. Cursor-based pagination (future):
 Add `--cursor` + `--limit` for entity-heavy installations so agents can page deterministically.
 
-9. Stable machine error envelope (future):
+10. Stable machine error envelope (future):
 Standardize failures to `{ code, message, hint, retriable }` across all commands and formats.
 
 ## TOON Format Explained

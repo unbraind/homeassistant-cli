@@ -1,0 +1,46 @@
+id: hac-suj3
+title: Add typed automation validation and release-safe version contracts
+description: Expose the official Home Assistant WebSocket automation validation contract through a typed agent-friendly command and repair scheduled releases so candidate version bumps cannot invalidate the test suite.
+type: Feature
+status: open
+priority: 0
+tags[7]: agents,api,automation,github-actions,home-assistant,release,websocket
+created_at: "2026-07-23T04:54:32.200Z"
+updated_at: "2026-07-23T04:54:32.200Z"
+deadline: "2026-07-24T04:54:32.200Z"
+assignee: codex-root
+author: codex-root
+estimated_minutes: 240
+acceptance_criteria: "hassio ws validate-config accepts trigger, condition, and action JSON plus a combined file and maps them to the server-supported plural payload contract; empty and malformed validation input fails before network I/O with actionable errors; scheduled release candidate version mutation passes the complete release test suite without weakening package/src version parity; all help, output formats, docs, live redacted checks, 100/100/100/100 coverage, docstrings, file-size, security, pm, and release gates pass"
+definition_of_ready: "Official docs, current Core source, live instance behavior, repository code, full pm lineage, and failed hosted run are understood"
+goal: Complete stable Home Assistant API coverage for agent workflows
+objective: Typed automation validation and release-safe candidate verification
+value: Agents can validate automations without executing them while daily releases remain dependable
+impact: Prevents unsafe trial-and-error automation writes and blocked scheduled releases
+outcome: A fully documented typed validation command and green scheduled release rehearsal
+why_now: Official/live contract research exposed the gap while GitHub issue #65 proves the current release regression
+parent: hac-4s9j
+reviewer: unbraind
+risk: medium
+confidence: 95
+sprint: api-contracts-2026-07-23
+release: 2026.7.23
+dependencies[4]{id,kind,created_at,author,source_kind}:
+  hac-km4t,discovered_from,"2026-07-23T04:54:32.200Z",codex-root,null
+  hac-l25p,related,"2026-07-23T04:54:32.200Z",codex-root,null
+  hac-r4e3,related,"2026-07-23T04:54:32.200Z",codex-root,null
+  hac-vooo,related,"2026-07-23T04:54:32.200Z",codex-root,null
+comments[1]{created_at,author,text}:
+  "2026-07-23T04:54:32.200Z",codex-root,Duplicate-safe searches found adjacent closed lineage but no existing typed validate_config or hard-coded candidate-version regression item.
+notes[1]{created_at,author,text}:
+  "2026-07-23T04:54:32.200Z",codex-root,"Never store live automation contents,entity inventories,tokens,user IDs,signed paths,or raw server responses in tracker or repository evidence."
+learnings[1]{created_at,author,text}:
+  "2026-07-23T04:54:32.200Z",codex-root,Home Assistant 2026.4.4 and current Core source require plural validate_config keys even though the rendered API docs currently describe singular labels.
+files[2]{path,scope,note}:
+  src/commands/websocket.ts,project,WebSocket command registration
+  tests/cli.test.ts,project,Release-safe version parity assertion
+tests[1]{command,scope,timeout_seconds}:
+  "bun run release:verify",project,1800
+docs[1]{path,scope,note}:
+  docs/API.md,project,Typed WebSocket contract reference
+body: "## Scope\n\nResearch the current WebSocket validation contract against official documentation, current Home Assistant Core source, and the configured live instance. Add typed trigger, condition, and action validation with local JSON/file checks, keep generic passthrough, repair release-time version assertions, update docs, preserve 100 percent coverage, and prove the scheduled workflow on a clean hosted runner without publishing from the development PR."

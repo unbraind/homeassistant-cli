@@ -145,6 +145,13 @@ assert(Array.isArray(serviceSchema[0]?.["optional_fields"]), "invalid services -
 const wsConnect = parseJson(run(["websocket", "--connect-test", "--format", "json"])) as Record<string, unknown>;
 assert(wsConnect["connected"] === true, "invalid websocket --connect-test connected field");
 assert(wsConnect["auth"] === "ok", "invalid websocket --connect-test auth field");
+
+const wsValidation = parseJson(
+  run(["ws", "validate-config", "--action", "[]", "--format", "json"])
+) as Record<string, unknown>;
+const validatedActions = wsValidation["actions"] as Record<string, unknown> | undefined;
+assert(validatedActions?.["valid"] === true, "invalid ws validate-config actions result");
+
 const wsTargetExtract = parseJson(
   run(["ws", "target", "extract", "--entity-id", sampleEntityId, "--format", "json"])
 ) as Record<string, unknown>;
