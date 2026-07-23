@@ -6,7 +6,7 @@ status: in_progress
 priority: 0
 tags[6]: api,automation,delivery,live-e2e,release,websocket
 created_at: "2026-07-23T04:55:47.297Z"
-updated_at: "2026-07-23T05:20:13.671Z"
+updated_at: "2026-07-23T05:21:40.198Z"
 deadline: "2026-07-24T04:55:47.297Z"
 assignee: codex-root
 author: codex-root
@@ -94,15 +94,17 @@ plan_steps[8]:
   - id: plan-step-006
     order: 6
     title: Regenerate pm changelog and publish a descriptive PR
-    status: in_progress
+    status: completed
     created_at: "2026-07-23T04:55:47.367Z"
-    updated_at: "2026-07-23T05:20:13.670Z"
+    updated_at: "2026-07-23T05:21:39.235Z"
+    evidence: Installed pm-changelog 2026.7.22; canonical generation and check passed; committed secret-scanned tracker and changelog state; pushed agent/automation-validation-release-version-contracts and opened descriptive draft PR #66 with permanent PM Markdown links.
+    completed_at: "2026-07-23T05:21:39.235Z"
   - id: plan-step-007
     order: 7
     title: "Wait for exact-head checks and all bot feedback; react, reply, fix, and retrigger"
-    status: pending
+    status: in_progress
     created_at: "2026-07-23T04:55:47.367Z"
-    updated_at: "2026-07-23T04:55:47.367Z"
+    updated_at: "2026-07-23T05:21:40.197Z"
   - id: plan-step-008
     order: 8
     title: "Merge green PR and prove merged master, scheduled release, tracker, and privacy state"
