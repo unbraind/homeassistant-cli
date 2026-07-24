@@ -6,7 +6,7 @@ status: in_progress
 priority: 0
 tags[8]: agents,api,entity-registry,github-actions,home-assistant,pm-changelog,release,websocket
 created_at: "2026-07-24T21:01:24.761Z"
-updated_at: "2026-07-24T21:30:19.694Z"
+updated_at: "2026-07-24T21:41:13.785Z"
 deadline: "2026-07-26T21:01:24.761Z"
 assignee: codex-root
 author: codex-root
@@ -29,19 +29,21 @@ dependencies[3]{id,kind,created_at,author,source_kind}:
   hac-n0ix,discovered_from,"2026-07-24T21:01:24.761Z",codex-root,null
   hac-suj3,related,"2026-07-24T21:01:24.761Z",codex-root,null
   hac-wwsi,related,"2026-07-24T21:01:24.761Z",codex-root,null
-comments[5]{created_at,author,text}:
+comments[6]{created_at,author,text}:
   "2026-07-24T21:01:24.761Z",codex-root,Duplicate audit found no existing compact list_for_display item; the open GitHub release blocker is the production manifestation of a distinct publish-runner tool provisioning gap.
   "2026-07-24T21:17:36.449Z",codex-root,"Implementation checkpoint: latest PM CLI 2026.7.24-3 confirmed; managed pm-changelog upgraded to 2026.7.23; focused tests, typecheck, lint, docstrings, file size, duplication, 100/100/100/100 full coverage, built hassio invocation, external settings wizard, and live all-format compact registry acceptance pass. Aggregate release and PM gates remain before publication."
   "2026-07-24T21:20:57.193Z",codex-root,PM full health identified tracked runtime cache sentinels as integrity drift. Removed the legacy search/locks .gitkeep files and obsolete negated ignore rules so runtime indexes and locks remain untracked while PM recreates directories as needed.
   "2026-07-24T21:27:13.270Z",codex-root,Latest-version recheck during release verification discovered pm-changelog 2026.7.24 had just become available; the managed package was refreshed from 2026.7.23 to 2026.7.24 and changelog check remains unchanged/clean for the 46 terminal items.
   "2026-07-24T21:30:19.691Z",codex-root,"The removed runtime sentinels are intentionally documented in this decision comment rather than retained as file links, because strict PM file validation correctly treats linked deleted paths as missing evidence."
+  "2026-07-24T21:41:13.784Z",codex-root,"CI static-contracts exposed a clean-checkout-only PM invariant: ignored runtime directories do not exist after clone. The quality:pm entrypoint now creates locks/search immediately before strict validation, preserving untracked runtime state while making local and hosted health behavior identical; a static contract test prevents regression."
 notes[1]{created_at,author,text}:
   "2026-07-24T21:01:24.761Z",codex-root,"Privacy boundary: keep token, credentials, raw live registry rows, user identifiers, signed paths, and instance inventory out of PM, git, logs, and GitHub."
 learnings[1]{created_at,author,text}:
   "2026-07-24T21:01:24.761Z",codex-root,Official Home Assistant docs now designate config/entity_registry/list_for_display as the bandwidth-efficient enabled-entity contract; the live server returns compact documented field keys.
-files[5]{path,scope,note}:
+files[6]{path,scope,note}:
   .github/workflows/publish.yml,project,Tag publication verifier provisioning
   .gitignore,project,null
+  package.json,project,null
   src/api/registries.ts,project,Typed compact registry transport
   src/commands/registry-display.ts,project,Compact registry implementation
   tests/release-workflow-contract.test.ts,project,Publication safety contract
