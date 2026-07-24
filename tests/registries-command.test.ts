@@ -19,6 +19,26 @@ const getEntityRegistry = vi.fn(async () => [
   { entity_id: "light.living_room", area_id: "living_room", device_id: "dev1", platform: "hue" },
   { entity_id: "switch.fan", area_id: "bedroom", device_id: "dev2", platform: "tplink" },
 ]);
+const getEntityRegistryForDisplay = vi.fn(async () => ({
+  entity_categories: { "0": "config" },
+  entities: [
+    {
+      ei: "light.living_room",
+      pl: "hue",
+      ai: "living_room",
+      di: "dev1",
+      dp: 2,
+      ec: 0,
+      en: "Living Room",
+      hb: true as const,
+      hn: true as const,
+      ic: "mdi:lightbulb",
+      lb: ["favorite"],
+      tk: "light",
+    },
+    { ei: "switch.fan", pl: "tplink" },
+  ],
+}));
 const getDeviceRegistry = vi.fn(async () => [
   { id: "dev1", name: "Hue Bulb", area_id: "living_room", manufacturer: "Philips" },
 ]);
@@ -41,6 +61,7 @@ const getStates = vi.fn(async () => [] as Array<{ entity_id: string; state: stri
 vi.mock("../src/api/registries.js", () => ({
   WebSocketRegistryClient: vi.fn().mockImplementation(function () { return {
     getEntityRegistry,
+    getEntityRegistryForDisplay,
     getDeviceRegistry,
     getAreaRegistry,
     getFloorRegistry,
@@ -50,6 +71,7 @@ vi.mock("../src/api/registries.js", () => ({
   }; }),
   RegistryApiClient: vi.fn().mockImplementation(function () { return {
     getEntityRegistry,
+    getEntityRegistryForDisplay,
     getDeviceRegistry,
     getAreaRegistry,
     getFloorRegistry,
@@ -61,6 +83,7 @@ vi.mock("../src/api/registries.js", () => ({
 vi.mock("../src/api/index.js", () => ({
   WebSocketRegistryClient: vi.fn().mockImplementation(function () { return {
     getEntityRegistry,
+    getEntityRegistryForDisplay,
     getDeviceRegistry,
     getAreaRegistry,
     getFloorRegistry,
@@ -98,6 +121,7 @@ function captureLog(fn: () => Promise<void>): Promise<string> {
 describe("registries command", () => {
   beforeEach(() => {
     getEntityRegistry.mockClear();
+    getEntityRegistryForDisplay.mockClear();
     getDeviceRegistry.mockClear();
     getAreaRegistry.mockClear();
     getFloorRegistry.mockClear();
@@ -121,6 +145,78 @@ describe("registries command", () => {
     expect(result).toContain("entity_registry");
     expect(result).toContain("light.living_room");
     expect(getEntityRegistry).toHaveBeenCalledTimes(1);
+  });
+
+  it("returns the raw compact enabled-entity display contract with a limit", async () => {
+    const result = JSON.parse(await captureLog(() =>
+      createRegistriesCommand().parseAsync(["--display", "--limit", "1"], { from: "user" })
+    )) as {
+      entity_categories: Record<string, string>;
+      entity_registry_display: Array<{ ei: string; pl: string }>;
+    };
+
+    expect(result.entity_categories).toEqual({ "0": "config" });
+    expect(result.entity_registry_display).toEqual([
+      expect.objectContaining({ ei: "light.living_room", pl: "hue" }),
+    ]);
+    expect(getEntityRegistryForDisplay).toHaveBeenCalledTimes(1);
+    expect(getEntityRegistry).not.toHaveBeenCalled();
+  });
+
+  it("decodes every compact display field and omits absent optional fields", async () => {
+    const result = JSON.parse(await captureLog(() =>
+      createRegistriesCommand().parseAsync(["--decode-display"], { from: "user" })
+    )) as { entity_registry_display: Array<Record<string, unknown>> };
+
+    expect(result.entity_registry_display[0]).toEqual({
+      entity_id: "light.living_room",
+      platform: "hue",
+      area_id: "living_room",
+      device_id: "dev1",
+      display_precision: 2,
+      entity_category: "config",
+      name: "Living Room",
+      hidden: true,
+      has_entity_name: true,
+      icon: "mdi:lightbulb",
+      labels: ["favorite"],
+      translation_key: "light",
+    });
+    expect(result.entity_registry_display[1]).toEqual({
+      entity_id: "switch.fan",
+      platform: "tplink",
+    });
+  });
+
+  it("filters compact display entities and returns only the matching count", async () => {
+    const result = JSON.parse(await captureLog(() =>
+      createRegistriesCommand().parseAsync([
+        "--display",
+        "--domain", "light",
+        "--device-id", "dev1",
+        "--area-id", "living_room",
+        "--count",
+      ], { from: "user" })
+    )) as { entity_registry_display_count: number };
+
+    expect(result).toEqual({ entity_registry_display_count: 1 });
+  });
+
+  it("reports compact display endpoint failures without falling back to private full rows", async () => {
+    getEntityRegistryForDisplay.mockRejectedValueOnce(new Error("WS failed"));
+    const result = await captureLog(() =>
+      createRegistriesCommand().parseAsync(["--display"], { from: "user" })
+    );
+    expect(result).toContain("Compact entity registry display is unavailable");
+    expect(close).toHaveBeenCalled();
+  });
+
+  it("rejects an invalid compact display limit before requesting registry data", async () => {
+    await expect(createRegistriesCommand().parseAsync(
+      ["--display", "--limit", "0"],
+      { from: "user" },
+    )).rejects.toThrow("Invalid limit '0'. Must be a positive integer.");
+    expect(getEntityRegistryForDisplay).not.toHaveBeenCalled();
   });
 
   it("filters entity registry by domain", async () => {

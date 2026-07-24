@@ -9,6 +9,7 @@ import type {
   HaFloorRegistryEntry,
   HaLabelRegistryEntry,
   HaCategoryRegistryEntry,
+  HaEntityRegistryDisplayResponse,
 } from "../types/api.js";
 import { HomeAssistantClient } from "./client.js";
 import { HomeAssistantWebSocketClient } from "./websocket.js";
@@ -56,6 +57,12 @@ export class WebSocketRegistryClient {
 
   async getEntityRegistry(): Promise<HaEntityRegistryEntry[]> {
     return this.wsClient.call("config/entity_registry/list") as Promise<HaEntityRegistryEntry[]>;
+  }
+
+  async getEntityRegistryForDisplay(): Promise<HaEntityRegistryDisplayResponse> {
+    return this.wsClient.call(
+      "config/entity_registry/list_for_display",
+    ) as Promise<HaEntityRegistryDisplayResponse>;
   }
 
   async getDeviceRegistry(): Promise<HaDeviceRegistryEntry[]> {

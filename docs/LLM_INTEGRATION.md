@@ -219,6 +219,26 @@ hassio inspect sensor.temperature --history -l 5
 
 ## Registry Queries
 
+### Compact Enabled-Entity Registry
+
+Prefer the display registry for bounded agent context. Home Assistant excludes
+disabled entries and sends abbreviated keys to reduce bandwidth:
+
+```bash
+# Lowest-token compact rows (ei=entity ID, pl=platform)
+hassio registries --display --limit 25 --format toon
+
+# Stable descriptive keys for tool pipelines
+hassio registries --decode-display --domain light --limit 25 --format json-compact
+
+# Plan context size before fetching rows
+hassio registries --display --count --format json-compact
+```
+
+The compact contract supports `--domain`, `--device-id`, `--area-id`,
+`--limit`, and `--count`. Use the full registry only when disabled entries,
+unique IDs, config-entry IDs, or other configuration-only fields are required.
+
 ### Entity Registry
 
 Access entity metadata and configuration:

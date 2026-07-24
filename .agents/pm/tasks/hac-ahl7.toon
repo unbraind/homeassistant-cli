@@ -1,0 +1,62 @@
+id: hac-ahl7
+title: Implement compact entity registry display discovery
+description: "Add fully typed transport and CLI support for config/entity_registry/list_for_display, preserve raw compact keys by default, provide semantic decoded output, and support entity/domain/device/area/count/limit workflows across validated formats."
+type: Task
+status: in_progress
+priority: 0
+tags[7]: agents,api,entity-registry,formats,live-e2e,typescript,websocket
+created_at: "2026-07-24T21:02:44.778Z"
+updated_at: "2026-07-24T21:35:31.719Z"
+deadline: "2026-07-25T21:02:44.778Z"
+assignee: codex-root
+author: codex-root
+estimated_minutes: 180
+acceptance_criteria: "Typed transport reflects every documented compact field without any or guessed external types; registries help, schema, filters, count, limit, raw compact and decoded outputs are tested in all supported formats; Actual built hassio command passes read-only structural live acceptance without recording entity data"
+definition_of_ready: Official docs and live structural response agree on root keys and field union
+goal: complete-agent-home-assistant-interface
+objective: token-efficient-enabled-entity-discovery
+value: Reduce Home Assistant registry payload and LLM token cost.
+impact: Agents can discover enabled entity metadata without downloading private and disabled full registry records.
+outcome: "A typed, documented, format-valid compact registry interface."
+why_now: The endpoint is officially documented and live but only reachable through generic passthrough.
+parent: hac-r17v
+reviewer: unbraind
+risk: medium
+confidence: 98
+sprint: 2026-07-compact-registry
+release: 2026.7.24
+dependencies[5]{id,kind,created_at,author,source_kind}:
+  hac-96i2,related,"2026-07-24T21:02:44.778Z",codex-root,null
+  hac-n0ix,discovered_from,"2026-07-24T21:02:44.778Z",codex-root,null
+  hac-soop,related,"2026-07-24T21:02:44.778Z",codex-root,null
+  hac-suj3,related,"2026-07-24T21:02:44.778Z",codex-root,null
+  hac-zwvk,related,"2026-07-24T21:03:30.532Z",codex-root,null
+comments[3]{created_at,author,text}:
+  "2026-07-24T21:02:44.778Z",codex-root,Live schema proof found root keys entities/entity_categories and the documented compact field union; only counts and field names are retained.
+  "2026-07-24T21:16:54.266Z",codex-root,"Focused transport and command tests pass; full coverage reached 100 percent statements branches functions and lines across 1214 tests; live built CLI passed compact count, raw/decoded structural checks, all six formats, and external settings wizard validation."
+  "2026-07-24T21:35:31.713Z",codex-root,"Final exact-tree validation: 1,220 tests and 100% statements/branches/functions/lines; built binary live E2E passed using external settings/auth, including raw and decoded compact display output across TOON, JSON, compact JSON, YAML, table, and Markdown."
+notes[1]{created_at,author,text}:
+  "2026-07-24T21:02:44.778Z",codex-root,"Do not expose raw entity rows, device IDs, areas, labels, names, icons, or user details in PM or GitHub evidence."
+learnings[2]{created_at,author,text}:
+  "2026-07-24T21:02:44.778Z",codex-root,The compact endpoint excludes disabled entities and encodes entity categories by index; decoded output must resolve ec through entity_categories.
+  "2026-07-24T21:16:55.618Z",codex-root,A separate decoded view preserves the upstream compact contract and category index map while giving agents stable semantic keys only when requested.
+files[7]{path,scope,note}:
+  src/api/registries.ts,project,Typed display endpoint transport
+  src/commands/registries.ts,project,Agent-facing command options and output
+  src/commands/registry-display.ts,project,Compact filtering decoding and output module
+  src/types/api/registries.ts,project,Compact and decoded contracts
+  tests/api-registries-ws.test.ts,project,Typed transport regression
+  tests/e2e-live.ts,project,Actual CLI all-format live structural acceptance
+  tests/registries-command.test.ts,project,Compact raw decoded filter count limit and failure coverage
+tests[2]{command,scope,timeout_seconds,note}:
+  bun run test -- tests/api-registries-ws.test.ts tests/registries-command.test.ts,project,180,Focused typed transport and command tests
+  "bun run test:coverage",project,900,Full 100 percent coverage gate
+test_runs[1]{run_id,kind,status,started_at,finished_at,recorded_at,passed,failed,skipped}:
+  test-local-mrzg9p1a-yry8ld,test,passed,"2026-07-24T21:26:12.097Z","2026-07-24T21:26:15.550Z","2026-07-24T21:26:15.551Z",1,0,0
+docs[5]{path,scope,note}:
+  docs/AGENT_OPTIMIZATION.md,project,Bounded context guidance
+  docs/API.md,project,Command and response contract
+  docs/INDEX.md,project,Documentation index
+  docs/LLM_INTEGRATION.md,project,Token-efficient agent workflow
+  README.md,project,User quick start
+body: "## Contract\\n\\nUse only the documented enabled-entity display endpoint. Preserve the raw compact contract for maximum token efficiency; decode into stable descriptive keys only when explicitly requested. Generic ws call remains the forward-compatible escape hatch."

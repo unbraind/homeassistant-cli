@@ -1,12 +1,12 @@
 {
   "name": "pm-changelog",
-  "version": "2026.7.22",
+  "version": "2026.7.24",
   "manifest_version": 2,
   "description": "Generate CHANGELOG.md release notes from pm-cli items",
   "author": "@unbraind",
   "entry": "./dist/extension.js",
   "priority": 50,
-  "pm_min_version": "2026.7.11",
+  "pm_min_version": "2026.7.24",
   "trusted": true,
   "sandbox_profile": "none",
   "permissions": {

@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026.7.24 - 2026-07-24
+
+### Added
+
+- Add --exclude-tag so tagged items can be omitted from generated changelogs ([pmc-e7b3](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/features/pmc-e7b3.toon))
+
+### Fixed
+
+- Single-window generation ignores an item release field, retro-dating already-shipped work ([pmc-52px](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-52px.toon))
+- Support public changelog labels or issue links for generated pm item references ([pmc-vl87](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-vl87.toon))
+
+### Other
+
+- Adopt scoped renderer ownership for changelog JSON output ([pmc-dkmm](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/tasks/pmc-dkmm.toon))
+
+## 2026.7.23 - 2026-07-23
+
+### Fixed
+
+- Recommend pm merge reconcile (2026.7.22) over raw history-repair in Multi-agent merge safety docs ([pmc-r9i0](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-r9i0.toon))
+
+### Other
+
+- Adopt pm field-aware merge driver for multi-agent branch-merge safety ([pmc-api6](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/chores/pmc-api6.toon))
+
 ## 2026.7.18 - 2026-07-18
 
 ### Fixed
@@ -83,6 +108,12 @@
 ### Fixed
 
 - Prepend merge promotes a stale Unreleased section into the released version instead of duplicating it (GH \#47) ([pmc-8ssd](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-8ssd.toon))
+
+## 2026.6.13 - 2026-06-13
+
+### Fixed
+
+- Stabilize calendar release headings across the zero-padded tag boundary ([pmc-sall](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-sall.toon))
 
 ## 2026.6.8 - 2026-06-08
 

@@ -230,6 +230,35 @@ pm changelog generate --changelog-json
 pm changelog generate --stdout --explain
 ```
 
+Attribute work to the release that actually shipped it, instead of to whenever the tracker was closed:
+
+```bash
+pm update <id> --release 2026.6.1
+npx pm-changelog --stdout --release-version 2026.7.24 --respect-item-release
+```
+
+In multi-agent workflows a fix often ships in one release while its tracker is closed during a later
+one. Because item placement otherwise derives from `closed_at` (then `updated_at`, then
+`created_at`), closing such a tracker injects months-old work into the current release — the reason
+shipped-but-unclosed items accumulate. `--respect-item-release` pins any item that declares a
+`release`: it is kept when the release matches the generated version (no matter what its timestamps
+say) and dropped otherwise, including from an unversioned `Unreleased` window. `--all-release-tags`
+already pinned by this field, so the flag is what makes `changelog:check` and release notes agree
+with the rebuilt history. Items without a declared release keep the plain time-window behavior.
+
+Keep tracked-but-not-user-facing items out of the changelog entirely:
+
+```bash
+pm update <id> --add-tags changelog:ignore
+npx pm-changelog --stdout --exclude-tag changelog:ignore
+npx pm-changelog --stdout --exclude-tag changelog:ignore,upstream-tracker
+```
+
+Upstream issue mirrors, internal chores and superseded work are legitimate pm items but are not
+changes to the package. `--exclude-tag` drops them from every generation path while leaving the item
+and its history untouched in the tracker. Both flags are reported by `--explain`
+(`excluded_counts.item_release` / `excluded_counts.excluded_tag` with sample ids and hints).
+
 ## Options
 
 | Option | Default | Description |
@@ -274,6 +303,9 @@ pm changelog generate --stdout --explain
 | `--include-empty` | false | Emit an empty section when no items match. When using `--all-release-tags`, empty release windows are omitted by default; pass this flag to keep them as `No changes.` sections. |
 | `--include-links` | false | Include item `url` values in generated entries |
 | `--item-url-base <url>` | - | Make item IDs clickable links to their `.toon` files; point to `.agents/pm` in the repo (e.g. `https://github.com/owner/repo/blob/main/.agents/pm`). The type subdirectory (`issues/`, `tasks/`, `chores/`, etc.) is derived automatically from each item's type. |
+| `--item-ref-style <style>` | `auto` | How item IDs render as references: `auto` (blob link when `--item-url-base` is set, else a neutral label), `label` (always a neutral `(id)` — public-registry safe), `toon` (force the blob link), `github` (public issue/PR link from the item's `gh:owner/repo#N` provenance tag, falling back to a label) |
+| `--exclude-tag <list>` | - | Omit items carrying any of these tags from every generation path (repeatable; comma-separated accepted). Case-insensitive, whitespace-trimmed. An ignore convention for tracked-but-not-user-facing items |
+| `--respect-item-release` | false | Treat an item's `release` field (or `metadata.release`) as the authority for which single version window it belongs to: kept when it matches the generated version regardless of timestamps, dropped otherwise. `--all-release-tags` already honors the field; this makes the single-window path agree. Items without a declared release are unaffected |
 
 ## TypeScript API
 

@@ -185,7 +185,23 @@ hassio capabilities --agent-profile
 hassio capabilities --agent-context --redact-private
 ```
 
-### 7. WebSocket Target Resolution
+### 7. Compact Registry Context
+
+Use Home Assistant's display registry before the full configuration registry.
+It contains enabled entities only and is optimized for low-bandwidth UI and
+agent discovery:
+
+```bash
+hassio registries --display --count --format json-compact
+hassio registries --display --domain light --limit 25 --format toon
+hassio registries --decode-display --area-id kitchen --limit 25 --format json-compact
+```
+
+The raw display form retains Home Assistant's compact keys. Request
+`--decode-display` for descriptive field names. Always bound rows before
+placing registry metadata in an LLM context.
+
+### 8. WebSocket Target Resolution
 
 Use WebSocket target helpers to convert abstract targets into concrete IDs, discover valid automation primitives, and fetch only matching registry records:
 
@@ -198,7 +214,7 @@ hassio ws target services --entity-id group.downstairs --no-expand-group
 hassio ws target related --label-id lighting
 ```
 
-### 8. Validate Automations Before Execution
+### 9. Validate Automations Before Execution
 
 Use the typed WebSocket validator before an agent proposes or applies an
 automation. It does not execute actions or create configuration:
@@ -213,7 +229,7 @@ hassio ws validate-config \
 CLI values override matching fields in the file. Treat a `valid: false` result as
 a hard stop and surface the corresponding `error` to the planning loop.
 
-### 9. Bounded WebSocket Session Discovery
+### 10. Bounded WebSocket Session Discovery
 
 Prefer typed commands for stable protocol operations and bound large exposure
 inventories before adding them to an agent context:

@@ -165,6 +165,8 @@ All commands support global flags (`--url`, `--token`, `--format`, `--timeout`, 
 
 | Command | Description |
 |---------|-------------|
+| `registries --display` | Compact enabled-entity registry for low-token agent discovery |
+| `registries --decode-display` | Compact enabled entities with descriptive field names |
 | `registries --entities` | Entity registry |
 | `registries --devices` | Device registry |
 | `registries --areas` | Area registry |

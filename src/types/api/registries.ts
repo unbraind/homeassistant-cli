@@ -22,6 +22,41 @@ export interface HaEntityRegistryEntry {
   unique_id: string;
 }
 
+export interface HaEntityRegistryDisplayEntry {
+  ai?: string;
+  di?: string;
+  dp?: number;
+  ec?: number;
+  ei: string;
+  en?: string;
+  hb?: true;
+  hn?: true;
+  ic?: string;
+  lb?: string[];
+  pl: string;
+  tk?: string;
+}
+
+export interface HaEntityRegistryDisplayResponse {
+  entities: HaEntityRegistryDisplayEntry[];
+  entity_categories: Record<string, string>;
+}
+
+export interface HaEntityRegistryDisplayRow {
+  area_id?: string;
+  device_id?: string;
+  display_precision?: number;
+  entity_category?: string;
+  entity_id: string;
+  has_entity_name?: true;
+  hidden?: true;
+  icon?: string;
+  labels?: string[];
+  name?: string;
+  platform: string;
+  translation_key?: string;
+}
+
 export interface HaDeviceRegistryEntry {
   area_id: string | null;
   configuration_url: string | null;

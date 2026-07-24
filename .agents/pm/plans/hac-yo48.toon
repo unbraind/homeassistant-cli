@@ -1,0 +1,127 @@
+id: hac-yo48
+title: Compact registry and publication parity delivery plan
+description: "Ordered official research, typed implementation, clean-runner repair, exhaustive validation, exact-head review, merge, and closeout for hac-r17v."
+type: Plan
+status: in_progress
+priority: 0
+tags[6]: delivery,entity-registry,live-e2e,plan,release,verification
+created_at: "2026-07-24T21:02:02.512Z"
+updated_at: "2026-07-24T21:35:30.472Z"
+deadline: "2026-07-26T21:02:02.512Z"
+assignee: codex-root
+author: codex-root
+estimated_minutes: 420
+acceptance_criteria: All seven steps complete with linked evidence and no private live values
+definition_of_ready: Feature hac-r17v created after all-status dedupe and current-state research
+goal: complete-agent-home-assistant-interface
+objective: auditable-end-to-end-delivery
+value: Keep research implementation verification and hosted delivery in one resumable graph.
+impact: Prevents partial completion and makes every technical decision traceable.
+outcome: Reviewed merged code and terminal tracker evidence on exact master.
+why_now: The product API gap and release failure must be shipped and proven together.
+parent: hac-r17v
+reviewer: unbraind
+risk: high
+confidence: 96
+sprint: 2026-07-compact-registry
+release: 2026.7.24
+dependencies[6]{id,kind,created_at,author,source_kind}:
+  hac-6asb,related,"2026-07-24T21:02:02.512Z",null,null
+  hac-7q84,related,"2026-07-24T21:02:02.512Z",null,null
+  hac-km4t,related,"2026-07-24T21:02:02.512Z",null,null
+  hac-r17v,parent,"2026-07-24T21:02:02.512Z",null,null
+  hac-ahl7,implements,"2026-07-24T21:03:19.607Z",codex-root,null
+  hac-zwvk,implements,"2026-07-24T21:03:20.780Z",codex-root,null
+comments[1]{created_at,author,text}:
+  "2026-07-24T21:02:02.512Z",codex-root,This plan reuses the durable product and prior API/release plans; it does not duplicate their completed scope.
+notes[1]{created_at,author,text}:
+  "2026-07-24T21:02:02.512Z",codex-root,"Do not mark terminal until hosted checks, bot artifacts, reactions, inline replies, merge, and exact-master verification are complete."
+learnings[1]{created_at,author,text}:
+  "2026-07-24T21:02:02.512Z",codex-root,Exact-head evidence is authoritative; stale review summaries and previous release rehearsals do not prove this branch.
+files[1]{path,scope,note}:
+  src/commands/registries.ts,project,Primary typed command delivery
+tests[1]{command,scope,timeout_seconds,note}:
+  "bun run release:verify",project,2400,Terminal local gate
+docs[1]{path,scope,note}:
+  docs/PR_REVIEW_LOOP.md,project,Hosted review convergence procedure
+plan_mode: approved
+plan_scope: Compact entity registry discovery and publication runner reliability
+plan_harness: codex
+plan_resume_context: "Official compact entity registry contract and live structural proof are confirmed; implement typed transport/CLI/docs/tests plus publish-runner tool parity, latest pm-changelog, full local/live gates, PR bot convergence, merge, and exact-master closeout."
+plan_steps[7]:
+  - id: plan-step-001
+    order: 1
+    title: Record official and live compact registry contract
+    status: completed
+    created_at: "2026-07-24T21:02:02.829Z"
+    updated_at: "2026-07-24T21:03:42.289Z"
+    owner: codex-root
+    evidence: "Official Home Assistant WebSocket docs and live read-only structural probe confirmed config/entity_registry/list_for_display root keys, compact documented field set, category index mapping, and enabled-only behavior; no raw rows were retained."
+    completed_at: "2026-07-24T21:03:42.289Z"
+    linked_items[1]{id,kind,note}:
+      hac-ahl7,discovered_from,Compact endpoint research established implementation scope
+  - id: plan-step-002
+    order: 2
+    title: Implement typed compact and decoded registry output
+    status: completed
+    created_at: "2026-07-24T21:02:02.829Z"
+    updated_at: "2026-07-24T21:16:59.536Z"
+    owner: codex-root
+    evidence: "Added typed display response/entry/decoded contracts, WebSocket transport, compact and decoded registry CLI options, domain/device/area filters, count and limit controls, focused tests, all-format live structural E2E, and complete user/agent docs. Full coverage is 100/100/100/100."
+    completed_at: "2026-07-24T21:16:59.536Z"
+    linked_items[1]{id,kind,note}:
+      hac-ahl7,implements,Typed transport command tests and docs
+  - id: plan-step-003
+    order: 3
+    title: Repair tag publication verifier provisioning
+    status: completed
+    created_at: "2026-07-24T21:02:02.829Z"
+    updated_at: "2026-07-24T21:17:01.992Z"
+    owner: codex-root
+    evidence: "Tag publication now independently installs ripgrep, ShellCheck, and pinned Trivy before release:verify. Manual dispatch defaults to a non-publishing rehearsal and every irreversible step is conditionally guarded; workflow contract tests and YAML parsing pass."
+    completed_at: "2026-07-24T21:17:01.992Z"
+    linked_items[1]{id,kind,note}:
+      hac-zwvk,implements,Clean-runner release prerequisite parity
+  - id: plan-step-004
+    order: 4
+    title: Update help schemas docs and managed packages
+    status: completed
+    created_at: "2026-07-24T21:02:02.829Z"
+    updated_at: "2026-07-24T21:27:11.915Z"
+    body: "Update every user and agent guide, command schema/help coverage, and latest managed pm-changelog. Generate CHANGELOG.md only after terminal PM metadata is accurate."
+    owner: codex-root
+    evidence: "Updated README and all relevant API/index/LLM/agent/release docs, help/schema derives the new options, and the aggregate gate refreshed managed pm-changelog to latest 2026.7.24 as it became available during execution. Canonical CHANGELOG regeneration is deferred to terminal closeout so it reflects final tracker truth."
+    completed_at: "2026-07-24T21:17:34.311Z"
+    linked_items[2]{id,kind,note}:
+      hac-ahl7,depends_on,Docs and managed packages cover API work
+      hac-zwvk,depends_on,Docs and managed packages cover release work
+  - id: plan-step-005
+    order: 5
+    title: Run unit coverage static release format wizard and live E2E gates
+    status: completed
+    created_at: "2026-07-24T21:02:02.829Z"
+    updated_at: "2026-07-24T21:35:29.373Z"
+    owner: codex-root
+    evidence: "Exact staged bun run release:verify passed all ten phases: install/audit, TypeScript/lint, 100% docstrings, duplication, <=300 code lines, ShellCheck, clean PM validation/health, build, 1,220 unit/integration/contract tests, 100/100/100/100 coverage, Trivy, full-history secret scan, and commit audit. Final read-only live E2E passed against built dist/cli.js, including isolated settings wizard and all six compact registry formats."
+    completed_at: "2026-07-24T21:35:29.373Z"
+    linked_items[2]{id,kind,note}:
+      hac-ahl7,verifies,Full and live validation
+      hac-zwvk,verifies,Aggregate release and workflow validation
+  - id: plan-step-006
+    order: 6
+    title: Publish PR and converge every exact-head bot and check
+    status: in_progress
+    created_at: "2026-07-24T21:02:02.829Z"
+    updated_at: "2026-07-24T21:35:30.471Z"
+    owner: codex-root
+    linked_items[1]{id,kind,note}:
+      hac-r17v,verifies,Exact-head review convergence
+  - id: plan-step-007
+    order: 7
+    title: Merge and close PM with exact-master evidence
+    status: pending
+    created_at: "2026-07-24T21:02:02.829Z"
+    updated_at: "2026-07-24T21:03:28.849Z"
+    linked_items[1]{id,kind,note}:
+      hac-r17v,verifies,Merged-master closeout
+body: One ordered end-to-end plan. Credentials and raw live inventories remain external; evidence is schema-level and redacted.
