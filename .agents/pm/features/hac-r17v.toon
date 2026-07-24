@@ -1,0 +1,56 @@
+id: hac-r17v
+title: Add token-efficient registry discovery and release-runner parity
+description: "Expose the official compact entity-registry display contract for agent workflows, preserve full typed and passthrough access, update the managed changelog package, and make tag-driven publication provision the same mandatory verifier toolchain as automatic release preparation."
+type: Feature
+status: in_progress
+priority: 0
+tags[8]: agents,api,entity-registry,github-actions,home-assistant,pm-changelog,release,websocket
+created_at: "2026-07-24T21:01:24.761Z"
+updated_at: "2026-07-24T21:41:13.785Z"
+deadline: "2026-07-26T21:01:24.761Z"
+assignee: codex-root
+author: codex-root
+estimated_minutes: 420
+acceptance_criteria: "hassio registries exposes the official compact display endpoint with token-efficient and decoded output, filtering, count, and limit behavior; Full source coverage remains 100/100/100/100, docstrings remain complete, every command help path and every formatter remains valid, and live read-only E2E passes; Tag-driven publish installs every tool required by release:verify, latest pm-changelog generates the canonical changelog, and hosted rehearsal succeeds without publishing a new version"
+definition_of_ready: "All-status PM lineage, official docs, live endpoint shape, exact failed release logs, current code, and managed package versions reviewed without recording private values"
+goal: complete-agent-home-assistant-interface
+objective: compact-discovery-and-reliable-publication
+value: Reduce agent token and bandwidth cost while restoring trustworthy automated release verification.
+impact: Agents can query enabled registry metadata efficiently and maintainers can trust the same mandatory gates in preparation and publication.
+outcome: A reviewed and merged typed discovery surface with reproducible clean-runner release parity.
+why_now: "The official compact endpoint is live but untyped in the CLI, and the latest production tag failed before publication because the publish runner omitted mandatory tools."
+parent: hac-4s9j
+reviewer: unbraind
+risk: high
+confidence: 96
+sprint: 2026-07-compact-registry
+release: 2026.7.24
+dependencies[3]{id,kind,created_at,author,source_kind}:
+  hac-n0ix,discovered_from,"2026-07-24T21:01:24.761Z",codex-root,null
+  hac-suj3,related,"2026-07-24T21:01:24.761Z",codex-root,null
+  hac-wwsi,related,"2026-07-24T21:01:24.761Z",codex-root,null
+comments[6]{created_at,author,text}:
+  "2026-07-24T21:01:24.761Z",codex-root,Duplicate audit found no existing compact list_for_display item; the open GitHub release blocker is the production manifestation of a distinct publish-runner tool provisioning gap.
+  "2026-07-24T21:17:36.449Z",codex-root,"Implementation checkpoint: latest PM CLI 2026.7.24-3 confirmed; managed pm-changelog upgraded to 2026.7.23; focused tests, typecheck, lint, docstrings, file size, duplication, 100/100/100/100 full coverage, built hassio invocation, external settings wizard, and live all-format compact registry acceptance pass. Aggregate release and PM gates remain before publication."
+  "2026-07-24T21:20:57.193Z",codex-root,PM full health identified tracked runtime cache sentinels as integrity drift. Removed the legacy search/locks .gitkeep files and obsolete negated ignore rules so runtime indexes and locks remain untracked while PM recreates directories as needed.
+  "2026-07-24T21:27:13.270Z",codex-root,Latest-version recheck during release verification discovered pm-changelog 2026.7.24 had just become available; the managed package was refreshed from 2026.7.23 to 2026.7.24 and changelog check remains unchanged/clean for the 46 terminal items.
+  "2026-07-24T21:30:19.691Z",codex-root,"The removed runtime sentinels are intentionally documented in this decision comment rather than retained as file links, because strict PM file validation correctly treats linked deleted paths as missing evidence."
+  "2026-07-24T21:41:13.784Z",codex-root,"CI static-contracts exposed a clean-checkout-only PM invariant: ignored runtime directories do not exist after clone. The quality:pm entrypoint now creates locks/search immediately before strict validation, preserving untracked runtime state while making local and hosted health behavior identical; a static contract test prevents regression."
+notes[1]{created_at,author,text}:
+  "2026-07-24T21:01:24.761Z",codex-root,"Privacy boundary: keep token, credentials, raw live registry rows, user identifiers, signed paths, and instance inventory out of PM, git, logs, and GitHub."
+learnings[1]{created_at,author,text}:
+  "2026-07-24T21:01:24.761Z",codex-root,Official Home Assistant docs now designate config/entity_registry/list_for_display as the bandwidth-efficient enabled-entity contract; the live server returns compact documented field keys.
+files[6]{path,scope,note}:
+  .github/workflows/publish.yml,project,Tag publication verifier provisioning
+  .gitignore,project,null
+  package.json,project,null
+  src/api/registries.ts,project,Typed compact registry transport
+  src/commands/registry-display.ts,project,Compact registry implementation
+  tests/release-workflow-contract.test.ts,project,Publication safety contract
+tests[1]{command,scope,timeout_seconds,note}:
+  "bun run release:verify",project,2400,Aggregate production gate
+docs[3]{path,scope,note}:
+  docs/API.md,project,Registry API contract
+  docs/LLM_INTEGRATION.md,project,Agent registry guidance
+  docs/RELEASING.md,project,Publication runner contract
+body: "## Scope\\n\\nDeliver one production-ready API and release reliability bundle: typed compact registry discovery with optional semantic decoding and filters, complete docs/help/schema/live acceptance, latest managed pm-changelog, and clean-runner publication verification parity. Raw live inventories and credentials remain external and redacted."

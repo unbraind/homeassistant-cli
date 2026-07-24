@@ -26,6 +26,14 @@ const sampleEntities = [
   { entity_id: "switch.fan", name: "Fan", platform: "zha", area_id: null },
 ];
 
+const sampleDisplayEntities = {
+  entity_categories: { "0": "config", "1": "diagnostic" },
+  entities: [
+    { ei: "light.kitchen", pl: "hue", ai: "kitchen", di: "dev1", en: "Kitchen Light" },
+    { ei: "switch.fan", pl: "zha" },
+  ],
+};
+
 const sampleDevices = [
   { id: "dev1", name: "Hue Bridge", manufacturer: "Philips", model: "Bridge v2" },
 ];
@@ -67,6 +75,16 @@ describe("WebSocketRegistryClient", () => {
       expect(result).toHaveLength(2);
       expect(result[0]?.entity_id).toBe("light.kitchen");
       expect(mockCall).toHaveBeenCalledWith("config/entity_registry/list");
+    });
+  });
+
+  describe("getEntityRegistryForDisplay", () => {
+    it("fetches the compact entity registry display contract via WebSocket", async () => {
+      mockCall.mockResolvedValueOnce(sampleDisplayEntities);
+      const result = await client.getEntityRegistryForDisplay();
+      expect(result.entities).toHaveLength(2);
+      expect(result.entity_categories).toEqual({ "0": "config", "1": "diagnostic" });
+      expect(mockCall).toHaveBeenCalledWith("config/entity_registry/list_for_display");
     });
   });
 

@@ -536,12 +536,19 @@ Options:
   --floors        List floor registry
   --labels        List label registry
   --categories    List category registry
+  --display       Use the compact enabled-entity display registry
+  --decode-display
+                  Expand compact display keys into descriptive field names
   -d, --domain <domain>      Filter by domain (entities only)
   --device-id <id>           Filter by device ID (entities only)
   --area-id <id>             Filter by area ID (devices/entities)
+  --limit <n>                Maximum compact display entities to return
   --count                    Only return count
 
 # Examples
+hassio registries --display --limit 25                 # Lowest-token enabled entities
+hassio registries --decode-display -d light --limit 10 # Descriptive compact rows
+hassio registries --display --count                    # Count enabled display rows
 hassio registries --entities --count                    # Count entities
 hassio registries --devices --area-id area_living_room  # Devices in area
 hassio registries --areas                               # List areas
@@ -549,7 +556,14 @@ hassio registries --entities -d light                   # Light entities only
 hassio registries                                       # All registries
 ```
 
-> **Note**: Uses WebSocket API (`config/entity_registry/list`, etc.). Falls back to state-based area discovery if WebSocket unavailable.
+`--display` uses the official
+`config/entity_registry/list_for_display` WebSocket command. Home Assistant
+omits disabled entities and abbreviates fields to reduce bandwidth. Add
+`--decode-display` when descriptive keys are more important than minimum token
+cost. Domain, device, area, count, and limit filters work without downloading
+the full registry through the CLI.
+
+> **Note**: Full registry modes use WebSocket API (`config/entity_registry/list`, etc.). Area discovery falls back to entity states if WebSocket registry access is unavailable.
 
 ### Registry CRUD Operations
 

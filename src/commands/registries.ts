@@ -7,6 +7,7 @@ import { formatOutput } from "../formatters/index.js";
 import { withExit } from "../utils/exit.js";
 import { resolveCommandOptions } from "../utils/command-helpers.js";
 import type { OutputFormat, HaState } from "../types/index.js";
+import { outputEntityRegistryDisplay } from "./registry-display.js";
 
 interface RegistryOptions {
   entities?: boolean;
@@ -21,9 +22,12 @@ interface RegistryOptions {
   label?: boolean;
   categories?: boolean;
   category?: boolean;
+  display?: boolean;
+  decodeDisplay?: boolean;
   domain?: string;
   deviceId?: string;
   areaId?: string;
+  limit?: string;
   count?: boolean;
 }
 
@@ -42,9 +46,12 @@ export function createRegistriesCommand(): Command {
     .option("--label", "Alias for --labels")
     .option("--categories", "List category registry")
     .option("--category", "Alias for --categories")
+    .option("--display", "Use the compact enabled-entity display registry")
+    .option("--decode-display", "Expand compact display keys into descriptive field names")
     .option("-d, --domain <domain>", "Filter by domain (for entities)")
     .option("--device-id <id>", "Filter by device ID (for entities)")
     .option("--area-id <id>", "Filter by area ID (for devices/entities)")
+    .option("--limit <n>", "Maximum compact display entities to return")
     .option("--count", "Only return count");
 
   command.action(withExit(async (options: RegistryOptions, cmd) => {
@@ -58,10 +65,14 @@ export function createRegistriesCommand(): Command {
     const useFloors = options.floors || options.floor;
     const useLabels = options.labels || options.label;
     const useCategories = options.categories || options.category;
-    const showAll = !useEntities && !useDevices && !useAreas && !useFloors && !useLabels && !useCategories;
+    const useDisplay = options.display || options.decodeDisplay;
+    const showAll = !useEntities && !useDevices && !useAreas && !useFloors
+      && !useLabels && !useCategories && !useDisplay;
 
     try {
-      if (showAll || useEntities) {
+      if (useDisplay) {
+        await outputEntityRegistryDisplay(wsClient, options, format);
+      } else if (showAll || useEntities) {
         await outputEntityRegistry(wsClient, options, format);
       }
       if (showAll || useDevices) {

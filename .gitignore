@@ -43,7 +43,5 @@ temp/
 # pm-cli:runtime-cache:start
 .agents/pm/runtime/
 .agents/pm/search/*
-!.agents/pm/search/.gitkeep
 .agents/pm/locks/*
-!.agents/pm/locks/.gitkeep
 # pm-cli:runtime-cache:end

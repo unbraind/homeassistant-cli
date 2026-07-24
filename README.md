@@ -34,6 +34,7 @@ Public release `v2026.3.6` was published on March 6, 2026. See:
 - **Fast Topology Snapshot** - `hassio summary` returns domain/state counts for quick agent planning
 - **Search Endpoint Fallback** - Falls back to local entity-state search when `/api/search` is unavailable
 - **Service Schema Intelligence** - Supports modern object-style `/api/services` payloads with filter/flat/count modes
+- **Compact Registry Discovery** - Uses Home Assistant's enabled-entity display contract for low-bandwidth agent context
 - **WebSocket API Coverage** - Generic passthrough plus typed targets, automation validation, panels, heartbeat, signed paths, and voice-assistant exposure
 - **Supervisor API Coverage** - Generic `supervisor api` passthrough + common shortcuts (addons, host, logs)
 - **Full TypeScript Support** - Complete type safety throughout
@@ -446,6 +447,19 @@ hassio search "temp" --quick
 
 # Search with filters
 hassio search "sensor" -d sensor --count
+```
+
+### Compact Registry Discovery
+
+```bash
+# Count enabled registry entries before fetching context
+hassio registries --display --count
+
+# Lowest-token compact entity metadata
+hassio registries --display --domain light --limit 25
+
+# Descriptive keys for JSON pipelines
+hassio registries --decode-display --area-id kitchen --limit 25 --format json-compact
 ```
 
 ### WebSocket & Supervisor

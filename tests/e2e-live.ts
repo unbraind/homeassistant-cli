@@ -114,6 +114,35 @@ assert(typeof services["total_services"] === "number", "invalid services --count
 const entities = parseJson(run(["entities", "--count", "--format", "json"])) as Record<string, unknown>;
 assert(typeof entities["count"] === "number", "invalid entities --count JSON shape");
 
+const displayCount = parseJson(
+  run(["registries", "--display", "--count", "--format", "json"])
+) as Record<string, unknown>;
+assert(
+  typeof displayCount["entity_registry_display_count"] === "number",
+  "invalid compact registry count shape",
+);
+
+for (const format of ["toon", "json", "json-compact", "yaml", "table", "markdown"] as const) {
+  const compactOut = run(["registries", "--display", "--limit", "1", "--format", format]);
+  if (format === "json" || format === "json-compact") {
+    const compactDisplay = parseJson(compactOut) as Record<string, unknown>;
+    assert(Array.isArray(compactDisplay["entity_registry_display"]), "invalid compact registry rows");
+    assert(typeof compactDisplay["entity_categories"] === "object", "invalid compact registry categories");
+  }
+  if (format === "yaml") {
+    assert(typeof parseYaml(compactOut) === "object", "invalid compact registry YAML");
+  }
+  assert(compactOut.length > 0, `empty compact registry output for format ${format}`);
+}
+
+const decodedDisplay = parseJson(
+  run(["registries", "--decode-display", "--limit", "1", "--format", "json"])
+) as Record<string, unknown>;
+const decodedRows = decodedDisplay["entity_registry_display"] as Array<Record<string, unknown>> | undefined;
+assert(Array.isArray(decodedRows), "invalid decoded compact registry rows");
+assert(typeof decodedRows[0]?.["entity_id"] === "string", "invalid decoded compact registry entity ID");
+assert(typeof decodedRows[0]?.["platform"] === "string", "invalid decoded compact registry platform");
+
 const configEntries = parseJson(run(["config-entries", "--count", "--format", "json"])) as Record<string, unknown>;
 assert(typeof configEntries["count"] === "number", "invalid config-entries --count JSON shape");
 

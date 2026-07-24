@@ -1,0 +1,63 @@
+id: hac-zwvk
+title: Tag publication runner omits mandatory release verification tools
+description: "The v2026.7.23 tag-driven Release workflow reaches bun run release:verify on a clean runner without provisioning ripgrep or Trivy, so the mandatory gate exits 127 before changelog, package smoke, publication, or release creation."
+type: Issue
+status: in_progress
+priority: 0
+tags[6]: github-actions,production-follow-up,publish,release,security,trivy
+created_at: "2026-07-24T21:02:44.626Z"
+updated_at: "2026-07-24T21:26:06.502Z"
+deadline: "2026-07-25T21:02:44.626Z"
+assignee: codex-root
+author: codex-root
+estimated_minutes: 90
+acceptance_criteria: "Tag-driven publish provisions ripgrep, ShellCheck, and pinned Trivy before release:verify; Workflow YAML, ShellCheck, local release verifier, and a hosted non-publishing rehearsal prove the complete clean-runner contract; Open GitHub blocker 68 is closed only after successful exact-head hosted evidence"
+definition_of_ready: "Failed Release run 29982873926 and workflow source identify missing binaries, not a product test failure"
+goal: lossless-automatic-releases
+objective: publication-runner-verifier-parity
+value: Restore reliable provenance publication without weakening mandatory gates.
+impact: Prevents tagged releases from being stranded after the release commit and tag are created.
+outcome: Preparation and publication runners install the same verifier prerequisites.
+why_now: "v2026.7.23 exists but its tag-driven release failed before publication, leaving GitHub issue 68 open."
+parent: hac-r17v
+reviewer: unbraind
+risk: high
+confidence: 100
+sprint: 2026-07-compact-registry
+release: 2026.7.24
+reporter: codex-root
+severity: high
+environment: GitHub Actions Release workflow on clean ubuntu-latest runner
+repro_steps: Run publish.yml for v2026.7.23; Verify release quality gates reaches scripts/release/verify-release.sh and exits 127 when rg and trivy are invoked.
+expected_result: The tag-driven runner provisions every mandatory verifier binary and proceeds to changelog/package/publication gates.
+actual_result: "All 1209 tests and 100 percent coverage pass, then release:verify fails because rg and trivy are not installed."
+affected_version: 2026.7.23
+component: release-automation
+regression: false
+customer_impact: The package and GitHub release are not published even though the version commit and tag exist.
+dependencies[5]{id,kind,created_at,author,source_kind}:
+  hac-ak9g,related,"2026-07-24T21:02:44.626Z",codex-root,null
+  hac-l25p,related,"2026-07-24T21:02:44.626Z",codex-root,null
+  hac-m1kj,related,"2026-07-24T21:02:44.626Z",codex-root,null
+  hac-s43s,discovered_from,"2026-07-24T21:02:44.626Z",codex-root,null
+  hac-ahl7,related,"2026-07-24T21:03:32.332Z",codex-root,null
+comments[2]{created_at,author,text}:
+  "2026-07-24T21:02:44.626Z",codex-root,"This is not a duplicate of hac-l25p: that issue repaired pm-changelog and verifier provisioning in auto-release.yml; this production failure is in the separate tag-driven publish.yml runner."
+  "2026-07-24T21:16:56.796Z",codex-root,"publish.yml now provisions ripgrep, ShellCheck, and pinned Trivy before release:verify. Manual dispatch defaults to dry_run=true and statically guards all three irreversible publication/release steps; focused workflow contract and YAML parsing pass."
+notes[2]{created_at,author,text}:
+  "2026-07-24T21:02:44.626Z",codex-root,Do not rerun publication until the workflow fix is merged; local and PR verification must remain non-publishing.
+  "2026-07-24T21:16:58.104Z",codex-root,Hosted proof will use workflow_dispatch against an existing tag with dry_run=true after the branch is pushed; this exercises the independent runner without npm publication or GitHub release creation.
+learnings[1]{created_at,author,text}:
+  "2026-07-24T21:02:44.626Z",codex-root,A downstream tag workflow has an independent clean-runner environment; provisioning tools in the parent auto-release job does not carry into publish.yml.
+files[2]{path,scope,note}:
+  .github/workflows/publish.yml,project,Missing release verifier prerequisites
+  tests/release-workflow-contract.test.ts,project,Clean-runner tooling and dry-run safety contract
+tests[2]{command,scope,timeout_seconds,note}:
+  "bun run release:verify",project,2400,Mandatory aggregate gate remains strict
+  "ruby -ryaml -e \"Dir.glob(%q(.github/workflows/*.yml)).each { |f| YAML.load_file(f) }\"",project,60,Workflow syntax parse
+test_runs[2]{run_id,kind,status,started_at,finished_at,recorded_at,passed,failed,skipped}:
+  test-local-mrzg92jq-hu2l0n,test,failed,"2026-07-24T21:21:18.942Z","2026-07-24T21:25:46.406Z","2026-07-24T21:25:46.406Z",1,1,0
+  test-local-mrzg9i16-6zp2pc,test,passed,"2026-07-24T21:26:05.509Z","2026-07-24T21:26:06.474Z","2026-07-24T21:26:06.474Z",1,0,0
+docs[1]{path,scope,note}:
+  docs/RELEASING.md,project,Clean-runner publication contract
+body: "## Production evidence\\n\\nThe exact tagged release run completed all tests and 100 percent coverage, then failed in security step 8 because rg and trivy were absent. The auto-release preparation workflow already provisions ripgrep, ShellCheck, and pinned Trivy; publish.yml must share that prerequisite contract."

@@ -48,12 +48,24 @@ There is one package publication, not two registries. Bun installs JavaScript pa
 
 The tag-driven `.github/workflows/publish.yml` therefore:
 
-1. checks that the tag, `package.json`, and Commander version match;
-2. runs release verification, generated-changelog verification, and packed `npx`/`bunx` smoke tests;
-3. publishes once to npm with GitHub provenance (or safely skips an already published version);
-4. waits for registry visibility and installs the exact version in separate npm and Bun temporary projects;
-5. verifies `npx homeassistant-cli --version` and `bunx homeassistant-cli --version` both return the tag version;
-6. creates the GitHub release only after those checks pass.
+1. provisions `ripgrep`, ShellCheck, and pinned Trivy on its independent clean runner;
+2. checks that the tag, `package.json`, and Commander version match;
+3. runs release verification, generated-changelog verification, and packed `npx`/`bunx` smoke tests;
+4. publishes once to npm with GitHub provenance (or safely skips an already published version);
+5. waits for registry visibility and installs the exact version in separate npm and Bun temporary projects;
+6. verifies `npx homeassistant-cli --version` and `bunx homeassistant-cli --version` both return the tag version;
+7. creates the GitHub release only after those checks pass.
+
+The Auto Release and tag-driven Release jobs do not share a runner. Every
+workflow that invokes `bun run release:verify` must independently install its
+required external binaries; a successful preparation job cannot provision the
+downstream tag job.
+
+Manual `Release` dispatches default to `dry_run: true`. They check out the
+selected existing tag and run every pre-publication gate, including the packed
+npx/bunx smoke, but skip npm publication, published-registry verification, and
+GitHub release creation. Only tag-push runs or an explicit manual
+`dry_run: false` selection can publish.
 
 GitHub requires `id-token: write` for npm provenance and the npm registry authentication configured by `actions/setup-node`; the workflow grants only `contents: write` and `id-token: write`.
 
