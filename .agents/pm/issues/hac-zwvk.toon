@@ -2,13 +2,13 @@ id: hac-zwvk
 title: Tag publication runner omits mandatory release verification tools
 description: "The v2026.7.23 tag-driven Release workflow reaches bun run release:verify on a clean runner without provisioning ripgrep or Trivy, so the mandatory gate exits 127 before changelog, package smoke, publication, or release creation."
 type: Issue
-status: in_progress
+status: closed
 priority: 0
 tags[6]: github-actions,production-follow-up,publish,release,security,trivy
 created_at: "2026-07-24T21:02:44.626Z"
-updated_at: "2026-07-24T21:26:06.502Z"
+updated_at: "2026-07-24T21:49:48.834Z"
 deadline: "2026-07-25T21:02:44.626Z"
-assignee: codex-root
+closed_at: "2026-07-24T21:49:47.464Z"
 author: codex-root
 estimated_minutes: 90
 acceptance_criteria: "Tag-driven publish provisions ripgrep, ShellCheck, and pinned Trivy before release:verify; Workflow YAML, ShellCheck, local release verifier, and a hosted non-publishing rehearsal prove the complete clean-runner contract; Open GitHub blocker 68 is closed only after successful exact-head hosted evidence"
@@ -29,9 +29,11 @@ reporter: codex-root
 severity: high
 environment: GitHub Actions Release workflow on clean ubuntu-latest runner
 repro_steps: Run publish.yml for v2026.7.23; Verify release quality gates reaches scripts/release/verify-release.sh and exits 127 when rg and trivy are invoked.
+resolution: "Fixed publish-runner verifier provisioning and added an explicit safe rehearsal contract, with clean-checkout PM runtime initialization discovered and fixed during CI."
 expected_result: The tag-driven runner provisions every mandatory verifier binary and proceeds to changelog/package/publication gates.
-actual_result: "All 1209 tests and 100 percent coverage pass, then release:verify fails because rg and trivy are not installed."
+actual_result: "Release workflow now provisions ripgrep, ShellCheck, and pinned Trivy; hosted dry-run 30128314175 passed all pre-publication gates and skipped every irreversible step; PR 69 merged as d902dc0 and GitHub issue 68 closed automatically."
 affected_version: 2026.7.23
+fixed_version: 2026.7.24
 component: release-automation
 regression: false
 customer_impact: The package and GitHub release are not published even though the version commit and tag exist.
@@ -47,8 +49,9 @@ comments[2]{created_at,author,text}:
 notes[2]{created_at,author,text}:
   "2026-07-24T21:02:44.626Z",codex-root,Do not rerun publication until the workflow fix is merged; local and PR verification must remain non-publishing.
   "2026-07-24T21:16:58.104Z",codex-root,Hosted proof will use workflow_dispatch against an existing tag with dry_run=true after the branch is pushed; this exercises the independent runner without npm publication or GitHub release creation.
-learnings[1]{created_at,author,text}:
+learnings[2]{created_at,author,text}:
   "2026-07-24T21:02:44.626Z",codex-root,A downstream tag workflow has an independent clean-runner environment; provisioning tools in the parent auto-release job does not carry into publish.yml.
+  "2026-07-24T21:49:45.520Z",codex-root,"A clean local worktree can hide absent ignored runtime directories; strict PM health must be proven from a fresh hosted checkout, so quality:pm now initializes those directories without tracking cache files."
 files[2]{path,scope,note}:
   .github/workflows/publish.yml,project,Missing release verifier prerequisites
   tests/release-workflow-contract.test.ts,project,Clean-runner tooling and dry-run safety contract
@@ -60,4 +63,5 @@ test_runs[2]{run_id,kind,status,started_at,finished_at,recorded_at,passed,failed
   test-local-mrzg9i16-6zp2pc,test,passed,"2026-07-24T21:26:05.509Z","2026-07-24T21:26:06.474Z","2026-07-24T21:26:06.474Z",1,0,0
 docs[1]{path,scope,note}:
   docs/RELEASING.md,project,Clean-runner publication contract
+close_reason: "Merged in PR 69 at master d902dc0; hosted Release dry-run 30128314175 passed with no publication, every CI gate was green, and GitHub issue 68 is closed."
 body: "## Production evidence\\n\\nThe exact tagged release run completed all tests and 100 percent coverage, then failed in security step 8 because rg and trivy were absent. The auto-release preparation workflow already provisions ripgrep, ShellCheck, and pinned Trivy; publish.yml must share that prerequisite contract."
