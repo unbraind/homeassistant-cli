@@ -1,5 +1,20 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- Add token-efficient registry discovery and release-runner parity ([hac-r17v](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/features/hac-r17v.toon))
+
+### Security
+
+- Tag publication runner omits mandatory release verification tools ([hac-zwvk](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/issues/hac-zwvk.toon))
+
+### Other
+
+- Compact registry and publication parity delivery plan ([hac-yo48](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/plans/hac-yo48.toon))
+- Implement compact entity registry display discovery ([hac-ahl7](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-ahl7.toon))
+
 ## 2026.7.23 - 2026-07-23
 
 ### Added

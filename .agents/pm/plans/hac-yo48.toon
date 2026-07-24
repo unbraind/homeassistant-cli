@@ -2,13 +2,13 @@ id: hac-yo48
 title: Compact registry and publication parity delivery plan
 description: "Ordered official research, typed implementation, clean-runner repair, exhaustive validation, exact-head review, merge, and closeout for hac-r17v."
 type: Plan
-status: in_progress
+status: closed
 priority: 0
 tags[6]: delivery,entity-registry,live-e2e,plan,release,verification
 created_at: "2026-07-24T21:02:02.512Z"
-updated_at: "2026-07-24T21:35:30.472Z"
+updated_at: "2026-07-24T21:50:24.733Z"
 deadline: "2026-07-26T21:02:02.512Z"
-assignee: codex-root
+closed_at: "2026-07-24T21:50:23.431Z"
 author: codex-root
 estimated_minutes: 420
 acceptance_criteria: All seven steps complete with linked evidence and no private live values
@@ -25,6 +25,9 @@ risk: high
 confidence: 96
 sprint: 2026-07-compact-registry
 release: 2026.7.24
+resolution: "Executed the full approved plan with official/live research, typed implementation, runner repair, strict local/hosted gates, bot inventory, and merged-head closeout."
+expected_result: "Complete the approved compact-registry and publication-parity plan through implementation, strict verification, exact-head review convergence, merge, and terminal PM/changelog evidence."
+actual_result: "All seven steps completed; PR 69 merged as d902dc0, Release rehearsal 30128314175 passed without publication, GitHub issue 68 closed, and child task/issue acceptance is terminal."
 dependencies[6]{id,kind,created_at,author,source_kind}:
   hac-6asb,related,"2026-07-24T21:02:02.512Z",null,null
   hac-7q84,related,"2026-07-24T21:02:02.512Z",null,null
@@ -44,6 +47,7 @@ tests[1]{command,scope,timeout_seconds,note}:
   "bun run release:verify",project,2400,Terminal local gate
 docs[1]{path,scope,note}:
   docs/PR_REVIEW_LOOP.md,project,Hosted review convergence procedure
+close_reason: "All seven approved steps completed with exact merged-master d902dc0 evidence, terminal child items, hosted non-publishing release proof, and complete PR check/reviewer inventory."
 plan_mode: approved
 plan_scope: Compact entity registry discovery and publication runner reliability
 plan_harness: codex
@@ -110,18 +114,23 @@ plan_steps[7]:
   - id: plan-step-006
     order: 6
     title: Publish PR and converge every exact-head bot and check
-    status: in_progress
+    status: completed
     created_at: "2026-07-24T21:02:02.829Z"
-    updated_at: "2026-07-24T21:35:30.471Z"
+    updated_at: "2026-07-24T21:49:30.003Z"
     owner: codex-root
+    evidence: "PR 69 exact head 8d594c9 passed every required GitHub check after the clean-checkout PM fix. Hosted Release rehearsal 30128314175 passed without publication. Final paginated inventory showed zero review threads/findings; every Gemini, CodeRabbit, Codecov, and Sourcery artifact was read, reacted to, and explicitly acknowledged; unavailable/rate-limited reviewers were documented."
+    completed_at: "2026-07-24T21:49:30.003Z"
     linked_items[1]{id,kind,note}:
       hac-r17v,verifies,Exact-head review convergence
   - id: plan-step-007
     order: 7
     title: Merge and close PM with exact-master evidence
-    status: pending
+    status: completed
     created_at: "2026-07-24T21:02:02.829Z"
-    updated_at: "2026-07-24T21:03:28.849Z"
+    updated_at: "2026-07-24T21:50:22.084Z"
+    owner: codex-root
+    evidence: "PR 69 squash-merged to master d902dc03a0aa330ba735bac09e831463ee9fe6fb; origin/master matched exactly, GitHub issue 68 closed, hosted non-publishing release proof passed, and implementation task hac-ahl7 plus release issue hac-zwvk were closed and released with strict evidence."
+    completed_at: "2026-07-24T21:50:20.906Z"
     linked_items[1]{id,kind,note}:
       hac-r17v,verifies,Merged-master closeout
 body: One ordered end-to-end plan. Credentials and raw live inventories remain external; evidence is schema-level and redacted.

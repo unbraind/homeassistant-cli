@@ -2,13 +2,13 @@ id: hac-r17v
 title: Add token-efficient registry discovery and release-runner parity
 description: "Expose the official compact entity-registry display contract for agent workflows, preserve full typed and passthrough access, update the managed changelog package, and make tag-driven publication provision the same mandatory verifier toolchain as automatic release preparation."
 type: Feature
-status: in_progress
+status: closed
 priority: 0
 tags[8]: agents,api,entity-registry,github-actions,home-assistant,pm-changelog,release,websocket
 created_at: "2026-07-24T21:01:24.761Z"
-updated_at: "2026-07-24T21:41:13.785Z"
+updated_at: "2026-07-24T21:50:45.212Z"
 deadline: "2026-07-26T21:01:24.761Z"
-assignee: codex-root
+closed_at: "2026-07-24T21:50:43.614Z"
 author: codex-root
 estimated_minutes: 420
 acceptance_criteria: "hassio registries exposes the official compact display endpoint with token-efficient and decoded output, filtering, count, and limit behavior; Full source coverage remains 100/100/100/100, docstrings remain complete, every command help path and every formatter remains valid, and live read-only E2E passes; Tag-driven publish installs every tool required by release:verify, latest pm-changelog generates the canonical changelog, and hosted rehearsal succeeds without publishing a new version"
@@ -25,6 +25,9 @@ risk: high
 confidence: 96
 sprint: 2026-07-compact-registry
 release: 2026.7.24
+resolution: "Delivered the cohesive API and release-reliability bundle with complete documentation, 100/100/100/100 coverage, live built-binary proof, exact-head review inventory, and terminal child lineage."
+expected_result: "Agents gain an official token-efficient registry interface and release publication uses the same strict verifier prerequisites as automatic preparation, with no publication performed during delivery."
+actual_result: "PR 69 merged as d902dc0 with compact raw/decoded registry discovery, latest pm-changelog 2026.7.24, strict clean-checkout PM health, and successful hosted Release rehearsal 30128314175; all checks passed and issue 68 closed."
 dependencies[3]{id,kind,created_at,author,source_kind}:
   hac-n0ix,discovered_from,"2026-07-24T21:01:24.761Z",codex-root,null
   hac-suj3,related,"2026-07-24T21:01:24.761Z",codex-root,null
@@ -38,8 +41,9 @@ comments[6]{created_at,author,text}:
   "2026-07-24T21:41:13.784Z",codex-root,"CI static-contracts exposed a clean-checkout-only PM invariant: ignored runtime directories do not exist after clone. The quality:pm entrypoint now creates locks/search immediately before strict validation, preserving untracked runtime state while making local and hosted health behavior identical; a static contract test prevents regression."
 notes[1]{created_at,author,text}:
   "2026-07-24T21:01:24.761Z",codex-root,"Privacy boundary: keep token, credentials, raw live registry rows, user identifiers, signed paths, and instance inventory out of PM, git, logs, and GitHub."
-learnings[1]{created_at,author,text}:
+learnings[2]{created_at,author,text}:
   "2026-07-24T21:01:24.761Z",codex-root,Official Home Assistant docs now designate config/entity_registry/list_for_display as the bandwidth-efficient enabled-entity contract; the live server returns compact documented field keys.
+  "2026-07-24T21:50:42.108Z",codex-root,"Repository health gates that depend on ignored directories need explicit runtime initialization; tracked placeholders satisfy clean checkouts but violate current PM integrity, while mkdir at the gate preserves both contracts."
 files[6]{path,scope,note}:
   .github/workflows/publish.yml,project,Tag publication verifier provisioning
   .gitignore,project,null
@@ -53,4 +57,5 @@ docs[3]{path,scope,note}:
   docs/API.md,project,Registry API contract
   docs/LLM_INTEGRATION.md,project,Agent registry guidance
   docs/RELEASING.md,project,Publication runner contract
+close_reason: "PR 69 merged to master d902dc0; compact registry discovery and release-runner parity are production-ready, 1,221 tests and 100/100/100/100 coverage passed, hosted dry-run published nothing, and all child work is terminal."
 body: "## Scope\\n\\nDeliver one production-ready API and release reliability bundle: typed compact registry discovery with optional semantic decoding and filters, complete docs/help/schema/live acceptance, latest managed pm-changelog, and clean-runner publication verification parity. Raw live inventories and credentials remain external and redacted."
