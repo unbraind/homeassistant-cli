@@ -6,7 +6,7 @@ status: in_progress
 priority: 0
 tags[4]: agents,automation,implementation,websocket
 created_at: "2026-07-25T00:18:21.933Z"
-updated_at: "2026-07-25T01:03:41.341Z"
+updated_at: "2026-07-25T01:05:01.457Z"
 deadline: "2026-07-28T00:18:21.933Z"
 assignee: codex-root
 author: codex-root
@@ -34,11 +34,12 @@ dependencies[8]{id,kind,created_at,author,source_kind}:
   hac-suj3,related,"2026-07-25T00:18:21.933Z",null,null
   hac-sv5f,discovered_from,"2026-07-25T00:18:21.933Z",null,null
   hac-vooo,related,"2026-07-25T00:18:21.933Z",null,null
-comments[4]{created_at,author,text}:
+comments[5]{created_at,author,text}:
   "2026-07-25T00:18:21.933Z",codex-root,"Starting only this concrete task; Feature hac-r2z9 and Plan hac-1sdd stay open, not in progress."
   "2026-07-25T00:29:47.990Z",codex-root,"Focused TypeScript, ESLint, file-size, 119/119 docstrings, 96 WebSocket tests, recursive help, built live trigger subscription, and built live ping pass. Proceeding to full four-metric and release verification."
   "2026-07-25T00:39:33.591Z",codex-root,Mandatory dependency gate discovered GHSA-mh99-v99m-4gvg. Canonical remediation is tracked by hac-jo1v; override and lock now resolve patched brace-expansion 5.0.8 and bun audit is clean.
   "2026-07-25T01:03:41.340Z",codex-root,"Final PM-linked acceptance is green: package-installed npx/bunx, focused 73-test WebSocket suite, live read-only Home Assistant smoke, and complete release verifier. Modern trigger-key syntax was additionally verified against live Home Assistant 2026.4.4. Preparing the review branch and exact-head hosted checks."
+  "2026-07-25T01:05:01.457Z",codex-root,"PR #71 opened from exact head e81aca4 with durable master-target PM links: https://github.com/unbraind/homeassistant-cli/pull/71. Starting protected checks and the Greptile, Gemini, and CodeRabbit full-review cycle."
 notes[1]{created_at,author,text}:
   "2026-07-25T00:18:21.933Z",codex-root,The live acceptance trigger uses a synthetic event type and does not fire or mutate Home Assistant.
 learnings[1]{created_at,author,text}:
