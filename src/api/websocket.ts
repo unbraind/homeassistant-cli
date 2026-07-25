@@ -71,33 +71,41 @@ export class HomeAssistantWebSocketClient {
     socket.on("message", (raw: WebSocket.RawData) => {
       const parsed = this.parseMessage(raw.toString());
       if (!parsed) return;
+      const messages = Array.isArray(parsed) ? parsed : [parsed];
 
-      if (parsed.type === "event" && typeof parsed.id === "number") {
-        const events = this.eventBuffers.get(parsed.id);
-        if (events) {
-          events.push(parsed["event"] ?? parsed);
-          return;
+      for (const message of messages) {
+        if (message.type === "event" && typeof message.id === "number") {
+          const events = this.eventBuffers.get(message.id);
+          if (events) {
+            events.push(message["event"] ?? message);
+            continue;
+          }
         }
-      }
 
-      if (typeof parsed.id === "number") {
-        const pending = this.pending.get(parsed.id);
-        if (!pending) return;
+        if (typeof message.id !== "number") continue;
+        const pending = this.pending.get(message.id);
+        if (!pending) continue;
         clearTimeout(pending.timer);
-        this.pending.delete(parsed.id);
+        this.pending.delete(message.id);
 
-        if (parsed.success === false) {
-          pending.reject(new Error(typeof parsed.error === "string" ? parsed.error : JSON.stringify(parsed.error)));
-          return;
+        if (message.success === false) {
+          pending.reject(new Error(
+            typeof message.error === "string" ? message.error : JSON.stringify(message.error)
+          ));
+          continue;
         }
 
-        if ("result" in parsed) {
-          pending.resolve(parsed["result"]);
-          return;
+        if ("result" in message) {
+          pending.resolve(message["result"]);
+          continue;
         }
 
-        pending.resolve(parsed);
+        pending.resolve(message);
       }
+    });
+
+    await this.sendAndWait(this.nextId++, "supported_features", {
+      features: { coalesce_messages: 1 },
     });
   }
 
@@ -125,13 +133,41 @@ export class HomeAssistantWebSocketClient {
     maxEvents?: number;
     waitMs?: number;
   }): Promise<unknown[]> {
+    const payload = options?.eventType ? { event_type: options.eventType } : undefined;
+    return this.collectSubscription(
+      "subscribe_events",
+      payload,
+      options?.maxEvents ?? 10,
+      options?.waitMs ?? 5000,
+    );
+  }
+
+  async subscribeTrigger(options: {
+    trigger: Record<string, unknown> | Record<string, unknown>[];
+    variables?: Record<string, unknown>;
+    maxEvents?: number;
+    waitMs?: number;
+  }): Promise<unknown[]> {
+    const payload: Record<string, unknown> = { trigger: options.trigger };
+    if (options.variables) payload["variables"] = options.variables;
+    return this.collectSubscription(
+      "subscribe_trigger",
+      payload,
+      options.maxEvents ?? 10,
+      options.waitMs ?? 5000,
+    );
+  }
+
+  private async collectSubscription(
+    type: "subscribe_events" | "subscribe_trigger",
+    payload: Record<string, unknown> | undefined,
+    maxEvents: number,
+    waitMs: number,
+  ): Promise<unknown[]> {
     await this.connect();
     const id = this.nextId++;
-    const maxEvents = options?.maxEvents ?? 10;
-    const waitMs = options?.waitMs ?? 5000;
-
     this.eventBuffers.set(id, []);
-    await this.sendAndWait(id, "subscribe_events", options?.eventType ? { event_type: options.eventType } : undefined);
+    await this.sendAndWait(id, type, payload);
 
     await new Promise((resolve) => setTimeout(resolve, waitMs));
     const events = this.eventBuffers.get(id) as unknown[];
@@ -139,7 +175,7 @@ export class HomeAssistantWebSocketClient {
     try {
       await this.call("unsubscribe_events", { subscription: id });
     } catch {
-      // Ignore unsubscribe failures; subscription will be closed on socket close.
+      // Closing the socket also removes a subscription if explicit cleanup fails.
     }
 
     this.eventBuffers.delete(id);
@@ -166,9 +202,15 @@ export class HomeAssistantWebSocketClient {
     return response;
   }
 
-  private parseMessage(raw: string): WsEnvelope | null {
+  private parseMessage(raw: string): WsEnvelope | WsEnvelope[] | null {
     try {
-      return JSON.parse(raw) as WsEnvelope;
+      const parsed = JSON.parse(raw) as unknown;
+      if (Array.isArray(parsed)) {
+        return parsed.filter(
+          (value): value is WsEnvelope => value !== null && typeof value === "object" && !Array.isArray(value)
+        );
+      }
+      return parsed !== null && typeof parsed === "object" ? parsed as WsEnvelope : null;
     } catch {
       return null;
     }

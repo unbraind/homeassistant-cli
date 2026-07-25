@@ -1,0 +1,153 @@
+id: hac-1sdd
+title: Coalesced trigger subscription delivery plan
+description: "Ordered research, protocol implementation, typed command UX, documentation, exhaustive verification, exact-head review, merge, and tracker closeout for hac-r2z9."
+type: Plan
+status: open
+priority: 0
+tags[4]: agents,delivery-plan,home-assistant,websocket
+created_at: "2026-07-25T00:17:03.734Z"
+updated_at: "2026-07-25T01:03:40.502Z"
+deadline: "2026-08-01T00:17:03.734Z"
+assignee: unbraind
+author: codex-root
+estimated_minutes: 360
+acceptance_criteria: All seven ordered steps have linked evidence with no private live values
+definition_of_ready: Feature hac-r2z9 is researched and live-confirmed
+goal: best-agent-home-assistant-cli
+objective: auditable-websocket-streaming-delivery
+value: Give future agents a replayable end-to-end delivery record.
+impact: "Connect protocol choices, code, tests, docs, release, review, and merged-head proof in one graph."
+outcome: Reviewed merged feature and terminal exact-master evidence.
+why_now: The latest stable protocol gap is confirmed and untracked.
+parent: hac-r2z9
+reviewer: unbraind
+risk: high
+confidence: 98
+sprint: 2026-07-websocket-streaming
+release: 2026.7.25
+dependencies[7]{id,kind,created_at,author,source_kind}:
+  hac-6asb,related,"2026-07-25T00:17:03.734Z",null,null
+  hac-7q84,related,"2026-07-25T00:17:03.734Z",null,null
+  hac-r17v,related,"2026-07-25T00:17:03.734Z",null,null
+  hac-r2z9,parent,"2026-07-25T00:17:03.734Z",null,null
+  hac-suj3,related,"2026-07-25T00:17:03.734Z",null,null
+  hac-sv5f,related,"2026-07-25T00:17:03.734Z",null,null
+  hac-yo48,related,"2026-07-25T00:17:03.734Z",null,null
+comments[2]{created_at,author,text}:
+  "2026-07-25T00:17:03.734Z",codex-root,Plan intentionally keeps only the concrete implementation task in progress; the Feature and Plan remain open until terminal delivery.
+  "2026-07-25T00:39:32.205Z",codex-root,"Reported core pm plan creation atomicity defect after three duplicate searches: https://github.com/unbraind/pm-cli/issues/688. The failure occurs after persisting a cross-assignee Plan but before seeded steps are applied; it is not caused by a custom extension."
+notes[1]{created_at,author,text}:
+  "2026-07-25T00:17:03.734Z",codex-root,Do not trigger a publishing release; only non-publishing dry-run/rehearsal is authorized.
+learnings[1]{created_at,author,text}:
+  "2026-07-25T00:17:03.734Z",codex-root,Generic WebSocket passthrough remains the forward-compatibility boundary; typed commands target stable documented contracts.
+files[1]{path,scope,note}:
+  src/api/websocket.ts,project,Primary protocol implementation
+tests[1]{command,scope,timeout_seconds,pm_context_mode}:
+  "bun run release:verify",project,2400,tracker
+docs[1]{path,scope,note}:
+  docs/API.md,project,Canonical command contract
+plan_mode: approved
+plan_resume_context: "Research is complete. Implement supported_features id 1 negotiation, object/array frame dispatch, and typed subscribe-trigger with inline/file JSON plus variables and bounded capture. Preserve generic passthrough and privacy. Then docs, 100 percent gates, non-publishing rehearsal, PR review loop, merge, and closeout."
+plan_decisions[1]{ts,author,decision,rationale,evidence}:
+  "2026-07-25T00:17:53.172Z",codex-root,Negotiate coalesce_messages by default after auth and add typed subscribe-trigger while retaining generic ws call.,"This follows the stable official protocol, lowers framing overhead, and keeps forward compatibility for integration-defined commands.",Official WebSocket docs; Core dev connection/http/commands sources; live supported_features and subscribe_trigger success.
+plan_discoveries[1]{ts,author,text}:
+  "2026-07-25T00:17:52.008Z",codex-root,"Current client starts application messages at id 1, only parses one JSON object per frame, and offers subscribe_events but not admin subscribe_trigger."
+plan_steps[7]:
+  - id: plan-step-001
+    order: 1
+    title: Freeze official and live protocol evidence
+    status: completed
+    created_at: "2026-07-25T00:17:42.397Z"
+    updated_at: "2026-07-25T00:17:50.822Z"
+    owner: codex-root
+    evidence: "Official Home Assistant 2026.7 REST/WebSocket docs, current Core dev command/http sources, current GitHub Actions docs, all-status PM inventory, and redacted live Core 2026.4.4 checks agree on the selected contract."
+    completed_at: "2026-07-25T00:17:50.822Z"
+    files[1]{path,scope,note}:
+      src/api/websocket.ts,project,Existing protocol gap
+    docs[1]{path,scope,note}:
+      docs/API.md,project,Current documented surface
+  - id: plan-step-002
+    order: 2
+    title: Implement feature negotiation and coalesced frame dispatch
+    status: completed
+    created_at: "2026-07-25T00:17:43.423Z"
+    updated_at: "2026-07-25T00:29:30.456Z"
+    owner: codex-root
+    evidence: "Client now sends supported_features id 1 after auth, starts application IDs at 2, and dispatches both single-object and coalesced-array frames; focused transport tests and live ws ping pass."
+    completed_at: "2026-07-25T00:29:30.456Z"
+    linked_items[1]{id,kind}:
+      hac-sv5f,depends_on
+    files[1]{path,scope,note}:
+      src/api/websocket.ts,project,Protocol transport
+    tests[1]{command,path,note}:
+      bun run test -- tests/api-websocket.test.ts,tests/api-websocket.test.ts,Protocol unit coverage
+  - id: plan-step-003
+    order: 3
+    title: Implement typed bounded subscribe-trigger UX
+    status: completed
+    created_at: "2026-07-25T00:17:44.853Z"
+    updated_at: "2026-07-25T00:29:34.683Z"
+    owner: codex-root
+    evidence: "Added validated inline/file trigger JSON, optional variables, positive time/result bounds, admin/read-only help, deterministic unsubscribe, focused tests, and live zero-event acceptance."
+    completed_at: "2026-07-25T00:29:34.683Z"
+    linked_items[1]{id,kind}:
+      hac-suj3,depends_on
+    files[1]{path,scope,note}:
+      src/commands/websocket.ts,project,Typed command surface
+    tests[1]{command,path,note}:
+      bun run test -- tests/websocket-command.test.ts,tests/websocket-command.test.ts,Command coverage
+  - id: plan-step-004
+    order: 4
+    title: Update complete agent API index and release documentation
+    status: completed
+    created_at: "2026-07-25T00:17:46.009Z"
+    updated_at: "2026-07-25T00:29:39.513Z"
+    owner: codex-root
+    evidence: "README, API reference, docs index, LLM integration, and agent optimization guides now document coalescing, admin requirements, privacy, bounds, output envelope, and examples."
+    completed_at: "2026-07-25T00:29:39.513Z"
+    linked_items[1]{id,kind}:
+      hac-r17v,depends_on
+    docs[2]{path,scope,note}:
+      docs/API.md,project,API reference
+      docs/LLM_INTEGRATION.md,project,Agent workflows
+  - id: plan-step-005
+    order: 5
+    title: Run unit integration live security PM and release gates
+    status: completed
+    created_at: "2026-07-25T00:17:47.259Z"
+    updated_at: "2026-07-25T01:03:39.585Z"
+    owner: codex-root
+    evidence: "PM-linked acceptance passed all four tests: packed npx/bunx smoke, 73 focused WebSocket tests, live read-only Home Assistant E2E including modern trigger syntax, and the complete release verifier with 1,236 tests and exact 100/100/100/100 coverage. Audit, Trivy, docstrings, file size, duplication, ShellCheck, PM integrity, changelog check, and privacy scans are green."
+    completed_at: "2026-07-25T01:03:39.585Z"
+    linked_items[2]{id,kind}:
+      hac-n0ix,depends_on
+      hac-wwsi,depends_on
+    tests[1]{command,note}:
+      "bun run release:verify",Complete release gate
+  - id: plan-step-006
+    order: 6
+    title: Publish PR and exhaust exact-head checks plus every bot thread
+    status: in_progress
+    created_at: "2026-07-25T00:17:48.425Z"
+    updated_at: "2026-07-25T01:03:40.501Z"
+    owner: codex-root
+    linked_items[1]{id,kind}:
+      hac-gx4b,depends_on
+    files[1]{path,scope,note}:
+      scripts/reviews/pr-review-loop.mjs,project,Exact-head review inventory
+    docs[1]{path,scope,note}:
+      docs/PR_REVIEW_LOOP.md,project,Review operating procedure
+  - id: plan-step-007
+    order: 7
+    title: Merge close PM lineage regenerate changelog and prove master
+    status: pending
+    created_at: "2026-07-25T00:17:49.714Z"
+    updated_at: "2026-07-25T00:17:49.714Z"
+    owner: codex-root
+    linked_items[1]{id,kind}:
+      hac-rdt1,depends_on
+    files[1]{path,scope,note}:
+      CHANGELOG.md,project,Generated closeout record
+    tests[1]{command,note}:
+      "bun run changelog:pm:check",Canonical generated changelog
+body: "Every step must preserve privacy, read-only live behavior, 100 percent four-metric source coverage, full docstrings, <=300 source LOC, detailed help, all output formats, and exact-head hosted evidence."

@@ -181,6 +181,19 @@ const wsValidation = parseJson(
 const validatedActions = wsValidation["actions"] as Record<string, unknown> | undefined;
 assert(validatedActions?.["valid"] === true, "invalid ws validate-config actions result");
 
+const wsTriggerSubscription = parseJson(
+  run([
+    "ws", "subscribe-trigger",
+    "--trigger", '{"trigger":"event","event_type":"hassio_cli_contract_probe"}',
+    "--wait-ms", "1",
+    "--max-events", "1",
+    "--format", "json",
+  ])
+) as Record<string, unknown>;
+assert(wsTriggerSubscription["subscription"] === "trigger", "invalid ws trigger subscription type");
+assert(wsTriggerSubscription["event_count"] === 0, "unexpected ws trigger subscription event");
+assert(Array.isArray(wsTriggerSubscription["events"]), "invalid ws trigger subscription events shape");
+
 const wsTargetExtract = parseJson(
   run(["ws", "target", "extract", "--entity-id", sampleEntityId, "--format", "json"])
 ) as Record<string, unknown>;

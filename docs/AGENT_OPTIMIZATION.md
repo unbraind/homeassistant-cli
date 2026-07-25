@@ -229,7 +229,23 @@ hassio ws validate-config \
 CLI values override matching fields in the file. Treat a `valid: false` result as
 a hard stop and surface the corresponding `error` to the planning loop.
 
-### 10. Bounded WebSocket Session Discovery
+### 10. Bounded Automation Trigger Observation
+
+Prefer automation-level trigger subscriptions over the entire event bus when an
+agent is waiting for a specific condition:
+
+```bash
+hassio ws subscribe-trigger \
+  --trigger '{"trigger":"state","entity_id":"binary_sensor.door"}' \
+  --wait-ms 30000 --max-events 3 --format json-compact
+```
+
+This admin-only, read-only workflow validates the trigger locally, negotiates
+coalesced WebSocket frames, bounds both time and output size, unsubscribes, and
+never fires the trigger. Treat returned context and variable values as private
+instance data.
+
+### 11. Bounded WebSocket Session Discovery
 
 Prefer typed commands for stable protocol operations and bound large exposure
 inventories before adding them to an agent context:

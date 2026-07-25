@@ -503,6 +503,11 @@ hassio ws target related --label-id lighting
 # Capture WS events for 10s
 hassio ws subscribe --event-type state_changed --wait-ms 10000 --max-events 20
 
+# Observe automation triggers without firing them (admin only)
+hassio ws subscribe-trigger \
+  --trigger '{"trigger":"event","event_type":"doorbell"}' \
+  --wait-ms 30000 --max-events 5
+
 # Supervisor shortcuts
 hassio supervisor addons --list
 hassio supervisor logs

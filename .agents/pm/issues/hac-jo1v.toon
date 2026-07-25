@@ -1,0 +1,66 @@
+id: hac-jo1v
+title: Patch brace-expansion denial-of-service advisory
+description: Release verification now fails because the explicit brace-expansion 5.0.7 override is affected by GHSA-mh99-v99m-4gvg / CVE-2026-14257; the registry and reviewed advisory identify 5.0.8 as patched.
+type: Issue
+status: closed
+priority: 0
+tags[3]: dependency,security,supply-chain
+created_at: "2026-07-25T00:37:33.714Z"
+updated_at: "2026-07-25T00:54:57.397Z"
+deadline: "2026-07-26T00:37:33.714Z"
+closed_at: "2026-07-25T00:54:48.047Z"
+author: codex-root
+estimated_minutes: 30
+acceptance_criteria: package.json override and bun.lock resolve brace-expansion 5.0.8; bun audit returns zero vulnerabilities and the complete release verifier passes without exclusions or ignored advisories
+definition_of_ready: GitHub reviewed advisory and npm registry both confirm patched version 5.0.8; dependency graph is inspected
+goal: best-agent-home-assistant-cli
+objective: restore-zero-known-high-vulnerabilities
+value: Keep production readiness and mandatory supply-chain gates honest.
+impact: Prevents attacker-influenced brace patterns from exhausting the lint/tooling process.
+outcome: Patched deterministic dependency graph with green audit and release verification.
+why_now: The advisory was published after the prior 5.0.7 remediation and blocks the current release gate.
+parent: hac-r2z9
+reviewer: unbraind
+risk: high
+confidence: 100
+sprint: 2026-07-websocket-streaming
+release: 2026.7.25
+reporter: codex-root
+severity: high
+environment: Bun 1.3.11 dependency audit; minimatch 10.2.4 via ESLint and typescript-eslint
+repro_steps: "Run bun run release:verify; step 2 reports brace-expansion <=5.0.7 affected by GHSA-mh99-v99m-4gvg"
+resolution: Patched brace-expansion to 5.0.8 with a deterministic Bun lock; zero-vulnerability audit and complete release verifier pass.
+expected_result: Mandatory dependency audit reports zero known vulnerabilities
+actual_result: Audit exits 1 on brace-expansion 5.0.7
+affected_version: 5.0.7
+fixed_version: 5.0.8
+component: dependency-overrides
+regression: true
+customer_impact: Release readiness is blocked; vulnerable development tooling can be crashed by crafted brace expansion input.
+dependencies[5]{id,kind,created_at,author,source_kind}:
+  hac-ak9g,related,"2026-07-25T00:37:33.714Z",null,null
+  hac-c0y8,discovered_from,"2026-07-25T00:37:33.714Z",null,null
+  hac-d3yc,related,"2026-07-25T00:37:33.714Z",null,null
+  hac-vooo,related,"2026-07-25T00:37:33.714Z",null,null
+  hac-x41n,related,"2026-07-25T00:37:33.714Z",null,null
+comments[2]{created_at,author,text}:
+  "2026-07-25T00:37:33.714Z",codex-root,All-status PM search found the earlier canonical override lineage hac-x41n but no item for this newly published advisory.
+  "2026-07-25T00:45:10.278Z",codex-root,"The first PM-linked release run exposed pm-cli issue https://github.com/unbraind/pm-cli/issues/689: injected tracker PM_PATH makes nested file validation resolve the sandbox as the workspace. Replaced the linked command with the documented source-workspace PM_PATH workaround; the standalone release verifier was already fully green."
+notes[1]{created_at,author,text}:
+  "2026-07-25T00:37:33.714Z",codex-root,Use the smallest patched override; do not suppress Bun audit or weaken release verification.
+learnings[1]{created_at,author,text}:
+  "2026-07-25T00:37:33.714Z",codex-root,The July 23 reviewed advisory newly marks <=5.0.7 vulnerable and 5.0.8 patched.
+files[2]{path,scope,note}:
+  package.json,project,Patched transitive override
+  bun.lock,project,Resolved dependency graph
+tests[2]{command,scope,timeout_seconds,pm_context_mode}:
+  bun audit,project,300,tracker
+  "PM_PATH=.agents/pm bun run release:verify",project,2400,auto
+test_runs[3]{run_id,kind,status,started_at,finished_at,recorded_at,passed,failed,skipped}:
+  test-local-mrznbqry-n8b5zb,test,failed,"2026-07-25T00:43:29.475Z","2026-07-25T00:43:48.430Z","2026-07-25T00:43:48.430Z",1,1,0
+  test-local-mrznjouo-t2opjb,test,failed,"2026-07-25T00:45:15.447Z","2026-07-25T00:49:59.184Z","2026-07-25T00:49:59.184Z",0,1,0
+  test-local-mrznprcj-a70t18,test,passed,"2026-07-25T00:50:47.462Z","2026-07-25T00:54:42.355Z","2026-07-25T00:54:42.355Z",1,0,0
+docs[1]{path,scope,note}:
+  SECURITY.md,project,Existing security operating policy
+close_reason: "Updated package.json and bun.lock to brace-expansion 5.0.8. bun audit reports zero vulnerabilities. The PM-linked complete release verifier now passes after preserving source-workspace PM resolution: 1,236 tests, exact 100/100/100/100 coverage, strict PM integrity, Trivy, full-history secret scan, and commit quality."
+body: The vulnerable package is a development-only transitive dependency of minimatch through ESLint and typescript-eslint. Preserve the strict audit gate and update the existing override plus Bun lockfile to the smallest patched release.

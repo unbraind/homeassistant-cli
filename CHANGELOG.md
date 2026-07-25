@@ -8,6 +8,7 @@
 
 ### Security
 
+- Patch brace-expansion denial-of-service advisory ([hac-jo1v](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/issues/hac-jo1v.toon))
 - Tag publication runner omits mandatory release verification tools ([hac-zwvk](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/issues/hac-zwvk.toon))
 
 ### Other
