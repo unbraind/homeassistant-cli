@@ -1,111 +1,61 @@
-import { describe, expect, it } from "vitest";
-import { spawnSync } from "node:child_process";
-import { join } from "node:path";
+import type { Command } from "commander";
+import { describe, expect, it, vi } from "vitest";
 
-type CommandPath = string[];
+vi.hoisted(() => {
+  process.env["HASSIO_CLI_SKIP_AUTO_RUN"] = "1";
+});
 
-function hasBunRuntime(): boolean {
-  const check = spawnSync("bun", ["--version"], {
-    cwd: process.cwd(),
-    env: process.env,
-    encoding: "utf8",
-  });
-  return check.status === 0;
-}
+import { createProgram } from "../src/cli.js";
 
-function runHelp(path: CommandPath): string {
-  const cliPath = join(process.cwd(), "src", "cli.ts");
-  const useBun = hasBunRuntime();
-  const command = useBun ? "bun" : "node";
-  const args = useBun
-    ? [cliPath, ...path, "--help"]
-    : ["--import", "tsx", cliPath, ...path, "--help"];
-  const result = spawnSync(command, args, {
-    cwd: process.cwd(),
-    env: process.env,
-    encoding: "utf8",
-  });
-
-  if (result.status !== 0) {
-    throw new Error(`help failed for '${path.join(" ") || "<root>"}':\n${result.stderr || result.stdout}`);
-  }
-
-  return result.stdout;
-}
-
-function parseSubcommands(helpText: string): string[] {
-  const lines = helpText.split("\n");
-  const parsed = new Set<string>();
-  let inCommandsSection = false;
-
-  for (const line of lines) {
-    if (line.trim() === "Commands:") {
-      inCommandsSection = true;
-      continue;
-    }
-    if (inCommandsSection && !line.startsWith("  ")) {
-      inCommandsSection = false;
-    }
-    if (!inCommandsSection || !line.startsWith("  ")) {
-      continue;
-    }
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith("-")) {
-      continue;
-    }
-
-    const head = trimmed.split(/\s+/)[0] || "";
-    if (!head || head === "help") {
-      continue;
-    }
-
-    const commandName = head.split("|")[0] || "";
-    if (!commandName || commandName === "help") {
-      continue;
-    }
-
-    parsed.add(commandName);
-  }
-
-  return [...parsed];
-}
+type CommandPath = {
+  command: Command;
+  path: string[];
+};
 
 describe("CLI help surface", () => {
-  it("supports --help on every command path and includes global flag section", () => {
-    const queue: CommandPath[] = [[]];
-    const visited = new Set<string>();
+  it("supports --help on every command path and includes global flag section", async () => {
+    const root = createProgram();
+    const queue: CommandPath[] = [{ command: root, path: [] }];
+    const visited = new Set<Command>();
     let checked = 0;
-    const maxDepth = 3;
 
     while (queue.length > 0) {
-      const path = queue.shift();
-      if (!path) {
+      const entry = queue.shift();
+      if (!entry || visited.has(entry.command)) {
         continue;
       }
+      visited.add(entry.command);
 
-      const key = path.join(" ");
-      if (visited.has(key)) {
-        continue;
+      const program = createProgram();
+      let help = "";
+      const commands = [program];
+      while (commands.length > 0) {
+        const command = commands.pop();
+        if (!command) continue;
+        command.exitOverride();
+        command.configureOutput({
+          writeOut: (text) => {
+            help += text;
+          },
+          writeErr: (text) => {
+            help += text;
+          },
+        });
+        commands.push(...command.commands);
       }
-      visited.add(key);
-
-      const help = runHelp(path);
+      await expect(program.parseAsync(["node", "hassio", ...entry.path, "--help"]))
+        .rejects.toMatchObject({ code: "commander.helpDisplayed" });
       expect(help).toContain("Usage:");
-      if (path.length > 0) {
+      if (entry.path.length > 0) {
         expect(help).toContain("Global flags:");
       }
       checked += 1;
-
-      if (path.length >= maxDepth) {
-        continue;
-      }
-
-      const subcommands = parseSubcommands(help);
-      for (const subcommand of subcommands) {
-        queue.push([...path, subcommand]);
-      }
+      queue.push(...entry.command.commands.map((command) => ({
+        command,
+        path: [...entry.path, command.name()],
+      })));
     }
 
     expect(checked).toBeGreaterThan(70);
-  }, 120000);
+  });
 });

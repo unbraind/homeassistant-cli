@@ -1,0 +1,146 @@
+id: hac-h3uj
+title: Media discovery delivery plan
+description: "Sequence official contract research, typed implementation, exhaustive local and live acceptance, protected PR review, merge, and PM/changelog closeout."
+type: Plan
+status: open
+priority: 0
+tags[5]: agents,delivery-plan,home-assistant,media,websocket
+created_at: "2026-07-25T22:31:16.370Z"
+updated_at: "2026-07-25T23:08:58.197Z"
+deadline: "2026-07-27T22:31:16.370Z"
+assignee: unbraind
+author: codex-root
+estimated_minutes: 420
+acceptance_criteria: "All ordered plan steps carry durable schema-level evidence and link to canonical feature/task artifacts; Implementation, tests, docs, setup wizard acceptance, review remediation, merge, and tracker closeout are completed without publishing a release"
+definition_of_ready: Feature hac-ln1v exists after all-status duplicate searches and current official/live research
+goal: complete-home-assistant-api-coverage
+objective: deliver-media-discovery
+value: Makes execution state and evidence independently reconstructable for future agents.
+impact: "Coordinates API, CLI, testing, documentation, review, and release safety as one delivery."
+outcome: One merged cohesive media-discovery change with terminal evidence and no active implementation claims.
+why_now: The API contract spans current and upcoming server capabilities and needs explicit compatibility classification.
+parent: hac-ln1v
+reviewer: unbraind
+risk: high
+confidence: 96
+sprint: 2026-07-media-discovery
+release: 2026.7.26
+dependencies[6]{id,kind,created_at,author,source_kind}:
+  hac-1sdd,related,"2026-07-25T22:31:16.370Z",null,null
+  hac-6asb,related,"2026-07-25T22:31:16.370Z",null,null
+  hac-7q84,related,"2026-07-25T22:31:16.370Z",null,null
+  hac-km4t,discovered_from,"2026-07-25T22:31:16.370Z",null,null
+  hac-wwsi,related,"2026-07-25T22:31:16.370Z",null,null
+  hac-yo48,related,"2026-07-25T22:31:16.370Z",null,null
+comments[1]{created_at,author,text}:
+  "2026-07-25T22:31:16.370Z",codex-root,The plan remains open while only its concrete implementation task is claimed and in progress.
+notes[1]{created_at,author,text}:
+  "2026-07-25T22:31:16.370Z",codex-root,"Do not publish npm, create a tag, or expose signed media URLs; the authorized release action is dry-run/rehearsal only."
+learnings[1]{created_at,author,text}:
+  "2026-07-25T22:31:16.370Z",codex-root,"Current server capability must be treated separately from current Core dev contract: unknown_command is an unavailable feature classification, not contradictory API evidence."
+files[1]{path,scope,note}:
+  docs/PR_REVIEW_LOOP.md,project,exact-head review procedure
+tests[1]{command,scope,timeout_seconds,pm_context_mode}:
+  "bun run release:verify",project,2400,tracker
+docs[1]{path,scope,note}:
+  docs/RELEASING.md,project,non-publishing release acceptance
+plan_mode: approved
+plan_validation[1]{text,command,expected}:
+  "Pre-PR release, package, and live acceptance completed without publishing or exposing private data.","bun run release:verify && bun run release:dry-run && HASSIO_READONLY=true bun run test:e2e:live","All strict gates pass, packed binaries execute, read-only live probes stay bounded, and unsupported current-instance capabilities remain explicit."
+plan_steps[7]:
+  - id: plan-step-001
+    order: 1
+    title: Confirm official and live media contracts
+    status: completed
+    created_at: "2026-07-25T22:32:14.280Z"
+    updated_at: "2026-07-25T22:32:14.280Z"
+    body: "Compare current official docs, Core dev source, repository coverage, installed types, and redacted local capability probes."
+    evidence: Official REST/WebSocket docs updated June 2026; Core dev media_source/http.py and media_player/__init__.py inspected; local 2026.7.4 browse and media-player service contracts confirmed while media_source/search_media is unavailable.
+    completed_at: "2026-07-25T22:32:14.280Z"
+    linked_items[1]{id,kind}:
+      hac-n0ix,discovered_from
+    files[1]{path,scope,note}:
+      src/commands/media-player.ts,project,current media surface
+    docs[1]{path,scope,note}:
+      docs/API.md,project,current documented surface
+  - id: plan-step-002
+    order: 2
+    title: Implement typed media discovery commands
+    status: completed
+    created_at: "2026-07-25T22:32:15.322Z"
+    updated_at: "2026-07-25T22:46:27.736Z"
+    body: "Add type-safe browse, search, and resolve commands with current media class validation, bounded output, stable envelopes, and honest server errors."
+    evidence: "Typed hassio media browse/search/resolve is implemented with verified Core payloads, safe limits, bounded output, current media classes, metadata-only resolution, 1,261 tests, and exact 100/100/100/100 coverage."
+    completed_at: "2026-07-25T22:46:27.736Z"
+    linked_items[1]{id,kind}:
+      hac-ln1v,implements
+    files[1]{path,scope,note}:
+      src/commands/media.ts,project,media command registration
+    tests[1]{command,path,note}:
+      bun run test -- tests/media-discovery-command.test.ts,tests/media-discovery-command.test.ts,focused command contract
+  - id: plan-step-003
+    order: 3
+    title: Document agent and human workflows
+    status: completed
+    created_at: "2026-07-25T22:32:16.292Z"
+    updated_at: "2026-07-25T22:46:30.413Z"
+    body: "Update README and all relevant docs with command tables, current/upcoming capability behavior, privacy cautions, examples, and links."
+    evidence: "README, API reference, command index, LLM integration, and agent optimization docs now cover payload scopes, flags, envelopes, compatibility classification, bounds, and signed URL privacy."
+    completed_at: "2026-07-25T22:46:30.413Z"
+    linked_items[1]{id,kind}:
+      hac-ln1v,depends_on
+    docs[4]{path,scope,note}:
+      README.md,project,user quickstart
+      docs/API.md,project,full API reference
+      docs/LLM_INTEGRATION.md,project,agent workflow
+      docs/AGENT_OPTIMIZATION.md,project,bounded discovery guidance
+  - id: plan-step-004
+    order: 4
+    title: Run independent local and live acceptance
+    status: completed
+    created_at: "2026-07-25T22:32:17.290Z"
+    updated_at: "2026-07-25T23:04:31.066Z"
+    body: "Run focused and full tests, all formats, recursive help, schema, isolated wizard, built/installed CLI, redacted live read-only media probes, security, and strict PM gates."
+    evidence: "Release verifier is fully green: 1,261 tests and 100/100/100/100 coverage, TypeScript/ESLint/docstrings/duplication/file-size/ShellCheck, PM integrity, Trivy, history secret scan, build and commit audit. Packed npx/bunx smoke and live read-only six-format media browse, wizard isolation, actual built CLI, and unsupported search classification all passed."
+    completed_at: "2026-07-25T23:04:31.066Z"
+    linked_items[1]{id,kind}:
+      hac-ln1v,depends_on
+    tests[2]{command,path,note}:
+      "PM_PATH=.agents/pm bun run release:verify",scripts/release/verify-release.sh,complete release verifier
+      "HASSIO_READONLY=true bun run test:e2e:live",tests/e2e-live.ts,redacted live acceptance
+  - id: plan-step-005
+    order: 5
+    title: Open protected PR and exhaust review feedback
+    status: in_progress
+    created_at: "2026-07-25T22:32:18.321Z"
+    updated_at: "2026-07-25T23:08:58.195Z"
+    body: "Commit scoped changes, push a descriptive branch, open a conventional PR with durable PM links, wait for exact-head checks and every requested bot, then react, reply, resolve, fix, and retrigger until clean."
+    linked_items[2]{id,kind}:
+      hac-ln1v,depends_on
+      hac-kv5o,related
+    docs[1]{path,scope,note}:
+      docs/PR_REVIEW_LOOP.md,project,review inventory and reaction workflow
+  - id: plan-step-006
+    order: 6
+    title: Merge and verify exact master head
+    status: pending
+    created_at: "2026-07-25T22:32:19.175Z"
+    updated_at: "2026-07-25T22:32:19.175Z"
+    body: "Merge only after all required checks and review artifacts are terminal, return to master, and verify exact merged-head CI/security state."
+    linked_items[2]{id,kind}:
+      hac-ln1v,depends_on
+      hac-wwsi,related
+  - id: plan-step-007
+    order: 7
+    title: Close PM lineage and verify non-publishing release readiness
+    status: pending
+    created_at: "2026-07-25T22:32:20.340Z"
+    updated_at: "2026-07-25T22:32:20.340Z"
+    body: "Record final test/review/merge evidence, close task/plan/feature, regenerate pm-changelog, and run a non-publishing auto-release rehearsal without tags or packages."
+    linked_items[2]{id,kind}:
+      hac-ln1v,depends_on
+      hac-wwsi,verifies
+    tests[2]{command,path,note}:
+      "bun run changelog:pm && bun run changelog:pm:check",CHANGELOG.md,package-owned deterministic changelog
+      "bun run release:auto:dry-run",scripts/release/auto-release.mjs,no-publish release readiness
+body: "Keep only the concrete implementation task in progress. Every phase must preserve read-only live behavior, private-data redaction, exact 100/100/100/100 coverage, complete docstrings, <=300 source LOC, detailed recursive help, every formatter, exact-head review evidence, and a non-publishing release rehearsal."

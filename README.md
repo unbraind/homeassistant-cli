@@ -8,7 +8,7 @@ CLI for Home Assistant with token-efficient output and broad API coverage. Defau
 
 ## Project Status
 
-Public release `v2026.3.6` was published on March 6, 2026. See:
+Current public release: `v2026.7.25` (July 25, 2026). See:
 
 - [CHANGELOG](./CHANGELOG.md) for released and unreleased changes
 - [Project History](./docs/PROJECT_HISTORY.md) for pre-release implementation history and audits
@@ -36,6 +36,7 @@ Public release `v2026.3.6` was published on March 6, 2026. See:
 - **Service Schema Intelligence** - Supports modern object-style `/api/services` payloads with filter/flat/count modes
 - **Compact Registry Discovery** - Uses Home Assistant's enabled-entity display contract for low-bandwidth agent context
 - **WebSocket API Coverage** - Generic passthrough plus typed targets, automation validation, panels, heartbeat, signed paths, and voice-assistant exposure
+- **Bounded Media Discovery** - Browse, search, and resolve media sources or players with read-only, agent-sized output
 - **Supervisor API Coverage** - Generic `supervisor api` passthrough + common shortcuts (addons, host, logs)
 - **Full TypeScript Support** - Complete type safety throughout
 - **Comprehensive Testing** - Large automated test suite with strong coverage
@@ -404,6 +405,19 @@ hassio calendar-events calendar.home \
 
 # Get camera snapshot
 hassio camera camera.front_door -o snapshot.jpg
+
+# Inspect the media tree without loading private media rows
+hassio media browse --count
+
+# Browse or search with an explicit agent context bound
+hassio media browse --limit 20
+hassio media search "ambient" --media-class artist,album --limit 10
+
+# Search a player that advertises SEARCH_MEDIA support
+hassio media search "news" --entity-id media_player.living_room --count
+
+# Confirm a media item resolves without returning its signed URL
+hassio media resolve "media-source://provider/item" --metadata-only
 ```
 
 ### Voice Assistant & Conversation

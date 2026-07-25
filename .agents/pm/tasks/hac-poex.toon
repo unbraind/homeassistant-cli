@@ -1,0 +1,85 @@
+id: hac-poex
+title: Implement typed bounded media browse search and resolve
+description: "Build the agent-native Home Assistant media discovery command surface with current WebSocket payloads, validated inputs, bounded result projections, exhaustive tests, documentation, live read-only proof, and release-safe delivery."
+type: Task
+status: in_progress
+priority: 0
+tags[6]: agents,implementation,media,search,typescript,websocket
+created_at: "2026-07-25T22:32:44.658Z"
+updated_at: "2026-07-25T23:07:24.756Z"
+deadline: "2026-07-27T22:32:44.658Z"
+assignee: codex-root
+author: codex-root
+estimated_minutes: 300
+acceptance_criteria: "Typed hassio media browse/search/resolve payloads match Home Assistant Core dev source and media player search remains compatible with local stable Core; Search query, scope, entity/source selectors, media content type, current media classes, count, and positive safe-integer limits validate before network I/O; TOON is default and TOON/JSON/compact JSON/YAML/table/markdown outputs retain stable documented envelopes; Focused, full, coverage, docstring, type, lint, duplication, file-size, ShellCheck, audit, Trivy, package, setup wizard, PM, changelog, and non-publishing release gates pass"
+definition_of_ready: "Feature hac-ln1v and approved plan hac-h3uj capture duplicate-safe lineage, research, privacy, and compatibility constraints"
+goal: complete-home-assistant-api-coverage
+objective: implement-media-discovery
+value: Eliminates opaque hand-written WebSocket calls for media automation and agent planning.
+impact: Adds current media browsing and search coverage with bounded machine contracts.
+outcome: Production-ready CLI commands merged with exact-head checks and zero unresolved reviews.
+why_now: Home Assistant current development exposes searchable media sources that are absent from the typed CLI.
+parent: hac-ln1v
+reviewer: unbraind
+risk: high
+confidence: 96
+sprint: 2026-07-media-discovery
+release: 2026.7.26
+dependencies[8]{id,kind,created_at,author,source_kind}:
+  hac-96i2,related,"2026-07-25T22:32:44.658Z",null,null
+  hac-ahl7,related,"2026-07-25T22:32:44.658Z",null,null
+  hac-ak9g,related,"2026-07-25T22:32:44.658Z",null,null
+  hac-c0y8,related,"2026-07-25T22:32:44.658Z",null,null
+  hac-h3uj,implements,"2026-07-25T22:32:44.658Z",null,null
+  hac-r4e3,related,"2026-07-25T22:32:44.658Z",null,null
+  hac-soop,discovered_from,"2026-07-25T22:32:44.658Z",null,null
+  hac-vooo,related,"2026-07-25T22:32:44.658Z",null,null
+comments[3]{created_at,author,text}:
+  "2026-07-25T22:32:44.658Z",codex-root,Only this Task will be claimed and moved in progress; the Feature and Plan remain open for terminal delivery tracking.
+  "2026-07-25T22:46:14.091Z",codex-root,"Focused implementation gates pass: TypeScript, ESLint, 120/120 docstrings, <=300 source LOC, 3.98 percent duplicated lines with no new media clone, 34 focused tests, and full 1,261-test coverage at exact 4620/4620 statements, 2329/2329 branches, 927/927 functions, and 4251/4251 lines."
+  "2026-07-25T23:04:29.818Z",codex-root,"Full pre-PR acceptance is green: release verifier passed dependency audit, TypeScript, ESLint, 100% docstrings, duplication and 300-line gates, ShellCheck, PM strict validation/health, build, 1,261 tests, exact 100/100/100/100 coverage, Trivy, full-history secret scan, commit audit, and isolated packed npx plus bunx smoke. Live read-only acceptance passed against the configured instance across six formats, wizard isolation, and honest unsupported media-source search classification; no private values were recorded."
+notes[1]{created_at,author,text}:
+  "2026-07-25T22:32:44.658Z",codex-root,"Live media tree/search/resolve results must be reduced in-process to counts, booleans, and contract classifications before logs or PM evidence."
+learnings[1]{created_at,author,text}:
+  "2026-07-25T22:32:44.658Z",codex-root,"Home Assistant media search has two scopes: media_player/search_media requires entity_id and optionally paired content type/id, while media_source/search_media accepts a source content id and is newest-development capability."
+files[12]{path,scope,note}:
+  .agents/pm/extensions/.managed-extensions.json,project,latest pm-changelog managed installation
+  .agents/pm/extensions/pm-changelog/manifest.json,project,latest pm-changelog manifest
+  .agents/pm/extensions/pm-changelog/package.json,project,latest pm-changelog package metadata
+  src/cli.ts,project,root command registration
+  src/commands/index.ts,project,public command export
+  src/commands/media-discovery.ts,project,typed browse search resolve command group
+  src/commands/media.ts,project,typed media command composition
+  src/utils/command-helpers.ts,project,positive safe integer limit contract
+  tests/command-helpers.test.ts,project,safe integer regression coverage
+  tests/e2e-live.ts,project,formatter and capability-classified live acceptance
+  tests/help-surface-e2e.test.ts,project,efficient exhaustive nested help acceptance
+  tests/media-discovery-command.test.ts,project,complete command branch coverage
+tests[4]:
+  - command: bun run test -- tests/media-discovery-command.test.ts
+    scope: project
+    timeout_seconds: 300
+    pm_context_mode: tracker
+  - command: "PM_PATH=.agents/pm bun run release:verify"
+    scope: project
+    timeout_seconds: 2400
+    pm_context_mode: auto
+  - command: "HASSIO_URL=\"$(jq -r .url \"$HOME/.hassio-cli/settings.json\")\" HASSIO_TOKEN=\"$(jq -r .token \"$HOME/.hassio-cli/auth.json\")\" HASSIO_READONLY=true HASSIO_CONFIG=\"$HOME/.hassio-cli/settings.json\" bun run test:e2e:live"
+    path: tests/e2e-live.ts
+    scope: project
+    timeout_seconds: 600
+    pm_context_mode: tracker
+  - command: "bun run test:e2e:help"
+    path: tests/help-surface-e2e.test.ts
+    scope: project
+    timeout_seconds: 180
+    pm_context_mode: tracker
+test_runs[1]{run_id,kind,status,started_at,finished_at,recorded_at,passed,failed,skipped}:
+  test-local-ms0zbmpu-ejn7kj,test,passed,"2026-07-25T23:04:45.987Z","2026-07-25T23:07:24.738Z","2026-07-25T23:07:24.738Z",4,0,0
+docs[5]{path,scope,note}:
+  docs/AGENT_OPTIMIZATION.md,project,bounded media guidance
+  docs/API.md,project,canonical media API documentation
+  docs/INDEX.md,project,command index and release status
+  docs/LLM_INTEGRATION.md,project,agent media workflow
+  README.md,project,user-facing media workflows
+body: "Implement only from verified Core contracts and installed dependency types. Use top-level imports, erasable TypeScript, no any, no trivial one-use helpers, no source file above 300 code lines, and no raw live media data in durable evidence. Keep media_source/search_media available for current Core development compatibility even when an older stable server returns unknown_command."

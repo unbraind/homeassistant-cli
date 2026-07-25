@@ -18,7 +18,7 @@ Complete documentation for the Home Assistant CLI tool.
 
 ## Release Status
 
-Current public release: **v2026.7.21-2** (2026-07-21).
+Current public release: **v2026.7.25** (2026-07-25).
 
 - `CHANGELOG.md` tracks released and unreleased changes.
 - Pre-release implementation progress and history audits are documented in `docs/PROJECT_HISTORY.md`.
@@ -139,6 +139,7 @@ All commands support global flags (`--url`, `--token`, `--format`, `--timeout`, 
 | `calendars` | List calendars |
 | `calendar-events <entity-id>` | Get calendar events |
 | `camera <entity-id>` | Get camera image |
+| `media browse|search|resolve` | Read-only, bounded media discovery and signed-URL-safe resolution |
 | `media-player` | Control `media_player.*` entities (play/pause/stop, volume, source, shuffle, repeat, play-media, join) |
 
 ### Device Control Commands
@@ -321,6 +322,7 @@ See [LLM Integration Guide](./LLM_INTEGRATION.md) for detailed examples.
 ✅ History and logbook  
 ✅ Templates and intents  
 ✅ Calendars and cameras  
+✅ Bounded media source/player browse, search, and resolve
 
 ### Extended API
 ✅ Entity Registry  

@@ -261,6 +261,25 @@ Global `--read-only` blocks `ws exposure enable|disable`. A value returned by
 `ws sign-path` is a short-lived credential: consume it immediately and never
 persist it in prompts, logs, pm items, or source control.
 
+### 12. Bounded Media Discovery
+
+Count before fetching media rows, then request only the context the agent needs:
+
+```bash
+hassio media browse --count
+hassio media browse --limit 20 --format toon
+hassio media search "ambient" --media-class artist,album --limit 10
+hassio media search "news" --entity-id media_player.living_room --count
+hassio media resolve "media-source://provider/item" --metadata-only
+```
+
+Browse and search are read-only. The shared media-source search command follows
+current Home Assistant Core development and can return `unknown_command` on a
+server that has not registered the new capability; treat that as a capability
+boundary and retain generic `ws call` for integration-specific contracts.
+Full resolve output may contain a short-lived signed URL, so prefer
+`--metadata-only` for planning and never persist the URL.
+
 ## Best Practices for Agents
 
 ### 1. Use Appropriate Output Format

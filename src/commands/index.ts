@@ -5,6 +5,7 @@ export * from "./core.js";
 export * from "./services.js";
 export * from "./history.js";
 export * from "./media.js";
+export * from "./media-discovery.js";
 export * from "./cli-config.js";
 export * from "./settings-wizard.js";
 export * from "./settings-doctor.js";

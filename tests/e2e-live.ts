@@ -1,7 +1,7 @@
 import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawnSync } from "node:child_process";
 import { parse as parseYaml } from "yaml";
 
 const required = ["HASSIO_URL", "HASSIO_TOKEN"] as const;
@@ -37,6 +37,20 @@ function run(args: string[], env?: NodeJS.ProcessEnv): string {
     if (typed.stderr) console.error(typed.stderr);
     process.exit(typed.status ?? 1);
   }
+}
+
+function runOutcome(args: string[]): { status: number; stdout: string; stderr: string } {
+  const result = spawnSync("node", [cliPath, "--config", configPath, ...args], {
+    cwd: repoRoot,
+    env: process.env,
+    encoding: "utf8",
+    maxBuffer: 20 * 1024 * 1024,
+  });
+  return {
+    status: result.status ?? 1,
+    stdout: result.stdout.trim(),
+    stderr: result.stderr.trim(),
+  };
 }
 
 function parseJson(out: string): unknown {
@@ -174,6 +188,33 @@ assert(Array.isArray(serviceSchema[0]?.["optional_fields"]), "invalid services -
 const wsConnect = parseJson(run(["websocket", "--connect-test", "--format", "json"])) as Record<string, unknown>;
 assert(wsConnect["connected"] === true, "invalid websocket --connect-test connected field");
 assert(wsConnect["auth"] === "ok", "invalid websocket --connect-test auth field");
+
+for (const format of ["toon", "json", "json-compact", "yaml", "table", "markdown"] as const) {
+  const mediaBrowse = run(["media", "browse", "--count", "--format", format]);
+  if (format === "json" || format === "json-compact") {
+    const parsed = parseJson(mediaBrowse) as Record<string, unknown>;
+    assert(parsed["scope"] === "media_source", "invalid media browse scope");
+    assert(typeof parsed["count"] === "number", "invalid media browse count");
+  }
+  if (format === "yaml") {
+    assert(typeof parseYaml(mediaBrowse) === "object", "invalid media browse YAML");
+  }
+  assert(mediaBrowse.length > 0, `empty media browse output for format ${format}`);
+}
+
+const mediaSearch = runOutcome([
+  "media", "search", "__hassio_cli_contract_probe__", "--count", "--format", "json",
+]);
+if (mediaSearch.status === 0) {
+  const parsed = parseJson(mediaSearch.stdout) as Record<string, unknown>;
+  assert(parsed["scope"] === "media_source", "invalid media search scope");
+  assert(typeof parsed["count"] === "number", "invalid media search count");
+} else {
+  assert(
+    mediaSearch.stderr.includes("unknown_command"),
+    "media-source search failed with an unexpected compatibility classification",
+  );
+}
 
 const wsValidation = parseJson(
   run(["ws", "validate-config", "--action", "[]", "--format", "json"])
