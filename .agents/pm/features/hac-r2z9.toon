@@ -2,13 +2,13 @@ id: hac-r2z9
 title: Add coalesced WebSocket trigger subscriptions
 description: "Implement the latest stable Home Assistant WebSocket supported-features negotiation and typed subscribe_trigger workflow so agents can observe automation triggers with bounded, token-efficient output."
 type: Feature
-status: open
+status: closed
 priority: 0
 tags[5]: agents,automation,home-assistant,streaming,websocket
 created_at: "2026-07-25T00:16:24.568Z"
-updated_at: "2026-07-25T01:51:10.498Z"
+updated_at: "2026-07-25T01:59:21.575Z"
 deadline: "2026-08-01T00:16:24.568Z"
-assignee: unbraind
+closed_at: "2026-07-25T01:59:21.575Z"
 author: codex-root
 estimated_minutes: 300
 acceptance_criteria: "The client negotiates coalesce_messages as command id 1 immediately after authentication and correctly dispatches both single-object and coalesced-array frames; hassio ws subscribe-trigger accepts inline JSON or a JSON file, optional variables, bounded wait/max-event controls, and provides detailed examples and global help; Trigger subscriptions validate input before network I/O, unsubscribe reliably, preserve generic passthrough, and remain read-only safe; All source coverage remains 100/100/100/100, docstrings remain complete, every source file stays within 300 code lines, and all formatter/help/schema/live/release/security/PM gates pass"
@@ -25,6 +25,9 @@ risk: high
 confidence: 98
 sprint: 2026-07-websocket-streaming
 release: 2026.7.25
+resolution: "Merged the complete coalesced WebSocket trigger subscription feature at 23a8e5fd02fafff447b61bca465e2293091b6ce7 with official/current API research, live Home Assistant verification, full documentation, exact coverage, protected checks, and exhausted review feedback."
+expected_result: Production-ready typed trigger subscription surface with coalesced protocol handling and exact-head delivery proof.
+actual_result: Feature is merged on master with all acceptance gates green and private live details excluded from repository evidence.
 dependencies[5]{id,kind,created_at,author,source_kind}:
   hac-n0ix,related,"2026-07-25T00:16:24.568Z",null,null
   hac-r17v,related,"2026-07-25T00:16:24.568Z",null,null
@@ -48,4 +51,5 @@ docs[3]{path,scope,note}:
   docs/AGENT_OPTIMIZATION.md,project,Token-efficient coalescing guidance
   docs/API.md,project,WebSocket trigger subscription reference
   docs/LLM_INTEGRATION.md,project,Agent observation workflow
+close_reason: Production feature merged and validated through PR #71.
 body: "Official Home Assistant 2026.7 documentation specifies supported_features with coalesce_messages as the first post-auth command and an admin-only subscribe_trigger contract accepting one or more automation triggers plus optional variables. Current Core dev source validates trigger configs, emits event messages containing variables/context, and uses unsubscribe_events for cleanup. The live configured Core accepts both contracts. The CLI currently supports only subscribe_events and assumes every incoming frame is one JSON object."

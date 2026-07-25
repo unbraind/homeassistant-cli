@@ -2,13 +2,13 @@ id: hac-c0y8
 title: Implement coalesced protocol and typed trigger observation
 description: "Negotiate Home Assistant WebSocket coalescing, dispatch single and array frames safely, and expose a typed bounded subscribe-trigger command with validated JSON inputs and complete agent documentation."
 type: Task
-status: in_progress
+status: closed
 priority: 0
 tags[4]: agents,automation,implementation,websocket
 created_at: "2026-07-25T00:18:21.933Z"
-updated_at: "2026-07-25T01:55:15.677Z"
+updated_at: "2026-07-25T01:59:07.664Z"
 deadline: "2026-07-28T00:18:21.933Z"
-assignee: codex-root
+closed_at: "2026-07-25T01:59:06.820Z"
 author: codex-root
 estimated_minutes: 240
 acceptance_criteria: "Application calls begin at id 2 after successful coalescing negotiation and all pending results/events are dispatched from single or coalesced frames; Inline/file trigger JSON and optional variables are validated before connect, documented with examples, and captured with positive bounded numeric controls; Actual built hassio passes live read-only subscribe-trigger acceptance and every supported formatter/help/schema gate; Release verifier, 100/100/100/100 coverage, docstrings, file-size, duplication, lint, TypeScript, ShellCheck, audit, Trivy, PM integrity, package smoke, and dry-run release all pass"
@@ -25,6 +25,9 @@ risk: high
 confidence: 98
 sprint: 2026-07-websocket-streaming
 release: 2026.7.25
+resolution: "Delivered coalesced WebSocket negotiation and bounded typed trigger observation at merged master commit 23a8e5fd02fafff447b61bca465e2293091b6ce7; independent PM runs, live read-only E2E, 1,239 tests, exact 100/100/100/100 coverage, security and release gates passed."
+expected_result: "Stable typed bounded trigger observation with complete tests, documentation, live proof, and exact-head review closure."
+actual_result: "Merged implementation provides negotiation, coalesced dispatch, bounded buffers, retry/cleanup safety, validated CLI inputs, documentation, and full green delivery evidence."
 dependencies[8]{id,kind,created_at,author,source_kind}:
   hac-1sdd,implements,"2026-07-25T00:18:21.933Z",null,null
   hac-3n6e,related,"2026-07-25T00:18:21.933Z",null,null
@@ -72,4 +75,5 @@ docs[5]{path,scope,note}:
   docs/INDEX.md,project,Discoverability
   docs/LLM_INTEGRATION.md,project,Agent workflow
   README.md,project,User quick-start
+close_reason: PR #71 merged with all acceptance criteria and review remediation verified.
 body: "Implement the stable official protocol only. Parse types from installed ws/Commander and existing internal contracts, keep top-level imports, use erasable TypeScript, introduce no any, keep source files at or under 300 code lines, and preserve default TOON plus every other formatter."
