@@ -14,9 +14,15 @@ describe("tag publication workflow contract", () => {
 
   it("provisions every external binary required by release verification", () => {
     for (const releaseWorkflow of [workflow, dryRunWorkflow]) {
+      const dependencyInstall = releaseWorkflow.indexOf("Install dependencies");
+      expect(dependencyInstall).toBeGreaterThan(-1);
       expect(releaseWorkflow).toContain("sudo apt-get install --yes ripgrep shellcheck");
       expect(releaseWorkflow).toContain("aquasecurity/setup-trivy@");
       expect(releaseWorkflow).toContain("version: v0.72.0");
+      expect(releaseWorkflow.indexOf("Install release verification tools"))
+        .toBeLessThan(dependencyInstall);
+      expect(releaseWorkflow.indexOf("Setup Trivy"))
+        .toBeLessThan(dependencyInstall);
       expect(releaseWorkflow.indexOf("Install release verification tools"))
         .toBeLessThan(releaseWorkflow.indexOf("Verify release quality gates"));
       expect(releaseWorkflow.indexOf("Setup Trivy"))

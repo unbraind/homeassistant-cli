@@ -120,6 +120,7 @@ describe("typed websocket trigger subscriptions", () => {
   it.each([
     ["--wait-ms", "0"],
     ["--max-events", "1.5"],
+    ["--wait-ms", "9007199254740992"],
   ])("rejects invalid positive integer bounds", async (flag, value) => {
     await expect(createWebsocketCommand().parseAsync([
       "subscribe-trigger",

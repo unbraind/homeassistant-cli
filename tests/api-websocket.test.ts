@@ -104,7 +104,7 @@ function buildAuthWs(onReady?: (ws: FakeWs) => void): FakeWs {
 type InternalClient = {
   socket: FakeWs | null;
   pending: Map<number, unknown>;
-  eventBuffers: Map<number, unknown[]>;
+  eventBuffers: Map<number, { events: unknown[]; maxEvents: number }>;
   parseMessage: (raw: string) => unknown;
   sendAndWait: (id: number, type: string, payload?: Record<string, unknown>) => Promise<unknown>;
   waitForMessage: <T>() => Promise<T>;
@@ -300,6 +300,38 @@ describe("HomeAssistantWebSocketClient – connect()", () => {
     });
     wsHelpers.setNextWs(ws);
     await expect(new HomeAssistantWebSocketClient(baseConfig).connect()).rejects.toThrow();
+  });
+
+  it("resets the socket when feature negotiation fails so connect can retry", async () => {
+    const ws = new FakeWs(1);
+    const originalSend = ws.send.bind(ws);
+    ws.send = (data: string) => {
+      originalSend(data);
+      const message = JSON.parse(data) as Record<string, unknown>;
+      if (message["type"] === "supported_features") {
+        setImmediate(() => ws.emit("message", Buffer.from(JSON.stringify({
+          id: message["id"],
+          type: "result",
+          success: false,
+          error: "unsupported",
+        }))));
+      }
+    };
+    setImmediate(() => {
+      ws.emit("open");
+      setImmediate(() => {
+        ws.emit("message", Buffer.from(JSON.stringify({ type: "auth_required" })));
+        setImmediate(() => ws.emit("message", Buffer.from(JSON.stringify({ type: "auth_ok" }))));
+      });
+    });
+    wsHelpers.setNextWs(ws);
+    const client = new HomeAssistantWebSocketClient(baseConfig);
+    await expect(client.connect()).rejects.toThrow("unsupported");
+    expect((client as unknown as InternalClient).socket).toBeNull();
+
+    wsHelpers.setNextWs(buildAuthWs());
+    await expect(client.connect()).resolves.toBeUndefined();
+    await client.close();
   });
 });
 
@@ -540,8 +572,10 @@ describe("HomeAssistantWebSocketClient – subscribeEvents()", () => {
   });
 
   it("caps returned events at maxEvents", async () => {
-    const { deliverEvent, promise } = await setupSubscribedClient({ maxEvents: 3, waitMs: 50 });
+    const { client, deliverEvent, promise } = await setupSubscribedClient({ maxEvents: 3, waitMs: 50 });
     for (let i = 0; i < 10; i++) deliverEvent({ n: i });
+    const buffers = (client as unknown as InternalClient).eventBuffers;
+    expect([...buffers.values()][0]?.events).toHaveLength(3);
     const events = await promise;
     expect(events).toHaveLength(3);
   });
@@ -585,6 +619,23 @@ describe("HomeAssistantWebSocketClient – subscribeEvents()", () => {
 });
 
 describe("HomeAssistantWebSocketClient – subscribeTrigger()", () => {
+  it("cleans the buffer and attempts unsubscribe when setup fails", async () => {
+    const client = new HomeAssistantWebSocketClient(baseConfig);
+    vi.spyOn(client, "connect").mockResolvedValue(undefined);
+    (client as unknown as InternalClient).sendAndWait = vi.fn(async () => {
+      throw new Error("setup failed");
+    });
+    const call = vi.spyOn(client, "call").mockRejectedValue(new Error("cleanup failed"));
+
+    await expect(client.subscribeTrigger({
+      trigger: { trigger: "event", event_type: "doorbell" },
+      waitMs: 20,
+      maxEvents: 2,
+    })).rejects.toThrow("setup failed");
+    expect(call).toHaveBeenCalledWith("unsubscribe_events", { subscription: 1 });
+    expect((client as unknown as InternalClient).eventBuffers.size).toBe(0);
+  });
+
   it("sends trigger variables and applies explicit collection bounds", async () => {
     vi.useFakeTimers();
     const client = new HomeAssistantWebSocketClient(baseConfig);

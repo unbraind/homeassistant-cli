@@ -18,6 +18,11 @@ interface PendingCall {
   timer: NodeJS.Timeout;
 }
 
+interface EventBuffer {
+  events: unknown[];
+  maxEvents: number;
+}
+
 interface WsConnectMessage {
   type: "auth_required" | "auth_ok" | "auth_invalid";
   message?: string;
@@ -30,7 +35,7 @@ export class HomeAssistantWebSocketClient {
   private socket: WebSocket | null = null;
   private nextId = 1;
   private pending = new Map<number, PendingCall>();
-  private eventBuffers = new Map<number, unknown[]>();
+  private eventBuffers = new Map<number, EventBuffer>();
 
   constructor(config: Config) {
     const parsed = new URL(config.url);
@@ -75,9 +80,11 @@ export class HomeAssistantWebSocketClient {
 
       for (const message of messages) {
         if (message.type === "event" && typeof message.id === "number") {
-          const events = this.eventBuffers.get(message.id);
-          if (events) {
-            events.push(message["event"] ?? message);
+          const buffer = this.eventBuffers.get(message.id);
+          if (buffer) {
+            if (buffer.events.length < buffer.maxEvents) {
+              buffer.events.push(message["event"] ?? message);
+            }
             continue;
           }
         }
@@ -104,9 +111,14 @@ export class HomeAssistantWebSocketClient {
       }
     });
 
-    await this.sendAndWait(this.nextId++, "supported_features", {
-      features: { coalesce_messages: 1 },
-    });
+    try {
+      await this.sendAndWait(this.nextId++, "supported_features", {
+        features: { coalesce_messages: 1 },
+      });
+    } catch (error) {
+      await this.close();
+      throw error;
+    }
   }
 
   async close(): Promise<void> {
@@ -166,20 +178,20 @@ export class HomeAssistantWebSocketClient {
   ): Promise<unknown[]> {
     await this.connect();
     const id = this.nextId++;
-    this.eventBuffers.set(id, []);
-    await this.sendAndWait(id, type, payload);
-
-    await new Promise((resolve) => setTimeout(resolve, waitMs));
-    const events = this.eventBuffers.get(id) as unknown[];
-
+    const buffer: EventBuffer = { events: [], maxEvents };
+    this.eventBuffers.set(id, buffer);
     try {
-      await this.call("unsubscribe_events", { subscription: id });
-    } catch {
-      // Closing the socket also removes a subscription if explicit cleanup fails.
+      await this.sendAndWait(id, type, payload);
+      await new Promise((resolve) => setTimeout(resolve, waitMs));
+      return buffer.events;
+    } finally {
+      try {
+        await this.call("unsubscribe_events", { subscription: id });
+      } catch {
+        // Closing the socket also removes a subscription if explicit cleanup fails.
+      }
+      this.eventBuffers.delete(id);
     }
-
-    this.eventBuffers.delete(id);
-    return events.slice(0, maxEvents);
   }
 
   private async sendAndWait(id: number, type: string, payload?: Record<string, unknown>): Promise<unknown> {

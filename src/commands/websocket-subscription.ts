@@ -33,10 +33,11 @@ function parseVariables(value: string | undefined): Record<string, unknown> | un
 }
 
 function parsePositiveInteger(value: string, name: string): number {
-  if (!/^[1-9]\d*$/.test(value)) {
+  const parsed = Number(value);
+  if (!/^[1-9]\d*$/.test(value) || !Number.isSafeInteger(parsed)) {
     throw new Error(`${name} must be a positive integer`);
   }
-  return Number(value);
+  return parsed;
 }
 
 /** Build the typed automation-trigger subscription command. */
