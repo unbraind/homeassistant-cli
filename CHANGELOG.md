@@ -4,6 +4,7 @@
 
 ### Added
 
+- Add coalesced WebSocket trigger subscriptions ([hac-r2z9](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/features/hac-r2z9.toon))
 - Add token-efficient registry discovery and release-runner parity ([hac-r17v](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/features/hac-r17v.toon))
 
 ### Security
@@ -14,6 +15,8 @@
 
 ### Other
 
+- Coalesced trigger subscription delivery plan ([hac-1sdd](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/plans/hac-1sdd.toon))
+- Implement coalesced protocol and typed trigger observation ([hac-c0y8](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-c0y8.toon))
 - Compact registry and publication parity delivery plan ([hac-yo48](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/plans/hac-yo48.toon))
 - Implement compact entity registry display discovery ([hac-ahl7](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-ahl7.toon))
 

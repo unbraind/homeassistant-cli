@@ -2,13 +2,13 @@ id: hac-1sdd
 title: Coalesced trigger subscription delivery plan
 description: "Ordered research, protocol implementation, typed command UX, documentation, exhaustive verification, exact-head review, merge, and tracker closeout for hac-r2z9."
 type: Plan
-status: open
+status: closed
 priority: 0
 tags[4]: agents,delivery-plan,home-assistant,websocket
 created_at: "2026-07-25T00:17:03.734Z"
-updated_at: "2026-07-25T01:46:57.537Z"
+updated_at: "2026-07-25T01:59:10.274Z"
 deadline: "2026-08-01T00:17:03.734Z"
-assignee: unbraind
+closed_at: "2026-07-25T01:59:10.273Z"
 author: codex-root
 estimated_minutes: 360
 acceptance_criteria: All seven ordered steps have linked evidence with no private live values
@@ -25,6 +25,9 @@ risk: high
 confidence: 98
 sprint: 2026-07-websocket-streaming
 release: 2026.7.25
+resolution: "Plan completed official/live research, implementation, documentation, independent acceptance gates, protected PR review remediation, merge, and canonical PM closeout for PR #71 at master commit 23a8e5fd02fafff447b61bca465e2293091b6ce7."
+expected_result: Every delivery step completed with exact-head evidence and canonical PM lineage.
+actual_result: Seven of seven steps completed; implementation and feature items closed; no product work remains active.
 dependencies[7]{id,kind,created_at,author,source_kind}:
   hac-6asb,related,"2026-07-25T00:17:03.734Z",null,null
   hac-7q84,related,"2026-07-25T00:17:03.734Z",null,null
@@ -46,6 +49,7 @@ tests[1]{command,scope,timeout_seconds,pm_context_mode}:
   "bun run release:verify",project,2400,tracker
 docs[1]{path,scope,note}:
   docs/API.md,project,Canonical command contract
+close_reason: All seven delivery-plan steps completed through merged-head tracker closeout.
 plan_mode: approved
 plan_resume_context: "Research is complete. Implement supported_features id 1 negotiation, object/array frame dispatch, and typed subscribe-trigger with inline/file JSON plus variables and bounded capture. Preserve generic passthrough and privacy. Then docs, 100 percent gates, non-publishing rehearsal, PR review loop, merge, and closeout."
 plan_decisions[1]{ts,author,decision,rationale,evidence}:
@@ -127,10 +131,12 @@ plan_steps[7]:
   - id: plan-step-006
     order: 6
     title: Publish PR and exhaust exact-head checks plus every bot thread
-    status: in_progress
+    status: completed
     created_at: "2026-07-25T00:17:48.425Z"
-    updated_at: "2026-07-25T01:03:40.501Z"
+    updated_at: "2026-07-25T01:59:04.886Z"
     owner: codex-root
+    evidence: "PR #71 merged at 23a8e5fd02fafff447b61bca465e2293091b6ce7 after exact-head c1d6b3e passed all required checks. Nine CodeRabbit threads were fixed, individually replied to and reacted to, then resolved; final inventory had zero unresolved threads and zero unreacted bot artifacts. Gemini reported sunset, CodeRabbit retrigger reported rate limit, and Greptile produced no artifact after repeated requests."
+    completed_at: "2026-07-25T01:59:04.886Z"
     linked_items[1]{id,kind}:
       hac-gx4b,depends_on
     files[1]{path,scope,note}:
@@ -140,10 +146,12 @@ plan_steps[7]:
   - id: plan-step-007
     order: 7
     title: Merge close PM lineage regenerate changelog and prove master
-    status: pending
+    status: completed
     created_at: "2026-07-25T00:17:49.714Z"
-    updated_at: "2026-07-25T00:17:49.714Z"
+    updated_at: "2026-07-25T01:59:09.469Z"
     owner: codex-root
+    evidence: Implementation PR #71 merged at 23a8e5fd02fafff447b61bca465e2293091b6ce7. Task hac-c0y8 and Feature hac-r2z9 are closed with strict resolution evidence; active claim released. Generated changelog and exact-master non-publishing workflow proof remain in this tracker-only closeout branch.
+    completed_at: "2026-07-25T01:59:09.469Z"
     linked_items[1]{id,kind}:
       hac-rdt1,depends_on
     files[1]{path,scope,note}:
