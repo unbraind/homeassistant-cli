@@ -67,10 +67,17 @@ fields to the plural WebSocket payload required by current Home Assistant Core,
 rejects malformed or empty input locally, and returns per-section
 `{ valid, error }` results in the selected output format.
 
-9. Cursor-based pagination (future):
+3. Observe Automation Triggers with Bounded Context (implemented):
+Use `hassio ws subscribe-trigger --trigger <json>` when an agent needs to wait
+for an automation-level condition without consuming the full event bus. The
+command validates inputs locally, negotiates coalesced WebSocket frames, applies
+`--wait-ms` and `--max-events` bounds, unsubscribes, and never fires the trigger.
+It requires a Home Assistant administrator.
+
+4. Cursor-based pagination (future):
 Add `--cursor` + `--limit` for entity-heavy installations so agents can page deterministically.
 
-10. Stable machine error envelope (future):
+5. Stable machine error envelope (future):
 Standardize failures to `{ code, message, hint, retriable }` across all commands and formats.
 
 ## TOON Format Explained

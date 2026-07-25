@@ -1247,7 +1247,13 @@ hassio ws target related --label-id lighting
 hassio ws validate-config --action '[{"action":"light.turn_on","target":{"entity_id":"light.kitchen"}}]'
 hassio ws validate-config --file automation.json
 hassio ws subscribe --event-type state_changed --wait-ms 10000 --max-events 20
+hassio ws subscribe-trigger --trigger '{"trigger":"event","event_type":"doorbell"}' --wait-ms 30000
 ```
+
+After authentication, the client negotiates Home Assistant's
+`supported_features.coalesce_messages` protocol feature. It accepts both ordinary
+single-message frames and coalesced JSON arrays, reducing transport overhead
+without changing command output contracts.
 
 #### `websocket target`
 Target-resolution helpers built on HA WebSocket commands:
@@ -1312,6 +1318,37 @@ hassio ws validate-config \
   --action '[{"action":"light.turn_on","target":{"entity_id":"light.kitchen"}}]' \
   --format json-compact
 hassio ws validate-config --file automation.json --format yaml
+```
+
+#### `websocket subscribe-trigger`
+
+Observe one or more Home Assistant automation triggers for a bounded period
+without firing the trigger or executing an action:
+
+```bash
+hassio ws subscribe-trigger [options]
+
+Options:
+  --trigger <json>    Trigger object or array as inline JSON
+  --file <path>       JSON trigger object or array; --trigger takes precedence
+  --variables <json>  Optional variables object supplied to the trigger
+  --wait-ms <ms>      Positive observation duration (default: 5000)
+  --max-events <n>    Positive result bound (default: 10)
+```
+
+The command requires a Home Assistant administrator because the official
+`subscribe_trigger` WebSocket command is admin-only. It validates JSON shapes
+and numeric bounds before connecting, subscribes, returns at most
+`--max-events` results, then calls `unsubscribe_events` even when no trigger
+fires. The selected global formatter receives
+`{ subscription: "trigger", event_count, events }`.
+
+```bash
+hassio ws subscribe-trigger \
+  --trigger '{"trigger":"state","entity_id":"binary_sensor.door"}' \
+  --variables '{"source":"agent-observation"}' \
+  --wait-ms 30000 --max-events 5 --format json-compact
+hassio ws subscribe-trigger --file trigger.json --format toon
 ```
 
 #### Typed session and exposure operations

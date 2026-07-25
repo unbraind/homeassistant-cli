@@ -98,4 +98,8 @@ bun run security:scan:history
 bun run commit:audit
 ```
 
-The separate `Release Dry Run` workflow remains available for a non-publishing full-gate and release-notes preview. `Commit Quality`, `CI`, and `Security` continue to enforce commit naming, build/test/coverage behavior, dependency auditing, secret scanning, and CodeQL independently of the privileged release environment.
+The separate `Release Dry Run` workflow provisions the same `ripgrep`,
+ShellCheck, and pinned Trivy toolchain before its non-publishing full-gate and
+release-notes preview. `Commit Quality`, `CI`, and `Security` continue to
+enforce commit naming, build/test/coverage behavior, dependency auditing, secret
+scanning, and CodeQL independently of the privileged release environment.

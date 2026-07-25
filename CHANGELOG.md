@@ -8,6 +8,8 @@
 
 ### Security
 
+- Release dry-run runner omits mandatory verification tools ([hac-bwr0](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/issues/hac-bwr0.toon))
+- Patch brace-expansion denial-of-service advisory ([hac-jo1v](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/issues/hac-jo1v.toon))
 - Tag publication runner omits mandatory release verification tools ([hac-zwvk](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/issues/hac-zwvk.toon))
 
 ### Other

@@ -1,0 +1,75 @@
+id: hac-c0y8
+title: Implement coalesced protocol and typed trigger observation
+description: "Negotiate Home Assistant WebSocket coalescing, dispatch single and array frames safely, and expose a typed bounded subscribe-trigger command with validated JSON inputs and complete agent documentation."
+type: Task
+status: in_progress
+priority: 0
+tags[4]: agents,automation,implementation,websocket
+created_at: "2026-07-25T00:18:21.933Z"
+updated_at: "2026-07-25T01:55:15.677Z"
+deadline: "2026-07-28T00:18:21.933Z"
+assignee: codex-root
+author: codex-root
+estimated_minutes: 240
+acceptance_criteria: "Application calls begin at id 2 after successful coalescing negotiation and all pending results/events are dispatched from single or coalesced frames; Inline/file trigger JSON and optional variables are validated before connect, documented with examples, and captured with positive bounded numeric controls; Actual built hassio passes live read-only subscribe-trigger acceptance and every supported formatter/help/schema gate; Release verifier, 100/100/100/100 coverage, docstrings, file-size, duplication, lint, TypeScript, ShellCheck, audit, Trivy, PM integrity, package smoke, and dry-run release all pass"
+definition_of_ready: hac-1sdd research step complete and plan approved
+goal: best-agent-home-assistant-cli
+objective: implement-bounded-coalesced-trigger-streaming
+value: Deliver the executable product behavior from hac-r2z9.
+impact: Agents can observe automation-level semantics without a broad unfiltered event stream.
+outcome: Typed tested documented and live-proven WebSocket streaming behavior.
+why_now: Official and live contracts are verified and the current transport is incompatible with coalesced arrays.
+parent: hac-r2z9
+reviewer: unbraind
+risk: high
+confidence: 98
+sprint: 2026-07-websocket-streaming
+release: 2026.7.25
+dependencies[8]{id,kind,created_at,author,source_kind}:
+  hac-1sdd,implements,"2026-07-25T00:18:21.933Z",null,null
+  hac-3n6e,related,"2026-07-25T00:18:21.933Z",null,null
+  hac-ak9g,related,"2026-07-25T00:18:21.933Z",null,null
+  hac-r17v,related,"2026-07-25T00:18:21.933Z",null,null
+  hac-soop,related,"2026-07-25T00:18:21.933Z",null,null
+  hac-suj3,related,"2026-07-25T00:18:21.933Z",null,null
+  hac-sv5f,discovered_from,"2026-07-25T00:18:21.933Z",null,null
+  hac-vooo,related,"2026-07-25T00:18:21.933Z",null,null
+comments[8]{created_at,author,text}:
+  "2026-07-25T00:18:21.933Z",codex-root,"Starting only this concrete task; Feature hac-r2z9 and Plan hac-1sdd stay open, not in progress."
+  "2026-07-25T00:29:47.990Z",codex-root,"Focused TypeScript, ESLint, file-size, 119/119 docstrings, 96 WebSocket tests, recursive help, built live trigger subscription, and built live ping pass. Proceeding to full four-metric and release verification."
+  "2026-07-25T00:39:33.591Z",codex-root,Mandatory dependency gate discovered GHSA-mh99-v99m-4gvg. Canonical remediation is tracked by hac-jo1v; override and lock now resolve patched brace-expansion 5.0.8 and bun audit is clean.
+  "2026-07-25T01:03:41.340Z",codex-root,"Final PM-linked acceptance is green: package-installed npx/bunx, focused 73-test WebSocket suite, live read-only Home Assistant smoke, and complete release verifier. Modern trigger-key syntax was additionally verified against live Home Assistant 2026.4.4. Preparing the review branch and exact-head hosted checks."
+  "2026-07-25T01:05:01.457Z",codex-root,"PR #71 opened from exact head e81aca4 with durable master-target PM links: https://github.com/unbraind/homeassistant-cli/pull/71. Starting protected checks and the Greptile, Gemini, and CodeRabbit full-review cycle."
+  "2026-07-25T01:46:34.972Z",codex-root,"CodeRabbit exact-head review found actionable bounded-buffer, negotiation-retry, failed-setup cleanup, safe-number, workflow-order, documentation-list, and PM-evidence gaps. Accepted the findings; the duplicate max-events thread will be resolved by the same bounded-buffer fix. Focused regression tests are linked before rerunning each acceptance gate independently."
+  "2026-07-25T01:51:11.756Z",codex-root,"The completed Plan-step structured-link update is blocked by pm-cli #692: https://github.com/unbraind/pm-cli/issues/692. The CLI reported success but silently retained old links; canonical Feature hac-r2z9 and Task hac-c0y8 carry the implementation and dedicated test paths, while step 003 evidence records the verified behavior."
+  "2026-07-25T01:55:15.676Z",codex-root,"Independent PM acceptance runs passed with concrete run IDs: package dry run test-local-mrzpquzn-dke2ca; focused 76-test WebSocket suite test-local-mrzpqxmb-tujzj2; live read-only Home Assistant E2E test-local-mrzprlw3-6w7eq1; complete release verifier test-local-mrzpv0f6-upne99. The verifier passed 1,239 tests, exact 4548/4548 statements, 2280/2280 branches, 912/912 functions, 4188/4188 lines, 119/119 docstrings, file-size, duplication, ShellCheck, PM strict, Trivy, history secrets, and commit audit."
+notes[1]{created_at,author,text}:
+  "2026-07-25T00:18:21.933Z",codex-root,The live acceptance trigger uses a synthetic event type and does not fire or mutate Home Assistant.
+learnings[1]{created_at,author,text}:
+  "2026-07-25T00:18:21.933Z",codex-root,subscribe_trigger is admin-only and uses unsubscribe_events with the original subscription id.
+files[7]{path,scope,note}:
+  src/api/websocket.ts,project,Negotiation and frame dispatch
+  src/commands/websocket-subscription.ts,project,Typed bounded trigger command
+  src/commands/websocket.ts,project,Typed command registration
+  tests/api-websocket.test.ts,project,Transport protocol coverage
+  tests/e2e-live.ts,project,Live read-only acceptance
+  tests/websocket-command.test.ts,project,Command behavior coverage
+  tests/websocket-subscription-command.test.ts,project,Command contract coverage
+tests[4]{command,scope,timeout_seconds,pm_context_mode}:
+  "bun run release:dry-run",project,600,tracker
+  bun run test -- tests/api-websocket.test.ts tests/websocket-command.test.ts tests/websocket-subscription-command.test.ts,project,300,tracker
+  "HASSIO_URL=\"$(jq -r .url \"$HOME/.hassio-cli/settings.json\")\" HASSIO_TOKEN=\"$(jq -r .token \"$HOME/.hassio-cli/auth.json\")\" HASSIO_READONLY=true HASSIO_CONFIG=\"$HOME/.hassio-cli/settings.json\" bun run test:e2e:live",project,600,tracker
+  "PM_PATH=.agents/pm bun run release:verify",project,2400,auto
+test_runs[5]{run_id,kind,status,started_at,finished_at,recorded_at,passed,failed,skipped}:
+  test-local-mrzo13f9-rkmnx1,test,passed,"2026-07-25T00:58:14.796Z","2026-07-25T01:03:31.222Z","2026-07-25T01:03:31.222Z",4,0,0
+  test-local-mrzpquzn-dke2ca,test,passed,"2026-07-25T01:51:12.805Z","2026-07-25T01:51:32.963Z","2026-07-25T01:51:32.963Z",1,0,0
+  test-local-mrzpqxmb-tujzj2,test,passed,"2026-07-25T01:51:33.997Z","2026-07-25T01:51:36.371Z","2026-07-25T01:51:36.371Z",1,0,0
+  test-local-mrzprlw3-6w7eq1,test,passed,"2026-07-25T01:51:37.447Z","2026-07-25T01:52:07.827Z","2026-07-25T01:52:07.827Z",1,0,0
+  test-local-mrzpv0f6-upne99,test,passed,"2026-07-25T01:52:08.893Z","2026-07-25T01:54:46.626Z","2026-07-25T01:54:46.626Z",1,0,0
+docs[5]{path,scope,note}:
+  docs/AGENT_OPTIMIZATION.md,project,Token efficiency
+  docs/API.md,project,CLI API contract
+  docs/INDEX.md,project,Discoverability
+  docs/LLM_INTEGRATION.md,project,Agent workflow
+  README.md,project,User quick-start
+body: "Implement the stable official protocol only. Parse types from installed ws/Commander and existing internal contracts, keep top-level imports, use erasable TypeScript, introduce no any, keep source files at or under 300 code lines, and preserve default TOON plus every other formatter."

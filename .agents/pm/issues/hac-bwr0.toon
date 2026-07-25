@@ -1,0 +1,62 @@
+id: hac-bwr0
+title: Release dry-run runner omits mandatory verification tools
+description: "The manually dispatched Release Dry Run workflow invokes release:verify on a clean ubuntu-latest runner without first installing ripgrep or Trivy, so the non-publishing rehearsal cannot complete."
+type: Issue
+status: closed
+priority: 0
+tags[4]: ci,release,security,workflow
+created_at: "2026-07-25T01:14:08.669Z"
+updated_at: "2026-07-25T01:20:28.662Z"
+deadline: "2026-07-26T01:14:08.669Z"
+closed_at: "2026-07-25T01:20:27.964Z"
+author: codex-root
+estimated_minutes: 30
+acceptance_criteria: release-dry-run.yml installs ripgrep and ShellCheck plus pinned Trivy before dependencies; workflow contract tests cover the required setup ordering; exact-head hosted Release Dry Run passes every gate and uploads its notes preview
+definition_of_ready: Hosted run 30137766759 provides a clean-runner reproduction; publication workflow contains a proven setup pattern
+goal: best-agent-home-assistant-cli
+objective: restore-release-dry-run-parity
+value: Make the manual non-publishing rehearsal a trustworthy release gate.
+impact: Prevents false confidence and guarantees the full verifier can execute before publication.
+outcome: A green exact-head Release Dry Run on a clean GitHub runner.
+why_now: "The user explicitly requires fully working automatic release readiness, and the exact-head rehearsal failed."
+parent: hac-r2z9
+reviewer: unbraind
+risk: high
+confidence: 100
+sprint: 2026-07-websocket-streaming
+release: 2026.7.25
+reporter: codex-root
+severity: high
+environment: "GitHub ubuntu-latest, Bun 1.3.14, workflow run 30137766759"
+repro_steps: "Dispatch release-dry-run.yml on exact PR head; release:verify step 8 exits 127 because rg and trivy are not installed"
+resolution: "Provisioned ripgrep, ShellCheck, and pinned Trivy in release-dry-run.yml before release:verify; added cross-workflow ordering coverage. Exact-head hosted run 30138138507 passed all gates and uploaded release notes."
+expected_result: All ten release verification stages execute and the non-publishing workflow completes
+actual_result: "Coverage reaches 100 percent, then security stage fails with rg: command not found and trivy: command not found"
+affected_version: 2026.7.24
+fixed_version: 2026.7.25
+component: release-dry-run-workflow
+regression: true
+customer_impact: Maintainers cannot prove a release candidate on a clean runner before publishing.
+dependencies[4]{id,kind,created_at,author,source_kind}:
+  hac-c0y8,discovered_from,"2026-07-25T01:14:08.669Z",null,null
+  hac-l25p,related,"2026-07-25T01:14:08.669Z",null,null
+  hac-r17v,related,"2026-07-25T01:14:08.669Z",null,null
+  hac-zwvk,related,"2026-07-25T01:14:08.669Z",null,null
+comments[1]{created_at,author,text}:
+  "2026-07-25T01:14:08.669Z",codex-root,"All-status duplicate searches found adjacent publication and pm-changelog runner issues, but no item for missing tools in release-dry-run.yml."
+notes[1]{created_at,author,text}:
+  "2026-07-25T01:14:08.669Z",codex-root,"Reuse the pinned setup-trivy action and apt tool installation already proven in publish.yml; do not weaken release:verify."
+learnings[1]{created_at,author,text}:
+  "2026-07-25T01:14:08.669Z",codex-root,A separate rehearsal workflow drifted from the publication runner after release verification added mandatory tools.
+files[2]{path,scope,note}:
+  .github/workflows/release-dry-run.yml,project,Clean-runner tool provisioning
+  tests/release-workflow-contract.test.ts,project,Release workflow parity contract
+tests[2]{command,scope,timeout_seconds,pm_context_mode}:
+  bun run test -- tests/release-workflow-contract.test.ts,project,300,tracker
+  gh run watch 30138138507 --repo unbraind/homeassistant-cli --exit-status,project,2400,tracker
+test_runs[1]{run_id,kind,status,started_at,finished_at,recorded_at,passed,failed,skipped}:
+  test-local-mrzomuqf-fserho,test,passed,"2026-07-25T01:20:24.297Z","2026-07-25T01:20:26.391Z","2026-07-25T01:20:26.391Z",2,0,0
+docs[1]{path,scope,note}:
+  docs/RELEASING.md,project,Release rehearsal contract
+close_reason: "Release Dry Run now provisions the full mandatory verifier toolchain. Focused workflow tests, YAML parsing, PM integrity, PR checks, and exact-head hosted run 30138138507 all pass; the non-publishing notes artifact was uploaded."
+body: "The release verifier intentionally requires rg, ShellCheck, and Trivy. publish.yml already installs the exact toolchain; release-dry-run.yml must maintain parity so its advertised rehearsal is meaningful."
