@@ -267,6 +267,55 @@ hassio camera camera.front_door -o snapshot.jpg
 hassio camera camera.front_door | convert - -resize 50% small.jpg
 ```
 
+#### `media`
+
+Browse, search, and resolve media through Home Assistant's read-only WebSocket
+contracts. Every subcommand supports the global output formats, including TOON
+by default.
+
+```bash
+hassio media browse [options]
+hassio media search <query> [options]
+hassio media resolve <media-content-id> [--metadata-only]
+```
+
+Browse and search options:
+
+- `--entity-id <id>` selects `media_player/browse_media` or
+  `media_player/search_media`; without it, the shared `media_source/*` contract
+  is used.
+- `--media-content-id <id>` selects a source or player node.
+- `--media-content-type <type>` is player-only and must be supplied together
+  with `--media-content-id`.
+- `--media-class <classes>` filters search results by current Home Assistant
+  media classes such as `artist,album,track`.
+- `--limit <n>` accepts a positive safe integer and defaults to 50.
+- `--count` omits media rows and returns only `{ scope, count }`.
+
+Detailed browse output is `{ scope, count, media }`, with only the first
+`--limit` immediate children retained. Search output is
+`{ scope, count, results }`, bounded in the same way. `count` reports the total
+rows returned by Home Assistant before the CLI projection is sliced.
+
+```bash
+hassio media browse --count
+hassio media browse --media-content-id "media-source://provider/root" --limit 20
+hassio media browse --entity-id media_player.living_room --count
+hassio media search "ambient" --media-class artist,album --limit 10
+hassio media search "news" --entity-id media_player.living_room --count
+hassio media resolve "media-source://provider/item" --metadata-only
+```
+
+`media_source/search_media` is the newest media-source search contract in
+current Home Assistant Core development. Servers that do not register it return
+their normal `unknown_command` error; the CLI does not disguise that capability
+boundary. `media_player/search_media` requires a player whose integration
+advertises `SEARCH_MEDIA`.
+
+Resolve output can contain a short-lived authenticated URL. Treat it as a
+credential and never persist it in logs, prompts, PM items, or source control.
+Use `--metadata-only` to return only `{ scope, resolved, mime_type }`.
+
 ## Settings Commands
 
 #### `settings wizard`

@@ -7,8 +7,10 @@ describe("command helper parsing", () => {
     expect(parseLimit("12")).toBe(12);
   });
 
-  it("rejects non-positive and non-numeric limits", () => {
+  it("rejects limits that are not positive safe integers", () => {
     expect(() => parseLimit("0")).toThrow("positive integer");
     expect(() => parseLimit("invalid")).toThrow("positive integer");
+    expect(() => parseLimit("1.5")).toThrow("positive integer");
+    expect(() => parseLimit("9007199254740992")).toThrow("positive integer");
   });
 });

@@ -67,17 +67,24 @@ fields to the plural WebSocket payload required by current Home Assistant Core,
 rejects malformed or empty input locally, and returns per-section
 `{ valid, error }` results in the selected output format.
 
-3. Observe Automation Triggers with Bounded Context (implemented):
+9. Bounded media discovery (implemented):
+Use `hassio media browse --count` before requesting detail, then apply a small
+`--limit`. `hassio media search` supports shared media sources and
+`--entity-id` player search, with current media-class filters and stable
+`{ scope, count, results }` output. Prefer `media resolve --metadata-only`;
+the full resolve response can contain a short-lived signed credential.
+
+10. Observe Automation Triggers with Bounded Context (implemented):
 Use `hassio ws subscribe-trigger --trigger <json>` when an agent needs to wait
 for an automation-level condition without consuming the full event bus. The
 command validates inputs locally, negotiates coalesced WebSocket frames, applies
 `--wait-ms` and `--max-events` bounds, unsubscribes, and never fires the trigger.
 It requires a Home Assistant administrator.
 
-4. Cursor-based pagination (future):
+11. Cursor-based pagination (future):
 Add `--cursor` + `--limit` for entity-heavy installations so agents can page deterministically.
 
-5. Stable machine error envelope (future):
+12. Stable machine error envelope (future):
 Standardize failures to `{ code, message, hint, retriable }` across all commands and formats.
 
 ## TOON Format Explained
@@ -460,10 +467,16 @@ hassio registries --areas
 ### Workflow 5: Media Control
 
 ```bash
-# 1. Find all media players
-hassio entities -d media_player
+# 1. Inspect shared media capability without returning private rows
+hassio media browse --count
 
-# 2. Stop all playing media
+# 2. Search a supported media source with bounded context
+hassio media search "ambient" --media-class artist,album --limit 10
+
+# 3. Search a player that advertises SEARCH_MEDIA support
+hassio media search "news" --entity-id media_player.living_room --count
+
+# 4. Stop all playing media
 hassio batch -d media_player -s media_stop \
   -e $(hassio entities -d media_player -s playing --format json-compact | jq -r '.[].entity_id' | tr '\n' ',')
 ```

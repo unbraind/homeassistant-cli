@@ -33,8 +33,8 @@ export function parseLimit(value?: string): number | undefined {
     return undefined;
   }
 
-  const limit = parseInt(value, 10);
-  if (!Number.isFinite(limit) || limit <= 0) {
+  const limit = Number(value);
+  if (!/^[1-9]\d*$/.test(value) || !Number.isSafeInteger(limit)) {
     throw new Error(`Invalid limit '${value}'. Must be a positive integer.`);
   }
 

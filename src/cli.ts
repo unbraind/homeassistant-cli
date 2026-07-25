@@ -24,6 +24,7 @@ import {
   createCalendarsCommand,
   createCalendarEventsCommand,
   createCameraCommand,
+  createMediaDiscoveryCommand,
   createConfigSetCommand,
   createConfigGetCommand,
   createConfigPathCommand,
@@ -171,6 +172,7 @@ program.addCommand(createErrorLogCommand());
 program.addCommand(createCalendarsCommand());
 program.addCommand(createCalendarEventsCommand());
 program.addCommand(createCameraCommand());
+program.addCommand(createMediaDiscoveryCommand());
 const settingsCmd = new Command("settings")
   .description("Configuration management commands");
 settingsCmd.addCommand(createConfigSetCommand());
