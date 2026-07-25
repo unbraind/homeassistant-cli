@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- Add agent-native media discovery and search ([hac-ln1v](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/features/hac-ln1v.toon))
+
+### Other
+
+- Media discovery delivery plan ([hac-h3uj](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/plans/hac-h3uj.toon))
+- Implement typed bounded media browse search and resolve ([hac-poex](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-poex.toon))
+
 ## 2026.7.25 - 2026-07-25
 
 ### Added
