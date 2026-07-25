@@ -6,7 +6,7 @@ status: in_progress
 priority: 0
 tags[6]: agents,implementation,media,search,typescript,websocket
 created_at: "2026-07-25T22:32:44.658Z"
-updated_at: "2026-07-25T23:07:24.756Z"
+updated_at: "2026-07-25T23:11:06.398Z"
 deadline: "2026-07-27T22:32:44.658Z"
 assignee: codex-root
 author: codex-root
@@ -34,10 +34,11 @@ dependencies[8]{id,kind,created_at,author,source_kind}:
   hac-r4e3,related,"2026-07-25T22:32:44.658Z",null,null
   hac-soop,discovered_from,"2026-07-25T22:32:44.658Z",null,null
   hac-vooo,related,"2026-07-25T22:32:44.658Z",null,null
-comments[3]{created_at,author,text}:
+comments[4]{created_at,author,text}:
   "2026-07-25T22:32:44.658Z",codex-root,Only this Task will be claimed and moved in progress; the Feature and Plan remain open for terminal delivery tracking.
   "2026-07-25T22:46:14.091Z",codex-root,"Focused implementation gates pass: TypeScript, ESLint, 120/120 docstrings, <=300 source LOC, 3.98 percent duplicated lines with no new media clone, 34 focused tests, and full 1,261-test coverage at exact 4620/4620 statements, 2329/2329 branches, 927/927 functions, and 4251/4251 lines."
   "2026-07-25T23:04:29.818Z",codex-root,"Full pre-PR acceptance is green: release verifier passed dependency audit, TypeScript, ESLint, 100% docstrings, duplication and 300-line gates, ShellCheck, PM strict validation/health, build, 1,261 tests, exact 100/100/100/100 coverage, Trivy, full-history secret scan, commit audit, and isolated packed npx plus bunx smoke. Live read-only acceptance passed against the configured instance across six formats, wizard isolation, and honest unsupported media-source search classification; no private values were recorded."
+  "2026-07-25T23:11:06.398Z",codex-root,"Implementation PR #75 opened at exact head 58a0f64 with durable Feature, Plan, and Task links. Bot review requests will be issued only after this PM linkage commit lands so every reviewer evaluates the final documented head."
 notes[1]{created_at,author,text}:
   "2026-07-25T22:32:44.658Z",codex-root,"Live media tree/search/resolve results must be reduced in-process to counts, booleans, and contract classifications before logs or PM evidence."
 learnings[1]{created_at,author,text}:
