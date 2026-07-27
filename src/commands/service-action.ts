@@ -3,9 +3,8 @@
  */
 import { readFile } from "node:fs/promises";
 import { Command, Option } from "commander";
-import { HomeAssistantClient } from "../api/client.js";
 import { HomeAssistantReadOnlyError } from "../api/errors.js";
-import { HomeAssistantWebSocketClient } from "../api/websocket.js";
+import { HomeAssistantServiceActionClient } from "../api/service-action.js";
 import { formatOutput } from "../formatters/index.js";
 import type {
   HaContext,
@@ -166,7 +165,7 @@ WebSocket. Dry runs are allowed in read-only mode and never execute the action.
         : "/websocket/call_service";
       throw new HomeAssistantReadOnlyError(options.transport === "rest" ? "POST" : "WEBSOCKET", path);
     }
-    const rest = new HomeAssistantClient(config);
+    const actions = new HomeAssistantServiceActionClient(config);
     const rawData = options.data ?? (options.dataFile ? await readFile(options.dataFile, "utf8") : undefined);
     const data = rawData ? parseObject(rawData, "Service data") : {};
     const target = parseTarget(options.target);
@@ -181,13 +180,21 @@ WebSocket. Dry runs are allowed in read-only mode and never execute the action.
       if (value) target[key] = value;
     }
 
-    const definition = findServiceDefinition(await rest.getServices(), domain, service);
+    const definition = findServiceDefinition(await actions.getServices(), domain, service);
     const capability = responseCapability(definition);
     const responseRequested = options.returnResponse === true
       || options.response === "always"
       || (options.response === "auto" && capability === "required");
     const validationData = options.transport === "rest" ? { ...data, ...target } : data;
     const validation = validateServiceData(definition, validationData, options.strictInput);
+    const targetIsSupported = Object.keys(target).length === 0 || !definition || Boolean(definition.target);
+    if (!targetIsSupported) {
+      validation.ok = false;
+      validation.errors.push(`Service action '${domain}.${service}' does not accept a target`);
+    }
+    if (!targetIsSupported && !options.dryRun) {
+      throw new Error(validation.errors.at(-1));
+    }
     if ((options.validateInput || options.strictInput) && !validation.ok && !options.dryRun) {
       throw new Error(`Service input validation failed: ${validation.errors.join("; ")}`);
     }
@@ -223,24 +230,25 @@ WebSocket. Dry runs are allowed in read-only mode and never execute the action.
     }
 
     if (options.transport === "rest") {
-      const result = await rest.callService(domain, service, validationData, responseRequested);
-      console.log(formatOutput(normalizeRestResult(result, base), format));
-      return;
-    }
-
-    const websocket = new HomeAssistantWebSocketClient(config);
-    try {
-      const result = await websocket.callService({
+      const result = await actions.executeRest({
         domain,
         service,
         serviceData: data,
         target,
         returnResponse: responseRequested,
       });
-      console.log(formatOutput(normalizeWebSocketResult(result, base), format));
-    } finally {
-      await websocket.close();
+      console.log(formatOutput(normalizeRestResult(result, base), format));
+      return;
     }
+
+    const result = await actions.executeWebSocket({
+      domain,
+      service,
+      serviceData: data,
+      target,
+      returnResponse: responseRequested,
+    });
+    console.log(formatOutput(normalizeWebSocketResult(result, base), format));
   }));
 
   return command;

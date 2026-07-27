@@ -130,14 +130,11 @@ export function validateServiceData(
   const fields = toFieldMap(definition.fields);
   const knownFields = Object.keys(fields).sort();
   const requiredFields = knownFields.filter((field) => fields[field]?.required);
-  const allowedExtraFields = new Set([
-    "area_id",
-    "device_id",
-    "entity_id",
-    "floor_id",
-    "label_id",
-  ]);
+  const allowedExtraFields = new Set<string>();
   if (definition.target) {
+    for (const targetField of ["area_id", "device_id", "entity_id", "floor_id", "label_id"]) {
+      allowedExtraFields.add(targetField);
+    }
     allowedExtraFields.add("target");
   }
 

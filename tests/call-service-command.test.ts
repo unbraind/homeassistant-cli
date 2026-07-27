@@ -293,8 +293,32 @@ describe("call-service command", () => {
     expect(mockRequest).toHaveBeenCalledTimes(1);
   });
 
+  it.each(["rest", "websocket"])("rejects targets for non-targetable %s actions", async (transport) => {
+    mockRequest.mockResolvedValueOnce(mockResponse(serviceCatalog({ fields: {} })));
+    await expect(createCallServiceCommand().parseAsync(
+      ["light", "turn_on", "--transport", transport, "--entity-id", "light.kitchen"],
+      { from: "user" },
+    )).rejects.toThrow("does not accept a target");
+    expect(mockRequest).toHaveBeenCalledTimes(1);
+    expect(wsCallService).not.toHaveBeenCalled();
+  });
+
+  it("records unsupported targets as non-executable dry-run evidence", async () => {
+    mockRequest.mockResolvedValueOnce(mockResponse(serviceCatalog({ fields: {} })));
+    const output = await captureOutput([
+      "light", "turn_on", "--entity-id", "light.kitchen", "--dry-run",
+    ]);
+    expect(output["executable"]).toBe(false);
+    expect((output["validation"] as { errors: string[] }).errors).toContain(
+      "Service action 'light.turn_on' does not accept a target",
+    );
+  });
+
   it("normalizes WebSocket execution and always closes the connection", async () => {
-    mockRequest.mockResolvedValueOnce(mockResponse(serviceCatalog({ response: { optional: true } })));
+    mockRequest.mockResolvedValueOnce(mockResponse(serviceCatalog({
+      target: {},
+      response: { optional: true },
+    })));
     wsCallService.mockResolvedValueOnce({
       context: { id: "ctx", parent_id: null, user_id: "user" },
       response: { accepted: true },

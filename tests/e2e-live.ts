@@ -18,7 +18,7 @@ const configDir = mkdtempSync(join(tmpdir(), "hassio-cli-e2e-"));
 const configPath = join(configDir, "settings.json");
 process.once("exit", () => rmSync(configDir, { recursive: true, force: true }));
 
-function run(args: string[], env?: NodeJS.ProcessEnv): string {
+function run(args: string[], env?: NodeJS.ProcessEnv, safeLabel?: string): string {
   try {
     return execFileSync("node", [cliPath, "--config", configPath, ...args], {
       cwd: repoRoot,
@@ -32,7 +32,7 @@ function run(args: string[], env?: NodeJS.ProcessEnv): string {
       stdout?: string;
       stderr?: string;
     };
-    console.error(`Command failed: hassio ${args.join(" ")}`);
+    console.error(`Command failed: hassio ${safeLabel ?? args.join(" ")}`);
     if (typed.stdout) console.error(typed.stdout);
     if (typed.stderr) console.error(typed.stderr);
     process.exit(typed.status ?? 1);
@@ -212,7 +212,7 @@ if (supportsForecastResponse && typeof weatherEntityId === "string") {
     "--format", "json",
   ], {
     HASSIO_READONLY: "false",
-  })) as Record<string, unknown>;
+  }, "call-service weather get_forecasts --entity-id <redacted> --data <redacted> --format json")) as Record<string, unknown>;
   assert(action["operation"] === "service_action", "invalid executed service action operation");
   assert(action["transport"] === "rest", "invalid executed service action transport");
   assert(action["response_capability"] === "required", "response capability was not detected");

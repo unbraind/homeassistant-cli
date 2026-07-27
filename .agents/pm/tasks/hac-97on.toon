@@ -6,7 +6,7 @@ status: closed
 priority: 0
 tags[8]: api,cli,coverage,docs,service-actions,testing,type-safety,websocket
 created_at: "2026-07-27T21:19:03.813Z"
-updated_at: "2026-07-27T21:49:32.086Z"
+updated_at: "2026-07-27T22:15:16.694Z"
 deadline: "2026-07-28T21:19:03.813Z"
 closed_at: "2026-07-27T21:49:14.110Z"
 author: codex-root
@@ -47,13 +47,14 @@ notes[2]{created_at,author,text}:
 learnings[2]{created_at,author,text}:
   "2026-07-27T21:19:03.813Z",codex-root,REST and WebSocket action results require a discriminated normalization layer; one guessed interface cannot safely describe both.
   "2026-07-27T21:38:04.408Z",codex-root,"Commander boolean env integration treats variable presence as truthy. Removing env binding from the bare boolean option lets the config loader remain the single strict parser, so false and 0 correctly disable read-only mode."
-files[16]{path,scope,note}:
+files[17]{path,scope,note}:
   .gitattributes,project,shared PM item history and JSON merge contracts
   bun.lock,project,reproducible latest TOON resolution
   package.json,project,latest TOON runtime
   src/api/client.ts,project,REST result transport
   src/api/errors.ts,project,read-only recovery guidance
   src/api/lists.ts,project,current response-capable todo parsing
+  src/api/service-action.ts,project,Dedicated lifecycle-safe REST and WebSocket service-action orchestration added from exact-head review feedback
   src/api/websocket.ts,project,WebSocket action transport
   src/cli.ts,project,strict environment boolean parsing
   src/commands/service-action.ts,project,typed action planning and normalization

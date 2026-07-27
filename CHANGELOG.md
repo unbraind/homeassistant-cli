@@ -1,6 +1,6 @@
 # Changelog
 
-## 2026.7.26 - 2026-07-26
+## Unreleased
 
 ### Added
 
@@ -8,7 +8,7 @@
 
 ### Fixed
 
-- Explicit HASSIO_READONLY false enables read-only mode ([hac-ndoh](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/issues/hac-ndoh.toon))
+- Explicit HASSIO_READONLY false incorrectly enables read-only mode ([hac-ndoh](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/issues/hac-ndoh.toon))
 
 ### Other
 

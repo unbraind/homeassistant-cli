@@ -16,6 +16,7 @@ export * from "./automation.js";
 export * from "./extended.js";
 export * from "./supervisor.js";
 export * from "./websocket.js";
+export * from "./service-action.js";
 export * from "./config-entries.js";
 export * from "./errors.js";
 export * from "./base.js";
