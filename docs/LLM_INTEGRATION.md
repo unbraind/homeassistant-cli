@@ -43,8 +43,18 @@ Use `hassio services --schema --format json` to retrieve normalized service rows
 - `accepts_target`
 - `has_response`
 
-Use `hassio call-service <domain> <service> --validate-input` to validate payloads against live service definitions before execution.
-Use `--strict-input` to fail on unknown keys (recommended for agent-written automation).
+Use `hassio call-service <domain> <service> --dry-run --strict-input` to produce
+a non-executing plan with live-schema validation evidence. Target entity,
+device, area, floor, or label selectors can be supplied independently from
+service data. After approval, remove `--dry-run` to execute the same plan.
+
+The default `--response auto` policy requests response data only for actions
+whose live definition requires it. Every REST or WebSocket execution returns the
+same `service_action` envelope, including `response_capability`,
+`response_requested`, `changed_states`, `context`, and `service_response`.
+Agents should branch on these explicit fields instead of transport-specific raw
+payload shapes. Use `--response never` for actions that must not return data;
+the CLI rejects that policy when the action requires a response.
 
 6. Output contracts for parser-safe automation (implemented):
 Use `hassio schema --output-contracts --format json` to retrieve:

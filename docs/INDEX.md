@@ -117,7 +117,7 @@ All commands support global flags (`--url`, `--token`, `--format`, `--timeout`, 
 
 | Command | Description |
 |---------|-------------|
-| `call-service <domain> <service>` | Call a service |
+| `call-service <domain> <service>` | Plan or execute a typed service action over REST or WebSocket |
 | `fire-event <event-type>` | Fire an event |
 | `render-template <template>` | Render a template |
 | `handle-intent <name>` | Handle an intent |

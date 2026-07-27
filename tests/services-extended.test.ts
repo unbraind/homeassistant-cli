@@ -4,7 +4,6 @@ import {
   createRenderTemplateCommand,
   createCheckConfigCommand,
   createHandleIntentCommand,
-  createCallServiceCommand,
 } from "../src/commands/services.js";
 
 const exitSpy = vi.spyOn(process, "exit").mockImplementation(() => undefined as never);
@@ -162,82 +161,5 @@ describe("handle-intent command", () => {
     const body = JSON.parse(callOptions?.body ?? "{}");
     expect(body.name).toBe("TurnOn");
     expect(body.data?.entity_id).toBe("light.kitchen");
-  });
-});
-
-describe("call-service command (extended)", () => {
-  beforeEach(() => { mockRequest.mockReset(); exitSpy.mockClear(); });
-  afterEach(() => { vi.clearAllMocks(); });
-
-  it("calls service with entity-id flag", async () => {
-    mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
-
-    const cmd = createCallServiceCommand();
-    await captureLog(() =>
-      cmd.parseAsync(["light", "turn_on", "--entity-id", "light.kitchen"], { from: "user" })
-    );
-
-    const callOptions = mockRequest.mock.calls[0]?.[1] as { body?: string };
-    const body = JSON.parse(callOptions?.body ?? "{}");
-    expect(body.entity_id).toBe("light.kitchen");
-  });
-
-  it("calls service with --return-response flag", async () => {
-    mockRequest.mockResolvedValueOnce(mockResponse({
-      context: { id: "ctx" },
-      response: { brightness: 200 },
-    }));
-
-    const cmd = createCallServiceCommand();
-    const result = await captureLog(() =>
-      cmd.parseAsync(["light", "turn_on", "--entity-id", "light.kitchen", "--return-response"], { from: "user" })
-    );
-
-    expect(result).toContain("context");
-  });
-
-  it("calls service without data or entity-id", async () => {
-    mockRequest.mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
-
-    const cmd = createCallServiceCommand();
-    const result = await captureLog(() =>
-      cmd.parseAsync(["homeassistant", "reload_all"], { from: "user" })
-    );
-
-    expect(result).toContain("ctx");
-  });
-
-  it("warns on unknown fields during validation", async () => {
-    mockRequest
-      .mockResolvedValueOnce(mockResponse([
-        {
-          domain: "light",
-          services: {
-            turn_on: {
-              fields: {
-                entity_id: { required: true },
-                brightness: { required: false },
-              },
-            },
-          },
-        },
-      ]))
-      .mockResolvedValueOnce(mockResponse({ context: { id: "ctx" } }));
-
-    const errors: string[] = [];
-    const originalErr = console.error;
-    console.error = (msg: string) => errors.push(msg);
-
-    const cmd = createCallServiceCommand();
-    await captureLog(() =>
-      cmd.parseAsync(
-        ["light", "turn_on", "--data", '{"entity_id":"light.kitchen","extra":true}', "--validate-input"],
-        { from: "user" }
-      )
-    );
-
-    console.error = originalErr;
-    // Validation passes with warnings for non-strict mode
-    expect(mockRequest).toHaveBeenCalledTimes(2);
   });
 });

@@ -176,17 +176,17 @@ describe("HomeAssistantClient", () => {
   describe("callService", () => {
     it("should call service without response", async () => {
       mockRequest.mockResolvedValueOnce(
-        mockResponse({ context: { id: "123" } })
+        mockResponse([{ entity_id: "light.living_room", state: "on" }])
       );
       const result = await client.callService("light", "turn_on", {
         entity_id: "light.living_room",
       });
-      expect(result.context.id).toBe("123");
+      expect(result).toEqual([{ entity_id: "light.living_room", state: "on" }]);
     });
 
     it("should call service with response", async () => {
       mockRequest.mockResolvedValueOnce(
-        mockResponse({ context: { id: "123" }, response: { data: "test" } })
+        mockResponse({ changed_states: [], service_response: { data: "test" } })
       );
       const result = await client.callService(
         "weather",

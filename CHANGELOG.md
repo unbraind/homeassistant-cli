@@ -1,5 +1,20 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- Unify typed service action execution across REST and WebSocket ([hac-stpm](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/features/hac-stpm.toon))
+
+### Fixed
+
+- Explicit HASSIO_READONLY false incorrectly enables read-only mode ([hac-ndoh](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/issues/hac-ndoh.toon))
+
+### Other
+
+- Typed service action delivery plan ([hac-ahkf](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/plans/hac-ahkf.toon))
+- Implement normalized typed service action contracts ([hac-97on](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-97on.toon))
+
 ## 2026.7.26 - 2026-07-26
 
 ### Added

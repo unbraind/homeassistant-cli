@@ -25,8 +25,8 @@ The CLI uses **TOON (Token-Oriented Object Notation)** as the default output for
 
 **TOON format (140 tokens):**
 ```
-states[1]{entity_id,state,last_changed,attributes}:
-  light.living_room,on,2024-01-01T00:00:00Z,"{""brightness"":255,""color_temp"":400}"
+states[1]{entity_id,state,last_changed,attributes{brightness,color_temp}}:
+  light.living_room,on,"2024-01-01T00:00:00Z",255,400
 ```
 
 ### Token Savings
@@ -328,7 +328,21 @@ export HASSIO_READONLY=true
 
 # Or per command
 hassio --read-only states
+
+# Plan and validate an action without executing it
+hassio call-service light turn_on --area-id kitchen --dry-run --strict-input
 ```
+
+Read-only mode blocks action execution before service discovery, while
+`--dry-run` remains available for planning. Set `HASSIO_READONLY=false`
+explicitly to override a saved read-only setting for an approved invocation.
+Boolean environment values are parsed strictly; only `true`, `1`, or `yes`
+enable the safety mode.
+
+Service actions use `--response auto` by default and return a stable envelope
+across REST and WebSocket. Inspect `response_capability` and
+`response_requested` before consuming `service_response`; use `changed_states`
+and `context` without depending on the selected transport's raw wire shape.
 
 ### 5. Cache Capabilities
 

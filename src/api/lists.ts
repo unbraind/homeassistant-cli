@@ -7,7 +7,7 @@ import type {
   HaTodoItem,
   HaShoppingListItem,
   HaPersistentNotification,
-  HaServiceCallResult,
+  HaRestServiceCallResult,
 } from "../types/api.js";
 import { HomeAssistantClient } from "./client.js";
 
@@ -74,7 +74,7 @@ export class ListsApiClient extends HomeAssistantClient {
     service: string,
     message: string,
     options?: { title?: string; target?: string | string[]; data?: Record<string, unknown> }
-  ): Promise<HaServiceCallResult> {
+  ): Promise<HaRestServiceCallResult> {
     const data: Record<string, unknown> = { message };
     if (options?.title) data["title"] = options.title;
     if (options?.target) data["target"] = options.target;
@@ -104,7 +104,16 @@ export class ListsApiClient extends HomeAssistantClient {
 
   async getTodoItemsViaService(entityId: string): Promise<HaTodoItem[]> {
     const result = await this.callService("todo", "get_items", { entity_id: entityId }, true);
-    return (result.response as { items: HaTodoItem[] })?.items ?? [];
+    if (Array.isArray(result) || result.service_response === null || typeof result.service_response !== "object") {
+      return [];
+    }
+    const responses = result.service_response as Record<string, unknown>;
+    const entityResponse = responses[entityId];
+    if (entityResponse === null || typeof entityResponse !== "object" || Array.isArray(entityResponse)) {
+      return [];
+    }
+    const items = (entityResponse as Record<string, unknown>)["items"];
+    return Array.isArray(items) ? items as HaTodoItem[] : [];
   }
 
   async completeShoppingItemByName(name: string): Promise<void> {

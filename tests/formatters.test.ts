@@ -110,10 +110,8 @@ describe("TOON Formatter", () => {
         },
       ];
       const result = formatStatesToon(states);
-      // Official TOON uses expanded list form when objects have nested attributes
-      expect(result).toContain("states[1]:");
-      expect(result).toContain("entity_id: light.living_room");
-      expect(result).toContain("state: on");
+      expect(result).toContain("states[1]{entity_id,state,last_changed,attributes{brightness}}:");
+      expect(result).toContain('light.living_room,on,"2024-01-01T00:00:00Z",255');
     });
   });
 

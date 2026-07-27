@@ -43,6 +43,13 @@ export interface HaState {
   };
 }
 
+/** Correlation metadata returned by Home Assistant action execution. */
+export interface HaContext {
+  id: string;
+  parent_id: string | null;
+  user_id: string | null;
+}
+
 export interface HaEvent {
   event: string;
   listener_count: number;
@@ -67,13 +74,19 @@ export interface HaServiceDefinition {
 export type HaServiceMap = Record<string, HaServiceDefinition>;
 export type HaServiceList = string[] | HaServiceMap;
 
-export interface HaServiceCallResult {
-  context: {
-    id: string;
-    parent_id: string | null;
-    user_id: string | null;
-  };
-  response?: Record<string, unknown> | null;
+/** REST result when response data was not requested. */
+export type HaRestServiceCallResult = HaState[] | HaRestServiceResponseResult;
+
+/** REST result when `return_response` is requested. */
+export interface HaRestServiceResponseResult {
+  changed_states: HaState[];
+  service_response: unknown;
+}
+
+/** WebSocket result for the `call_service` command. */
+export interface HaWebSocketServiceCallResult {
+  context: HaContext;
+  response: unknown | null;
 }
 
 export interface HaFireEventResult {

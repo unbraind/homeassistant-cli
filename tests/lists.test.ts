@@ -199,10 +199,21 @@ describe("ListsApiClient", () => {
 
   it("returns todo items from a service response", async () => {
     mockRequest.mockResolvedValueOnce(mockResponse({
-      context: { id: "ctx" }, response: { items: [{ uid: "1", summary: "Ship", status: "needs_action" }] },
+      changed_states: [],
+      service_response: {
+        "todo.tasks": { items: [{ uid: "1", summary: "Ship", status: "needs_action" }] },
+      },
     }));
     await expect(client.getTodoItemsViaService("todo.tasks")).resolves.toEqual([
       { uid: "1", summary: "Ship", status: "needs_action" },
     ]);
+  });
+
+  it.each([
+    { changed_states: [], service_response: {} },
+    { changed_states: [], service_response: { "todo.tasks": { items: null } } },
+  ])("returns no todo items when a service response has no item array", async (response) => {
+    mockRequest.mockResolvedValueOnce(mockResponse(response));
+    await expect(client.getTodoItemsViaService("todo.tasks")).resolves.toEqual([]);
   });
 });

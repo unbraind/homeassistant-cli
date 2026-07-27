@@ -18,7 +18,7 @@ const configDir = mkdtempSync(join(tmpdir(), "hassio-cli-e2e-"));
 const configPath = join(configDir, "settings.json");
 process.once("exit", () => rmSync(configDir, { recursive: true, force: true }));
 
-function run(args: string[], env?: NodeJS.ProcessEnv): string {
+function run(args: string[], env?: NodeJS.ProcessEnv, safeLabel?: string): string {
   try {
     return execFileSync("node", [cliPath, "--config", configPath, ...args], {
       cwd: repoRoot,
@@ -32,7 +32,7 @@ function run(args: string[], env?: NodeJS.ProcessEnv): string {
       stdout?: string;
       stderr?: string;
     };
-    console.error(`Command failed: hassio ${args.join(" ")}`);
+    console.error(`Command failed: hassio ${safeLabel ?? args.join(" ")}`);
     if (typed.stdout) console.error(typed.stdout);
     if (typed.stderr) console.error(typed.stderr);
     process.exit(typed.status ?? 1);
@@ -184,6 +184,42 @@ assert(Array.isArray(serviceSchema), "invalid services --schema JSON shape");
 assert(serviceSchema.length > 0, "services --schema returned no rows");
 assert(Array.isArray(serviceSchema[0]?.["required_fields"]), "invalid services --schema required_fields");
 assert(Array.isArray(serviceSchema[0]?.["optional_fields"]), "invalid services --schema optional_fields");
+
+const actionPlan = parseJson(run([
+  "call-service", "light", "turn_on",
+  "--entity-id", sampleEntityId,
+  "--response", "never",
+  "--dry-run",
+  "--format", "json",
+])) as Record<string, unknown>;
+assert(actionPlan["operation"] === "service_action_plan", "invalid service action plan operation");
+assert(actionPlan["read_only"] === true, "service action plan did not preserve read-only mode");
+assert(actionPlan["executable"] === false, "read-only service action plan was marked executable");
+assert(typeof actionPlan["validation"] === "object", "service action plan omitted validation evidence");
+
+const weatherEntities = parseJson(
+  run(["entities", "--domain", "weather", "--limit", "1", "--format", "json"])
+) as Record<string, unknown>[];
+const weatherEntityId = weatherEntities[0]?.["entity_id"];
+const supportsForecastResponse = flatServices.some(
+  (row) => row["domain"] === "weather" && row["service"] === "get_forecasts",
+);
+if (supportsForecastResponse && typeof weatherEntityId === "string") {
+  const action = parseJson(run([
+    "call-service", "weather", "get_forecasts",
+    "--entity-id", weatherEntityId,
+    "--data", '{"type":"daily"}',
+    "--format", "json",
+  ], {
+    HASSIO_READONLY: "false",
+  }, "call-service weather get_forecasts --entity-id <redacted> --data <redacted> --format json")) as Record<string, unknown>;
+  assert(action["operation"] === "service_action", "invalid executed service action operation");
+  assert(action["transport"] === "rest", "invalid executed service action transport");
+  assert(action["response_capability"] === "required", "response capability was not detected");
+  assert(action["response_requested"] === true, "required service response was not requested");
+  assert(Array.isArray(action["changed_states"]), "service action omitted changed states");
+  assert("service_response" in action, "service action omitted response data");
+}
 
 const wsConnect = parseJson(run(["websocket", "--connect-test", "--format", "json"])) as Record<string, unknown>;
 assert(wsConnect["connected"] === true, "invalid websocket --connect-test connected field");
