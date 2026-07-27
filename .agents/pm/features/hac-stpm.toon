@@ -2,12 +2,12 @@ id: hac-stpm
 title: Unify typed service action execution across REST and WebSocket
 description: "Provide a stable, type-safe, agent-oriented service action contract across Home Assistant REST and WebSocket transports, including response capability discovery, explicit targets, safe dry runs, strict validation, and normalized output."
 type: Feature
-status: open
+status: closed
 priority: 0
 tags[8]: agents,api-parity,home-assistant,llm,rest,service-actions,type-safety,websocket
 created_at: "2026-07-27T21:17:26.281Z"
-updated_at: "2026-07-27T21:17:26.281Z"
-assignee: unbraind
+updated_at: "2026-07-27T22:34:09.412Z"
+closed_at: "2026-07-27T22:34:07.669Z"
 author: codex-root
 estimated_minutes: 720
 acceptance_criteria: "call-service models current REST changed-state and service-response results plus WebSocket context/response results without any or guessed types; Agents can inspect and dry-run normalized requests, target selectors, transport choice, validation, and response capability before mutation; HASSIO_READONLY accepts explicit true and false values consistently through the complete Commander program; All source coverage and docstrings remain 100/100/100/100, every source file stays within 300 code lines, all formats and recursive help validate, and live evidence contains no private identifiers"
@@ -24,19 +24,23 @@ risk: high
 confidence: 94
 sprint: api-parity-2026-07
 release: unreleased
-dependencies[8]{id,kind,created_at,author,source_kind,author_source}:
-  hac-96i2,related,"2026-07-27T21:17:26.281Z",codex-root,"cli:create:dep",detected
-  hac-ak9g,related,"2026-07-27T21:17:26.281Z",codex-root,"cli:create:dep",detected
-  hac-n0ix,discovered_from,"2026-07-27T21:17:26.281Z",codex-root,"cli:create:dep",detected
-  hac-r2z9,related,"2026-07-27T21:17:26.281Z",codex-root,"cli:create:dep",detected
-  hac-r4e3,related,"2026-07-27T21:17:26.281Z",codex-root,"cli:create:dep",detected
-  hac-suj3,related,"2026-07-27T21:17:26.281Z",codex-root,"cli:create:dep",detected
-  hac-vooo,related,"2026-07-27T21:17:26.281Z",codex-root,"cli:create:dep",detected
-  hac-wwsi,related,"2026-07-27T21:17:26.281Z",codex-root,"cli:create:dep",detected
+resolution: Delivered the normalized action platform and all acceptance evidence without publishing a package.
+expected_result: "Production-ready typed Home Assistant service actions across REST and WebSocket with full safety, documentation, and verification."
+actual_result: "Release verification, live Home Assistant acceptance, exact 100% coverage, privacy scans, CI, and review closure all pass."
+dependencies[8]{id,kind,created_at,author,source_kind}:
+  hac-96i2,related,"2026-07-27T21:17:26.281Z",codex-root,"cli:create:dep"
+  hac-ak9g,related,"2026-07-27T21:17:26.281Z",codex-root,"cli:create:dep"
+  hac-n0ix,discovered_from,"2026-07-27T21:17:26.281Z",codex-root,"cli:create:dep"
+  hac-r2z9,related,"2026-07-27T21:17:26.281Z",codex-root,"cli:create:dep"
+  hac-r4e3,related,"2026-07-27T21:17:26.281Z",codex-root,"cli:create:dep"
+  hac-suj3,related,"2026-07-27T21:17:26.281Z",codex-root,"cli:create:dep"
+  hac-vooo,related,"2026-07-27T21:17:26.281Z",codex-root,"cli:create:dep"
+  hac-wwsi,related,"2026-07-27T21:17:26.281Z",codex-root,"cli:create:dep"
 comments[1]{created_at,author,text}:
   "2026-07-27T21:17:26.281Z",codex-root,Official June 2026 docs distinguish REST and WebSocket service-action response shapes; the live current server confirms the REST object shape for return_response.
 notes[1]{created_at,author,text}:
   "2026-07-27T21:17:26.281Z",codex-root,"Never record entity IDs, raw service responses, access tokens, URLs beyond public documentation examples, or private topology in PM or GitHub evidence."
 learnings[1]{created_at,author,text}:
   "2026-07-27T21:17:26.281Z",codex-root,Presence-based Commander boolean environment parsing can override a downstream parser; boolean ENV contracts must be tested at the full CLI boundary.
+close_reason: "Typed service-action contracts, read-only safety, programmatic output, documentation, clean-runner PM SDK provisioning, and release automation gates are implemented and fully verified in PR #77."
 body: "Research the latest official Home Assistant action APIs and the configured current server; correct transport-specific response typing; expose explicit target and response controls; preserve legacy command compatibility; validate setup, formats, schema, help, packaging, release automation, and private live execution without persisting identifiers."

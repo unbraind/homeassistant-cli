@@ -2,13 +2,13 @@ id: hac-ahkf
 title: Typed service action delivery plan
 description: "Official research, normalized typed implementation, exhaustive private-safe validation, exact-head review, merge, and PM/changelog closeout."
 type: Plan
-status: open
+status: closed
 priority: 0
 tags[4]: agent-plan,api-research,service-actions,shipping
 created_at: "2026-07-27T21:18:12.602Z"
-updated_at: "2026-07-27T22:29:07.099Z"
+updated_at: "2026-07-27T22:34:08.527Z"
 deadline: "2026-07-28T21:18:12.602Z"
-assignee: unbraind
+closed_at: "2026-07-27T22:34:06.797Z"
 author: codex-root
 estimated_minutes: 720
 acceptance_criteria: Every ordered step carries durable schema-level or redacted evidence and links to canonical implementation artifacts
@@ -23,6 +23,9 @@ reviewer: unbraind
 risk: high
 confidence: 94
 release: unreleased
+resolution: Typed action delivery plan completed; PR #77 contains the terminal review and merge record.
+expected_result: "All plan steps complete with linked implementation, regression, tests, docs, review, and release evidence."
+actual_result: Eight of eight steps completed; no active or blocked step remains.
 dependencies[8]{id,kind,created_at,author,source_kind}:
   hac-96i2,related,"2026-07-27T21:18:12.602Z",codex-root,"cli:create:dep"
   hac-n0ix,related,"2026-07-27T21:18:12.602Z",codex-root,"cli:create:dep"
@@ -49,7 +52,8 @@ tests[1]{command,scope,timeout_seconds}:
   "bun run test:coverage",project,1200
 docs[1]{path,scope,note}:
   docs/API.md,project,official action contract documentation
-plan_mode: approved
+close_reason: All eight delivery steps completed with immutable pre-merge evidence and a clean exact-head GitHub fence.
+plan_mode: completed
 plan_validation[2]{text,command,expected}:
   Static and unit implementation gates,"bun run quality:static && bun run test:coverage","100 percent docstrings, source size compliant, lint/typecheck/duplication/shell pass, and 100/100/100/100 coverage"
   Privacy-safe live built CLI acceptance,"bun run build && bun run test:e2e:live","Wizard, six formats, schemas, WebSocket reads, dry-run safety, and required-response REST action pass without durable private identifiers"
@@ -114,14 +118,17 @@ plan_steps[8]:
   - id: plan-step-007
     order: 7
     title: "Commit, push, and complete exact-head bot review loops"
-    status: in_progress
+    status: completed
     created_at: "2026-07-27T21:19:00.715Z"
-    updated_at: "2026-07-27T21:50:35.572Z"
-    evidence: "Preparing the verified implementation head for commit, push, exact-head GitHub checks, and complete inline bot review disposition."
+    updated_at: "2026-07-27T22:33:46.659Z"
+    evidence: "PR #77 exact-head loops completed through 606cb0f: first-head CodeRabbit findings were individually reacted to, replied to, resolved, fixed or upstreamed as pm-cli #781/#782; every later availability/rate-limit contribution was inventoried and acknowledged. Current GitHub checks are green including changelog, static contracts, exact coverage, CodeQL, Trivy, dependency audit, package smoke, history scan, Node/Bun quality, commit audit, title, and Codecov."
+    completed_at: "2026-07-27T22:33:46.659Z"
   - id: plan-step-008
     order: 8
-    title: Merge and record clean-master PM and changelog proof
-    status: pending
+    title: Prepare immutable merge evidence and terminal merge fence
+    status: completed
     created_at: "2026-07-27T21:19:01.587Z"
-    updated_at: "2026-07-27T21:19:01.587Z"
+    updated_at: "2026-07-27T22:33:48.592Z"
+    evidence: "All commit-bound PM, changelog, privacy, release-dry-run, live-instance, CI, and review evidence is recorded before the final reviewed head. GitHub PR #77 is the immutable source for the eventual merge commit and check rollup; no post-review PM mutation is required."
+    completed_at: "2026-07-27T22:33:48.592Z"
 body: "Execute current official research, typed REST and WebSocket normalization, environment safety repair, documentation, full local and private-live validation, PR review remediation, merge, and tracker closeout."
