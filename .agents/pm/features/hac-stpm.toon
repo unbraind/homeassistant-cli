@@ -1,0 +1,42 @@
+id: hac-stpm
+title: Unify typed service action execution across REST and WebSocket
+description: "Provide a stable, type-safe, agent-oriented service action contract across Home Assistant REST and WebSocket transports, including response capability discovery, explicit targets, safe dry runs, strict validation, and normalized output."
+type: Feature
+status: open
+priority: 0
+tags[8]: agents,api-parity,home-assistant,llm,rest,service-actions,type-safety,websocket
+created_at: "2026-07-27T21:17:26.281Z"
+updated_at: "2026-07-27T21:17:26.281Z"
+assignee: unbraind
+author: codex-root
+estimated_minutes: 720
+acceptance_criteria: "call-service models current REST changed-state and service-response results plus WebSocket context/response results without any or guessed types; Agents can inspect and dry-run normalized requests, target selectors, transport choice, validation, and response capability before mutation; HASSIO_READONLY accepts explicit true and false values consistently through the complete Commander program; All source coverage and docstrings remain 100/100/100/100, every source file stays within 300 code lines, all formats and recursive help validate, and live evidence contains no private identifiers"
+definition_of_ready: "Official REST and WebSocket docs, installed Commander/Undici types, live service schemas, prior PM lineage, and duplicate inventory reviewed"
+goal: agent-safe-home-assistant-actions
+objective: stable-cross-transport-service-execution
+value: "Let agents plan, validate, execute, and interpret Home Assistant actions without transport-specific ambiguity."
+impact: "Eliminates incorrectly typed REST results, improves target precision, prevents unsafe environment parsing surprises, and makes response-required services reliable."
+outcome: One documented call-service workflow produces a stable envelope across REST and WebSocket and supports non-executing plans.
+why_now: The current 2026.7.4 server exposes many response-capable actions and the official June 2026 REST contract no longer matches the CLI type; live ENV verification also found an explicit-false safety regression.
+parent: hac-4s9j
+reviewer: unbraind
+risk: high
+confidence: 94
+sprint: api-parity-2026-07
+release: unreleased
+dependencies[8]{id,kind,created_at,author,source_kind,author_source}:
+  hac-96i2,related,"2026-07-27T21:17:26.281Z",codex-root,"cli:create:dep",detected
+  hac-ak9g,related,"2026-07-27T21:17:26.281Z",codex-root,"cli:create:dep",detected
+  hac-n0ix,discovered_from,"2026-07-27T21:17:26.281Z",codex-root,"cli:create:dep",detected
+  hac-r2z9,related,"2026-07-27T21:17:26.281Z",codex-root,"cli:create:dep",detected
+  hac-r4e3,related,"2026-07-27T21:17:26.281Z",codex-root,"cli:create:dep",detected
+  hac-suj3,related,"2026-07-27T21:17:26.281Z",codex-root,"cli:create:dep",detected
+  hac-vooo,related,"2026-07-27T21:17:26.281Z",codex-root,"cli:create:dep",detected
+  hac-wwsi,related,"2026-07-27T21:17:26.281Z",codex-root,"cli:create:dep",detected
+comments[1]{created_at,author,text}:
+  "2026-07-27T21:17:26.281Z",codex-root,Official June 2026 docs distinguish REST and WebSocket service-action response shapes; the live current server confirms the REST object shape for return_response.
+notes[1]{created_at,author,text}:
+  "2026-07-27T21:17:26.281Z",codex-root,"Never record entity IDs, raw service responses, access tokens, URLs beyond public documentation examples, or private topology in PM or GitHub evidence."
+learnings[1]{created_at,author,text}:
+  "2026-07-27T21:17:26.281Z",codex-root,Presence-based Commander boolean environment parsing can override a downstream parser; boolean ENV contracts must be tested at the full CLI boundary.
+body: "Research the latest official Home Assistant action APIs and the configured current server; correct transport-specific response typing; expose explicit target and response controls; preserve legacy command compatibility; validate setup, formats, schema, help, packaging, release automation, and private live execution without persisting identifiers."

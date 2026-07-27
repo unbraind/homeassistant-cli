@@ -11,11 +11,9 @@ import type {
 } from "@unbrained/pm-cli/sdk";
 import type {
   TodosExportOptions,
-  TodosExportResult,
   TodosImportOptions,
-  TodosImportResult,
 } from "./runtime.ts";
-import { loadPackageRuntimeModule } from "./runtime-loader.ts";
+import { runTodosExport, runTodosImport } from "./runtime.ts";
 
 /** Declarative package manifest consumed by the extension loader. */
 export const manifest = {
@@ -26,25 +24,17 @@ export const manifest = {
   capabilities: ["commands", "schema", "importers"],
 };
 
-type RuntimeModule = {
-  runTodosImport?: (
-    options: TodosImportOptions,
-    global: GlobalOptions,
-  ) => Promise<TodosImportResult>;
-  runTodosExport?: (
-    options: TodosExportOptions,
-    global: GlobalOptions,
-  ) => Promise<TodosExportResult>;
-};
-
 function asOptionalString(value: unknown): string | undefined {
   return typeof value === "string" ? value : undefined;
 }
 
-function toImportOptions(options: Record<string, unknown>): TodosImportOptions {
+function toImportOptions(
+  options: Record<string, unknown>,
+  global: GlobalOptions,
+): TodosImportOptions {
   return {
     folder: asOptionalString(options.folder),
-    author: asOptionalString(options.author),
+    author: global.author,
     message: asOptionalString(options.message),
   };
 }
@@ -53,32 +43,6 @@ function toExportOptions(options: Record<string, unknown>): TodosExportOptions {
   return {
     folder: asOptionalString(options.folder),
   };
-}
-
-async function runTodosImportFromRuntime(
-  options: TodosImportOptions,
-  global: GlobalOptions,
-): Promise<TodosImportResult> {
-  const runtime = (await loadPackageRuntimeModule()) as RuntimeModule;
-  if (typeof runtime.runTodosImport !== "function") {
-    throw new Error(
-      "Bundled todos runtime module is missing runTodosImport().",
-    );
-  }
-  return runtime.runTodosImport(options, global);
-}
-
-async function runTodosExportFromRuntime(
-  options: TodosExportOptions,
-  global: GlobalOptions,
-): Promise<TodosExportResult> {
-  const runtime = (await loadPackageRuntimeModule()) as RuntimeModule;
-  if (typeof runtime.runTodosExport !== "function") {
-    throw new Error(
-      "Bundled todos runtime module is missing runTodosExport().",
-    );
-  }
-  return runtime.runTodosExport(options, global);
 }
 
 /** Registers this package's commands, actions, and runtime hooks with the host. */
@@ -90,8 +54,8 @@ export function activate(api: ExtensionApi): void {
   api.registerImporter(
     "todos",
     async (context: ImportExportContext) =>
-      runTodosImportFromRuntime(
-        toImportOptions(context.options),
+      runTodosImport(
+        toImportOptions(context.options, context.global),
         context.global,
       ),
     {
@@ -99,6 +63,7 @@ export function activate(api: ExtensionApi): void {
       description: "Import Todo markdown files into pm items.",
       failure_hints: [
         "This command reads a directory, not a file. Use --folder <path> to point at the Todo markdown directory.",
+        "Use the host-global --author <id> flag when an explicit mutation identity override is required.",
       ],
       flags: [
         {
@@ -106,12 +71,6 @@ export function activate(api: ExtensionApi): void {
           value_name: "path",
           value_type: "string",
           description: "Source folder containing Todo markdown files.",
-        },
-        {
-          long: "--author",
-          value_name: "author",
-          value_type: "string",
-          description: "Override import mutation author.",
         },
         {
           long: "--message",
@@ -125,7 +84,7 @@ export function activate(api: ExtensionApi): void {
   api.registerExporter(
     "todos",
     async (context: ImportExportContext) =>
-      runTodosExportFromRuntime(
+      runTodosExport(
         toExportOptions(context.options),
         context.global,
       ),

@@ -1,0 +1,82 @@
+id: hac-97on
+title: Implement normalized typed service action contracts
+description: "Implement current REST and WebSocket service action requests, response capability planning, normalized output envelopes, target selectors, response modes, input files, strict validation, read-only enforcement, exhaustive docs/tests, and release-safe delivery."
+type: Task
+status: closed
+priority: 0
+tags[8]: api,cli,coverage,docs,service-actions,testing,type-safety,websocket
+created_at: "2026-07-27T21:19:03.813Z"
+updated_at: "2026-07-27T21:49:32.086Z"
+deadline: "2026-07-28T21:19:03.813Z"
+closed_at: "2026-07-27T21:49:14.110Z"
+author: codex-root
+estimated_minutes: 600
+acceptance_criteria: "Typed transport contracts exactly represent official current REST and WebSocket requests and responses; call-service supports normalized dry-run planning, explicit transport, target selectors, inline/file service data, response capability modes, and local validation; Read-only mode blocks executing action calls before network I/O on both transports but allows dry-run discovery; Actual built hassio passes setup wizard, recursive help, every formatter/schema, private live response action, 100 percent coverage/docstrings, static/security/PM/package/changelog, and non-publishing auto-release gates"
+definition_of_ready: "Feature, plan, regression issue, official docs, live server capability counts, and previous related PM items are linked"
+goal: agent-safe-home-assistant-actions
+objective: implement-cross-transport-service-actions
+value: Give agents one predictable action execution surface.
+impact: "Improves API fidelity, safety, observability, and programmatic output stability."
+outcome: Production-ready merged implementation without publishing.
+why_now: Official and live response contracts expose a type and UX gap today.
+parent: hac-stpm
+reviewer: unbraind
+risk: high
+confidence: 94
+sprint: api-parity-2026-07
+release: unreleased
+resolution: "Implemented and verified typed action contracts, stable transport-neutral envelopes, read-only planning, current TOON and full release gates."
+expected_result: "One safe, typed, documented action surface with exact official transport behavior and complete production-readiness evidence."
+actual_result: "REST and WebSocket execution, required-response discovery, selector targeting, file/inline inputs, dry-run, strict environment parsing, 100 percent gates and live acceptance pass."
+dependencies[8]{id,kind,created_at,author,source_kind}:
+  hac-96i2,related,"2026-07-27T21:19:03.813Z",codex-root,"cli:create:dep"
+  hac-ahkf,implements,"2026-07-27T21:19:03.813Z",codex-root,"cli:create:dep"
+  hac-ak9g,related,"2026-07-27T21:19:03.813Z",codex-root,"cli:create:dep"
+  hac-ndoh,implements,"2026-07-27T21:19:03.813Z",codex-root,"cli:create:dep"
+  hac-r4e3,related,"2026-07-27T21:19:03.813Z",codex-root,"cli:create:dep"
+  hac-suj3,related,"2026-07-27T21:19:03.813Z",codex-root,"cli:create:dep"
+  hac-vooo,related,"2026-07-27T21:19:03.813Z",codex-root,"cli:create:dep"
+  hac-wwsi,related,"2026-07-27T21:19:03.813Z",codex-root,"cli:create:dep"
+comments[3]{created_at,author,text}:
+  "2026-07-27T21:19:03.813Z",codex-root,Implementation scope selected after all-status PM and GitHub duplicate search; media discovery and trigger subscriptions are explicitly excluded as already delivered.
+  "2026-07-27T21:38:02.767Z",codex-root,Official 2026 REST and WebSocket contracts are implemented with separate wire types and one stable CLI envelope. Latest local server acceptance verified a required-response weather action without retaining private identifiers or payloads.
+  "2026-07-27T21:41:23.246Z",codex-root,"PM integrity exposed a stale history-drift cache in pm-cli 2026.7.27. Detailed duplicate search found no match; upstream issue https://github.com/unbraind/pm-cli/issues/779 records the reproducible false-negative strict gate and runtime-cache recovery."
+notes[2]{created_at,author,text}:
+  "2026-07-27T21:19:03.813Z",codex-root,"Live acceptance may use ephemeral entity IDs but durable evidence records only booleans, counts, versions, shapes, and redacted classifications."
+  "2026-07-27T21:38:03.650Z",codex-root,TOON was upgraded from 2.x to current 4.1.0 in this delivery because it is the default programmatic format. Existing Dependabot PR 73 only proposed 4.0.0 and is therefore superseded by this newer tested resolution.
+learnings[2]{created_at,author,text}:
+  "2026-07-27T21:19:03.813Z",codex-root,REST and WebSocket action results require a discriminated normalization layer; one guessed interface cannot safely describe both.
+  "2026-07-27T21:38:04.408Z",codex-root,"Commander boolean env integration treats variable presence as truthy. Removing env binding from the bare boolean option lets the config loader remain the single strict parser, so false and 0 correctly disable read-only mode."
+files[16]{path,scope,note}:
+  .gitattributes,project,shared PM item history and JSON merge contracts
+  bun.lock,project,reproducible latest TOON resolution
+  package.json,project,latest TOON runtime
+  src/api/client.ts,project,REST result transport
+  src/api/errors.ts,project,read-only recovery guidance
+  src/api/lists.ts,project,current response-capable todo parsing
+  src/api/websocket.ts,project,WebSocket action transport
+  src/cli.ts,project,strict environment boolean parsing
+  src/commands/service-action.ts,project,typed action planning and normalization
+  src/commands/services.ts,project,primary command implementation
+  src/types/api/core.ts,project,REST and WebSocket result contracts
+  src/utils/services.ts,project,official target selector validation
+  tests/api-websocket.test.ts,project,WebSocket wire coverage
+  tests/call-service-command.test.ts,project,command contract coverage
+  tests/e2e-live.ts,project,privacy-safe built CLI acceptance
+  tests/fixtures/service-action-data.json,project,file-backed service data acceptance fixture
+tests[7]{command,scope,timeout_seconds}:
+  "bun run changelog:pm:check",project,1200
+  "bun run quality:static",project,1200
+  "bun run release:auto:dry-run",project,1200
+  "bun run release:verify",project,1800
+  "bun run test:coverage",project,1200
+  "bun run test:e2e:help",project,600
+  "bun run test:e2e:live",project,1200
+docs[5]{path,scope,note}:
+  docs/AGENT_OPTIMIZATION.md,project,read-only planning guidance
+  docs/API.md,project,action API reference
+  docs/INDEX.md,project,command index
+  docs/LLM_INTEGRATION.md,project,agent execution workflow
+  README.md,project,user action workflow
+close_reason: "Typed REST and WebSocket service actions, normalized output, target/response planning, latest TOON, documentation, setup/live acceptance, strict PM integrity, security and exact 100 percent coverage are implementation-complete for reviewed delivery under plan hac-ahkf."
+body: "Preserve hassio call-service domain service compatibility while adding agent-native planning and transport controls. Correct the REST result union, add WebSocket action execution using official target/service_data/return_response fields, normalize both transports, fix explicit boolean environment parsing, extend schema/capability documentation, and verify current live behavior with identifiers suppressed."

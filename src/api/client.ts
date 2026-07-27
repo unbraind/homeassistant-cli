@@ -12,7 +12,7 @@ import type {
   HaHistoryResponse,
   HaLogbookEntry,
   HaService,
-  HaServiceCallResult,
+  HaRestServiceCallResult,
   HaState,
 } from "../types/api.js";
 import { BaseClient } from "./base.js";
@@ -69,11 +69,11 @@ export class HomeAssistantClient extends BaseClient {
     service: string,
     data?: Record<string, unknown>,
     returnResponse = false
-  ): Promise<HaServiceCallResult> {
+  ): Promise<HaRestServiceCallResult> {
     const path = returnResponse
       ? `/services/${domain}/${service}?return_response`
       : `/services/${domain}/${service}`;
-    return this.request<HaServiceCallResult>("POST", path, data);
+    return this.request<HaRestServiceCallResult>("POST", path, data);
   }
 
   async fireEvent(

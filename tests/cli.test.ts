@@ -8,6 +8,7 @@ const { promptMock } = vi.hoisted(() => {
 vi.mock("../src/utils/github-star.js", () => ({ maybePromptToStarRepo: promptMock }));
 
 import { createProgram, getConfigPathFromArgv, reportCliError, runCli } from "../src/cli.js";
+import { getConfig } from "../src/config/loader.js";
 
 const packageVersion = (JSON.parse(
   readFileSync(new URL("../package.json", import.meta.url), "utf8"),
@@ -32,6 +33,35 @@ describe("CLI composition", () => {
     expect(getConfigPathFromArgv(["node", "hassio", "-c", "/tmp/b.json"])).toBe("/tmp/b.json");
     expect(getConfigPathFromArgv(["node", "hassio", "--config=/tmp/c.json"])).toBe("/tmp/c.json");
     expect(getConfigPathFromArgv(["node", "hassio", "status"])).toBeUndefined();
+  });
+
+  it("preserves strict HASSIO_READONLY boolean values through the root program", () => {
+    const previous = process.env["HASSIO_READONLY"];
+    try {
+      for (const [value, expected] of [["true", true], ["false", false], ["0", false]] as const) {
+        process.env["HASSIO_READONLY"] = value;
+        const program = createProgram();
+        program.parseOptions([]);
+        expect(program.opts()["readOnly"]).toBeUndefined();
+        expect(getConfig({
+          ...program.opts(),
+          url: "http://localhost:8123",
+          token: "test-token",
+        }).readOnly).toBe(expected);
+      }
+
+      delete process.env["HASSIO_READONLY"];
+      const protectedProgram = createProgram();
+      protectedProgram.parseOptions(["--read-only"]);
+      expect(getConfig({
+        ...protectedProgram.opts(),
+        url: "http://localhost:8123",
+        token: "test-token",
+      }).readOnly).toBe(true);
+    } finally {
+      if (previous === undefined) delete process.env["HASSIO_READONLY"];
+      else process.env["HASSIO_READONLY"] = previous;
+    }
   });
 
   it("runs a non-network settings command with and without a custom config", async () => {

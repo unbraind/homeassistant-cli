@@ -98,7 +98,7 @@ export class HomeAssistantReadOnlyError extends Error {
     this.envelope = {
       code: "READ_ONLY_MODE",
       message: `Write operation blocked: ${method} /api${path}`,
-      hint: "Use --read-only=false or set HASSIO_READONLY=false to enable write operations",
+      hint: "Set HASSIO_READONLY=false or update the saved read-only setting to enable write operations",
       retriable: false,
       endpoint: `/api${path}`,
       timestamp: new Date().toISOString(),

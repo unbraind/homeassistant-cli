@@ -1,0 +1,50 @@
+id: hac-ndoh
+title: Explicit HASSIO_READONLY false enables read-only mode
+description: "Commander 15 treats the presence of the boolean option environment variable as enabled, so HASSIO_READONLY=false reaches getConfig as true and blocks service calls despite the loader supporting explicit false strings."
+type: Issue
+status: closed
+priority: 0
+tags[6]: bug,commander,config,environment,read-only,safety
+created_at: "2026-07-27T21:17:27.756Z"
+updated_at: "2026-07-27T21:49:34.088Z"
+closed_at: "2026-07-27T21:49:34.087Z"
+author: codex-root
+estimated_minutes: 90
+acceptance_criteria: HASSIO_READONLY=false and equivalent false literals resolve false through the full program while true literals resolve true; Invalid values fail before network I/O with actionable guidance and the bare --read-only flag still enables protection
+definition_of_ready: Full-program reproduction captured without private output and installed Commander Option behavior inspected
+goal: predictable-read-only-safety
+objective: fix-boolean-env-boundary
+value: Make safety configuration deterministic in CI and agent shells.
+impact: Prevents false-negative execution availability and confusing setup failures.
+outcome: CLI and loader share one validated boolean interpretation.
+why_now: Live service-response verification failed solely because an explicit false environment value became true.
+parent: hac-stpm
+reviewer: unbraind
+risk: high
+confidence: 99
+sprint: api-parity-2026-07
+release: unreleased
+reporter: codex-root
+severity: high
+environment: Commander 15 full hassio program with HASSIO_READONLY environment option
+repro_steps: Run built hassio call-service with HASSIO_READONLY=false; observe read-only rejection before network execution.
+resolution: Fixed and covered at root-program and live-action levels.
+expected_result: Explicit false-like values leave execution enabled while true-like values and --read-only enable safety mode.
+actual_result: Strict loader parsing controls environment values and the command flag remains a one-way boolean enable switch.
+affected_version: 2026.7.25
+fixed_version: unreleased
+component: cli/config
+regression: true
+customer_impact: Automation and CI cannot explicitly disable a persisted read-only setting through the documented environment variable.
+dependencies[3]{id,kind,created_at,author,source_kind}:
+  hac-0zez,related,"2026-07-27T21:17:27.756Z",codex-root,"cli:create:dep"
+  hac-n0ix,discovered_from,"2026-07-27T21:17:27.756Z",codex-root,"cli:create:dep"
+  hac-r4e3,related,"2026-07-27T21:17:27.756Z",codex-root,"cli:create:dep"
+comments[1]{created_at,author,text}:
+  "2026-07-27T21:17:27.756Z",codex-root,Reproduced against the built CLI while probing a response-only action; omitting the variable allows the same safe request to succeed.
+notes[1]{created_at,author,text}:
+  "2026-07-27T21:17:27.756Z",codex-root,The token and entity selector used for reproduction remain only in the private global config and ephemeral shell variables.
+learnings[1]{created_at,author,text}:
+  "2026-07-27T21:17:27.756Z",codex-root,Commander boolean Option.env is presence-oriented; explicit string booleans need a value-taking option or pre-Commander normalization.
+close_reason: Explicit false and 0 now disable read-only mode; true and the bare CLI flag still enable it. Unit and built live acceptance pass.
+body: "Reproduce at the built CLI boundary, replace presence-only environment coercion with the shared strict boolean contract, retain the --read-only flag, cover true/false/invalid values and precedence, and verify the non-interactive setup path."

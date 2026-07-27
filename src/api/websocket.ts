@@ -3,6 +3,8 @@
  */
 import WebSocket from "ws";
 import type { Config } from "../types/options.js";
+import type { HaWebSocketServiceCallResult } from "../types/api.js";
+import { HomeAssistantReadOnlyError } from "./errors.js";
 
 interface WsEnvelope {
   id?: number;
@@ -32,6 +34,7 @@ export class HomeAssistantWebSocketClient {
   private readonly wsUrl: string;
   private readonly token: string;
   private readonly timeout: number;
+  private readonly readOnly: boolean;
   private socket: WebSocket | null = null;
   private nextId = 1;
   private pending = new Map<number, PendingCall>();
@@ -45,6 +48,7 @@ export class HomeAssistantWebSocketClient {
     this.wsUrl = parsed.toString();
     this.token = config.token;
     this.timeout = config.timeout;
+    this.readOnly = config.readOnly;
   }
 
   async connect(): Promise<void> {
@@ -138,6 +142,31 @@ export class HomeAssistantWebSocketClient {
     await this.connect();
     const id = this.nextId++;
     return this.sendAndWait(id, type, payload);
+  }
+
+  /** Execute a service action through the typed WebSocket contract. */
+  async callService(options: {
+    domain: string;
+    service: string;
+    serviceData?: Record<string, unknown>;
+    target?: Record<string, string[]>;
+    returnResponse: boolean;
+  }): Promise<HaWebSocketServiceCallResult> {
+    if (this.readOnly) {
+      throw new HomeAssistantReadOnlyError("WEBSOCKET", "/websocket/call_service");
+    }
+    const payload: Record<string, unknown> = {
+      domain: options.domain,
+      service: options.service,
+      return_response: options.returnResponse,
+    };
+    if (options.serviceData && Object.keys(options.serviceData).length > 0) {
+      payload["service_data"] = options.serviceData;
+    }
+    if (options.target && Object.keys(options.target).length > 0) {
+      payload["target"] = options.target;
+    }
+    return await this.call("call_service", payload) as HaWebSocketServiceCallResult;
   }
 
   async subscribeEvents(options?: {

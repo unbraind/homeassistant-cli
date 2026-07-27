@@ -57,5 +57,5 @@ describe("CLI help surface", () => {
     }
 
     expect(checked).toBeGreaterThan(70);
-  });
+  }, 15_000);
 });

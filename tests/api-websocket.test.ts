@@ -486,6 +486,73 @@ describe("HomeAssistantWebSocketClient – call()", () => {
     expect(callMsg?.["service"]).toBe("turn_on");
     await client.close();
   });
+
+  it("executes a typed service action with data, target, and response fields", async () => {
+    const { client, ws } = await connectedClient();
+    hookReply(ws, (id) => ({
+      type: "result",
+      success: true,
+      result: {
+        context: { id: "ctx", parent_id: null, user_id: "user" },
+        response: { accepted: true },
+      },
+      id,
+    }));
+    await expect(client.callService({
+      domain: "light",
+      service: "turn_on",
+      serviceData: { brightness: 128 },
+      target: { entity_id: ["light.kitchen"] },
+      returnResponse: true,
+    })).resolves.toEqual({
+      context: { id: "ctx", parent_id: null, user_id: "user" },
+      response: { accepted: true },
+    });
+    const callMsg = ws.sentMessages
+      .map(message => JSON.parse(message) as Record<string, unknown>)
+      .find(message => message["type"] === "call_service");
+    expect(callMsg).toEqual(expect.objectContaining({
+      domain: "light",
+      service: "turn_on",
+      service_data: { brightness: 128 },
+      target: { entity_id: ["light.kitchen"] },
+      return_response: true,
+    }));
+    await client.close();
+  });
+
+  it("omits empty optional service action payload sections", async () => {
+    const { client, ws } = await connectedClient();
+    hookReply(ws, (id) => ({
+      type: "result",
+      success: true,
+      result: { context: { id: "ctx", parent_id: null, user_id: null }, response: null },
+      id,
+    }));
+    await client.callService({
+      domain: "homeassistant",
+      service: "reload_all",
+      serviceData: {},
+      target: {},
+      returnResponse: false,
+    });
+    const callMsg = ws.sentMessages
+      .map(message => JSON.parse(message) as Record<string, unknown>)
+      .find(message => message["type"] === "call_service");
+    expect(callMsg).not.toHaveProperty("service_data");
+    expect(callMsg).not.toHaveProperty("target");
+    await client.close();
+  });
+
+  it("blocks typed service actions before connecting in read-only mode", async () => {
+    const client = new HomeAssistantWebSocketClient({ ...baseConfig, readOnly: true });
+    await expect(client.callService({
+      domain: "light",
+      service: "turn_on",
+      returnResponse: false,
+    })).rejects.toThrow("Read-only mode blocked WEBSOCKET");
+    expect(mockWsConstructor).not.toHaveBeenCalled();
+  });
 });
 
 // ──────────────────────────────────────────────────────────────

@@ -1,0 +1,122 @@
+id: hac-ahkf
+title: Typed service action delivery plan
+description: "Official research, normalized typed implementation, exhaustive private-safe validation, exact-head review, merge, and PM/changelog closeout."
+type: Plan
+status: open
+priority: 0
+tags[4]: agent-plan,api-research,service-actions,shipping
+created_at: "2026-07-27T21:18:12.602Z"
+updated_at: "2026-07-27T21:50:35.573Z"
+deadline: "2026-07-28T21:18:12.602Z"
+assignee: unbraind
+author: codex-root
+estimated_minutes: 720
+acceptance_criteria: Every ordered step carries durable schema-level or redacted evidence and links to canonical implementation artifacts
+goal: agent-safe-home-assistant-actions
+objective: ship-service-action-contracts
+value: Make the delivery sequence stateless-agent resumable.
+impact: Prevents incomplete verification or review handoff.
+outcome: Feature is merged with exact-head proof and no package publication.
+why_now: Implementation and PM package refresh have begun.
+parent: hac-stpm
+reviewer: unbraind
+risk: high
+confidence: 94
+release: unreleased
+dependencies[8]{id,kind,created_at,author,source_kind}:
+  hac-96i2,related,"2026-07-27T21:18:12.602Z",codex-root,"cli:create:dep"
+  hac-n0ix,related,"2026-07-27T21:18:12.602Z",codex-root,"cli:create:dep"
+  hac-r2z9,related,"2026-07-27T21:18:12.602Z",codex-root,"cli:create:dep"
+  hac-stpm,parent,"2026-07-27T21:18:12.602Z",codex-root,"cli:create:dep"
+  hac-suj3,related,"2026-07-27T21:18:12.602Z",codex-root,"cli:create:dep"
+  hac-wwsi,related,"2026-07-27T21:18:12.602Z",codex-root,"cli:create:dep"
+  hac-97on,implements,"2026-07-27T21:19:23.837Z",codex-root,null
+  hac-ndoh,verifies,"2026-07-27T21:19:24.627Z",codex-root,null
+comments[1]{created_at,author,text}:
+  "2026-07-27T21:18:12.602Z",codex-root,"Plan created only after all-status PM search, duplicate audit, and GitHub inventory found no matching active lineage."
+notes[1]{created_at,author,text}:
+  "2026-07-27T21:18:12.602Z",codex-root,Keep all live identifiers and response payloads ephemeral; persist only contract shapes and counts.
+learnings[1]{created_at,author,text}:
+  "2026-07-27T21:18:12.602Z",codex-root,Latest PM Plan schema expects evidence-bearing fields even when the plan primarily orchestrates an existing feature.
+files[1]{path,scope,note}:
+  src/commands/services.ts,project,primary action command surface
+tests[1]{command,scope,timeout_seconds}:
+  "bun run test:coverage",project,1200
+docs[1]{path,scope,note}:
+  docs/API.md,project,official action contract documentation
+plan_mode: approved
+plan_validation[2]{text,command,expected}:
+  Static and unit implementation gates,"bun run quality:static && bun run test:coverage","100 percent docstrings, source size compliant, lint/typecheck/duplication/shell pass, and 100/100/100/100 coverage"
+  Privacy-safe live built CLI acceptance,"bun run build && bun run test:e2e:live","Wizard, six formats, schemas, WebSocket reads, dry-run safety, and required-response REST action pass without durable private identifiers"
+plan_decisions[1]{ts,author,decision,rationale,evidence}:
+  "2026-07-27T21:19:03.013Z",codex-root,Ship one normalized action envelope while preserving the existing call-service positional command and --return-response flag.,A stable discriminated envelope is safer for programs than transport-dependent top-level shapes and avoids breaking command discovery.,Official June 2026 REST and WebSocket docs plus redacted Home Assistant 2026.7.4 live probe.
+plan_discoveries[2]{ts,author,text}:
+  "2026-07-27T21:19:02.243Z",codex-root,"Current official REST returns either changed-state arrays or changed_states/service_response objects, while WebSocket returns context/response and separates target from service_data."
+  "2026-07-27T21:41:24.017Z",codex-root,pm-cli history drift validation can retain stale cache results after clean mutations; pm gc runtime fixes the false gate. Upstream issue 779 tracks cache invalidation.
+plan_steps[8]:
+  - id: plan-step-001
+    order: 1
+    title: "Reconstruct PM, repository, release, and GitHub state"
+    status: completed
+    created_at: "2026-07-27T21:18:56.151Z"
+    updated_at: "2026-07-27T21:38:24.903Z"
+    evidence: "Read all 59 prior items across every status with full metadata, history and relations; reviewed clean master, tags, workflows, releases, open PRs, dependency state, PM package state, graph audit, and duplicate inventory. Canonical delivered media and trigger lineages were excluded."
+    completed_at: "2026-07-27T21:38:24.903Z"
+  - id: plan-step-002
+    order: 2
+    title: Research current official REST and WebSocket action contracts
+    status: completed
+    created_at: "2026-07-27T21:18:56.864Z"
+    updated_at: "2026-07-27T21:38:25.671Z"
+    evidence: "Verified official June/July 2026 REST and WebSocket docs and privacy-safe Home Assistant 2026.7.4 live shapes: REST arrays or changed_states/service_response; WebSocket context/response with separate target and service_data; 45 response-capable live actions classified without identifiers."
+    completed_at: "2026-07-27T21:38:25.671Z"
+  - id: plan-step-003
+    order: 3
+    title: Implement typed normalized action planning and execution
+    status: completed
+    created_at: "2026-07-27T21:18:57.602Z"
+    updated_at: "2026-07-27T21:38:26.360Z"
+    evidence: "Added typed REST and WebSocket action contracts, stable cross-transport envelope, response policy, target selectors, inline/file data, validation, dry-run planning, read-only preflight, current todo response parsing, and latest TOON 4.1.0. Full 1,280-test coverage is 100/100/100/100."
+    completed_at: "2026-07-27T21:38:26.360Z"
+    linked_items[1]{id,kind,note}:
+      hac-97on,implements,Canonical implementation task
+  - id: plan-step-004
+    order: 4
+    title: Repair explicit boolean ENV parsing and setup acceptance
+    status: completed
+    created_at: "2026-07-27T21:18:58.462Z"
+    updated_at: "2026-07-27T21:38:27.134Z"
+    evidence: Removed Commander presence-based binding for HASSIO_READONLY; config loader now exclusively parses true/1/yes and false/0/no. Unit tests and built live CLI prove explicit false overrides the saved read-only setting; wizard persists token only in 0600 auth.json.
+    completed_at: "2026-07-27T21:38:27.134Z"
+    linked_items[1]{id,kind,note}:
+      hac-ndoh,verifies,Boolean environment regression
+  - id: plan-step-005
+    order: 5
+    title: "Document every command, schema, and agent workflow"
+    status: completed
+    created_at: "2026-07-27T21:18:59.257Z"
+    updated_at: "2026-07-27T21:38:27.769Z"
+    evidence: "Updated README, API reference, docs index, LLM integration, and agent optimization guidance with every target/data/transport/response/dry-run option, stable envelope, read-only behavior, and examples."
+    completed_at: "2026-07-27T21:38:27.769Z"
+  - id: plan-step-006
+    order: 6
+    title: "Run focused, full, coverage, quality, package, live, and release gates"
+    status: completed
+    created_at: "2026-07-27T21:18:59.915Z"
+    updated_at: "2026-07-27T21:49:11.465Z"
+    evidence: "Green: release:verify; 1,280 tests; exact 100/100/100/100 coverage; 121/121 docstrings; lint/typecheck/duplication/file-size/shell; PM validate/health and merge drivers; bun audit; Trivy; history secret scan; build; recursive help; wizard/six-format/live 2026.7.4 response action. Auto-release dry-run correctly defers until committed clean head."
+    completed_at: "2026-07-27T21:49:11.465Z"
+  - id: plan-step-007
+    order: 7
+    title: "Commit, push, and complete exact-head bot review loops"
+    status: in_progress
+    created_at: "2026-07-27T21:19:00.715Z"
+    updated_at: "2026-07-27T21:50:35.572Z"
+    evidence: "Preparing the verified implementation head for commit, push, exact-head GitHub checks, and complete inline bot review disposition."
+  - id: plan-step-008
+    order: 8
+    title: Merge and record clean-master PM and changelog proof
+    status: pending
+    created_at: "2026-07-27T21:19:01.587Z"
+    updated_at: "2026-07-27T21:19:01.587Z"
+body: "Execute current official research, typed REST and WebSocket normalization, environment safety repair, documentation, full local and private-live validation, PR review remediation, merge, and tracker closeout."

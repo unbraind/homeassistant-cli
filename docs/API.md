@@ -29,9 +29,8 @@ These options can be used with any command and are shown in `hassio <command> --
 TOON (Token-Oriented Object Notation) provides ~40% token reduction vs JSON:
 
 ```
-states[4]{entity_id,state,last_changed,attributes}:
-  light.living_room,on,2024-01-01T00:00:00Z,"{...}"
-  switch.kitchen,off,2024-01-01T01:00:00Z,"{}"
+states[1]{entity_id,state,last_changed,attributes{brightness}}:
+  light.living_room,on,"2024-01-01T00:00:00Z",255
 ```
 
 ### Other Formats
@@ -133,24 +132,62 @@ hassio delete-state <entity-id>
 ## Service Calls
 
 #### `call-service`
-Call a Home Assistant service.
+Plan or execute a Home Assistant service action. The command reads the live
+service definition before execution, detects whether response data is required,
+and emits one stable envelope for REST and WebSocket transports.
 
 ```bash
 hassio call-service <domain> <service> [options]
 
 Options:
-  -e, --entity-id <entity>  Target entity
-  -d, --data <json>         JSON data
-  --validate-input          Validate payload against live service schema first
-  --strict-input            Treat unknown payload keys as errors (with validation)
-  -r, --return-response     Return response data
+  -e, --entity-id <ids>       Comma-separated entity target IDs
+  --device-id <ids>           Comma-separated device target IDs
+  --area-id <ids>             Comma-separated area target IDs
+  --floor-id <ids>            Comma-separated floor target IDs
+  --label-id <ids>            Comma-separated label target IDs
+  --target <json>             Target object; selector flags override matching keys
+  -d, --data <json>           Service data object
+  --data-file <path>          Read service data from JSON; --data takes precedence
+  --transport <transport>     rest (default) or websocket
+  --response <mode>           auto (default), always, or never
+  -r, --return-response       Legacy alias for --response always
+  --validate-input            Validate against the live service definition
+  --strict-input              Fail on unknown service-data fields
+  --dry-run                   Print a validated plan without executing
 
 # Examples
 hassio call-service light turn_on -e light.living_room
-hassio call-service light turn_on -e light.living_room -d '{"brightness":200,"rgb_color":[255,0,0]}'
-hassio call-service light turn_on --validate-input -d '{"entity_id":"light.living_room","brightness":200}'
-hassio call-service weather get_forecasts -e weather.home -d '{"type":"daily"}' -r
+hassio call-service light turn_on --area-id kitchen -d '{"brightness":200}'
+hassio call-service light turn_on --target '{"label_id":["evening"]}' --dry-run --strict-input
+hassio call-service weather get_forecasts -e weather.home -d '{"type":"daily"}'
+hassio call-service light turn_on --transport websocket --device-id device-id --response never
 ```
+
+`--response auto` requests response data only when the live definition marks it
+as required. `--response never` rejects a required-response action before
+execution. Dry runs remain available in read-only mode, but are marked
+`executable: false`.
+
+Successful executions use this format-independent contract:
+
+```json
+{
+  "operation": "service_action",
+  "transport": "rest",
+  "domain": "weather",
+  "service": "get_forecasts",
+  "response_capability": "required",
+  "response_requested": true,
+  "changed_state_count": 0,
+  "changed_states": [],
+  "context": null,
+  "service_response": {}
+}
+```
+
+REST responses populate `changed_states`; WebSocket responses populate
+`context`. Both expose action response data as `service_response`, so consumers
+do not need transport-specific parsers.
 
 #### `fire-event`
 Fire a Home Assistant event.

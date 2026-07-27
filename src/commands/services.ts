@@ -7,71 +7,8 @@ import { HomeAssistantClient } from "../api/index.js";
 import { formatOutput } from "../formatters/index.js";
 import { withExit } from "../utils/exit.js";
 import { resolveCommandOptions } from "../utils/command-helpers.js";
-import { findServiceDefinition, validateServiceData } from "../utils/services.js";
 
-export function createCallServiceCommand(): Command {
-  const command = new Command("call-service")
-    .description("Call a Home Assistant service")
-    .argument("<domain>", "Service domain (e.g., light, switch)")
-    .argument("<service>", "Service name (e.g., turn_on, toggle)")
-    .option("-e, --entity-id <entity>", "Entity ID to target")
-    .option("-d, --data <json>", "JSON data to pass to the service")
-    .option("--validate-input", "Validate payload against service schema before calling", false)
-    .option("--strict-input", "Fail on unknown input fields when validating", false)
-    .option("-r, --return-response", "Return response data from service", false);
-
-  command.action(
-    withExit(async (
-      domain: string,
-      service: string,
-      options: {
-        entityId?: string;
-        data?: string;
-        returnResponse?: boolean;
-        validateInput?: boolean;
-        strictInput?: boolean;
-      },
-      cmd
-    ) => {
-      const globalOpts = cmd.optsWithGlobals();
-      const { config, format } = resolveCommandOptions(globalOpts);
-      const client = new HomeAssistantClient(config);
-
-      let data: Record<string, unknown> | undefined;
-      if (options.data) {
-        data = JSON.parse(options.data) as Record<string, unknown>;
-      }
-
-      if (options.entityId) {
-        data = { ...data, entity_id: options.entityId };
-      }
-
-      if (options.validateInput || options.strictInput) {
-        const services = await client.getServices();
-        const definition = findServiceDefinition(services, domain, service);
-        const validation = validateServiceData(definition, data, options.strictInput);
-        if (!validation.ok) {
-          throw new Error(
-            `Service input validation failed: ${validation.errors.join("; ")}`
-          );
-        }
-        if (validation.warnings.length > 0) {
-          console.error(`WARN: ${validation.warnings.join("; ")}`);
-        }
-      }
-
-      const result = await client.callService(
-        domain,
-        service,
-        data,
-        options.returnResponse
-      );
-      console.log(formatOutput(result, format));
-    })
-  );
-
-  return command;
-}
+export { createCallServiceCommand } from "./service-action.js";
 
 export function createFireEventCommand(): Command {
   const command = new Command("fire-event")

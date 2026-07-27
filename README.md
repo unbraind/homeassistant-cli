@@ -194,9 +194,16 @@ Use `hassio <command> --help` to see command-specific options plus the global fl
 Token-efficient format - ~40% fewer tokens than JSON:
 
 ```
-states[2]{entity_id,state,last_changed,attributes}:
-  light.living_room,on,2024-01-01T00:00:00Z,"{ ""brightness"":255}"
-  switch.kitchen,off,2024-01-01T01:00:00Z,"{}"
+states[2]:
+  - entity_id: light.living_room
+    state: on
+    last_changed: "2024-01-01T00:00:00Z"
+    attributes:
+      brightness: 255
+  - entity_id: switch.kitchen
+    state: off
+    last_changed: "2024-01-01T01:00:00Z"
+    attributes:
 ```
 
 ### Other Formats
@@ -226,14 +233,20 @@ hassio states --limit 25         # Limit list output
 # Control devices
 hassio call-service light turn_on -e light.living_room
 hassio call-service light turn_on -e light.living_room -d '{"brightness":200}'
+hassio call-service light turn_on --area-id kitchen --dry-run --strict-input
 
-# Call services
+# Execute a response-capable action (response policy defaults to auto)
 hassio call-service climate set_temperature -e climate.living_room -d '{"temperature":22}'
+hassio call-service weather get_forecasts -e weather.home -d '{"type":"daily"}'
 
 # Explore service schema (agent-friendly)
 hassio services --count
 hassio services --domain light --flat
 ```
+
+`call-service` supports entity, device, area, floor, and label targets; REST or
+WebSocket transport; file-backed data; and `auto|always|never` response policy.
+It always emits the same typed action envelope for parser-safe automation.
 
 ### History & Logs
 

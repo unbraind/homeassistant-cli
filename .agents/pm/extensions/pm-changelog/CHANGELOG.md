@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026.7.27 - 2026-07-27
+
+### Other
+
+- Exclude generated dist output from DeepScan static analysis ([pmc-mi7s](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/chores/pmc-mi7s.toon))
+- Replace hand-built api doubles in extension tests with the SDK activation harness ([pmc-x0u4](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/tasks/pmc-x0u4.toon))
+
+## 2026.7.26 - 2026-07-26
+
+### Other
+
+- Enable governance duplicate-detection advisory mode and adopt pm-cli 2026.7.25 ([pmc-zbj2](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/chores/pmc-zbj2.toon))
+
 ## 2026.7.24 - 2026-07-24
 
 ### Added
