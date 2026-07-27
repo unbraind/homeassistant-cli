@@ -2,10 +2,6 @@
 
 ## Unreleased
 
-### Added
-
-- Add agent-native media discovery and search ([hac-ln1v](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/features/hac-ln1v.toon))
-
 ### Fixed
 
 - Explicit HASSIO_READONLY false incorrectly enables read-only mode ([hac-ndoh](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/issues/hac-ndoh.toon))
@@ -13,6 +9,15 @@
 ### Other
 
 - Implement normalized typed service action contracts ([hac-97on](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-97on.toon))
+
+## 2026.7.26 - 2026-07-26
+
+### Added
+
+- Add agent-native media discovery and search ([hac-ln1v](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/features/hac-ln1v.toon))
+
+### Other
+
 - Media discovery delivery plan ([hac-h3uj](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/plans/hac-h3uj.toon))
 - Implement typed bounded media browse search and resolve ([hac-poex](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-poex.toon))
 

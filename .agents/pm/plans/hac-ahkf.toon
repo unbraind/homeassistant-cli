@@ -6,7 +6,7 @@ status: open
 priority: 0
 tags[4]: agent-plan,api-research,service-actions,shipping
 created_at: "2026-07-27T21:18:12.602Z"
-updated_at: "2026-07-27T22:23:27.561Z"
+updated_at: "2026-07-27T22:29:07.099Z"
 deadline: "2026-07-28T21:18:12.602Z"
 assignee: unbraind
 author: codex-root
@@ -32,12 +32,13 @@ dependencies[8]{id,kind,created_at,author,source_kind}:
   hac-wwsi,related,"2026-07-27T21:18:12.602Z",codex-root,"cli:create:dep"
   hac-97on,implements,"2026-07-27T21:19:23.837Z",codex-root,null
   hac-ndoh,verifies,"2026-07-27T21:19:24.627Z",codex-root,null
-comments[5]{created_at,author,text}:
+comments[6]{created_at,author,text}:
   "2026-07-27T21:18:12.602Z",codex-root,"Plan created only after all-status PM search, duplicate audit, and GitHub inventory found no matching active lineage."
   "2026-07-27T22:12:12.675Z",codex-root,"First exact-head review found three actionable improvements: reject selectors when the live action schema has no target contract, redact private entity selectors from live-test failure diagnostics, and isolate cross-transport action execution behind a typed API client. Base release commit was merged before applying the fixes; generated changelog wording was corrected at its canonical PM source."
   "2026-07-27T22:15:17.211Z",codex-root,"Verified CodeRabbit managed-package observations against the published PM 2026.7.27 SDK. The local listAllItemMetadata mirror hides two supported optional parameters but does not currently fail at runtime; managed extension type mirrors are upstream-owned and were reported after duplicate searches as unbraind/pm-cli#781. The similarity-label observation was rejected because the authoritative SDK explicitly reports exact_title, issue_code, and title_token_jaccard; package-managed sources were not hand-edited."
   "2026-07-27T22:19:29.994Z",codex-root,"Additional package-managed calendar and guide-shell review suggestions were verified after focused duplicate searches and reported upstream as unbraind/pm-cli#782: generic multi-word command normalization, shared status derivation, and explicit validation-only calendar intent. Consumer-managed package sources remain untouched."
   "2026-07-27T22:23:27.535Z",codex-root,"CI exposed a clean-runner dependency boundary hidden by the local global PM install: package-managed built-ins now statically import @unbrained/pm-cli/sdk, so the project must declare the latest PM CLI as a development dependency for module-graph verification. Added 2026.7.27 with Bun; this also makes changelog generation identical between local and clean runners."
+  "2026-07-27T22:29:07.061Z",codex-root,"The remaining changelog failure was reproduced on GitHub's exact PR merge ref: the local clone had not yet fetched the newly created immutable v2026.7.26 tag, so the prior generation classified the merged media lineage as Unreleased. Fetching the PR merge ref brought the tag into the clone; regeneration now matches the full-history CI contract."
 notes[1]{created_at,author,text}:
   "2026-07-27T21:18:12.602Z",codex-root,Keep all live identifiers and response payloads ephemeral; persist only contract shapes and counts.
 learnings[1]{created_at,author,text}:
