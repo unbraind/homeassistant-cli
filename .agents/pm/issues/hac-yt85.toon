@@ -6,7 +6,7 @@ status: in_progress
 priority: 0
 tags[5]: auto-release,github-actions,history-drift,pm,regression
 created_at: "2026-07-31T20:22:44.377Z"
-updated_at: "2026-07-31T20:29:23.969Z"
+updated_at: "2026-07-31T20:44:17.355Z"
 deadline: "2026-08-03T20:22:44.377Z"
 assignee: codex-root
 claim_principal: codex-root
@@ -31,7 +31,7 @@ severity: high
 environment: GitHub Actions Auto Release on master with @unbrained/pm-cli 2026.7.31
 repro_steps: "Clear PM runtime cache or use a fresh checkout, then run pm validate --check-history-drift; observe four chain mismatches in hac-97on, hac-ahkf, hac-ndoh, and hac-stpm."
 expected_result: Fresh checkout strict PM validation reports no history drift and release verification proceeds.
-actual_result: "Scheduled run 30607930160 exits during quality:pm with validate_history_drift_chain_mismatches:4."
+actual_result: "Local cache-cleared PM validation, full release verification, and clean-worktree auto-release dry-run now pass; hosted exact-head proof remains pending."
 affected_version: 2026.7.26
 component: pm-history/release
 regression: true
@@ -43,8 +43,9 @@ dependencies[6]{id,kind,created_at,author,source_kind,author_source}:
   hac-ndoh,related,"2026-07-31T20:22:44.377Z",codex-root,"cli:create:dep",detected
   hac-stpm,discovered_from,"2026-07-31T20:22:44.377Z",codex-root,"cli:create:dep",detected
   hac-wwsi,related,"2026-07-31T20:22:44.377Z",codex-root,"cli:create:dep",detected
-comments[1]{created_at,author,text}:
+comments[2]{created_at,author,text}:
   "2026-07-31T20:22:44.377Z",codex-root,"GitHub issue: https://github.com/unbraind/homeassistant-cli/issues/79"
+  "2026-07-31T20:44:17.331Z",codex-root,Repaired exactly four affected history streams while preserving current items. Cache-cleared strict validation now reports 67 checked items and zero mismatches; clean-worktree auto-release dry-run completed full verification plus npx and bunx tarball smoke tests without publishing. Issue remains active until hosted PR checks prove fresh-runner parity.
 notes[1]{created_at,author,text}:
   "2026-07-31T20:22:44.377Z",codex-root,The initial cached local validation was a false negative; pm gc --scope runtime made the checkout reproduce the clean-runner failure.
 learnings[1]{created_at,author,text}:

@@ -6,7 +6,7 @@ status: in_progress
 priority: 0
 tags[5]: agents,automation,delivery-plan,release,websocket
 created_at: "2026-07-31T20:22:04.264Z"
-updated_at: "2026-07-31T20:39:06.221Z"
+updated_at: "2026-07-31T20:44:16.089Z"
 deadline: "2026-08-14T20:22:04.264Z"
 assignee: codex-root
 author: codex-root
@@ -83,13 +83,15 @@ plan_steps[6]:
   - id: plan-step-005
     order: 5
     title: Generate PM changelog and prove release dry-run
-    status: in_progress
+    status: completed
     created_at: "2026-07-31T20:22:04.252Z"
-    updated_at: "2026-07-31T20:39:06.220Z"
+    updated_at: "2026-07-31T20:44:14.705Z"
+    evidence: Latest pm-cli 2026.7.31 and pm-changelog 2026.7.29-1 installed and pinned; generated CHANGELOG is deterministic; strict PM validation and health are clean after runtime cache clear; graph audit has zero findings across 67 nodes and 223 edges; clean-worktree auto-release dry-run reached terminal success with full release verification and isolated npx plus bunx package smoke tests without publishing.
+    completed_at: "2026-07-31T20:44:14.705Z"
   - id: plan-step-006
     order: 6
     title: "Publish PR, await exact-head checks and bot reviews, address every actionable finding, and merge"
-    status: pending
+    status: in_progress
     created_at: "2026-07-31T20:22:04.252Z"
-    updated_at: "2026-07-31T20:22:04.252Z"
+    updated_at: "2026-07-31T20:44:16.088Z"
 body: Keep transport generic enough for current subscription events while expose typed bounded commands. Validate only read-only live operations. Repair the current release blocker through audited PM history normalization and exact clean-runner parity.
