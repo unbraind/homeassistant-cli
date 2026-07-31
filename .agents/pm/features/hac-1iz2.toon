@@ -2,13 +2,14 @@ id: hac-1iz2
 title: Add token-efficient entity deltas and automation platform discovery
 description: "Expose current Home Assistant subscribe_entities and trigger/condition platform subscription contracts as typed bounded agent-native CLI workflows, with live 2026.7 validation and release-safe PM evidence."
 type: Feature
-status: open
+status: closed
 priority: 0
 tags[5]: agents,automation,home-assistant,streaming,websocket
 created_at: "2026-07-31T20:21:27.042Z"
-updated_at: "2026-07-31T20:21:27.042Z"
+updated_at: "2026-07-31T21:05:37.848Z"
 deadline: "2026-08-14T20:21:27.042Z"
-assignee: codex-root
+closed_at: "2026-07-31T21:05:36.239Z"
+completed_at: "2026-07-31T21:05:36.239Z"
 author: codex-root
 estimated_minutes: 480
 acceptance_criteria: "Built hassio provides bounded entity-delta watching with entity/domain filters, max-event and duration limits, deterministic normalized output, and explicit unsubscribe cleanup; Built hassio provides bounded trigger and condition platform discovery using current Home Assistant subscription contracts; All output formats and schema/help surfaces document stable programmatic envelopes; All source tests retain exact 100/100/100/100 coverage and repository quality/release gates pass; Live Home Assistant 2026.7.4 read-only acceptance succeeds without persisting private payloads"
@@ -25,6 +26,9 @@ risk: high
 confidence: 95
 sprint: api-parity-2026-07
 release: unreleased
+resolution: Delivered the typed agent-native WebSocket discovery surface and restored the clean release path.
+expected_result: Agents can use bounded filtered deltas and current platform catalogs through stable format-safe commands.
+actual_result: "Master 8a0c573 contains the production-ready commands, documentation, exact coverage, and verified release path."
 dependencies[8]{id,kind,created_at,author,source_kind,author_source}:
   hac-96i2,discovered_from,"2026-07-31T20:21:27.042Z",codex-root,"cli:create:dep",detected
   hac-ak9g,related,"2026-07-31T20:21:27.042Z",codex-root,"cli:create:dep",detected
@@ -34,8 +38,9 @@ dependencies[8]{id,kind,created_at,author,source_kind,author_source}:
   hac-stpm,related,"2026-07-31T20:21:27.042Z",codex-root,"cli:create:dep",detected
   hac-suj3,related,"2026-07-31T20:21:27.042Z",codex-root,"cli:create:dep",detected
   hac-wwsi,related,"2026-07-31T20:21:27.042Z",codex-root,"cli:create:dep",detected
-comments[1]{created_at,author,text}:
+comments[2]{created_at,author,text}:
   "2026-07-31T20:21:27.042Z",codex-root,"Selected after duplicate search across all 63 statuses; this extends, rather than duplicates, bounded trigger subscriptions by modeling entity-delta and platform-subscription protocols."
+  "2026-07-31T21:05:34.427Z",codex-root,"PR 80 merged to master as 8a0c573 after exact-head hosted checks and complete bot-thread disposition. Live Home Assistant 2026.7.4 acceptance,all six formats,1294 tests,exact 100 percent coverage,100 percent docstrings,clean package smoke,and auto-release dry-run passed without publishing."
 notes[1]{created_at,author,text}:
   "2026-07-31T20:21:27.042Z",codex-root,Official documentation and tagged Home Assistant Core 2026.7.4 are primary contract sources. Live output is used only for redacted schema-level validation.
 learnings[1]{created_at,author,text}:
@@ -46,4 +51,5 @@ tests[1]{command,scope,timeout_seconds}:
   "bun run test:coverage",project,1800
 docs[1]{path,scope,note}:
   docs/API.md,project,Typed live observation and automation discovery contract
+close_reason: "Merged bounded entity delta observation and automation platform discovery in PR 80 with complete docs, exact tests, privacy-safe live proof, and release readiness."
 body: "Research current official Home Assistant 2026.7 documentation and tagged Core source; implement typed bounded subscriptions with deterministic filtering and normalized envelopes; cover transport, command, help, format, docs, live read-only, package, and release behavior; preserve raw WebSocket passthrough for forward compatibility."

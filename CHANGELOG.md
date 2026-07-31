@@ -4,14 +4,17 @@
 
 ### Added
 
+- Add token-efficient entity deltas and automation platform discovery ([hac-1iz2](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/features/hac-1iz2.toon))
 - Unify typed service action execution across REST and WebSocket ([hac-stpm](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/features/hac-stpm.toon))
 
 ### Fixed
 
+- Clean-runner PM history drift blocks scheduled auto release ([hac-yt85](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/issues/hac-yt85.toon))
 - Explicit HASSIO_READONLY false incorrectly enables read-only mode ([hac-ndoh](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/issues/hac-ndoh.toon))
 
 ### Other
 
+- Entity delta and automation discovery delivery plan ([hac-usxc](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/plans/hac-usxc.toon))
 - Implement bounded entity delta and automation platform subscriptions ([hac-g36l](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-g36l.toon))
 - Typed service action delivery plan ([hac-ahkf](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/plans/hac-ahkf.toon))
 - Implement normalized typed service action contracts ([hac-97on](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-97on.toon))
