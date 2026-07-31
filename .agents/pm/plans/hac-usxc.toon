@@ -6,9 +6,10 @@ status: in_progress
 priority: 0
 tags[5]: agents,automation,delivery-plan,release,websocket
 created_at: "2026-07-31T20:22:04.264Z"
-updated_at: "2026-07-31T20:44:16.089Z"
+updated_at: "2026-07-31T20:53:44.515Z"
 deadline: "2026-08-14T20:22:04.264Z"
 assignee: codex-root
+claim_principal: codex-root
 author: codex-root
 estimated_minutes: 480
 acceptance_criteria: Every step has linked implementation or validation evidence and the plan is closed only after merged-head proof
