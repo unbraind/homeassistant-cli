@@ -84,17 +84,31 @@ Use `hassio media browse --count` before requesting detail, then apply a small
 `{ scope, count, results }` output. Prefer `media resolve --metadata-only`;
 the full resolve response can contain a short-lived signed credential.
 
-10. Observe Automation Triggers with Bounded Context (implemented):
+10. Observe Entity Deltas with Bounded Context (implemented):
+Use `hassio ws observe-entities --domain <domain>` instead of repeatedly fetching
+all states or consuming full `state_changed` event envelopes. The command sends
+filters to Home Assistant, expands the compact initial snapshot, preserves
+lossless add/change/remove patches, stops at `--wait-ms` or `--max-events`, and
+always attempts to unsubscribe. Add `--no-initial` when only subsequent changes
+belong in the agent context.
+
+11. Discover Purpose-Specific Automation Platforms (implemented):
+Use `hassio ws automation-platforms --kind all` to retrieve the current trigger
+and condition schemas published by loaded integrations. Narrow them with
+`ws target triggers|conditions`, then validate the authored configuration with
+`ws validate-config` before execution.
+
+12. Observe Automation Triggers with Bounded Context (implemented):
 Use `hassio ws subscribe-trigger --trigger <json>` when an agent needs to wait
 for an automation-level condition without consuming the full event bus. The
 command validates inputs locally, negotiates coalesced WebSocket frames, applies
 `--wait-ms` and `--max-events` bounds, unsubscribes, and never fires the trigger.
 It requires a Home Assistant administrator.
 
-11. Cursor-based pagination (future):
+13. Cursor-based pagination (future):
 Add `--cursor` + `--limit` for entity-heavy installations so agents can page deterministically.
 
-12. Stable machine error envelope (future):
+14. Stable machine error envelope (future):
 Standardize failures to `{ code, message, hint, retriable }` across all commands and formats.
 
 ## TOON Format Explained

@@ -23,7 +23,15 @@ interface PendingCall {
 interface EventBuffer {
   events: unknown[];
   maxEvents: number;
+  finish: () => void;
 }
+
+type WsSubscriptionType =
+  | "condition_platforms/subscribe"
+  | "subscribe_entities"
+  | "subscribe_events"
+  | "subscribe_trigger"
+  | "trigger_platforms/subscribe";
 
 interface WsConnectMessage {
   type: "auth_required" | "auth_ok" | "auth_invalid";
@@ -88,6 +96,7 @@ export class HomeAssistantWebSocketClient {
           if (buffer) {
             if (buffer.events.length < buffer.maxEvents) {
               buffer.events.push(message["event"] ?? message);
+              if (buffer.events.length === buffer.maxEvents) buffer.finish();
             }
             continue;
           }
@@ -199,21 +208,70 @@ export class HomeAssistantWebSocketClient {
     );
   }
 
+  /** Collect compact entity snapshot and delta events from Home Assistant. */
+  async subscribeEntities(options: {
+    entityIds?: string[];
+    includeDomains?: string[];
+    excludeEntityIds?: string[];
+    excludeDomains?: string[];
+    maxEvents?: number;
+    waitMs?: number;
+  }): Promise<unknown[]> {
+    const payload: Record<string, unknown> = {};
+    if (options.entityIds?.length) payload["entity_ids"] = options.entityIds;
+    if (options.includeDomains?.length) payload["include"] = { domains: options.includeDomains };
+    const exclude: Record<string, string[]> = {};
+    if (options.excludeEntityIds?.length) exclude["entities"] = options.excludeEntityIds;
+    if (options.excludeDomains?.length) exclude["domains"] = options.excludeDomains;
+    if (Object.keys(exclude).length) payload["exclude"] = exclude;
+    return this.collectSubscription(
+      "subscribe_entities",
+      payload,
+      options.maxEvents ?? 11,
+      options.waitMs ?? 5000,
+    );
+  }
+
+  /** Collect current and newly loaded automation platform descriptions. */
+  async subscribeAutomationPlatforms(options: {
+    kind: "condition" | "trigger";
+    maxEvents?: number;
+    waitMs?: number;
+  }): Promise<unknown[]> {
+    return this.collectSubscription(
+      `${options.kind}_platforms/subscribe`,
+      undefined,
+      options.maxEvents ?? 1,
+      options.waitMs ?? 5000,
+    );
+  }
+
   private async collectSubscription(
-    type: "subscribe_events" | "subscribe_trigger",
+    type: WsSubscriptionType,
     payload: Record<string, unknown> | undefined,
     maxEvents: number,
     waitMs: number,
   ): Promise<unknown[]> {
     await this.connect();
     const id = this.nextId++;
-    const buffer: EventBuffer = { events: [], maxEvents };
+    let finish!: () => void;
+    const limitReached = new Promise<void>((resolve) => {
+      finish = resolve;
+    });
+    const buffer: EventBuffer = { events: [], maxEvents, finish };
     this.eventBuffers.set(id, buffer);
+    let timer: NodeJS.Timeout | undefined;
     try {
       await this.sendAndWait(id, type, payload);
-      await new Promise((resolve) => setTimeout(resolve, waitMs));
+      await Promise.race([
+        limitReached,
+        new Promise<void>((resolve) => {
+          timer = setTimeout(resolve, waitMs);
+        }),
+      ]);
       return buffer.events;
     } finally {
+      if (timer) clearTimeout(timer);
       try {
         await this.call("unsubscribe_events", { subscription: id });
       } catch {

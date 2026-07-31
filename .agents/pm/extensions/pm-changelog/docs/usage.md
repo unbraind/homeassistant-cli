@@ -136,7 +136,7 @@ npx pm-changelog --all-release-tags --mode replace --output CHANGELOG.md \
   --item-url-base https://github.com/owner/repo/blob/main/.agents/pm
 ```
 
-`--all-release-tags` creates a newest-first `Unreleased` section for closed items after the latest tag, then one section per matching git tag. Release section dates come from the tag commit timestamp. Items with a `release` field whose value matches a known tag (`v2026.05.24-7`, `2026.05.24-7`, etc.) are bucketed into that tag's section regardless of timestamps; items without a matching `release` field fall back to each item's `closed_at`, `updated_at`, then `created_at` timestamp. Empty release windows are omitted unless `--include-empty` is passed.
+`--all-release-tags` creates a newest-first `Unreleased` section for closed items after the latest tag, then one section per matching git tag. Release section dates come from the tag commit timestamp. Items with a `release` field whose value matches a known tag (`v2026.05.24-7`, `2026.05.24-7`, etc.) are bucketed into that tag's section regardless of timestamps; items without a matching `release` field use each item's authoritative `completed_at`, then fall back to the inferred `closed_at`, `updated_at`, and `created_at` for legacy records. Empty release windows are omitted unless `--include-empty` is passed.
 
 Pair `--all-release-tags` with `--release-version-from-package` (or `--version v<x>`) to insert a section for the pending release before the tag is created — for example during CI when bumping `package.json` ahead of `git tag`.
 
@@ -214,7 +214,13 @@ npx pm-changelog --stdout --include-metadata
 Emit an item-selection diagnostics report so agents can explain why expected
 items were excluded (status, time windows, release windows, or visibility
 limits). With `--json` / `--changelog-json`, the report is returned as
-`selection_report`; with plain markdown output it is printed to stderr:
+`selection_report`; with plain markdown output it is printed to stderr. The
+report includes `attribution_provenance` — how many visible items were placed
+in their release window from the authoritative `completed_at` versus an
+inferred fallback (`closed_at`/`updated_at`/`created_at`), which fallback
+fields were used, and a bounded sample of the inferred item ids — so a
+maintainer can spot a shipped-but-late-closed item that dated into the wrong
+release:
 
 ```bash
 npx pm-changelog --stdout --json --explain
@@ -238,13 +244,21 @@ npx pm-changelog --stdout --release-version 2026.7.24 --respect-item-release
 ```
 
 In multi-agent workflows a fix often ships in one release while its tracker is closed during a later
-one. Because item placement otherwise derives from `closed_at` (then `updated_at`, then
-`created_at`), closing such a tracker injects months-old work into the current release — the reason
+one. Because item placement otherwise derives from the authoritative `completed_at` (then the inferred
+`closed_at`, `updated_at`, and `created_at` for legacy records), closing such a tracker can inject months-old work into the current release — the reason
 shipped-but-unclosed items accumulate. `--respect-item-release` pins any item that declares a
 `release`: it is kept when the release matches the generated version (no matter what its timestamps
 say) and dropped otherwise, including from an unversioned `Unreleased` window. `--all-release-tags`
-already pinned by this field, so the flag is what makes `changelog:check` and release notes agree
+already honors this field, so the flag is what makes `changelog:check` and release notes agree
 with the rebuilt history. Items without a declared release keep the plain time-window behavior.
+
+`completed_at` is the **authoritative** completion time (recorded by pm-cli ≥ 2026.7.29 separately
+from tracker close time); `closed_at`, `updated_at`, and `created_at` are **inferred fallbacks** used
+only when `completed_at` is absent. `--explain` reports this provenance as `attribution_provenance`:
+how many visible items were placed authoritatively versus from an inferred fallback, which fallback
+fields supplied the inferred timestamps, and a bounded sample of the inferred item ids. An item in
+the inferred sample is the candidate for a shipped-but-late-closed tracker that dated into the wrong
+release — inspect it, set `completed_at` (or pin it with `--release`), and regenerate.
 
 Keep tracked-but-not-user-facing items out of the changelog entirely:
 
@@ -289,7 +303,7 @@ and its history untouched in the tracker. Both flags are reported by `--explain`
 | `--limit <n>` | - | Keep only the most recent N release sections (only affects `--all-release-tags`/`--group-by` history output) |
 | `--since-version <v>` | - | Keep only releases at or newer than version `<v>` (`Unreleased` is always kept; history output only) |
 | `--changelog-json` | false | Print the full structured changelog document (releases -> sections -> items) as JSON to stdout. Distinct from `--json` (CI summary) |
-| `--explain` | false | Emit item-selection diagnostics (`selection_report`) showing stage counts, exclusion reasons, sample items, and actionable hints |
+| `--explain` | false | Emit item-selection diagnostics (`selection_report`) showing stage counts, exclusion reasons, sample items, completion-timestamp attribution provenance (`attribution_provenance`: authoritative `completed_at` vs inferred fallback counts and sample ids), and actionable hints |
 | `--breaking-changes` | false | Emit an additional `Breaking Changes` section per release listing items detected as breaking (a truthy `breaking` flag, a `breaking`/`breaking-change` tag, or the standalone word `breaking` in type/title; negated phrasings like `non-breaking` are ignored) |
 | `--suggest-semver` | false | Print a suggested semver bump (`major`/`minor`/`patch`/`none`) as JSON to stdout; never writes the changelog. Computed from the same visible release sections as the output (respects `--limit`/`--since-version`). Also embedded in `--changelog-json` output |
 | `--body-preview <n>` | - | Append the first N characters of each item's body to its entry (single-lined, truncated with an ellipsis when longer). Loads bodies via `--include-body`; falls back to the item `description` when the body is empty |
@@ -297,7 +311,8 @@ and its history untouched in the tracker. Both flags are reported by `--explain`
 | `--include-metadata` | false | Append compact item metadata (`type`, `status`, `priority`, `release`, `milestone`) to each entry |
 | `--mode <mode>` | `replace` | `replace` or `prepend` existing changelog |
 | `--json` | false | Print JSON summary for automation |
-| `--check` | false | Do not write; exit 1 if the output file would change |
+| `--check` | false | Do not write; exit 1 if the output file would change. On drift, also prints a unified diff (`--- committed` vs `+++ generated`) to **stderr** so the cause is visible without rerunning the generator — the common case (a PR branch behind `main`, so the CI merge ref sees a release the branch lacks) shows up as a missing release section in seconds. Capped at ~200 diff lines with an explicit truncation notice |
+| `--no-check-diff` | false | With `--check`, suppress the drift diff; the exit code is unchanged. For callers that only want the pass/fail signal |
 | `--github-output` | false | Write summary fields to `$GITHUB_OUTPUT` |
 | `--github-step-summary` | false | Append generated markdown to `$GITHUB_STEP_SUMMARY` |
 | `--include-empty` | false | Emit an empty section when no items match. When using `--all-release-tags`, empty release windows are omitted by default; pass this flag to keep them as `No changes.` sections. |

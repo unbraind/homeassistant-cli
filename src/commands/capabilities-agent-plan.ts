@@ -39,6 +39,8 @@ export function buildAgentPlan(report: CapabilityReportSnapshot): AgentPlan {
 
   if (report.capabilities.websocket.status === "available") {
     recommendedCommands.push("hassio websocket status");
+    recommendedCommands.push("hassio ws observe-entities --domain <domain> --max-events 10");
+    recommendedCommands.push("hassio ws automation-platforms --kind all");
   } else {
     notes.push("WebSocket API is unavailable; prefer REST polling commands.");
   }
