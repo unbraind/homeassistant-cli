@@ -2,14 +2,14 @@ id: hac-usxc
 title: Entity delta and automation discovery delivery plan
 description: "Deliver typed entity-delta observation and automation-platform discovery, repair clean-runner PM release validation, and complete exact-head review/merge evidence."
 type: Plan
-status: in_progress
+status: closed
 priority: 0
 tags[5]: agents,automation,delivery-plan,release,websocket
 created_at: "2026-07-31T20:22:04.264Z"
-updated_at: "2026-07-31T20:53:44.515Z"
+updated_at: "2026-07-31T21:05:31.492Z"
 deadline: "2026-08-14T20:22:04.264Z"
-assignee: codex-root
-claim_principal: codex-root
+closed_at: "2026-07-31T21:05:30.121Z"
+completed_at: "2026-07-31T21:05:30.121Z"
 author: codex-root
 estimated_minutes: 480
 acceptance_criteria: Every step has linked implementation or validation evidence and the plan is closed only after merged-head proof
@@ -26,6 +26,9 @@ risk: high
 confidence: 95
 sprint: api-parity-2026-07
 release: unreleased
+resolution: "Executed the full feature, release repair, review, and merge plan."
+expected_result: Every plan step has reproducible evidence and the implementation is merged with no unresolved finding.
+actual_result: PR 80 merged at 8a0c573 after all checks and actionable review feedback reached terminal resolution.
 dependencies[6]{id,kind,created_at,author,source_kind,author_source}:
   hac-1iz2,parent,"2026-07-31T20:22:04.264Z",codex-root,"cli:create:dep",detected
   hac-r17v,related,"2026-07-31T20:22:04.264Z",codex-root,"cli:create:dep",detected
@@ -45,54 +48,15 @@ tests[1]{command,scope,timeout_seconds}:
   "bun run release:verify",project,3600
 docs[1]{path,scope,note}:
   docs/API.md,project,Primary command contract documentation
-plan_mode: executing
+close_reason: "All six delivery steps completed with exact merged-head, hosted check, review, PM, package, security, and live acceptance evidence."
+plan_mode: completed
 plan_scope: "Home Assistant 2026.7 subscribe_entities, trigger_platforms/subscribe, condition_platforms/subscribe, CLI help/schema/docs/tests/live acceptance, and auto-release history integrity."
 plan_harness: codex
-plan_steps[6]:
-  - id: plan-step-001
-    order: 1
-    title: Confirm tagged Core subscription schemas and live instance behavior
-    status: completed
-    created_at: "2026-07-31T20:22:04.252Z"
-    updated_at: "2026-07-31T20:31:45.685Z"
-    evidence: "Official REST/WebSocket/auth docs refreshed; tagged Core 2026.7.4 commands.py, messages.py, core.py, entityfilter.py, and upstream tests inspected. Live instance reports 2026.7.4 and returned schema-only trigger/condition catalogs plus a redacted compact entity snapshot."
-    completed_at: "2026-07-31T20:31:45.685Z"
-  - id: plan-step-002
-    order: 2
-    title: Implement generic bounded subscription collection and normalized entity deltas
-    status: completed
-    created_at: "2026-07-31T20:22:04.252Z"
-    updated_at: "2026-07-31T20:31:47.715Z"
-    evidence: "Added reusable bounded collection with early max-event termination and unsubscribe cleanup, subscribe_entities server filters, expanded initial rows, and lossless add/change/remove patches. Focused transport/command tests and live built CLI pass."
-    completed_at: "2026-07-31T20:31:47.715Z"
-  - id: plan-step-003
-    order: 3
-    title: Add typed automation platform discovery commands
-    status: completed
-    created_at: "2026-07-31T20:22:04.252Z"
-    updated_at: "2026-07-31T20:31:49.377Z"
-    evidence: "Added trigger/condition/all platform catalog subscriptions with deterministic event merging, bounded loading window, detailed help, agent planning integration, focused tests, and live built CLI proof."
-    completed_at: "2026-07-31T20:31:49.377Z"
-  - id: plan-step-004
-    order: 4
-    title: "Complete exact coverage, strict quality, docs, setup wizard, formats, and live acceptance"
-    status: completed
-    created_at: "2026-07-31T20:22:04.252Z"
-    updated_at: "2026-07-31T20:37:44.845Z"
-    evidence: "Exact 100/100/100/100 source coverage (116 files, 1294 tests); 100% docstrings (123/123 files); typecheck, ESLint, duplication threshold, <=300 code-line gate, ShellCheck, Bun audit, Trivy, build, exhaustive compiled help, setup/settings coverage, six-format live E2E, entity deltas, and trigger/condition catalogs all passed. No private payloads persisted."
-    completed_at: "2026-07-31T20:37:44.845Z"
-  - id: plan-step-005
-    order: 5
-    title: Generate PM changelog and prove release dry-run
-    status: completed
-    created_at: "2026-07-31T20:22:04.252Z"
-    updated_at: "2026-07-31T20:44:14.705Z"
-    evidence: Latest pm-cli 2026.7.31 and pm-changelog 2026.7.29-1 installed and pinned; generated CHANGELOG is deterministic; strict PM validation and health are clean after runtime cache clear; graph audit has zero findings across 67 nodes and 223 edges; clean-worktree auto-release dry-run reached terminal success with full release verification and isolated npx plus bunx package smoke tests without publishing.
-    completed_at: "2026-07-31T20:44:14.705Z"
-  - id: plan-step-006
-    order: 6
-    title: "Publish PR, await exact-head checks and bot reviews, address every actionable finding, and merge"
-    status: in_progress
-    created_at: "2026-07-31T20:22:04.252Z"
-    updated_at: "2026-07-31T20:44:16.088Z"
+plan_steps[6]{id,order,title,status,created_at,updated_at,evidence,completed_at}:
+  plan-step-001,1,Confirm tagged Core subscription schemas and live instance behavior,completed,"2026-07-31T20:22:04.252Z","2026-07-31T20:31:45.685Z","Official REST/WebSocket/auth docs refreshed; tagged Core 2026.7.4 commands.py, messages.py, core.py, entityfilter.py, and upstream tests inspected. Live instance reports 2026.7.4 and returned schema-only trigger/condition catalogs plus a redacted compact entity snapshot.","2026-07-31T20:31:45.685Z"
+  plan-step-002,2,Implement generic bounded subscription collection and normalized entity deltas,completed,"2026-07-31T20:22:04.252Z","2026-07-31T20:31:47.715Z","Added reusable bounded collection with early max-event termination and unsubscribe cleanup, subscribe_entities server filters, expanded initial rows, and lossless add/change/remove patches. Focused transport/command tests and live built CLI pass.","2026-07-31T20:31:47.715Z"
+  plan-step-003,3,Add typed automation platform discovery commands,completed,"2026-07-31T20:22:04.252Z","2026-07-31T20:31:49.377Z","Added trigger/condition/all platform catalog subscriptions with deterministic event merging, bounded loading window, detailed help, agent planning integration, focused tests, and live built CLI proof.","2026-07-31T20:31:49.377Z"
+  plan-step-004,4,"Complete exact coverage, strict quality, docs, setup wizard, formats, and live acceptance",completed,"2026-07-31T20:22:04.252Z","2026-07-31T20:37:44.845Z","Exact 100/100/100/100 source coverage (116 files, 1294 tests); 100% docstrings (123/123 files); typecheck, ESLint, duplication threshold, <=300 code-line gate, ShellCheck, Bun audit, Trivy, build, exhaustive compiled help, setup/settings coverage, six-format live E2E, entity deltas, and trigger/condition catalogs all passed. No private payloads persisted.","2026-07-31T20:37:44.845Z"
+  plan-step-005,5,Generate PM changelog and prove release dry-run,completed,"2026-07-31T20:22:04.252Z","2026-07-31T20:44:14.705Z",Latest pm-cli 2026.7.31 and pm-changelog 2026.7.29-1 installed and pinned; generated CHANGELOG is deterministic; strict PM validation and health are clean after runtime cache clear; graph audit has zero findings across 67 nodes and 223 edges; clean-worktree auto-release dry-run reached terminal success with full release verification and isolated npx plus bunx package smoke tests without publishing.,"2026-07-31T20:44:14.705Z"
+  plan-step-006,6,"Publish PR, await exact-head checks and bot reviews, address every actionable finding, and merge",completed,"2026-07-31T20:22:04.252Z","2026-07-31T21:05:28.664Z","PR 80 reviewed exact head 5c6ebb04186d7c02c7f94c2bbb8f942dfa3ea544 and merged to master as 8a0c573248c039bc4732c4f2f6ed1dac40752023. Every hosted check passed; all five CodeRabbit threads were reacted to, answered, and resolved; CodeRabbit confirmed dispositions; Gemini reported service sunset, Sourcery quota exhaustion, and Greptile did not acknowledge either invocation within the full review window. No actionable findings remain.","2026-07-31T21:05:28.664Z"
 body: Keep transport generic enough for current subscription events while expose typed bounded commands. Validate only read-only live operations. Repair the current release blocker through audited PM history normalization and exact clean-runner parity.
