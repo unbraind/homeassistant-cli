@@ -10,6 +10,7 @@ import { createWebsocketTargetCommand } from "./websocket-target.js";
 import { createWebsocketSessionCommands } from "./websocket-session.js";
 import { createWebsocketTriggerSubscriptionCommand } from "./websocket-subscription.js";
 import { createWebsocketValidationCommand } from "./websocket-validation.js";
+import { createWebsocketObserveCommands } from "./websocket-observe.js";
 
 function parseJson(value?: string): Record<string, unknown> | undefined {
   if (!value) return undefined;
@@ -46,6 +47,7 @@ export function createWebsocketCommand(): Command {
   cmd.addCommand(createWebsocketTriggerSubscriptionCommand());
   cmd.addCommand(createWebsocketTargetCommand());
   cmd.addCommand(createWebsocketValidationCommand());
+  for (const command of createWebsocketObserveCommands()) cmd.addCommand(command);
   for (const command of createWebsocketSessionCommands()) cmd.addCommand(command);
   return cmd;
 }

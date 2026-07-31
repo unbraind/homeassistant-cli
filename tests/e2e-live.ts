@@ -271,6 +271,30 @@ assert(wsTriggerSubscription["subscription"] === "trigger", "invalid ws trigger 
 assert(wsTriggerSubscription["event_count"] === 0, "unexpected ws trigger subscription event");
 assert(Array.isArray(wsTriggerSubscription["events"]), "invalid ws trigger subscription events shape");
 
+for (const format of ["toon", "json", "json-compact", "yaml", "table", "markdown"] as const) {
+  const observationOutput = run([
+    "ws", "observe-entities", "--domain", "sun", "--wait-ms", "1", "--max-events", "1", "--format", format,
+  ]);
+  if (format === "json" || format === "json-compact") {
+    const observation = parseJson(observationOutput) as Record<string, unknown>;
+    assert(observation["subscription"] === "entities", "invalid ws entity subscription type");
+    assert(typeof observation["initial_count"] === "number", "invalid ws entity initial count");
+    assert(Array.isArray(observation["initial"]), "invalid ws entity initial rows");
+    assert(Array.isArray(observation["changes"]), "invalid ws entity change rows");
+  }
+  if (format === "yaml") {
+    assert(typeof parseYaml(observationOutput) === "object", "invalid ws entity observation YAML");
+  }
+  assert(observationOutput.length > 0, `empty ws entity observation output for format ${format}`);
+}
+
+const wsAutomationPlatforms = parseJson(
+  run(["ws", "automation-platforms", "--kind", "all", "--format", "json"])
+) as Record<string, unknown>;
+assert(wsAutomationPlatforms["subscription"] === "automation_platforms", "invalid automation platform subscription type");
+assert(typeof wsAutomationPlatforms["triggers"] === "object", "invalid trigger platform catalog");
+assert(typeof wsAutomationPlatforms["conditions"] === "object", "invalid condition platform catalog");
+
 const wsTargetExtract = parseJson(
   run(["ws", "target", "extract", "--entity-id", sampleEntityId, "--format", "json"])
 ) as Record<string, unknown>;

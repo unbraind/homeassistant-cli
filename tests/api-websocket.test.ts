@@ -104,7 +104,7 @@ function buildAuthWs(onReady?: (ws: FakeWs) => void): FakeWs {
 type InternalClient = {
   socket: FakeWs | null;
   pending: Map<number, unknown>;
-  eventBuffers: Map<number, { events: unknown[]; maxEvents: number }>;
+  eventBuffers: Map<number, { events: unknown[]; maxEvents: number; finish: () => void }>;
   parseMessage: (raw: string) => unknown;
   sendAndWait: (id: number, type: string, payload?: Record<string, unknown>) => Promise<unknown>;
   waitForMessage: <T>() => Promise<T>;
@@ -745,6 +745,80 @@ describe("HomeAssistantWebSocketClient – subscribeTrigger()", () => {
     expect(sendAndWait).toHaveBeenCalledWith(1, "subscribe_trigger", {
       trigger: [{ trigger: "event", event_type: "doorbell" }],
     });
+    vi.useRealTimers();
+  });
+});
+
+describe("HomeAssistantWebSocketClient – optimized subscriptions", () => {
+  it("builds complete entity subscription filters and bounds", async () => {
+    vi.useFakeTimers();
+    const client = new HomeAssistantWebSocketClient(baseConfig);
+    vi.spyOn(client, "connect").mockResolvedValue(undefined);
+    const sendAndWait = vi.fn(async () => null);
+    (client as unknown as InternalClient).sendAndWait = sendAndWait;
+    vi.spyOn(client, "call").mockResolvedValue(null);
+
+    const promise = client.subscribeEntities({
+      entityIds: ["light.kitchen"],
+      includeDomains: ["light"],
+      excludeEntityIds: ["light.hidden"],
+      excludeDomains: ["sensor"],
+      maxEvents: 3,
+      waitMs: 20,
+    });
+    await vi.advanceTimersByTimeAsync(20);
+
+    await expect(promise).resolves.toEqual([]);
+    expect(sendAndWait).toHaveBeenCalledWith(1, "subscribe_entities", {
+      entity_ids: ["light.kitchen"],
+      include: { domains: ["light"] },
+      exclude: { entities: ["light.hidden"], domains: ["sensor"] },
+    });
+    vi.useRealTimers();
+  });
+
+  it("uses entity subscription defaults without empty filters", async () => {
+    vi.useFakeTimers();
+    const client = new HomeAssistantWebSocketClient(baseConfig);
+    vi.spyOn(client, "connect").mockResolvedValue(undefined);
+    const sendAndWait = vi.fn(async () => null);
+    (client as unknown as InternalClient).sendAndWait = sendAndWait;
+    vi.spyOn(client, "call").mockResolvedValue(null);
+
+    const promise = client.subscribeEntities({});
+    await vi.advanceTimersByTimeAsync(5000);
+
+    await expect(promise).resolves.toEqual([]);
+    expect(sendAndWait).toHaveBeenCalledWith(1, "subscribe_entities", {});
+    vi.useRealTimers();
+  });
+
+  it.each(["trigger", "condition"] as const)("subscribes to %s platform catalogs", async (kind) => {
+    vi.useFakeTimers();
+    const client = new HomeAssistantWebSocketClient(baseConfig);
+    vi.spyOn(client, "connect").mockResolvedValue(undefined);
+    const sendAndWait = vi.fn(async () => null);
+    (client as unknown as InternalClient).sendAndWait = sendAndWait;
+    vi.spyOn(client, "call").mockResolvedValue(null);
+
+    const promise = client.subscribeAutomationPlatforms({ kind, maxEvents: 2, waitMs: 20 });
+    await vi.advanceTimersByTimeAsync(20);
+
+    await expect(promise).resolves.toEqual([]);
+    expect(sendAndWait).toHaveBeenCalledWith(1, `${kind}_platforms/subscribe`, undefined);
+    vi.useRealTimers();
+  });
+
+  it("uses automation platform subscription defaults", async () => {
+    vi.useFakeTimers();
+    const client = new HomeAssistantWebSocketClient(baseConfig);
+    vi.spyOn(client, "connect").mockResolvedValue(undefined);
+    (client as unknown as InternalClient).sendAndWait = vi.fn(async () => null);
+    vi.spyOn(client, "call").mockResolvedValue(null);
+
+    const promise = client.subscribeAutomationPlatforms({ kind: "trigger" });
+    await vi.advanceTimersByTimeAsync(5000);
+    await expect(promise).resolves.toEqual([]);
     vi.useRealTimers();
   });
 });

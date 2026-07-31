@@ -1334,12 +1334,65 @@ hassio ws validate-config --action '[{"action":"light.turn_on","target":{"entity
 hassio ws validate-config --file automation.json
 hassio ws subscribe --event-type state_changed --wait-ms 10000 --max-events 20
 hassio ws subscribe-trigger --trigger '{"trigger":"event","event_type":"doorbell"}' --wait-ms 30000
+hassio ws observe-entities --domain light --wait-ms 10000 --max-events 20
+hassio ws automation-platforms --kind all
 ```
 
 After authentication, the client negotiates Home Assistant's
 `supported_features.coalesce_messages` protocol feature. It accepts both ordinary
 single-message frames and coalesced JSON arrays, reducing transport overhead
 without changing command output contracts.
+
+#### `websocket observe-entities`
+
+Collect Home Assistant's compact `subscribe_entities` initial snapshot and
+bounded state deltas without polling the full REST state collection:
+
+```bash
+hassio ws observe-entities [options]
+
+Options:
+  --entity-id <ids>          Comma-separated entity IDs
+  --domain <domains>         Comma-separated included domains
+  --exclude-entity-id <ids>  Comma-separated entity IDs to exclude
+  --exclude-domain <domains> Comma-separated domains to exclude
+  --wait-ms <ms>             Positive collection duration (default: 5000)
+  --max-events <n>           Positive change-event bound (default: 10)
+  --no-initial               Omit initial snapshot rows from output
+```
+
+The normalized envelope is
+`{subscription, initial_count, change_count, initial?, changes}`. Initial rows
+expand Home Assistant's compressed state keys into `entity_id`, `state`,
+`attributes`, `context`, `last_changed`, and `last_updated`. Change rows retain
+lossless `added`, `changed`, and `removed` semantics; changed rows expose the
+protocol's `set` and `remove` patches. Filtering is sent to Home Assistant so
+unwanted entities are not transported, and the client always attempts
+`unsubscribe_events` cleanup. This read-only command is safe under
+`--read-only`.
+
+```bash
+hassio ws observe-entities --entity-id light.kitchen,sensor.temperature --max-events 5
+hassio ws observe-entities --domain sensor --exclude-entity-id sensor.private --no-initial --format json-compact
+```
+
+#### `websocket automation-platforms`
+
+Discover the current purpose-specific trigger and condition schemas that loaded
+integrations publish through `trigger_platforms/subscribe` and
+`condition_platforms/subscribe`:
+
+```bash
+hassio ws automation-platforms --kind trigger|condition|all \
+  --wait-ms 100 --max-events 1
+```
+
+The stable envelope is
+`{subscription: "automation_platforms", triggers?, conditions?}`. Catalog
+events are merged by platform name, so a longer bounded wait can include
+integrations loaded after the initial catalog. Use this before authoring an
+automation, `ws target triggers|conditions` to narrow schemas to a target, and
+`ws validate-config` to validate the final definition.
 
 #### `websocket target`
 Target-resolution helpers built on HA WebSocket commands:

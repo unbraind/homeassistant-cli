@@ -12,6 +12,7 @@
 
 ### Other
 
+- Implement bounded entity delta and automation platform subscriptions ([hac-g36l](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-g36l.toon))
 - Typed service action delivery plan ([hac-ahkf](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/plans/hac-ahkf.toon))
 - Implement normalized typed service action contracts ([hac-97on](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-97on.toon))
 

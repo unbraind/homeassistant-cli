@@ -530,6 +530,12 @@ hassio ws target related --label-id lighting
 # Capture WS events for 10s
 hassio ws subscribe --event-type state_changed --wait-ms 10000 --max-events 20
 
+# Capture a compact snapshot plus bounded state deltas without full event envelopes
+hassio ws observe-entities --domain light --wait-ms 10000 --max-events 20
+
+# Discover current purpose-specific automation platform schemas
+hassio ws automation-platforms --kind all
+
 # Observe automation triggers without firing them (admin only)
 hassio ws subscribe-trigger \
   --trigger '{"trigger":"event","event_type":"doorbell"}' \

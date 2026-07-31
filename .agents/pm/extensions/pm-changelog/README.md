@@ -80,10 +80,7 @@ See [Usage](docs/usage.md#opt-in-enhancements) for details.
 
 ### Release attribution: work that shipped before its tracker was closed
 
-By default an item lands in the release window that contains its `closed_at` (falling back to
-`updated_at`/`created_at`). In multi-agent workflows an agent often ships the fix in one release and
-closes the tracker during a later one, which would date months-old work as new — and is why
-shipped-but-unclosed trackers pile up: closing them corrupts the changelog.
+By default an item lands in the release window that contains its **authoritative completion time** — `completed_at` (recorded by pm-cli ≥ 2026.7.29 separately from tracker close time). When `completed_at` is absent, generation falls back to `closed_at`, then `updated_at`, then `created_at`; those fallbacks are **inferred**, not authoritative. In multi-agent workflows an agent often ships the fix in one release and closes the tracker during a later one, which would date months-old work as new — and is why shipped-but-unclosed trackers pile up: closing them corrupts the changelog.
 
 Record where the work actually landed and generation stops trusting `closed_at`:
 
@@ -99,6 +96,15 @@ shipped). Items without a declared release keep the plain time-window behavior, 
 unchanged for workspaces that never set the field. `--all-release-tags` already honors the field and
 is unaffected; the flag makes the single-window path (`--since-previous-tag --until-release-tag`,
 `changelog:check`, release notes) agree with it. `--explain` reports what attribution dropped.
+
+#### Inferred-attribution report
+
+`--explain` also reports **attribution provenance**: how many visible items were placed in their
+release window from the authoritative `completed_at` versus an inferred fallback (`closed_at`,
+`updated_at`, or `created_at`), plus a bounded sample of the inferred item ids. This is how a
+maintainer catches a shipped-but-late-closed item — one whose `completed_at` is missing so its
+placement fell back to a `closed_at` recorded in a later release. Inspect the inferred sample, set
+`completed_at` (or pin the item with `--release`), and regenerate.
 
 ### Excluding items
 

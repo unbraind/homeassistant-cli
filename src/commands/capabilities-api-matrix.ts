@@ -208,7 +208,7 @@ export async function probeApiMatrix(config: ProbeConfig): Promise<ApiMatrixPayl
       endpoint: "/api/websocket",
       status: "available",
       command_group: "websocket",
-      cli_commands: ["hassio websocket status", "hassio ws subscribe --event-type state_changed"],
+      cli_commands: ["hassio websocket status", "hassio ws observe-entities --domain light"],
       probe: "websocket",
     };
   } catch (error) {
@@ -218,7 +218,7 @@ export async function probeApiMatrix(config: ProbeConfig): Promise<ApiMatrixPayl
       endpoint: "/api/websocket",
       status: statusFromProbe(normalized),
       command_group: "websocket",
-      cli_commands: ["hassio websocket status", "hassio ws subscribe --event-type state_changed"],
+      cli_commands: ["hassio websocket status", "hassio ws observe-entities --domain light"],
       probe: "websocket",
       message: normalized.message,
     };
@@ -263,7 +263,7 @@ export async function probeApiMatrix(config: ProbeConfig): Promise<ApiMatrixPayl
 
   const recommendations: string[] = [];
   if (websocketEntry.status === "available") {
-    recommendations.push("Prefer websocket subscriptions for low-latency state/event streaming.");
+    recommendations.push("Prefer ws observe-entities for token-efficient low-latency state deltas.");
   }
   if (supervisorEntry.status !== "available") {
     recommendations.push("Skip supervisor commands unless running HA OS/Supervised with proper token scope.");

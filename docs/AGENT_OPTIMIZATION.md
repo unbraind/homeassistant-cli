@@ -201,7 +201,35 @@ The raw display form retains Home Assistant's compact keys. Request
 `--decode-display` for descriptive field names. Always bound rows before
 placing registry metadata in an LLM context.
 
-### 8. WebSocket Target Resolution
+### 8. Token-Efficient Entity Delta Observation
+
+Prefer the compact entity subscription when an agent needs a live state window.
+Server-side filters prevent unrelated state from entering the transport or model
+context:
+
+```bash
+hassio ws observe-entities --domain light --wait-ms 10000 --max-events 10
+hassio ws observe-entities --entity-id sensor.temperature --no-initial --format json-compact
+```
+
+The initial snapshot uses expanded descriptive fields. Later rows preserve
+`added`, `changed`, and `removed` semantics, including attribute removals. Both
+time and event count are mandatory positive bounds, and the client unsubscribes
+at either boundary.
+
+### 9. Purpose-Specific Automation Discovery
+
+Discover the trigger and condition schemas contributed by currently loaded
+integrations before asking an agent to author an automation:
+
+```bash
+hassio ws automation-platforms --kind all --format toon
+```
+
+Use target discovery next to narrow the catalog, then validate the resulting
+definition before any configuration mutation.
+
+### 10. WebSocket Target Resolution
 
 Use WebSocket target helpers to convert abstract targets into concrete IDs, discover valid automation primitives, and fetch only matching registry records:
 
@@ -214,7 +242,7 @@ hassio ws target services --entity-id group.downstairs --no-expand-group
 hassio ws target related --label-id lighting
 ```
 
-### 9. Validate Automations Before Execution
+### 11. Validate Automations Before Execution
 
 Use the typed WebSocket validator before an agent proposes or applies an
 automation. It does not execute actions or create configuration:
@@ -229,7 +257,7 @@ hassio ws validate-config \
 CLI values override matching fields in the file. Treat a `valid: false` result as
 a hard stop and surface the corresponding `error` to the planning loop.
 
-### 10. Bounded Automation Trigger Observation
+### 12. Bounded Automation Trigger Observation
 
 Prefer automation-level trigger subscriptions over the entire event bus when an
 agent is waiting for a specific condition:
@@ -245,7 +273,7 @@ coalesced WebSocket frames, bounds both time and output size, unsubscribes, and
 never fires the trigger. Treat returned context and variable values as private
 instance data.
 
-### 11. Bounded WebSocket Session Discovery
+### 13. Bounded WebSocket Session Discovery
 
 Prefer typed commands for stable protocol operations and bound large exposure
 inventories before adding them to an agent context:
@@ -261,7 +289,7 @@ Global `--read-only` blocks `ws exposure enable|disable`. A value returned by
 `ws sign-path` is a short-lived credential: consume it immediately and never
 persist it in prompts, logs, pm items, or source control.
 
-### 12. Bounded Media Discovery
+### 14. Bounded Media Discovery
 
 Count before fetching media rows, then request only the context the agent needs:
 

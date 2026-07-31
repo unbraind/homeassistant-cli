@@ -1,0 +1,73 @@
+id: hac-g36l
+title: Implement bounded entity delta and automation platform subscriptions
+description: "Extend the typed WebSocket client and command surface for subscribe_entities, trigger_platforms/subscribe, and condition_platforms/subscribe with bounded collection, filtering, normalization, help, schemas, docs, and exact coverage."
+type: Task
+status: closed
+priority: 0
+tags[5]: agents,automation,entity-delta,typescript,websocket
+created_at: "2026-07-31T20:22:22.979Z"
+updated_at: "2026-07-31T20:39:05.203Z"
+deadline: "2026-08-10T20:22:22.979Z"
+closed_at: "2026-07-31T20:39:04.060Z"
+completed_at: "2026-07-31T20:39:04.060Z"
+author: codex-root
+estimated_minutes: 360
+acceptance_criteria: "Transport accepts current subscription types and always attempts unsubscribe_events cleanup; Entity delta command supports entity ID and domain filters, bounded duration/count, initial snapshot inclusion control, and normalized deterministic envelopes; Automation platforms command supports trigger and condition catalogs and stable bounded output; Help, schema, README/docs, unit/integration/live tests, all formats, source docs, file size, duplication, security, package, and release gates pass"
+definition_of_ready: Tagged Core 2026.7.4 schemas and live 2026.7.4 behavior are known; existing subscription transport and tests inspected
+goal: agent-native-home-state-observation
+objective: implement-typed-delta-platform-contracts
+value: Avoid repeated full state polling and raw protocol parsing for agent workflows.
+impact: "Efficient, bounded monitoring and automation authoring discovery become first-class CLI capabilities."
+outcome: "Typed source, tests, docs, and live proof integrated into the hassio command surface."
+why_now: The CLI supports generic WebSocket calls but not the current optimized subscriptions needed by agents.
+parent: hac-usxc
+reviewer: unbraind
+risk: high
+confidence: 94
+sprint: api-parity-2026-07
+release: unreleased
+resolution: Implemented and verified the typed WebSocket subscriptions and agent-oriented CLI contracts.
+expected_result: "Home Assistant entity and automation discovery is bounded, typed, documented, format-safe, and fully tested."
+actual_result: All implementation acceptance criteria passed locally and through PM-linked test execution.
+dependencies[6]{id,kind,created_at,author,source_kind,author_source}:
+  hac-1iz2,implements,"2026-07-31T20:22:22.979Z",codex-root,"cli:create:dep",detected
+  hac-3n6e,related,"2026-07-31T20:22:22.979Z",codex-root,"cli:create:dep",detected
+  hac-ahl7,related,"2026-07-31T20:22:22.979Z",codex-root,"cli:create:dep",detected
+  hac-c0y8,related,"2026-07-31T20:22:22.979Z",codex-root,"cli:create:dep",detected
+  hac-r4e3,related,"2026-07-31T20:22:22.979Z",codex-root,"cli:create:dep",detected
+  hac-vooo,related,"2026-07-31T20:22:22.979Z",codex-root,"cli:create:dep",detected
+comments[3]{created_at,author,text}:
+  "2026-07-31T20:22:22.979Z",codex-root,Command design will follow current Core source while keeping the raw call command as the forward-compatibility escape hatch.
+  "2026-07-31T20:31:51.763Z",codex-root,"Live built CLI on Home Assistant 2026.7.4 validated automation platform catalogs and compact entity observation. Evidence retains only version, catalog counts, and field shapes; no entity identifiers, state values, credentials, or topology were stored."
+  "2026-07-31T20:37:43.405Z",codex-root,Live read-only built-CLI acceptance passed against Home Assistant Core 2026.7.4 across TOON JSON compact JSON YAML table and Markdown. Entity output was inspected only for counts and field shape; no private URL token entity IDs states or payloads were persisted.
+notes[3]{created_at,author,text}:
+  "2026-07-31T20:22:22.979Z",codex-root,"Live acceptance records only version, counts, and schema shapes; entity IDs and state values remain private."
+  "2026-07-31T20:31:50.970Z",codex-root,"Measured full Vitest coverage after transport, command, capability, and documentation integration: 1,294 tests and exact 100 percent statements, branches, functions, and lines."
+  "2026-07-31T20:37:43.405Z",codex-root,Trivy initially could not allocate its download beneath the quota-exhausted host /tmp. The same mandatory scan passed with an isolated TMPDIR and reported zero HIGH or CRITICAL vulnerabilities misconfigurations or secrets.
+learnings[1]{created_at,author,text}:
+  "2026-07-31T20:22:22.979Z",codex-root,"subscribe_entities emits compact add/change/remove deltas rather than state_changed event objects, so its normalization must be protocol-specific."
+files[7]{path,scope,note}:
+  src/api/websocket.ts,project,Reusable bounded subscription transport
+  src/commands/capabilities-agent-plan.ts,project,Agent recommendation integration
+  src/commands/capabilities-api-matrix.ts,project,Capability matrix command mapping
+  src/commands/websocket-observe.ts,project,Typed observation command surface
+  tests/api-websocket.test.ts,project,Transport subscription coverage
+  tests/e2e-live.ts,project,Built live read-only acceptance
+  tests/websocket-observe-command.test.ts,project,Command contract coverage
+tests[6]{command,scope,timeout_seconds}:
+  bun run build,project,300
+  "bun run quality:static",project,900
+  "bun run security:audit",project,300
+  "bun run security:trivy",project,900
+  "bun run test:coverage",project,1800
+  "bun run test:e2e:help",project,300
+test_runs[1]{run_id,kind,status,started_at,finished_at,recorded_at,passed,failed,skipped}:
+  test-local-ms9enky2-karg9b,test,passed,"2026-07-31T20:38:00.863Z","2026-07-31T20:38:45.962Z","2026-07-31T20:38:45.962Z",6,0,0
+docs[5]{path,scope,note}:
+  docs/AGENT_OPTIMIZATION.md,project,Token-efficient observation workflow
+  docs/API.md,project,User and programmatic contract
+  docs/INDEX.md,project,Command discovery index
+  docs/LLM_INTEGRATION.md,project,Agent orchestration guidance
+  README.md,project,User quick-start examples
+close_reason: "Implementation and local acceptance complete: bounded entity deltas, automation platform catalogs, full docs, exact coverage, strict quality, security, compiled help, and privacy-safe live E2E all pass."
+body: Implement a reusable typed subscription collector without dynamic imports or any; normalize entity delta protocol payloads without losing remove/add/change semantics; filter after protocol decoding; return deterministic envelopes; add platform subscription commands; retain raw call passthrough.

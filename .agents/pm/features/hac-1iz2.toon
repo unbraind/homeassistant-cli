@@ -1,0 +1,49 @@
+id: hac-1iz2
+title: Add token-efficient entity deltas and automation platform discovery
+description: "Expose current Home Assistant subscribe_entities and trigger/condition platform subscription contracts as typed bounded agent-native CLI workflows, with live 2026.7 validation and release-safe PM evidence."
+type: Feature
+status: open
+priority: 0
+tags[5]: agents,automation,home-assistant,streaming,websocket
+created_at: "2026-07-31T20:21:27.042Z"
+updated_at: "2026-07-31T20:21:27.042Z"
+deadline: "2026-08-14T20:21:27.042Z"
+assignee: codex-root
+author: codex-root
+estimated_minutes: 480
+acceptance_criteria: "Built hassio provides bounded entity-delta watching with entity/domain filters, max-event and duration limits, deterministic normalized output, and explicit unsubscribe cleanup; Built hassio provides bounded trigger and condition platform discovery using current Home Assistant subscription contracts; All output formats and schema/help surfaces document stable programmatic envelopes; All source tests retain exact 100/100/100/100 coverage and repository quality/release gates pass; Live Home Assistant 2026.7.4 read-only acceptance succeeds without persisting private payloads"
+definition_of_ready: "Official docs, tagged Core 2026.7.4 source, live instance version, all-status PM lineage, GitHub issues/PRs, installed dependency types, and release failure logs inspected"
+goal: agent-native-home-state-observation
+objective: typed-bounded-websocket-deltas-and-platforms
+value: Let agents observe only meaningful state changes and discover automation primitives without polling full state snapshots or parsing raw protocol envelopes.
+impact: Reduces token and bandwidth cost while making current Home Assistant automation capabilities directly usable in safe programmatic workflows.
+outcome: "A typed, documented, production-ready live observation and automation discovery surface with exact release evidence."
+why_now: Home Assistant 2026.7 promotes purpose-specific automations and its current Core protocol offers delta subscriptions not yet modeled by the CLI.
+parent: hac-4s9j
+reviewer: unbraind
+risk: high
+confidence: 95
+sprint: api-parity-2026-07
+release: unreleased
+dependencies[8]{id,kind,created_at,author,source_kind,author_source}:
+  hac-96i2,discovered_from,"2026-07-31T20:21:27.042Z",codex-root,"cli:create:dep",detected
+  hac-ak9g,related,"2026-07-31T20:21:27.042Z",codex-root,"cli:create:dep",detected
+  hac-c0y8,related,"2026-07-31T20:21:27.042Z",codex-root,"cli:create:dep",detected
+  hac-r17v,related,"2026-07-31T20:21:27.042Z",codex-root,"cli:create:dep",detected
+  hac-r2z9,related,"2026-07-31T20:21:27.042Z",codex-root,"cli:create:dep",detected
+  hac-stpm,related,"2026-07-31T20:21:27.042Z",codex-root,"cli:create:dep",detected
+  hac-suj3,related,"2026-07-31T20:21:27.042Z",codex-root,"cli:create:dep",detected
+  hac-wwsi,related,"2026-07-31T20:21:27.042Z",codex-root,"cli:create:dep",detected
+comments[1]{created_at,author,text}:
+  "2026-07-31T20:21:27.042Z",codex-root,"Selected after duplicate search across all 63 statuses; this extends, rather than duplicates, bounded trigger subscriptions by modeling entity-delta and platform-subscription protocols."
+notes[1]{created_at,author,text}:
+  "2026-07-31T20:21:27.042Z",codex-root,Official documentation and tagged Home Assistant Core 2026.7.4 are primary contract sources. Live output is used only for redacted schema-level validation.
+learnings[1]{created_at,author,text}:
+  "2026-07-31T20:21:27.042Z",codex-root,"The public WebSocket guide documents stable commands, while tagged Core source is required to discover current optimized subscription contracts such as subscribe_entities and platform subscriptions."
+files[1]{path,scope,note}:
+  src/api/websocket.ts,project,Typed WebSocket subscription transport
+tests[1]{command,scope,timeout_seconds}:
+  "bun run test:coverage",project,1800
+docs[1]{path,scope,note}:
+  docs/API.md,project,Typed live observation and automation discovery contract
+body: "Research current official Home Assistant 2026.7 documentation and tagged Core source; implement typed bounded subscriptions with deterministic filtering and normalized envelopes; cover transport, command, help, format, docs, live read-only, package, and release behavior; preserve raw WebSocket passthrough for forward compatibility."

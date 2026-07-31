@@ -1,0 +1,95 @@
+id: hac-usxc
+title: Entity delta and automation discovery delivery plan
+description: "Deliver typed entity-delta observation and automation-platform discovery, repair clean-runner PM release validation, and complete exact-head review/merge evidence."
+type: Plan
+status: in_progress
+priority: 0
+tags[5]: agents,automation,delivery-plan,release,websocket
+created_at: "2026-07-31T20:22:04.264Z"
+updated_at: "2026-07-31T20:39:06.221Z"
+deadline: "2026-08-14T20:22:04.264Z"
+assignee: codex-root
+author: codex-root
+estimated_minutes: 480
+acceptance_criteria: Every step has linked implementation or validation evidence and the plan is closed only after merged-head proof
+definition_of_ready: Feature hac-1iz2 is open and claimed implementation scope is non-duplicative
+goal: agent-native-home-state-observation
+objective: execute-typed-delta-platform-delivery
+value: Coordinate one cohesive delivery bundle with reproducible evidence.
+impact: "Keeps implementation, release repair, reviews, and merged proof traceable as one graph."
+outcome: Merged production-ready CLI enhancement with clean PM history and release validation.
+why_now: The current API opportunity and scheduled release blocker must be resolved together before new release-ready work accumulates.
+parent: hac-1iz2
+reviewer: unbraind
+risk: high
+confidence: 95
+sprint: api-parity-2026-07
+release: unreleased
+dependencies[6]{id,kind,created_at,author,source_kind,author_source}:
+  hac-1iz2,parent,"2026-07-31T20:22:04.264Z",codex-root,"cli:create:dep",detected
+  hac-r17v,related,"2026-07-31T20:22:04.264Z",codex-root,"cli:create:dep",detected
+  hac-r2z9,related,"2026-07-31T20:22:04.264Z",codex-root,"cli:create:dep",detected
+  hac-stpm,related,"2026-07-31T20:22:04.264Z",codex-root,"cli:create:dep",detected
+  hac-suj3,related,"2026-07-31T20:22:04.264Z",codex-root,"cli:create:dep",detected
+  hac-wwsi,related,"2026-07-31T20:22:04.264Z",codex-root,"cli:create:dep",detected
+comments[1]{created_at,author,text}:
+  "2026-07-31T20:22:04.264Z",codex-root,Plan created only after all-status duplicate and graph audit checks.
+notes[1]{created_at,author,text}:
+  "2026-07-31T20:22:04.264Z",codex-root,"Do not persist local entity IDs, state payloads, credentials, signed URLs, or private topology in PM evidence."
+learnings[1]{created_at,author,text}:
+  "2026-07-31T20:22:04.264Z",codex-root,Warm history-drift caches can hide clean-runner failures; clear runtime cache before release validation.
+files[1]{path,scope,note}:
+  src/api/websocket.ts,project,Subscription transport plan anchor
+tests[1]{command,scope,timeout_seconds}:
+  "bun run release:verify",project,3600
+docs[1]{path,scope,note}:
+  docs/API.md,project,Primary command contract documentation
+plan_mode: executing
+plan_scope: "Home Assistant 2026.7 subscribe_entities, trigger_platforms/subscribe, condition_platforms/subscribe, CLI help/schema/docs/tests/live acceptance, and auto-release history integrity."
+plan_harness: codex
+plan_steps[6]:
+  - id: plan-step-001
+    order: 1
+    title: Confirm tagged Core subscription schemas and live instance behavior
+    status: completed
+    created_at: "2026-07-31T20:22:04.252Z"
+    updated_at: "2026-07-31T20:31:45.685Z"
+    evidence: "Official REST/WebSocket/auth docs refreshed; tagged Core 2026.7.4 commands.py, messages.py, core.py, entityfilter.py, and upstream tests inspected. Live instance reports 2026.7.4 and returned schema-only trigger/condition catalogs plus a redacted compact entity snapshot."
+    completed_at: "2026-07-31T20:31:45.685Z"
+  - id: plan-step-002
+    order: 2
+    title: Implement generic bounded subscription collection and normalized entity deltas
+    status: completed
+    created_at: "2026-07-31T20:22:04.252Z"
+    updated_at: "2026-07-31T20:31:47.715Z"
+    evidence: "Added reusable bounded collection with early max-event termination and unsubscribe cleanup, subscribe_entities server filters, expanded initial rows, and lossless add/change/remove patches. Focused transport/command tests and live built CLI pass."
+    completed_at: "2026-07-31T20:31:47.715Z"
+  - id: plan-step-003
+    order: 3
+    title: Add typed automation platform discovery commands
+    status: completed
+    created_at: "2026-07-31T20:22:04.252Z"
+    updated_at: "2026-07-31T20:31:49.377Z"
+    evidence: "Added trigger/condition/all platform catalog subscriptions with deterministic event merging, bounded loading window, detailed help, agent planning integration, focused tests, and live built CLI proof."
+    completed_at: "2026-07-31T20:31:49.377Z"
+  - id: plan-step-004
+    order: 4
+    title: "Complete exact coverage, strict quality, docs, setup wizard, formats, and live acceptance"
+    status: completed
+    created_at: "2026-07-31T20:22:04.252Z"
+    updated_at: "2026-07-31T20:37:44.845Z"
+    evidence: "Exact 100/100/100/100 source coverage (116 files, 1294 tests); 100% docstrings (123/123 files); typecheck, ESLint, duplication threshold, <=300 code-line gate, ShellCheck, Bun audit, Trivy, build, exhaustive compiled help, setup/settings coverage, six-format live E2E, entity deltas, and trigger/condition catalogs all passed. No private payloads persisted."
+    completed_at: "2026-07-31T20:37:44.845Z"
+  - id: plan-step-005
+    order: 5
+    title: Generate PM changelog and prove release dry-run
+    status: in_progress
+    created_at: "2026-07-31T20:22:04.252Z"
+    updated_at: "2026-07-31T20:39:06.220Z"
+  - id: plan-step-006
+    order: 6
+    title: "Publish PR, await exact-head checks and bot reviews, address every actionable finding, and merge"
+    status: pending
+    created_at: "2026-07-31T20:22:04.252Z"
+    updated_at: "2026-07-31T20:22:04.252Z"
+body: Keep transport generic enough for current subscription events while expose typed bounded commands. Validate only read-only live operations. Repair the current release blocker through audited PM history normalization and exact clean-runner parity.

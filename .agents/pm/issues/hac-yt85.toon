@@ -1,0 +1,59 @@
+id: hac-yt85
+title: Clean-runner PM history drift blocks scheduled auto release
+description: Scheduled Auto Release issue 79 repeatedly fails because a fresh checkout detects chain mismatches in four service-action lineage histories that a warm runtime cache can hide.
+type: Issue
+status: in_progress
+priority: 0
+tags[5]: auto-release,github-actions,history-drift,pm,regression
+created_at: "2026-07-31T20:22:44.377Z"
+updated_at: "2026-07-31T20:29:23.969Z"
+deadline: "2026-08-03T20:22:44.377Z"
+assignee: codex-root
+claim_principal: codex-root
+author: codex-root
+estimated_minutes: 120
+acceptance_criteria: pm validate --check-history-drift reports zero drift after clearing runtime cache; A clean archive or equivalent fresh-runner release verification passes the PM history gate; Auto-release dry run reaches a terminal non-failure result without publishing; GitHub issue 79 is linked and closed only after hosted proof
+definition_of_ready: "Runs 30331944063, 30425623136, 30516542480, and 30607930160 inspected; dry-run repair identifies exactly four affected streams and preserves current item documents"
+goal: reliable-conditional-daily-release
+objective: repair-service-action-history-chain
+value: Restore deterministic daily release automation on clean GitHub runners.
+impact: Prevents all future changes from being blocked before build/test/release evaluation.
+outcome: Fresh runners and warm workspaces agree on zero PM history drift.
+why_now: Every scheduled release since the service-action merge has failed at the PM integrity gate.
+parent: hac-1iz2
+reviewer: unbraind
+risk: high
+confidence: 99
+sprint: api-parity-2026-07
+release: unreleased
+reporter: github-actions
+severity: high
+environment: GitHub Actions Auto Release on master with @unbrained/pm-cli 2026.7.31
+repro_steps: "Clear PM runtime cache or use a fresh checkout, then run pm validate --check-history-drift; observe four chain mismatches in hac-97on, hac-ahkf, hac-ndoh, and hac-stpm."
+expected_result: Fresh checkout strict PM validation reports no history drift and release verification proceeds.
+actual_result: "Scheduled run 30607930160 exits during quality:pm with validate_history_drift_chain_mismatches:4."
+affected_version: 2026.7.26
+component: pm-history/release
+regression: true
+customer_impact: Conditional daily releases cannot prepare or publish any repository changes.
+dependencies[6]{id,kind,created_at,author,source_kind,author_source}:
+  hac-97on,related,"2026-07-31T20:22:44.377Z",codex-root,"cli:create:dep",detected
+  hac-ahkf,related,"2026-07-31T20:22:44.377Z",codex-root,"cli:create:dep",detected
+  hac-ak9g,related,"2026-07-31T20:22:44.377Z",codex-root,"cli:create:dep",detected
+  hac-ndoh,related,"2026-07-31T20:22:44.377Z",codex-root,"cli:create:dep",detected
+  hac-stpm,discovered_from,"2026-07-31T20:22:44.377Z",codex-root,"cli:create:dep",detected
+  hac-wwsi,related,"2026-07-31T20:22:44.377Z",codex-root,"cli:create:dep",detected
+comments[1]{created_at,author,text}:
+  "2026-07-31T20:22:44.377Z",codex-root,"GitHub issue: https://github.com/unbraind/homeassistant-cli/issues/79"
+notes[1]{created_at,author,text}:
+  "2026-07-31T20:22:44.377Z",codex-root,The initial cached local validation was a false negative; pm gc --scope runtime made the checkout reproduce the clean-runner failure.
+learnings[1]{created_at,author,text}:
+  "2026-07-31T20:22:44.377Z",codex-root,"Release integrity checks must invalidate derived history-drift caches when item/history content changes, or clean-runner parity can diverge."
+files[2]{path,scope,note}:
+  .github/workflows/auto-release.yml,project,Scheduled conditional release workflow
+  scripts/release/auto-release.mjs,project,Conditional release orchestration
+tests[1]{command,scope,timeout_seconds}:
+  pm gc --scope runtime && pm validate --check-history-drift --strict-exit --json,project,300
+docs[1]{path,scope,note}:
+  docs/RELEASING.md,project,Conditional release operating contract
+body: "Preserve current item dependency graphs, use audited pm history-repair to re-anchor the four streams, clear runtime cache, verify strict history validation from the checkout and a clean archive, then close the GitHub blocker only after the scheduled/release workflow path is proven."

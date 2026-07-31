@@ -1,5 +1,36 @@
 # Changelog
 
+## 2026.7.29-1 - 2026-07-29
+
+### Added
+
+- Adopt authoritative completion-timestamp contract from pm-cli SDK ([pmc-366b](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/features/pmc-366b.toon))
+
+## 2026.7.29 - 2026-07-28
+
+### Added
+
+- Enforce a real coverage gate by running tests against TypeScript sources ([pmc-6jr4](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/features/pmc-6jr4.toon))
+
+### Fixed
+
+- Prefer actual completion time for changelog release windows ([pmc-f08u](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-f08u.toon))
+
+### Other
+
+- Drop the dead SDK export shim and exporter cast, and gate host-owned flags on sdk/contracts ([pmc-0wyq](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/chores/pmc-0wyq.toon))
+
+## 2026.7.28 - 2026-07-28
+
+### Added
+
+- Report the actual changelog drift as a diff when check fails ([pmc-r0nj](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/features/pmc-r0nj.toon))
+
+### Other
+
+- Adopt pm-cli 2026.7.28 and harmonize the production audit script ([pmc-4w23](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/chores/pmc-4w23.toon))
+- Adopt pm-cli 2026.7.27 dependency ranges ([pmc-58zs](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/chores/pmc-58zs.toon))
+
 ## 2026.7.27 - 2026-07-27
 
 ### Other
@@ -12,6 +43,12 @@
 ### Other
 
 - Enable governance duplicate-detection advisory mode and adopt pm-cli 2026.7.25 ([pmc-zbj2](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/chores/pmc-zbj2.toon))
+
+## 2026.7.25 - 2026-07-25
+
+### Fixed
+
+- Release attribution silently fails when the release tag is zero-padded but the version is not ([pmc-2sfc](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-2sfc.toon))
 
 ## 2026.7.24 - 2026-07-24
 
@@ -93,6 +130,18 @@
 
 - Ecosystem release readiness pass 2026-07-06 ([pmc-5z9i](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/tasks/pmc-5z9i.toon))
 
+## 2026.7.11 - 2026-07-11
+
+### Other
+
+- SDK 2026.7.10 alignment and production readiness pass ([pmc-yy8d](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/tasks/pmc-yy8d.toon))
+
+## 2026.7.10 - 2026-07-10
+
+### Added
+
+- Add --summary mode and unified --format json output for agents ([pmc-ygs2](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/features/pmc-ygs2.toon))
+
 ## 2026.7.6 - 2026-07-06
 
 ### Fixed
@@ -128,11 +177,21 @@
 
 - Stabilize calendar release headings across the zero-padded tag boundary ([pmc-sall](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-sall.toon))
 
+## 2026.6.10 - 2026-06-10
+
+### Added
+
+- Full pm ecosystem production pass for pm-changelog ([pmc-3j77](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/features/pmc-3j77.toon))
+
 ## 2026.6.8 - 2026-06-08
 
 ### Fixed
 
 - Classifier misroutes feature command names containing remove/delete to Removed section ([pmc-ph6q](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-ph6q.toon))
+
+### Other
+
+- Full-cycle hardening wave: pm-changelog ([pmc-4279](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/tasks/pmc-4279.toon))
 
 ## 2026.6.7 - 2026-06-07
 
