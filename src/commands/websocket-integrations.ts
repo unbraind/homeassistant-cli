@@ -23,6 +23,12 @@ function parseDomains(value?: string): string[] {
   return domains;
 }
 
+function parseDomain(value: string): string {
+  const domains = parseDomains(value);
+  if (domains.length !== 1) throw new Error("Provide exactly one integration domain");
+  return domains[0] as string;
+}
+
 function rowsFromRecord(result: unknown, key: string): Record<string, unknown>[] {
   if (!result || typeof result !== "object" || Array.isArray(result)) return [];
   return Object.entries(result as Record<string, unknown>).map(([name, value]) => ({
@@ -123,7 +129,7 @@ function createIntegrationGetCommand(): Command {
     .description("Get the manifest for one integration domain")
     .argument("<domain>", "Integration domain, for example light or mqtt");
   command.action(withExit(async (domain: string, _options, cmd) => {
-    const [validatedDomain] = parseDomains(domain);
+    const validatedDomain = parseDomain(domain);
     await callAndOutput(cmd as Command, "manifest/get", { integration: validatedDomain }, (result) => ({
       integration: result,
     }));
@@ -162,7 +168,7 @@ function createIntegrationWaitCommand(): Command {
     .description("Wait until an integration domain finishes loading")
     .argument("<domain>", "Integration domain, for example homeassistant");
   command.action(withExit(async (domain: string, _options, cmd) => {
-    const [validatedDomain] = parseDomains(domain);
+    const validatedDomain = parseDomain(domain);
     await callAndOutput(cmd as Command, "integration/wait", { domain: validatedDomain }, (result) => ({
       domain: validatedDomain,
       ...(result && typeof result === "object" && !Array.isArray(result)

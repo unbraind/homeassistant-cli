@@ -90,6 +90,16 @@ describe("typed WebSocket integration intelligence", () => {
     expect(JSON.parse(output[0] ?? "").integration.domain).toBe("mqtt");
   });
 
+  it("requires exactly one domain for singular integration commands", async () => {
+    await expect(createWebsocketCommand().parseAsync([
+      "integrations", "get", "mqtt,light",
+    ], { from: "user" })).rejects.toThrow("Provide exactly one integration domain");
+    await expect(createWebsocketCommand().parseAsync([
+      "integrations", "wait", "",
+    ], { from: "user" })).rejects.toThrow("Provide exactly one integration domain");
+    expect(call).not.toHaveBeenCalled();
+  });
+
   it("filters and sorts setup timing rows", async () => {
     call.mockResolvedValue([
       { domain: "sun", seconds: 0.3 },
