@@ -295,6 +295,55 @@ assert(wsAutomationPlatforms["subscription"] === "automation_platforms", "invali
 assert(typeof wsAutomationPlatforms["triggers"] === "object", "invalid trigger platform catalog");
 assert(typeof wsAutomationPlatforms["conditions"] === "object", "invalid condition platform catalog");
 
+for (const format of ["toon", "json", "json-compact", "yaml", "table", "markdown"] as const) {
+  const integrationsOutput = run(["ws", "integrations", "list", "--limit", "1", "--format", format]);
+  const sourcesOutput = run(["ws", "entity-sources", "--count", "--format", format]);
+  if (format === "json" || format === "json-compact") {
+    const integrations = parseJson(integrationsOutput) as Record<string, unknown>;
+    const sources = parseJson(sourcesOutput) as Record<string, unknown>;
+    assert(typeof integrations["count"] === "number", "invalid integration manifest count");
+    assert(typeof integrations["returned_count"] === "number", "invalid returned integration count");
+    assert(typeof integrations["truncated"] === "boolean", "invalid integration truncation flag");
+    assert(Array.isArray(integrations["integrations"]), "invalid integration manifest rows");
+    assert(typeof sources["count"] === "number", "invalid entity source count");
+  }
+  if (format === "yaml") {
+    assert(typeof parseYaml(integrationsOutput) === "object", "invalid integrations YAML");
+    assert(typeof parseYaml(sourcesOutput) === "object", "invalid entity sources YAML");
+  }
+  assert(integrationsOutput.length > 0, `empty integrations output for format ${format}`);
+  assert(sourcesOutput.length > 0, `empty entity sources output for format ${format}`);
+}
+
+const integrationManifest = parseJson(
+  run(["ws", "integrations", "get", "homeassistant", "--format", "json"])
+) as Record<string, unknown>;
+assert(typeof integrationManifest["integration"] === "object", "invalid integration manifest shape");
+
+const integrationSetup = parseJson(
+  run(["ws", "integrations", "setup", "--count", "--format", "json"])
+) as Record<string, unknown>;
+assert(typeof integrationSetup["count"] === "number", "invalid integration setup count");
+
+const integrationDescriptions = parseJson(
+  run(["ws", "integrations", "descriptions", "--count", "--format", "json"])
+) as Record<string, unknown>;
+assert(typeof integrationDescriptions["count"] === "number", "invalid integration description count");
+
+const integrationReady = parseJson(
+  run(["ws", "integrations", "wait", "homeassistant", "--format", "json"])
+) as Record<string, unknown>;
+assert(integrationReady["integration_loaded"] === true, "homeassistant integration did not report ready");
+
+const slugOutcome = runOutcome(["ws", "slugify", "Kitchen Ceiling Light", "--format", "json"]);
+if (slugOutcome.status === 0) {
+  const slug = parseJson(slugOutcome.stdout) as Record<string, unknown>;
+  const slugResult = slug["result"] as Record<string, unknown> | undefined;
+  assert(slugResult?.["slug"] === "kitchen_ceiling_light", "invalid canonical slug result");
+} else {
+  assert(slugOutcome.stderr.includes("unknown_command"), "slugify failed without compatibility classification");
+}
+
 const wsTargetExtract = parseJson(
   run(["ws", "target", "extract", "--entity-id", sampleEntityId, "--format", "json"])
 ) as Record<string, unknown>;

@@ -45,6 +45,35 @@ export const REST_PROBES: RestProbe[] = [
 
 export const WEBSOCKET_PROBES: WebsocketProbe[] = [
   {
+    key: "integration_manifests",
+    commandType: "manifest/list",
+    endpoint: "/api/websocket#manifest/list",
+    commandGroup: "websocket",
+    commands: ["hassio ws integrations list --limit 20", "hassio ws integrations get <domain>"],
+  },
+  {
+    key: "integration_setup",
+    commandType: "integration/setup_info",
+    endpoint: "/api/websocket#integration/setup_info",
+    commandGroup: "websocket",
+    commands: ["hassio ws integrations setup --limit 20", "hassio ws integrations wait <domain>"],
+  },
+  {
+    key: "entity_sources",
+    commandType: "entity/source",
+    endpoint: "/api/websocket#entity/source",
+    commandGroup: "websocket",
+    commands: ["hassio ws entity-sources --count"],
+  },
+  {
+    key: "slugify",
+    commandType: "slugify",
+    endpoint: "/api/websocket#slugify",
+    commandGroup: "websocket",
+    commands: ["hassio ws slugify <text>"],
+    payload: { text: "hassio_cli_capability_probe" },
+  },
+  {
     key: "repairs",
     commandType: "repairs/list_issues",
     endpoint: "/api/websocket#repairs/list_issues",

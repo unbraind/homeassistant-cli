@@ -236,10 +236,13 @@ All commands support global flags (`--url`, `--token`, `--format`, `--timeout`, 
 
 | Command | Description |
 |---------|-------------|
-| `websocket` / `ws` | Coalesced passthrough plus typed target, trigger-subscription, automation-validation, panel, ping, signed-path, and voice-exposure operations |
+| `websocket` / `ws` | Coalesced passthrough plus typed target, automation, integration-intelligence, provenance, session, and exposure operations |
 | `ws subscribe-trigger` | Observe automation triggers for a bounded period without firing them (admin only) |
 | `ws observe-entities` | Collect compact state snapshots and bounded add/change/remove deltas |
 | `ws automation-platforms` | Discover current purpose-specific trigger and condition schemas |
+| `ws integrations` | List/get manifests, setup timings, descriptions, and load readiness with bounded output |
+| `ws entity-sources` | Map readable entities to their providing integration domains |
+| `ws slugify` | Generate identifiers with Home Assistant Core's canonical slug rules |
 | `ws validate-config` | Validate trigger, condition, and action definitions without executing them |
 | `supervisor api` | Raw Supervisor proxy passthrough |
 | `supervisor addons` | Add-on list/info/start/stop/restart |
@@ -320,6 +323,7 @@ The CLI is optimized for use by LLMs and AI agents:
 - **Bounded Trigger Observation**: `ws subscribe-trigger` captures automation-level events with coalesced WebSocket transport
 - **Token-Efficient State Deltas**: `ws observe-entities` filters at the server and returns bounded normalized changes
 - **Automation Platform Discovery**: `ws automation-platforms` returns current trigger and condition schemas
+- **Integration Intelligence**: `ws integrations`, `ws entity-sources`, and `ws slugify` provide bounded metadata, provenance, readiness, and identifier contracts
 - **Agent Plan Output**: `hassio capabilities --agent-plan` returns command recommendations and avoid-lists based on live capability probes
 - **Agent Profile Output**: `hassio capabilities --agent-profile` returns a stable execution profile (`preferred_output_format`, `capabilities`, `planning.fast_path`, `streaming_ready`)
 - **Agent Context Output**: `hassio capabilities --agent-context` returns combined summary + plan + profile for one-shot agent bootstrap

@@ -36,7 +36,7 @@ export function normalizeProbeError(endpoint: string, error: unknown): Capabilit
   if (/401/.test(message)) {
     return { status: "unauthorized", endpoint, message };
   }
-  if (/404/.test(message)) {
+  if (/404|unknown_command/i.test(message)) {
     return { status: "unavailable", endpoint, message };
   }
   return { status: "error", endpoint, message };

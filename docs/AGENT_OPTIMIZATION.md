@@ -326,6 +326,27 @@ blocked by read-only mode. `repairs fix status` is read-only. Never persist
 issue IDs, flow IDs, placeholders, URLs, or related-resource identifiers in
 prompts, PM evidence, or source control.
 
+### 16. Integration Intelligence and Entity Provenance
+
+Build integration-aware plans with bounded metadata before requesting entity
+or service detail:
+
+```bash
+hassio ws integrations list --count
+hassio ws integrations list --domain light,mqtt --limit 20
+hassio ws integrations setup --limit 20
+hassio ws integrations descriptions --domain mqtt
+hassio ws integrations wait homeassistant
+hassio ws entity-sources --domain light --limit 20
+hassio ws slugify "Kitchen Ceiling Light"
+```
+
+The list/setup/descriptions/source commands return deterministic rows with
+explicit total and returned counts plus a truncation flag. Prefer `--count`,
+then a small `--limit`; use `--all` only when complete export is intentional.
+These commands are read-only, but descriptions is admin-only and live metadata
+can reveal private instance topology.
+
 ## Best Practices for Agents
 
 ### 1. Use Appropriate Output Format
