@@ -32,3 +32,7 @@
 ".agents/pm/settings.json" merge=pm-json
 ".agents/pm/**/*.json" merge=pm-json
 # pm-cli:merge-drivers:end
+
+# Extension package assets are not PM item documents. Keep this exclusion after
+# the managed fence until https://github.com/unbraind/pm-cli/issues/910 lands.
+".agents/pm/extensions/**" -merge

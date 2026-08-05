@@ -6,7 +6,7 @@ status: in_progress
 priority: 0
 tags[6]: agents,implementation,repairs,search,typescript,websocket
 created_at: "2026-08-05T19:18:16.357Z"
-updated_at: "2026-08-05T19:56:19.662Z"
+updated_at: "2026-08-05T20:05:22.026Z"
 deadline: "2026-08-07T19:18:16.357Z"
 assignee: codex-root
 claim_principal: codex-root
@@ -39,13 +39,14 @@ dependencies[12]{id,kind,created_at,author,source_kind,author_source}:
   hac-r4e3,related,"2026-08-05T19:18:16.357Z",codex-root,"cli:create:dep",detected
   hac-soop,related,"2026-08-05T19:18:16.357Z",codex-root,"cli:create:dep",detected
   hac-vooo,related,"2026-08-05T19:18:16.357Z",codex-root,"cli:create:dep",detected
-comments[6]{created_at,author,text}:
+comments[7]{created_at,author,text}:
   "2026-08-05T19:18:16.357Z",codex-root,Only this implementation Task will be claimed and moved in progress; the Feature and Plan remain open for terminal delivery tracking.
   "2026-08-05T19:18:18.130Z",codex-root,"Implementation started after clean baseline: 1,305 tests, exact 4,762/4,762 statements, 2,475/2,475 branches, 959/959 functions, valid setup/settings files at mode 0600, and healthy all-format output validation."
   "2026-08-05T19:32:36.339Z",codex-root,"Implementation checkpoint: typed Repairs list/detail/ignore and complete admin fix-flow start/status/submit are registered with confirmation and read-only enforcement; related-resource search covers all fourteen Core item types with deterministic per-type bounds; capability matrix and agent plan expose both surfaces; 1,328 tests pass at exact 4,874/4,874 statements, 2,525/2,525 branches, 1,000/1,000 functions, and 4,477/4,477 lines; 127/127 source docstrings and the 300-line gate pass."
   "2026-08-05T19:39:27.732Z",codex-root,"Post-refactor verification: 1,329 tests; exact 4,883/4,883 statements, 2,525/2,525 branches, 1,002/1,002 functions, and 4,484/4,484 lines; 128/128 source docstrings; all source files at or below 300 code lines; lint, typecheck, jscpd, ShellCheck, build, complete nested help E2E, live all-format diagnostics, read-only negative controls, setup validation, and settings doctor passed without retaining live values."
   "2026-08-05T19:41:31.727Z",codex-root,"Release verification surfaced current advisories in direct undici and transitive brace-expansion/postcss. Updated the Bun graph to undici 8.10.0, toon 4.1.1, ws 8.21.2, patched compatible tooling, and explicit safe transitive overrides; bun audit now reports zero vulnerabilities."
   "2026-08-05T19:56:19.662Z",codex-root,Final documentation consistency scan aligned the release checklist with the enforced exact 100/100/100/100 coverage ratchet; no obsolete 90 percent target remains.
+  "2026-08-05T20:05:22.026Z",codex-root,"CodeRabbit exact inventory found seven threads. Fixed nullable repairs issue_data per Core, fixed the exact coverage checklist, and excluded extension package assets from item merge drivers while opening duplicate-searched pm-cli issue #910. BaseClient already guards both REST repair POSTs; top-level command tests match the repository's established layout; sequential LLM guide numbering is semantically correct; and managed pm-changelog importer metadata remains package-owned. Full coverage and PM validation remain exact/clean."
 notes[1]{created_at,author,text}:
   "2026-08-05T19:18:16.357Z",codex-root,"Live evidence is restricted to Core version,support booleans,severity/count aggregates,result type names,field shapes,and formatter validity."
 learnings[1]{created_at,author,text}:

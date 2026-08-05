@@ -43,7 +43,7 @@ export interface HaRepairIssueList {
 }
 
 export interface HaRepairIssueData {
-  issue_data: Record<string, unknown>;
+  issue_data: Record<string, unknown> | null;
 }
 
 export interface HaRepairFlowResult {

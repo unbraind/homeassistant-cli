@@ -35,10 +35,10 @@ describe("DiagnosticsApiClient", () => {
 
   it("calls typed repair issue websocket contracts", async () => {
     const client = new DiagnosticsApiClient(writableConfig);
-    call.mockResolvedValueOnce({ issues: [] }).mockResolvedValueOnce({ issue_data: { key: "value" } });
+    call.mockResolvedValueOnce({ issues: [] }).mockResolvedValueOnce({ issue_data: null });
     await expect(client.listRepairIssues()).resolves.toEqual({ issues: [] });
     await expect(client.getRepairIssueData("domain", "issue")).resolves.toEqual({
-      issue_data: { key: "value" },
+      issue_data: null,
     });
     expect(call).toHaveBeenNthCalledWith(1, "repairs/list_issues");
     expect(call).toHaveBeenNthCalledWith(2, "repairs/get_issue_data", {
