@@ -2,13 +2,14 @@ id: hac-lda1
 title: Add agent-native repairs and related-resource diagnostics
 description: "Expose Home Assistant 2026.8 repairs and search/related contracts as typed, bounded, format-stable CLI workflows for agent diagnosis and safe remediation."
 type: Feature
-status: open
+status: closed
 priority: 0
 tags[7]: agents,diagnostics,home-assistant,repairs,search,topology,websocket
 created_at: "2026-08-05T19:18:15.202Z"
-updated_at: "2026-08-05T19:18:15.202Z"
+updated_at: "2026-08-05T20:14:15.963Z"
 deadline: "2026-08-07T19:18:15.202Z"
-assignee: unbraind
+closed_at: "2026-08-05T20:14:15.942Z"
+completed_at: "2026-08-05T20:14:15.942Z"
 author: codex-root
 estimated_minutes: 480
 acceptance_criteria: "Built hassio exposes typed bounded repairs list/detail, explicit ignore/unignore, and admin fix-flow start/read/submit operations; Built hassio exposes typed search/related topology with every current Home Assistant item type, deterministic normalized output, count and per-type bounds; Mutating repairs operations respect HASSIO_READONLY and require explicit confirmation where appropriate; Every command and global flag has detailed help and schema/documentation coverage across all supported formats; Exact 100/100/100/100 source coverage, 100 percent docstrings, file-size, duplication, static, PM, security, package, release-dry-run, setup wizard, and privacy-safe live gates pass"
@@ -25,6 +26,9 @@ risk: high
 confidence: 95
 sprint: api-parity-2026-08
 release: unreleased
+resolution: Delivered the typed diagnostic feature tranche and its terminal project-management lineage.
+expected_result: Production-ready typed repairs and related topology commands merge with exact gates and no private data.
+actual_result: "Merged master commit 1174bf5 provides the commands, latest Core contracts, exact coverage, live acceptance, audited dependencies, complete docs, and resolved review feedback."
 dependencies[8]{id,kind,created_at,author,source_kind,author_source}:
   hac-96i2,discovered_from,"2026-08-05T19:18:15.202Z",codex-root,"cli:create:dep",detected
   hac-ak9g,related,"2026-08-05T19:18:15.202Z",codex-root,"cli:create:dep",detected
@@ -46,4 +50,5 @@ tests[1]{command,scope,timeout_seconds}:
   "bun run test:coverage",project,900
 docs[1]{path,scope,note}:
   docs/API.md,project,canonical API documentation
+close_reason: "Repairs and related-resource diagnostics shipped on master through PR #83 with complete PM, test, documentation, privacy, review, and release evidence."
 body: "Research official Home Assistant developer documentation and Core 2026.8.0 source; implement typed Repairs issue discovery/detail/ignore/fix-flow operations and related-resource topology search; preserve read-only enforcement, bounded deterministic output, all formatter contracts, setup health, privacy-safe live proof, and generic WebSocket passthrough."

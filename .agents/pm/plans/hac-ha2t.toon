@@ -2,13 +2,14 @@ id: hac-ha2t
 title: Repairs and related-resource diagnostics delivery plan
 description: "Coordinate official contract research, typed transport and CLI implementation, exhaustive verification, documentation, PM evidence, exact-head bot review, merge, and default-branch closeout."
 type: Plan
-status: open
+status: closed
 priority: 0
 tags[7]: delivery,diagnostics,live-e2e,plan,repairs,search,verification
 created_at: "2026-08-05T19:18:15.827Z"
-updated_at: "2026-08-05T19:45:15.483Z"
+updated_at: "2026-08-05T20:14:15.037Z"
 deadline: "2026-08-07T19:18:15.827Z"
-assignee: unbraind
+closed_at: "2026-08-05T20:14:14.987Z"
+completed_at: "2026-08-05T20:14:14.987Z"
 author: codex-root
 estimated_minutes: 480
 acceptance_criteria: "Every plan step has linked implementation or validation evidence; feature, plan, and task form typed lineage with rich existing-project relationships; plan closes only after exact merged-head hosted checks, review disposition, privacy proof, and default-branch verification"
@@ -25,6 +26,9 @@ risk: high
 confidence: 95
 sprint: api-parity-2026-08
 release: unreleased
+resolution: "Completed research, implementation, exact local/live gates, review convergence, merge, and terminal lineage closeout."
+expected_result: Exact reviewed diagnostics head merges and all plan evidence remains canonical in PM.
+actual_result: Master commit 1174bf5 contains the production-ready feature; every plan step has evidence and no review thread remains.
 dependencies[6]{id,kind,created_at,author,source_kind,author_source}:
   hac-6asb,discovered_from,"2026-08-05T19:18:15.827Z",codex-root,"cli:create:dep",detected
   hac-ahkf,related,"2026-08-05T19:18:15.827Z",codex-root,"cli:create:dep",detected
@@ -44,7 +48,8 @@ tests[1]{command,scope,timeout_seconds}:
   "bun run release:verify",project,2400
 docs[1]{path,scope,note}:
   docs/INDEX.md,project,delivery documentation index
-plan_mode: approved
+close_reason: All seven plan steps completed; PR #83 is merged and canonical closeout evidence is ready for the established docs(pm) follow-up.
+plan_mode: completed
 plan_decisions[1]{ts,author,decision,rationale,evidence}:
   "2026-08-05T19:19:23.635Z",codex-root,Ship Repairs and related-resource topology as one agent-diagnostics tranche.,"They share typed WebSocket transport, bounded stable projections, safety policy, format/help/schema coverage, and agent diagnosis workflows.",No PM/GitHub duplicate; live structural probes and Core 2026.8.0 source confirm the gaps.
 plan_discoveries[1]{ts,author,text}:
@@ -125,21 +130,25 @@ plan_steps[7]:
   - id: plan-step-006
     order: 6
     title: Converge exact-head hosted checks and bot reviews
-    status: in_progress
+    status: completed
     created_at: "2026-08-05T19:19:21.906Z"
-    updated_at: "2026-08-05T19:39:37.429Z"
+    updated_at: "2026-08-05T20:14:09.184Z"
     body: "Open PR, wait once per head, react/reply to every bot artifact, resolve findings, and repeat after any push."
     owner: codex-root
+    evidence: "PR #83 exact head 0894828 passed every hosted gate; all seven CodeRabbit threads were individually reacted to, answered, resolved, and re-inventoried; every bot comment and review was reacted to; quota, skip, and silence were recorded as limitations."
+    completed_at: "2026-08-05T20:14:09.184Z"
     linked_items[1]{id,kind}:
       hac-3kz8,depends_on
   - id: plan-step-007
     order: 7
     title: Merge and close terminal PM lineage
-    status: pending
+    status: completed
     created_at: "2026-08-05T19:19:22.444Z"
-    updated_at: "2026-08-05T19:19:22.444Z"
+    updated_at: "2026-08-05T20:14:14.102Z"
     body: "Verify merged master, close Task Plan Feature with exact evidence, regenerate PM changelog if required, and leave master clean."
     owner: codex-root
+    evidence: PR #83 merged as master commit 1174bf5; the active Task is closed and released; terminal Plan and Feature closure is recorded in this closeout branch.
+    completed_at: "2026-08-05T20:14:14.102Z"
     linked_items[1]{id,kind}:
       hac-3kz8,depends_on
 body: Deliver one cohesive non-publishing tranche. Keep private instance values external and retain only contract-level counts or booleans. Use current Core source for non-public command schemas and official developer docs for stable transport/auth contracts.
