@@ -308,6 +308,24 @@ boundary and retain generic `ws call` for integration-specific contracts.
 Full resolve output may contain a short-lived signed URL, so prefer
 `--metadata-only` for planning and never persist the URL.
 
+### 15. Repair and Dependency Diagnostics
+
+Count before fetching private diagnostic details, and keep topology traversal
+focused on the resource type needed for a decision:
+
+```bash
+hassio repairs list --count --format json-compact
+hassio repairs list --severity critical --limit 10
+hassio related entity light.kitchen --count
+hassio related entity light.kitchen --result-type automation --limit 10
+```
+
+Use `repairs show` only after selecting a specific issue. State-changing
+`repairs ignore` and fix-flow start/submit operations require `--yes` and remain
+blocked by read-only mode. `repairs fix status` is read-only. Never persist
+issue IDs, flow IDs, placeholders, URLs, or related-resource identifiers in
+prompts, PM evidence, or source control.
+
 ## Best Practices for Agents
 
 ### 1. Use Appropriate Output Format

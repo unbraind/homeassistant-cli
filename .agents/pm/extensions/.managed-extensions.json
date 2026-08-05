@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": "2026-07-31T21:06:25.041Z",
+  "updated_at": "2026-08-05T19:44:00.227Z",
   "entries": [
     {
       "name": "builtin-beads-import",
@@ -233,7 +233,7 @@
       "name": "pm-changelog",
       "directory": "pm-changelog",
       "scope": "project",
-      "manifest_version": "2026.7.29-1",
+      "manifest_version": "2026.8.4",
       "manifest_entry": "./dist/extension.js",
       "capabilities": [
         "commands",
@@ -241,14 +241,66 @@
         "renderers",
         "schema"
       ],
+      "contributions": {
+        "schema_version": 1,
+        "commands": [
+          "changelog export",
+          "changelog generate"
+        ],
+        "command_overrides": [],
+        "command_handlers": [
+          "changelog export",
+          "changelog generate"
+        ],
+        "hooks": [],
+        "flag_commands": [
+          "changelog export",
+          "changelog generate"
+        ],
+        "item_types": [],
+        "item_fields": [],
+        "migrations": [],
+        "profiles": [],
+        "importers": [],
+        "exporters": [
+          "changelog"
+        ],
+        "search_providers": [],
+        "vector_store_adapters": [],
+        "parser_overrides": [],
+        "service_overrides": [],
+        "renderer_overrides": [
+          "json",
+          "toon"
+        ],
+        "renderer_ownership": [
+          {
+            "format": "json",
+            "commands": [
+              "changelog generate",
+              "changelog export"
+            ],
+            "result_discriminator": true
+          },
+          {
+            "format": "toon",
+            "commands": [
+              "changelog generate",
+              "changelog export"
+            ],
+            "result_discriminator": true
+          }
+        ],
+        "preflight_overrides": 0
+      },
       "installed_at": "2026-07-21T17:02:03.952Z",
-      "updated_at": "2026-07-31T20:32:08.117Z",
+      "updated_at": "2026-08-05T19:26:32.909Z",
       "source": {
         "kind": "npm",
         "input": "npm:pm-changelog",
         "location": "package",
         "package": "pm-changelog",
-        "version": "2026.7.29-1"
+        "version": "2026.8.4"
       }
     }
   ]

@@ -321,6 +321,35 @@ const related = wsTargetRelated["related"] as Record<string, unknown> | undefine
 assert(Array.isArray(related?.["entities"]), "invalid ws target related entity shape");
 assert(Array.isArray(related?.["devices"]), "invalid ws target related device shape");
 
+for (const format of ["toon", "json", "json-compact", "yaml", "table", "markdown"] as const) {
+  const repairsOutput = run(["repairs", "list", "--count", "--format", format]);
+  const relatedOutput = run(["related", "entity", "sun.sun", "--count", "--format", format]);
+  if (format === "json" || format === "json-compact") {
+    const repairs = parseJson(repairsOutput) as Record<string, unknown>;
+    const topology = parseJson(relatedOutput) as Record<string, unknown>;
+    assert(typeof repairs["count"] === "number", "invalid repairs count shape");
+    assert(Array.isArray(repairs["by_severity"]), "invalid repairs severity summary");
+    assert(typeof topology["count"] === "number", "invalid related count shape");
+    assert(Array.isArray(topology["by_type"]), "invalid related type summary");
+    assert(!("related" in topology), "related --count exposed private identifiers");
+  }
+  if (format === "yaml") {
+    assert(typeof parseYaml(repairsOutput) === "object", "invalid repairs YAML");
+    assert(typeof parseYaml(relatedOutput) === "object", "invalid related YAML");
+  }
+  assert(repairsOutput.length > 0, `empty repairs output for format ${format}`);
+  assert(relatedOutput.length > 0, `empty related output for format ${format}`);
+}
+
+for (const args of [
+  ["repairs", "ignore", "contract-probe", "contract-probe", "--yes"],
+  ["repairs", "fix", "start", "contract-probe", "contract-probe", "--yes"],
+]) {
+  const outcome = runOutcome(args);
+  assert(outcome.status !== 0, "read-only repair write unexpectedly succeeded");
+  assert(outcome.stderr.includes("Read-only mode blocked"), "repair write lacked read-only classification");
+}
+
 const doctor = parseJson(run(["settings", "doctor", "--format", "json"])) as Record<string, unknown>;
 assert(typeof doctor["healthy"] === "boolean", "invalid settings doctor JSON shape");
 

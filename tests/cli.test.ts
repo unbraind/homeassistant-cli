@@ -24,7 +24,7 @@ describe("CLI composition", () => {
     expect(program.name()).toBe("hassio");
     expect(program.version()).toBe(packageVersion);
     expect(program.commands.map((command) => command.name())).toEqual(expect.arrayContaining([
-      "status", "settings", "capabilities", "websocket", "supervisor", "fan",
+      "status", "settings", "capabilities", "websocket", "supervisor", "fan", "repairs", "related",
     ]));
   });
 

@@ -222,21 +222,14 @@ hassio call-service light turn_on --data '{"entity_id":"light.x","brightness":12
 
 ## Test Coverage Target
 
-- **Target: ≥90% statement coverage** across all `src/` files
+- **Target: 100/100/100/100 coverage** across statements, branches, functions, and lines for all `src/` files
 - **Current**: Check with `bun run test:coverage`
 - Tests live in `tests/` and mirror `src/` structure
 - Use `vi.mock("undici")` to mock HTTP calls
 - Use `vi.mock("ws")` to mock WebSocket connections
 
-### Coverage improvement priorities (lowest coverage first)
-
-1. `commands/conversation.ts` — command-level tests
-2. `commands/registries.ts` — WebSocket mock tests
-3. `commands/registry-crud.ts` — CRUD operation tests
-4. `commands/statistics.ts` — statistics query tests
-5. `commands/tts.ts` — TTS command tests
-6. `api/websocket.ts` — WebSocket protocol tests
-7. `api/media.ts` — Camera/media tests
+Coverage must remain exact without ignore directives, source exclusions,
+artificial branches, or tests that execute code without asserting behavior.
 
 ---
 
@@ -310,6 +303,7 @@ The CLI covers all major HA REST and WebSocket endpoints:
 | Capabilities       | capabilities (agent-context, api-matrix, profile)     |
 | Extended           | energy, weather, health, info                         |
 | Notify             | notify                                                |
+| Diagnostics        | repairs (issues, ignore, fix flows), related topology |
 
 ---
 

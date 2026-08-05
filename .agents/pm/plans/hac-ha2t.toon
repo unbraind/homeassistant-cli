@@ -1,0 +1,145 @@
+id: hac-ha2t
+title: Repairs and related-resource diagnostics delivery plan
+description: "Coordinate official contract research, typed transport and CLI implementation, exhaustive verification, documentation, PM evidence, exact-head bot review, merge, and default-branch closeout."
+type: Plan
+status: open
+priority: 0
+tags[7]: delivery,diagnostics,live-e2e,plan,repairs,search,verification
+created_at: "2026-08-05T19:18:15.827Z"
+updated_at: "2026-08-05T19:45:15.483Z"
+deadline: "2026-08-07T19:18:15.827Z"
+assignee: unbraind
+author: codex-root
+estimated_minutes: 480
+acceptance_criteria: "Every plan step has linked implementation or validation evidence; feature, plan, and task form typed lineage with rich existing-project relationships; plan closes only after exact merged-head hosted checks, review disposition, privacy proof, and default-branch verification"
+definition_of_ready: Canonical feature exists after duplicate-safe selection and official/live research identifies supported contracts
+goal: complete-agent-home-assistant-interface
+objective: execute-repairs-topology-delivery
+value: "Keep discovery, implementation, validation, review, and delivery resumable and graph-queryable."
+impact: Prevents partial diagnostic coverage and makes technical choices and proof traceable.
+outcome: Merged production-ready repairs and related-resource commands with terminal evidence.
+why_now: "The current feature spans typed WebSocket and REST flows, output contracts, safety policy, and agent documentation that must land together."
+parent: hac-lda1
+reviewer: unbraind
+risk: high
+confidence: 95
+sprint: api-parity-2026-08
+release: unreleased
+dependencies[6]{id,kind,created_at,author,source_kind,author_source}:
+  hac-6asb,discovered_from,"2026-08-05T19:18:15.827Z",codex-root,"cli:create:dep",detected
+  hac-ahkf,related,"2026-08-05T19:18:15.827Z",codex-root,"cli:create:dep",detected
+  hac-km4t,related,"2026-08-05T19:18:15.827Z",codex-root,"cli:create:dep",detected
+  hac-lda1,parent,"2026-08-05T19:18:15.827Z",codex-root,"cli:create:dep",detected
+  hac-usxc,related,"2026-08-05T19:18:15.827Z",codex-root,"cli:create:dep",detected
+  hac-yo48,related,"2026-08-05T19:18:15.827Z",codex-root,"cli:create:dep",detected
+comments[1]{created_at,author,text}:
+  "2026-08-05T19:18:15.827Z",codex-root,"Plan created only after exact-title,keyword,linked-content,graph,and GitHub duplicate checks returned no canonical repairs/topology delivery owner."
+notes[1]{created_at,author,text}:
+  "2026-08-05T19:18:15.827Z",codex-root,"Do not close before PR checks,every bot artifact reaction/reply,merged-head verification,and PM-generated changelog freshness are complete."
+learnings[1]{created_at,author,text}:
+  "2026-08-05T19:18:15.827Z",codex-root,The topology endpoint is read-only while Repairs fix flows are stateful; one plan must keep safety and output boundaries explicit across both transports.
+files[1]{path,scope,note}:
+  src/cli.ts,project,delivery integration point
+tests[1]{command,scope,timeout_seconds}:
+  "bun run release:verify",project,2400
+docs[1]{path,scope,note}:
+  docs/INDEX.md,project,delivery documentation index
+plan_mode: approved
+plan_decisions[1]{ts,author,decision,rationale,evidence}:
+  "2026-08-05T19:19:23.635Z",codex-root,Ship Repairs and related-resource topology as one agent-diagnostics tranche.,"They share typed WebSocket transport, bounded stable projections, safety policy, format/help/schema coverage, and agent diagnosis workflows.",No PM/GitHub duplicate; live structural probes and Core 2026.8.0 source confirm the gaps.
+plan_discoveries[1]{ts,author,text}:
+  "2026-08-05T19:19:23.039Z",codex-root,"Core 2026.8.0 registers repairs/list_issues, repairs/get_issue_data, repairs/ignore_issue, REST repair fix-flow resources, and search/related for fourteen item types; live Core 2026.7.4 supports list issues and entity/area related search."
+plan_steps[7]:
+  - id: plan-step-001
+    order: 1
+    title: Verify PM lineage and official/live contracts
+    status: completed
+    created_at: "2026-08-05T19:19:18.869Z"
+    updated_at: "2026-08-05T19:19:24.173Z"
+    body: Read all canonical PM data and history; inspect Core 2026.8.0 and official docs; probe live support without retaining private payloads.
+    owner: codex-root
+    evidence: "All 67 prior items were enumerated, deep fields and verified histories were inspected in bounded projections, graph and duplicate audits passed, GitHub duplicates were absent, Core 2026.8.0 and official docs were checked, and privacy-safe live support was proven."
+    completed_at: "2026-08-05T19:19:24.173Z"
+    linked_items[1]{id,kind}:
+      hac-lda1,depends_on
+    files[1]{path,note}:
+      AGENTS.md,repository contract
+    docs[1]{path,note}:
+      docs/API.md,existing API baseline
+  - id: plan-step-002
+    order: 2
+    title: Implement typed transport and command surfaces
+    status: completed
+    created_at: "2026-08-05T19:19:19.610Z"
+    updated_at: "2026-08-05T19:32:37.426Z"
+    body: Add Repairs WebSocket/REST flow client and related-resource topology command with strict validation and safety.
+    owner: codex-root
+    evidence: "Typed transport, Repairs and related commands, public exports, root registration, agent plan, live API matrix, latest PM toolchain, and complete documentation are implemented with strict input, safety, deterministic output, and privacy boundaries."
+    completed_at: "2026-08-05T19:32:37.426Z"
+    linked_items[1]{id,kind}:
+      hac-3kz8,depends_on
+    files[1]{path,note}:
+      src/cli.ts,command registration
+  - id: plan-step-003
+    order: 3
+    title: Complete focused tests and exact coverage
+    status: completed
+    created_at: "2026-08-05T19:19:20.217Z"
+    updated_at: "2026-08-05T19:39:35.791Z"
+    body: "Add behavior-focused unit, transport, format, help, and safety regressions while preserving exact 100/100/100/100."
+    owner: codex-root
+    evidence: "Post-split full suite exact at 100/100/100/100 with 1,329 tests; strict static and file-size gates pass."
+    completed_at: "2026-08-05T19:39:35.791Z"
+    linked_items[1]{id,kind}:
+      hac-3kz8,depends_on
+    tests[1]{command,note}:
+      "bun run test:coverage",exact source coverage
+  - id: plan-step-004
+    order: 4
+    title: Update complete user and agent documentation
+    status: completed
+    created_at: "2026-08-05T19:19:20.768Z"
+    updated_at: "2026-08-05T19:39:36.362Z"
+    body: "Document commands, schemas, safety, formats, examples, and latest-version compatibility across README and docs."
+    owner: codex-root
+    evidence: "README, contributor contract, API reference, index, LLM guide, and agent optimization guide document contracts, privacy, bounds, safety, and stable envelopes."
+    completed_at: "2026-08-05T19:39:36.362Z"
+    linked_items[1]{id,kind}:
+      hac-3kz8,depends_on
+    docs[1]{path,note}:
+      docs/INDEX.md,documentation index
+  - id: plan-step-005
+    order: 5
+    title: Run local release and privacy acceptance
+    status: completed
+    created_at: "2026-08-05T19:19:21.438Z"
+    updated_at: "2026-08-05T19:39:36.853Z"
+    body: "Run static, PM, security, package, setup, live, all-format, and automatic-release dry-run gates without publishing."
+    owner: codex-root
+    evidence: "Built CLI passed complete help discovery, live six-format repairs/related output, read-only write negative controls, setup validation, and settings doctor against private external configuration."
+    completed_at: "2026-08-05T19:39:36.853Z"
+    linked_items[1]{id,kind}:
+      hac-3kz8,depends_on
+    tests[1]{command,note}:
+      "bun run release:verify",complete local release verification
+  - id: plan-step-006
+    order: 6
+    title: Converge exact-head hosted checks and bot reviews
+    status: in_progress
+    created_at: "2026-08-05T19:19:21.906Z"
+    updated_at: "2026-08-05T19:39:37.429Z"
+    body: "Open PR, wait once per head, react/reply to every bot artifact, resolve findings, and repeat after any push."
+    owner: codex-root
+    linked_items[1]{id,kind}:
+      hac-3kz8,depends_on
+  - id: plan-step-007
+    order: 7
+    title: Merge and close terminal PM lineage
+    status: pending
+    created_at: "2026-08-05T19:19:22.444Z"
+    updated_at: "2026-08-05T19:19:22.444Z"
+    body: "Verify merged master, close Task Plan Feature with exact evidence, regenerate PM changelog if required, and leave master clean."
+    owner: codex-root
+    linked_items[1]{id,kind}:
+      hac-3kz8,depends_on
+body: Deliver one cohesive non-publishing tranche. Keep private instance values external and retain only contract-level counts or booleans. Use current Core source for non-public command schemas and official developer docs for stable transport/auth contracts.

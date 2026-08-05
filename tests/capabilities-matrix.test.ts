@@ -16,6 +16,7 @@ const mockGetCalendarEvents = vi.fn();
 
 const mockWsConnect = vi.fn();
 const mockWsClose = vi.fn();
+const mockWsCall = vi.fn();
 
 const mockGetAddons = vi.fn();
 
@@ -37,6 +38,7 @@ vi.mock("../src/api/index.js", () => ({
   }; }),
   HomeAssistantWebSocketClient: vi.fn().mockImplementation(function () { return {
     connect: mockWsConnect,
+    call: mockWsCall,
     close: mockWsClose,
   }; }),
 }));
@@ -83,6 +85,7 @@ describe("probeApiMatrix", () => {
     mockCallService.mockResolvedValue({ context: { id: "ctx" } });
     mockGetCalendarEvents.mockResolvedValue([]);
     mockWsConnect.mockResolvedValue(undefined);
+    mockWsCall.mockResolvedValue({});
     mockWsClose.mockResolvedValue(undefined);
     mockGetAddons.mockResolvedValue({ result: "ok", data: { addons: [] } });
   });
@@ -121,6 +124,23 @@ describe("probeApiMatrix", () => {
     const wsEntry = result.entries.find(e => e.key === "websocket");
     expect(wsEntry?.status).toBe("available");
     expect(wsEntry?.probe).toBe("websocket");
+    expect(result.entries.find(e => e.key === "repairs")?.status).toBe("available");
+    expect(result.entries.find(e => e.key === "related")?.status).toBe("available");
+    expect(mockWsCall).toHaveBeenCalledWith("repairs/list_issues", undefined);
+    expect(mockWsCall).toHaveBeenCalledWith("search/related", {
+      item_type: "area",
+      item_id: "__hassio_cli_capability_probe__",
+    });
+  });
+
+  it("classifies unavailable typed websocket commands independently", async () => {
+    mockWsCall.mockImplementation(async (type: string) => {
+      if (type === "repairs/list_issues") throw new Error("unknown_command");
+      throw new Error("401 Unauthorized");
+    });
+    const result = await probeApiMatrix(baseConfig);
+    expect(result.entries.find(e => e.key === "repairs")?.status).toBe("error");
+    expect(result.entries.find(e => e.key === "related")?.status).toBe("unauthorized");
   });
 
   it("marks supervisor as available when addons succeed", async () => {
@@ -150,6 +170,9 @@ describe("probeApiMatrix", () => {
 
     const wsEntry = result.entries.find(e => e.key === "websocket");
     expect(wsEntry?.status).toBe("error");
+    expect(result.entries.find(e => e.key === "repairs")?.status).toBe("error");
+    expect(result.entries.find(e => e.key === "related")?.status).toBe("error");
+    expect(mockWsCall).not.toHaveBeenCalled();
   });
 
   it("marks supervisor as unavailable on 404", async () => {

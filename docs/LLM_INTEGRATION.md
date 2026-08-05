@@ -105,10 +105,23 @@ command validates inputs locally, negotiates coalesced WebSocket frames, applies
 `--wait-ms` and `--max-events` bounds, unsubscribes, and never fires the trigger.
 It requires a Home Assistant administrator.
 
-13. Cursor-based pagination (future):
+13. Repair diagnosis and safe remediation (implemented):
+Start with `hassio repairs list --count`, then request a small severity/domain
+slice. Use `repairs show` only when issue data is required. Ignore and fix-flow
+writes require `--yes` and are blocked in read-only mode; `fix status` is safe
+for observing an already-started flow. Treat every issue and flow identifier as
+private instance data.
+
+14. Related-resource topology (implemented):
+Use `hassio related <item-type> <item-id> --count` to estimate the dependency
+surface before fetching identifiers. Apply `--result-type` and a small
+per-type `--limit` to bound context. This is Core's semantic resource graph,
+not text search, and can reveal automation/configuration relationships.
+
+15. Cursor-based pagination (future):
 Add `--cursor` + `--limit` for entity-heavy installations so agents can page deterministically.
 
-14. Stable machine error envelope (future):
+16. Stable machine error envelope (future):
 Standardize failures to `{ code, message, hint, retriable }` across all commands and formats.
 
 ## TOON Format Explained

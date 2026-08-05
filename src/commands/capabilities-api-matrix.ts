@@ -4,7 +4,8 @@
 import { HomeAssistantClient, HomeAssistantWebSocketClient } from "../api/index.js";
 import { SupervisorApiClient } from "../api/supervisor.js";
 import type { OutputFormat } from "../types/index.js";
-import type { CapabilityProbe, CapabilityStatus } from "./capabilities-utils.js";
+import { REST_PROBES, runRestProbe, runWebsocketProbe, WEBSOCKET_PROBES } from "./capabilities-api-probes.js";
+import type { CapabilityStatus } from "./capabilities-utils.js";
 import { normalizeProbeError } from "./capabilities-utils.js";
 
 interface ProbeConfig {
@@ -41,89 +42,6 @@ interface ServiceDomainProbe {
   domain: string;
 }
 
-interface RestProbe {
-  key: string;
-  endpoint: string;
-  commandGroup: string;
-  commands: string[];
-  check: (client: HomeAssistantClient, sampleEntityId?: string) => Promise<unknown>;
-}
-
-const REST_PROBES: RestProbe[] = [
-  {
-    key: "status",
-    endpoint: "/api/",
-    commandGroup: "core",
-    commands: ["hassio status"],
-    check: async (client) => client.getStatus(),
-  },
-  {
-    key: "config",
-    endpoint: "/api/config",
-    commandGroup: "core",
-    commands: ["hassio config"],
-    check: async (client) => client.getConfig(),
-  },
-  {
-    key: "components",
-    endpoint: "/api/components",
-    commandGroup: "core",
-    commands: ["hassio components"],
-    check: async (client) => client.getComponents(),
-  },
-  {
-    key: "events",
-    endpoint: "/api/events",
-    commandGroup: "core",
-    commands: ["hassio events"],
-    check: async (client) => client.getEvents(),
-  },
-  {
-    key: "services",
-    endpoint: "/api/services",
-    commandGroup: "services",
-    commands: ["hassio services", "hassio call-service <domain> <service>"],
-    check: async (client) => client.getServices(),
-  },
-  {
-    key: "states",
-    endpoint: "/api/states",
-    commandGroup: "states",
-    commands: ["hassio states", "hassio discover", "hassio summary"],
-    check: async (client) => client.getStates(),
-  },
-  {
-    key: "history",
-    endpoint: "/api/history/period",
-    commandGroup: "history",
-    commands: ["hassio history -e <entity_id>"],
-    check: async (client, sampleEntityId) => sampleEntityId
-      ? client.getHistory({ entityId: sampleEntityId, minimalResponse: true })
-      : [],
-  },
-  {
-    key: "logbook",
-    endpoint: "/api/logbook",
-    commandGroup: "history",
-    commands: ["hassio logbook"],
-    check: async (client) => client.getLogbook(),
-  },
-  {
-    key: "template",
-    endpoint: "/api/template",
-    commandGroup: "services",
-    commands: ["hassio render-template \"{{ 1 + 1 }}\""],
-    check: async (client) => client.renderTemplate("{{ 1 + 1 }}"),
-  },
-  {
-    key: "calendars",
-    endpoint: "/api/calendars",
-    commandGroup: "media",
-    commands: ["hassio calendars", "hassio calendar-events <calendar> -s <start> -e <end>"],
-    check: async (client) => client.getCalendars(),
-  },
-];
-
 const SERVICE_DOMAIN_PROBES: ServiceDomainProbe[] = [
   {
     key: "conversation",
@@ -148,39 +66,6 @@ const SERVICE_DOMAIN_PROBES: ServiceDomainProbe[] = [
   },
 ];
 
-function statusFromProbe(probe: CapabilityProbe): ApiMatrixEntry["status"] {
-  return probe.status;
-}
-
-async function runRestProbe(
-  client: HomeAssistantClient,
-  probe: RestProbe,
-  sampleEntityId?: string
-): Promise<ApiMatrixEntry> {
-  try {
-    await probe.check(client, sampleEntityId);
-    return {
-      key: probe.key,
-      endpoint: probe.endpoint,
-      status: "available",
-      command_group: probe.commandGroup,
-      cli_commands: probe.commands,
-      probe: "rest",
-    };
-  } catch (error) {
-    const normalized = normalizeProbeError(probe.endpoint, error);
-    return {
-      key: probe.key,
-      endpoint: probe.endpoint,
-      status: statusFromProbe(normalized),
-      command_group: probe.commandGroup,
-      cli_commands: probe.commands,
-      probe: "rest",
-      message: normalized.message,
-    };
-  }
-}
-
 export async function probeApiMatrix(config: ProbeConfig): Promise<ApiMatrixPayload> {
   const client = new HomeAssistantClient(config);
   const states = await client.getStates();
@@ -200,6 +85,7 @@ export async function probeApiMatrix(config: ProbeConfig): Promise<ApiMatrixPayl
   }));
 
   let websocketEntry: ApiMatrixEntry;
+  let websocketCommandEntries: ApiMatrixEntry[];
   const ws = new HomeAssistantWebSocketClient(config);
   try {
     await ws.connect();
@@ -211,17 +97,27 @@ export async function probeApiMatrix(config: ProbeConfig): Promise<ApiMatrixPayl
       cli_commands: ["hassio websocket status", "hassio ws observe-entities --domain light"],
       probe: "websocket",
     };
+    websocketCommandEntries = await Promise.all(WEBSOCKET_PROBES.map((probe) => runWebsocketProbe(ws, probe)));
   } catch (error) {
     const normalized = normalizeProbeError("/api/websocket", error);
     websocketEntry = {
       key: "websocket",
       endpoint: "/api/websocket",
-      status: statusFromProbe(normalized),
+      status: normalized.status,
       command_group: "websocket",
       cli_commands: ["hassio websocket status", "hassio ws observe-entities --domain light"],
       probe: "websocket",
       message: normalized.message,
     };
+    websocketCommandEntries = WEBSOCKET_PROBES.map((probe) => ({
+      key: probe.key,
+      endpoint: probe.endpoint,
+      status: normalized.status,
+      command_group: probe.commandGroup,
+      cli_commands: probe.commands,
+      probe: "websocket",
+      message: normalized.message,
+    }));
   } finally {
     await ws.close();
   }
@@ -243,7 +139,7 @@ export async function probeApiMatrix(config: ProbeConfig): Promise<ApiMatrixPayl
     supervisorEntry = {
       key: "supervisor",
       endpoint: "/api/hassio/addons",
-      status: statusFromProbe(normalized),
+      status: normalized.status,
       command_group: "supervisor",
       cli_commands: ["hassio supervisor addons --list", "hassio supervisor api -m GET -p /addons"],
       probe: "rest",
@@ -251,7 +147,13 @@ export async function probeApiMatrix(config: ProbeConfig): Promise<ApiMatrixPayl
     };
   }
 
-  const entries = [...restEntries, ...serviceDomainEntries, websocketEntry, supervisorEntry];
+  const entries = [
+    ...restEntries,
+    ...serviceDomainEntries,
+    websocketEntry,
+    ...websocketCommandEntries,
+    supervisorEntry,
+  ];
   const summary = entries.reduce<ApiMatrixPayload["summary"]>(
     (acc, entry) => {
       acc.total += 1;
