@@ -269,7 +269,7 @@ Before tagging a release:
 - [ ] `bun run build` — no errors
 - [ ] `bun run typecheck` — no type errors
 - [ ] `bun run test` — all tests pass
-- [ ] `bun run test:coverage` — ≥90% statement coverage
+- [ ] `bun run test:coverage` — exact 100/100/100/100 statement, branch, function, and line coverage
 - [ ] Scan for secrets: `git diff HEAD~1 -U0 | rg -n '^\+.*(ghp_|github_pat_|npm_|_authToken|-----BEGIN (RSA|OPENSSH|EC|DSA|PGP) PRIVATE KEY-----|eyJ[A-Za-z0-9_-]{10,}\.)'`
 - [ ] Update `CHANGELOG.md` with release notes
 - [ ] Update version in `package.json` and `src/cli.ts` to `YYYY.M.D[-N]`
