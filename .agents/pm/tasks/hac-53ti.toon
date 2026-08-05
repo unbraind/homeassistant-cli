@@ -6,7 +6,7 @@ status: in_progress
 priority: 0
 tags[8]: agents,api,docs,integrations,provenance,testing,typescript,websocket
 created_at: "2026-08-05T20:34:59.713Z"
-updated_at: "2026-08-05T21:06:23.124Z"
+updated_at: "2026-08-05T21:10:26.060Z"
 deadline: "2026-08-07T20:34:59.713Z"
 assignee: codex-root
 claim_principal: codex-root
@@ -34,11 +34,12 @@ dependencies[7]{id,kind,created_at,author,source_kind,author_source}:
   hac-n0ix,discovered_from,"2026-08-05T20:34:59.713Z",codex-root,"cli:create:dep",detected
   hac-soop,related,"2026-08-05T20:34:59.713Z",codex-root,"cli:create:dep",detected
   hac-vwh7,implements,"2026-08-05T20:34:59.713Z",codex-root,"cli:create:dep",detected
-comments[4]{created_at,author,text}:
+comments[5]{created_at,author,text}:
   "2026-08-05T20:34:59.713Z",codex-root,"Implementation scope selected after full code, PM, GitHub, official 2026.8.0 source, public docs, and live-instance orientation."
   "2026-08-05T20:53:34.696Z",codex-root,"Core 2026.8.0 is current upstream while the private live instance is 2026.7.4. Live acceptance proves manifests, setup, descriptions, readiness, and entity sources; slugify is correctly classified unavailable through unknown_command until the server upgrades."
   "2026-08-05T21:05:00.424Z",codex-root,"Post-refactor release verifier passed all ten phases: 120 test files, 1,343 tests, exact 100/100/100/100 coverage, and green build, typecheck, lint, docstrings, file size, duplication, shell, audit, PM, Trivy, history-secret, and commit gates. Remaining work is clean-tree auto-release dry-run, exact-head PR review, bot artifact disposition, merge, and PM closeout."
   "2026-08-05T21:06:23.124Z",codex-root,"Filed upstream pm-cli regression issue https://github.com/unbraind/pm-cli/issues/912 after all-state duplicate search found only completed issue #688. This documents the 2026.8.5 non-atomic cross-owner seeded Plan creation behavior encountered during this delivery."
+  "2026-08-05T21:10:26.060Z",codex-root,"Clean-tree auto-release dry-run passed: target v2026.8.5, prior tag v2026.8.1, pushed=false, release verifier green, and packed tarball consumers passed through both npx and bunx. Publication remains intentionally deferred to the maintainer."
 notes[2]:
   - created_at: "2026-08-05T20:34:59.713Z"
     author: codex-root
@@ -70,7 +71,10 @@ files[11]{path,scope,note}:
   tests/capabilities-utils.test.ts,project,Compatibility classification assertions
   tests/e2e-live.ts,project,Built live all-format and setup acceptance
   tests/websocket-integrations-command.test.ts,project,Typed command behavior and branch coverage
-tests[4]:
+tests[5]:
+  - command: "bun run release:auto:dry-run"
+    scope: project
+    note: Clean-tree automatic daily release candidate and packed consumer verification
   - command: "bun run release:verify"
     scope: project
     note: Production release verifier

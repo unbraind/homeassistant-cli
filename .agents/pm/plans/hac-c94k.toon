@@ -6,7 +6,7 @@ status: open
 priority: 0
 tags[7]: agents,delivery,docs,integrations,live-e2e,quality,websocket
 created_at: "2026-08-05T20:33:58.132Z"
-updated_at: "2026-08-05T21:04:59.878Z"
+updated_at: "2026-08-05T21:10:25.061Z"
 deadline: "2026-08-07T20:33:58.132Z"
 assignee: unbraind
 author: codex-root
@@ -45,9 +45,10 @@ docs[1]{path,scope,note}:
   docs/API.md,project,API reference integration point
 plan_mode: approved
 plan_resume_context: "Continue from Home Assistant Core 2026.8.0 contracts: manifest/list, manifest/get, integration/setup_info, integration/descriptions, integration/wait, entity/source, slugify. Keep private instance evidence redacted."
-plan_validation[2]{text,command,expected}:
+plan_validation[3]{text,command,expected}:
   Built live E2E completed successfully on Core 2026.7.4; all stable pre-2026.8 handlers passed and slugify was accepted only as a classified unknown_command compatibility boundary.,"HASSIO_READONLY=true bun run test:e2e:live","Setup wizard, six formatters, typed commands, read-only controls, schema, capabilities, and compatibility classification pass without retaining private payloads."
   Authoritative post-refactor release verification is green with exact coverage and privacy-safe live evidence.,"bun run release:verify","All ten release phases pass, 1,343 tests pass, and all four coverage dimensions are exactly 100%."
+  Automatic daily release dry-run selected the correct unpublished date candidate without pushing or publishing and passed packed npx and bunx consumers.,"bun run release:auto:dry-run","Clean tree, target v2026.8.5, pushed false, all release gates and packed consumer smoke tests pass."
 plan_decisions[1]{ts,author,decision,rationale,evidence}:
   "2026-08-05T20:34:34.587Z",codex-root,Use one typed integrations group plus entity-sources and slugify commands; retain ws call for dynamic integration-defined contracts.,These stable Core discovery handlers form a cohesive read-only agent-intelligence surface without pretending all integration commands are static.,Home Assistant Core 2026.8.0 websocket_api/commands.py and live generic-call probes.
 plan_discoveries[1]{ts,author,text}:
