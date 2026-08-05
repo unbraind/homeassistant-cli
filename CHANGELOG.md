@@ -4,10 +4,13 @@
 
 ### Added
 
+- Add typed WebSocket integration intelligence ([hac-vwh7](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/features/hac-vwh7.toon))
 - Add agent-native repairs and related-resource diagnostics ([hac-lda1](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/features/hac-lda1.toon))
 
 ### Other
 
+- Integration intelligence delivery plan ([hac-c94k](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/plans/hac-c94k.toon))
+- Implement typed integration metadata and entity provenance commands ([hac-53ti](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-53ti.toon))
 - Repairs and related-resource diagnostics delivery plan ([hac-ha2t](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/plans/hac-ha2t.toon))
 - Implement typed repairs and related-resource command contracts ([hac-3kz8](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-3kz8.toon))
 

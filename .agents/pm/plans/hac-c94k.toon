@@ -2,13 +2,14 @@ id: hac-c94k
 title: Integration intelligence delivery plan
 description: "Coordinate official contract research, typed command design, documentation, exhaustive verification, and exact-head delivery for integration intelligence."
 type: Plan
-status: open
+status: closed
 priority: 0
 tags[7]: agents,delivery,docs,integrations,live-e2e,quality,websocket
 created_at: "2026-08-05T20:33:58.132Z"
-updated_at: "2026-08-05T21:10:25.061Z"
+updated_at: "2026-08-05T21:27:47.054Z"
 deadline: "2026-08-07T20:33:58.132Z"
-assignee: unbraind
+closed_at: "2026-08-05T21:27:47.032Z"
+completed_at: "2026-08-05T21:27:47.032Z"
 author: codex-root
 estimated_minutes: 420
 acceptance_criteria: Every plan step carries direct evidence and the implementation Task is the only in-progress item
@@ -25,6 +26,9 @@ risk: medium
 confidence: 90
 sprint: 2026-08-integration-intelligence
 release: 2026.8.5
+resolution: "Completed the official research, typed contract design, implementation, tests, docs, live/release verification, exact-head review, and merge plan."
+expected_result: Every plan step has evidence and the reviewed implementation merges cleanly.
+actual_result: "Seven of seven steps completed with PR #85 merged at 8177c0c, every required check green, and no unresolved review thread."
 dependencies[5]{id,kind,created_at,author,source_kind,author_source}:
   hac-ha2t,related,"2026-08-05T20:33:58.132Z",codex-root,"cli:create:dep",detected
   hac-km4t,related,"2026-08-05T20:33:58.132Z",codex-root,"cli:create:dep",detected
@@ -43,7 +47,8 @@ tests[1]{command,scope,note}:
   "bun run release:verify",project,Complete production release verifier
 docs[1]{path,scope,note}:
   docs/API.md,project,API reference integration point
-plan_mode: approved
+close_reason: All seven plan steps completed; PR #85 merged as 8177c0c and the delivery returned to clean master.
+plan_mode: completed
 plan_resume_context: "Continue from Home Assistant Core 2026.8.0 contracts: manifest/list, manifest/get, integration/setup_info, integration/descriptions, integration/wait, entity/source, slugify. Keep private instance evidence redacted."
 plan_validation[3]{text,command,expected}:
   Built live E2E completed successfully on Core 2026.7.4; all stable pre-2026.8 handlers passed and slugify was accepted only as a classified unknown_command compatibility boundary.,"HASSIO_READONLY=true bun run test:e2e:live","Setup wizard, six formatters, typed commands, read-only controls, schema, capabilities, and compatibility classification pass without retaining private payloads."
@@ -53,66 +58,12 @@ plan_decisions[1]{ts,author,decision,rationale,evidence}:
   "2026-08-05T20:34:34.587Z",codex-root,Use one typed integrations group plus entity-sources and slugify commands; retain ws call for dynamic integration-defined contracts.,These stable Core discovery handlers form a cohesive read-only agent-intelligence surface without pretending all integration commands are static.,Home Assistant Core 2026.8.0 websocket_api/commands.py and live generic-call probes.
 plan_discoveries[1]{ts,author,text}:
   "2026-08-05T20:34:35.312Z",codex-root,"Official public WebSocket documentation covers target discovery while Core 2026.8.0 additionally registers manifest metadata, setup timing, readiness, descriptions, entity sources, and slugify handlers."
-plan_steps[7]:
-  - id: plan-step-001
-    order: 1
-    title: Verify official and live contracts without retaining private payloads
-    status: completed
-    created_at: "2026-08-05T20:34:29.140Z"
-    updated_at: "2026-08-05T20:35:13.615Z"
-    owner: codex-root
-    evidence: "Reviewed official Home Assistant public REST/WebSocket docs, Core 2026.8.0 release and websocket_api handlers, current dev head, existing typed/generic CLI surfaces, and live read-only support; retained only contract names and redacted aggregate evidence."
-    completed_at: "2026-08-05T20:35:13.615Z"
-  - id: plan-step-002
-    order: 2
-    title: Design typed bounded command and schema contracts
-    status: completed
-    created_at: "2026-08-05T20:34:29.885Z"
-    updated_at: "2026-08-05T20:35:14.675Z"
-    owner: codex-root
-    evidence: "Selected typed integrations list/get/setup/descriptions/wait plus entity-sources and slugify, with bounded deterministic envelopes, preflight validation, detailed help, all format/schema integration, and generic ws call retention."
-    completed_at: "2026-08-05T20:35:14.675Z"
-  - id: plan-step-003
-    order: 3
-    title: Implement commands and capability integration
-    status: completed
-    created_at: "2026-08-05T20:34:30.857Z"
-    updated_at: "2026-08-05T20:53:50.771Z"
-    owner: codex-root
-    evidence: "Implemented typed integrations list/get/setup/descriptions/wait, entity-sources, and slugify; registered them under ws; added bounded deterministic envelopes, local validation, Core 2026.8 compatibility classification, agent plan recommendations, API matrix probes, and machine schema coverage."
-    completed_at: "2026-08-05T20:53:50.771Z"
-  - id: plan-step-004
-    order: 4
-    title: Add focused behavior formatting help and setup regression tests
-    status: completed
-    created_at: "2026-08-05T20:34:31.649Z"
-    updated_at: "2026-08-05T20:53:51.812Z"
-    owner: codex-root
-    evidence: "Added 14 focused typed command tests plus capability/schema/help assertions and live built-CLI coverage across six formatters and the isolated setup wizard; full suite reached 1,343 tests with exact 100/100/100/100 before final compatibility refinements."
-    completed_at: "2026-08-05T20:53:51.812Z"
-  - id: plan-step-005
-    order: 5
-    title: Synchronize README and all docs surfaces
-    status: completed
-    created_at: "2026-08-05T20:34:32.455Z"
-    updated_at: "2026-08-05T20:53:52.820Z"
-    owner: codex-root
-    evidence: "Updated README, docs/API.md, docs/INDEX.md, docs/LLM_INTEGRATION.md, and docs/AGENT_OPTIMIZATION.md with every command, flag, envelope, privacy boundary, version boundary, and agent workflow."
-    completed_at: "2026-08-05T20:53:52.820Z"
-  - id: plan-step-006
-    order: 6
-    title: Run full local quality security PM live and release gates
-    status: completed
-    created_at: "2026-08-05T20:34:33.175Z"
-    updated_at: "2026-08-05T21:04:49.443Z"
-    owner: codex-root
-    evidence: "Release verifier passed all 10 phases after the final refactor: 120 files and 1,343 tests; exact 4,979/4,979 statements, 2,590/2,590 branches, 1,045/1,045 functions, and 4,566/4,566 lines; build, typecheck, ESLint, 129/129 docstrings, file-size, shell, 3.67% line duplication under threshold, Bun audit, Trivy, full-history secret scan, commit audit, PM validation and health all passed. Built live E2E also passed against the configured Core 2026.7.4 instance with isolated setup, six formatters, read-only commands, and the Core 2026.8 slugify compatibility boundary."
-    completed_at: "2026-08-05T21:04:49.443Z"
-  - id: plan-step-007
-    order: 7
-    title: Ship exact-head PR process every bot artifact and merge
-    status: in_progress
-    created_at: "2026-08-05T20:34:33.871Z"
-    updated_at: "2026-08-05T21:04:59.877Z"
-    owner: codex-root
+plan_steps[7]{id,order,title,status,created_at,updated_at,owner,evidence,completed_at}:
+  plan-step-001,1,Verify official and live contracts without retaining private payloads,completed,"2026-08-05T20:34:29.140Z","2026-08-05T20:35:13.615Z",codex-root,"Reviewed official Home Assistant public REST/WebSocket docs, Core 2026.8.0 release and websocket_api handlers, current dev head, existing typed/generic CLI surfaces, and live read-only support; retained only contract names and redacted aggregate evidence.","2026-08-05T20:35:13.615Z"
+  plan-step-002,2,Design typed bounded command and schema contracts,completed,"2026-08-05T20:34:29.885Z","2026-08-05T20:35:14.675Z",codex-root,"Selected typed integrations list/get/setup/descriptions/wait plus entity-sources and slugify, with bounded deterministic envelopes, preflight validation, detailed help, all format/schema integration, and generic ws call retention.","2026-08-05T20:35:14.675Z"
+  plan-step-003,3,Implement commands and capability integration,completed,"2026-08-05T20:34:30.857Z","2026-08-05T20:53:50.771Z",codex-root,"Implemented typed integrations list/get/setup/descriptions/wait, entity-sources, and slugify; registered them under ws; added bounded deterministic envelopes, local validation, Core 2026.8 compatibility classification, agent plan recommendations, API matrix probes, and machine schema coverage.","2026-08-05T20:53:50.771Z"
+  plan-step-004,4,Add focused behavior formatting help and setup regression tests,completed,"2026-08-05T20:34:31.649Z","2026-08-05T20:53:51.812Z",codex-root,"Added 14 focused typed command tests plus capability/schema/help assertions and live built-CLI coverage across six formatters and the isolated setup wizard; full suite reached 1,343 tests with exact 100/100/100/100 before final compatibility refinements.","2026-08-05T20:53:51.812Z"
+  plan-step-005,5,Synchronize README and all docs surfaces,completed,"2026-08-05T20:34:32.455Z","2026-08-05T20:53:52.820Z",codex-root,"Updated README, docs/API.md, docs/INDEX.md, docs/LLM_INTEGRATION.md, and docs/AGENT_OPTIMIZATION.md with every command, flag, envelope, privacy boundary, version boundary, and agent workflow.","2026-08-05T20:53:52.820Z"
+  plan-step-006,6,Run full local quality security PM live and release gates,completed,"2026-08-05T20:34:33.175Z","2026-08-05T21:04:49.443Z",codex-root,"Release verifier passed all 10 phases after the final refactor: 120 files and 1,343 tests; exact 4,979/4,979 statements, 2,590/2,590 branches, 1,045/1,045 functions, and 4,566/4,566 lines; build, typecheck, ESLint, 129/129 docstrings, file-size, shell, 3.67% line duplication under threshold, Bun audit, Trivy, full-history secret scan, commit audit, PM validation and health all passed. Built live E2E also passed against the configured Core 2026.7.4 instance with isolated setup, six formatters, read-only commands, and the Core 2026.8 slugify compatibility boundary.","2026-08-05T21:04:49.443Z"
+  plan-step-007,7,Ship exact-head PR process every bot artifact and merge,completed,"2026-08-05T20:34:33.871Z","2026-08-05T21:27:43.185Z",codex-root,"PR #85 reviewed exact head 869b54d, passed every required hosted check, received five CodeRabbit findings with two fixes and three evidence-backed withdrawals, reached zero unresolved threads and zero unreacted bot artifacts, then merged as master commit 8177c0c. Sourcery and CodeRabbit quota receipts and Greptile/Gemini silence were recorded as limitations rather than approval.","2026-08-05T21:27:43.185Z"
 body: "The plan keeps one implementation Task in progress while the Feature and Plan remain open governance/context records. Every durable result is linked through PM files, docs, tests, decisions, discoveries, validations, comments, notes, learnings, and graph edges."

@@ -2,13 +2,14 @@ id: hac-vwh7
 title: Add typed WebSocket integration intelligence
 description: "Expose stable Home Assistant Core integration metadata, readiness, and entity provenance contracts through typed agent-friendly commands."
 type: Feature
-status: open
+status: closed
 priority: 0
 tags[7]: agents,api,discovery,home-assistant,integrations,provenance,websocket
 created_at: "2026-08-05T20:33:35.755Z"
-updated_at: "2026-08-05T20:33:35.755Z"
+updated_at: "2026-08-05T21:27:47.763Z"
 deadline: "2026-08-07T20:33:35.755Z"
-assignee: unbraind
+closed_at: "2026-08-05T21:27:47.742Z"
+completed_at: "2026-08-05T21:27:47.742Z"
 author: codex-root
 estimated_minutes: 420
 acceptance_criteria: "Typed commands cover integration list/get/setup/descriptions/wait, entity source provenance, and slug generation with validated inputs and detailed help; Outputs remain deterministic and valid across TOON, JSON, compact JSON, YAML, table, and Markdown; Schema, capabilities, README, API reference, docs index, LLM guidance, and agent optimization documentation stay synchronized; Unit, integration, command-help, setup wizard, live read-only, security, PM, release, and exact 100/100/100/100 coverage gates pass"
@@ -25,6 +26,9 @@ risk: medium
 confidence: 92
 sprint: 2026-08-integration-intelligence
 release: 2026.8.5
+resolution: "Delivered safe typed integration metadata, setup diagnostics, readiness, entity ownership, and slug generation across CLI, capabilities, schemas, docs, and tests."
+expected_result: Production-ready typed integration intelligence is merged with full evidence and without publication or private data.
+actual_result: "PR #85 merged at 8177c0c with 1,344 tests, exact 100% coverage, live acceptance, all required hosted checks green, and complete review/PM lineage."
 dependencies[5]{id,kind,created_at,author,source_kind,author_source}:
   hac-1iz2,related,"2026-08-05T20:33:35.755Z",codex-root,"cli:create:dep",detected
   hac-lda1,related,"2026-08-05T20:33:35.755Z",codex-root,"cli:create:dep",detected
@@ -43,4 +47,5 @@ tests[1]{command,scope,note}:
   "bun run test:coverage",project,Exact all-source coverage gate
 docs[1]{path,scope,note}:
   docs/API.md,project,Canonical CLI API reference
+close_reason: Typed WebSocket integration intelligence shipped through PR #85 as master commit 8177c0c; release publication remains maintainer-controlled.
 body: "Home Assistant Core 2026.8.0 provides stable WebSocket contracts for manifest/list, manifest/get, integration/setup_info, integration/descriptions, integration/wait, entity/source, and slugify. The current CLI supports these only through raw ws call. This feature adds a discoverable typed surface with bounded output and preserves generic passthrough for integration-defined evolution."
