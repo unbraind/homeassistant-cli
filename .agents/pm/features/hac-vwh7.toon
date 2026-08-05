@@ -1,0 +1,46 @@
+id: hac-vwh7
+title: Add typed WebSocket integration intelligence
+description: "Expose stable Home Assistant Core integration metadata, readiness, and entity provenance contracts through typed agent-friendly commands."
+type: Feature
+status: open
+priority: 0
+tags[7]: agents,api,discovery,home-assistant,integrations,provenance,websocket
+created_at: "2026-08-05T20:33:35.755Z"
+updated_at: "2026-08-05T20:33:35.755Z"
+deadline: "2026-08-07T20:33:35.755Z"
+assignee: unbraind
+author: codex-root
+estimated_minutes: 420
+acceptance_criteria: "Typed commands cover integration list/get/setup/descriptions/wait, entity source provenance, and slug generation with validated inputs and detailed help; Outputs remain deterministic and valid across TOON, JSON, compact JSON, YAML, table, and Markdown; Schema, capabilities, README, API reference, docs index, LLM guidance, and agent optimization documentation stay synchronized; Unit, integration, command-help, setup wizard, live read-only, security, PM, release, and exact 100/100/100/100 coverage gates pass"
+definition_of_ready: Official 2026.8.0 source contracts and live instance support are verified; all-status duplicate search returns no canonical equivalent.
+goal: best-agent-home-assistant-cli
+objective: typed-integration-intelligence
+value: Let agents understand loaded integrations and entity ownership without raw protocol knowledge.
+impact: "Improves planning, diagnostics, compatibility analysis, and prompt-efficient topology discovery."
+outcome: A production-ready typed discovery surface with private-instance-safe evidence and full release readiness.
+why_now: Home Assistant 2026.8.0 shipped today and the latest contract review identified this cohesive remaining Core discovery gap.
+parent: hac-4s9j
+reviewer: unbraind
+risk: medium
+confidence: 92
+sprint: 2026-08-integration-intelligence
+release: 2026.8.5
+dependencies[5]{id,kind,created_at,author,source_kind,author_source}:
+  hac-1iz2,related,"2026-08-05T20:33:35.755Z",codex-root,"cli:create:dep",detected
+  hac-lda1,related,"2026-08-05T20:33:35.755Z",codex-root,"cli:create:dep",detected
+  hac-n0ix,discovered_from,"2026-08-05T20:33:35.755Z",codex-root,"cli:create:dep",detected
+  hac-stpm,related,"2026-08-05T20:33:35.755Z",codex-root,"cli:create:dep",detected
+  hac-sv5f,related,"2026-08-05T20:33:35.755Z",codex-root,"cli:create:dep",detected
+comments[1]{created_at,author,text}:
+  "2026-08-05T20:33:35.755Z",codex-root,All-status PM searches for integration manifest setup entity source slugify and WebSocket diagnostics found related completed lineage but no equivalent typed integration-intelligence item.
+notes[1]{created_at,author,text}:
+  "2026-08-05T20:33:35.755Z",codex-root,"Private instance data, entity IDs, manifest payloads, setup timings, credentials, and raw responses remain outside Git; durable evidence uses counts, keys, booleans, and contract names only."
+learnings[1]{created_at,author,text}:
+  "2026-08-05T20:33:35.755Z",codex-root,Core command registration is broader than the public WebSocket guide; stable Core handlers are suitable for typed UX while ws call remains the forward-compatible boundary.
+files[1]{path,scope,note}:
+  src/commands/websocket.ts,project,Typed WebSocket registration surface
+tests[1]{command,scope,note}:
+  "bun run test:coverage",project,Exact all-source coverage gate
+docs[1]{path,scope,note}:
+  docs/API.md,project,Canonical CLI API reference
+body: "Home Assistant Core 2026.8.0 provides stable WebSocket contracts for manifest/list, manifest/get, integration/setup_info, integration/descriptions, integration/wait, entity/source, and slugify. The current CLI supports these only through raw ws call. This feature adds a discoverable typed surface with bounded output and preserves generic passthrough for integration-defined evolution."

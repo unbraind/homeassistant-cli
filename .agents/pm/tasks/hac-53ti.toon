@@ -1,0 +1,99 @@
+id: hac-53ti
+title: Implement typed integration metadata and entity provenance commands
+description: "Implement the production typed CLI surface, tests, documentation, live verification, and release evidence for Core integration intelligence."
+type: Task
+status: in_progress
+priority: 0
+tags[8]: agents,api,docs,integrations,provenance,testing,typescript,websocket
+created_at: "2026-08-05T20:34:59.713Z"
+updated_at: "2026-08-05T21:22:11.197Z"
+deadline: "2026-08-07T20:34:59.713Z"
+assignee: codex-root
+claim_principal: codex-root
+author: codex-root
+estimated_minutes: 360
+acceptance_criteria: "Every command validates inputs, uses top-level imports and erasable strict TypeScript, and keeps source files below 300 code lines; All behavior is covered with meaningful assertions and repository coverage remains exactly 100/100/100/100; Built CLI passes help, formatter, setup wizard, live read-only, security, PM, changelog, auto-release dry-run, and release verification; PR includes working PM links, every bot artifact is read/reacted/replied/dispositioned, exact-head checks are green, and the branch is merged back to clean master"
+definition_of_ready: Plan hac-c94k is approved; Core 2026.8.0 exposes every target handler; the configured Core 2026.7.4 instance supports the pre-2026.8 handlers and may return the documented slugify unknown_command compatibility exception; no duplicate PM item exists.
+goal: best-agent-home-assistant-cli
+objective: implement-integration-intelligence
+value: Give users and agents safe typed access to integration metadata and entity ownership.
+impact: Reduces raw protocol errors and makes diagnostics/planning token-efficient and discoverable.
+outcome: "Merged, fully tested, documented, release-ready commands with redacted live evidence."
+why_now: This is the highest-value cohesive untyped Core API gap found against the latest release.
+parent: hac-c94k
+reviewer: unbraind
+risk: medium
+confidence: 90
+sprint: 2026-08-integration-intelligence
+release: 2026.8.5
+dependencies[7]{id,kind,created_at,author,source_kind,author_source}:
+  hac-3kz8,related,"2026-08-05T20:34:59.713Z",codex-root,"cli:create:dep",detected
+  hac-ak9g,verifies,"2026-08-05T20:34:59.713Z",codex-root,"cli:create:dep",detected
+  hac-c94k,implements,"2026-08-05T20:34:59.713Z",codex-root,"cli:create:dep",detected
+  hac-g36l,related,"2026-08-05T20:34:59.713Z",codex-root,"cli:create:dep",detected
+  hac-n0ix,discovered_from,"2026-08-05T20:34:59.713Z",codex-root,"cli:create:dep",detected
+  hac-soop,related,"2026-08-05T20:34:59.713Z",codex-root,"cli:create:dep",detected
+  hac-vwh7,implements,"2026-08-05T20:34:59.713Z",codex-root,"cli:create:dep",detected
+comments[7]{created_at,author,text}:
+  "2026-08-05T20:34:59.713Z",codex-root,"Implementation scope selected after full code, PM, GitHub, official 2026.8.0 source, public docs, and live-instance orientation."
+  "2026-08-05T20:53:34.696Z",codex-root,"Core 2026.8.0 is current upstream while the private live instance is 2026.7.4. Live acceptance proves manifests, setup, descriptions, readiness, and entity sources; slugify is correctly classified unavailable through unknown_command until the server upgrades."
+  "2026-08-05T21:05:00.424Z",codex-root,"Post-refactor release verifier passed all ten phases: 120 test files, 1,343 tests, exact 100/100/100/100 coverage, and green build, typecheck, lint, docstrings, file size, duplication, shell, audit, PM, Trivy, history-secret, and commit gates. Remaining work is clean-tree auto-release dry-run, exact-head PR review, bot artifact disposition, merge, and PM closeout."
+  "2026-08-05T21:06:23.124Z",codex-root,"Filed upstream pm-cli regression issue https://github.com/unbraind/pm-cli/issues/912 after all-state duplicate search found only completed issue #688. This documents the 2026.8.5 non-atomic cross-owner seeded Plan creation behavior encountered during this delivery."
+  "2026-08-05T21:10:26.060Z",codex-root,"Clean-tree auto-release dry-run passed: target v2026.8.5, prior tag v2026.8.1, pushed=false, release verifier green, and packed tarball consumers passed through both npx and bunx. Publication remains intentionally deferred to the maintainer."
+  "2026-08-05T21:18:46.019Z",codex-root,"CodeRabbit review round 1: accepted the readiness-contract and singular-domain findings; rejected selective TLS-only enforcement because it would break supported local Home Assistant HTTP deployments and belongs at the shared transport policy layer; rejected moving one test because all 120 repository tests follow the flat tests directory convention; rejected MD029 renumbering after direct markdownlint showed 47 pre-existing findings and the suggested markers would corrupt deliberate section numbers."
+  "2026-08-05T21:22:11.197Z",codex-root,"Round-one correction verification passed all ten release phases at 1,344 tests with exact 4,983/4,983 statements, 2,592/2,592 branches, 1,046/1,046 functions, and 4,569/4,569 lines. PM integrity, security, quality, build, and consumer-facing command gates remain green."
+notes[2]:
+  - created_at: "2026-08-05T20:34:59.713Z"
+    author: codex-root
+    text: Only this Task will enter in_progress. Feature hac-vwh7 and Plan hac-c94k remain open context records until closeout.
+  - created_at: "2026-08-05T20:53:36.260Z"
+    author: codex-root
+    text: "{\"available\":[\"manifest/list\",\"manifest/get\",\"integration/setup_info\",\"integration/descriptions\",\"integration/wait\",\"entity/source\"],\"instance\":\"Core 2026.7.4\",\"privacy\":\"counts and contract names only\",\"type\":\"live_contract_evidence\",\"unavailable\":[\"slugify\"],\"upstream\":\"Core 2026.8.0\"}"
+    format: json
+    data:
+      type: live_contract_evidence
+      upstream: Core 2026.8.0
+      instance: Core 2026.7.4
+      available[6]: manifest/list,manifest/get,integration/setup_info,integration/descriptions,integration/wait,entity/source
+      unavailable[1]: slugify
+      privacy: counts and contract names only
+    event_type: live_contract_evidence
+learnings[2]{created_at,author,text}:
+  "2026-08-05T20:34:59.713Z",codex-root,"List, setup, descriptions, source, and slug contracts need bounded normalized UX; wait is a single-result readiness probe. All are read-only despite some admin-only authorization."
+  "2026-08-05T20:53:37.368Z",codex-root,"integration/descriptions returns nested core/custom catalogs split into integration/helper groups, not a flat domain map; the typed CLI flattens these into deterministic source/category/domain rows and preserves translated-name metadata."
+files[11]{path,scope,note}:
+  src/commands/capabilities-agent-plan.ts,project,Agent planning recommendations
+  src/commands/capabilities-api-probes.ts,project,Live typed capability probes
+  src/commands/capabilities-utils.ts,project,Unknown-command compatibility classification
+  src/commands/capabilities.ts,project,Agent capability surface
+  src/commands/llm-extended.ts,project,Machine-readable command schema
+  src/commands/websocket-integrations.ts,project,Typed integration intelligence command implementation
+  src/commands/websocket.ts,project,WebSocket command registration
+  tests/capabilities-matrix.test.ts,project,Capability mapping assertions
+  tests/capabilities-utils.test.ts,project,Compatibility classification assertions
+  tests/e2e-live.ts,project,Built live all-format and setup acceptance
+  tests/websocket-integrations-command.test.ts,project,Typed command behavior and branch coverage
+tests[5]:
+  - command: "bun run release:auto:dry-run"
+    scope: project
+    note: Clean-tree automatic daily release candidate and packed consumer verification
+  - command: "bun run release:verify"
+    scope: project
+    note: Production release verifier
+  - command: bun run test -- tests/websocket-integrations-command.test.ts tests/capabilities-utils.test.ts tests/capabilities-matrix.test.ts tests/llm-extended.test.ts tests/help-surface-e2e.test.ts
+    scope: project
+    timeout_seconds: 300
+    note: Focused typed behavior capability schema and help regression suite
+  - command: "bun run test:coverage"
+    scope: project
+    note: Exact all-source coverage
+  - command: "HASSIO_READONLY=true bun run test:e2e:live"
+    scope: project
+    note: Private-instance-safe live acceptance
+docs[5]{path,scope,note}:
+  docs/AGENT_OPTIMIZATION.md,project,Bounded agent workflow guidance
+  docs/API.md,project,Command API reference
+  docs/INDEX.md,project,Documentation command index
+  docs/LLM_INTEGRATION.md,project,Agent workflow guidance
+  README.md,project,User-facing examples and feature summary
+body: "Add hassio ws integrations list|get|setup|descriptions|wait, hassio ws entity-sources, and hassio ws slugify. Normalize list-like outputs into bounded deterministic envelopes, validate domains/text/limits before network I/O, expose detailed help and schema metadata, preserve all format contracts, and retain raw ws call."

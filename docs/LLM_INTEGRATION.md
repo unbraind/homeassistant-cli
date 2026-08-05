@@ -118,10 +118,19 @@ surface before fetching identifiers. Apply `--result-type` and a small
 per-type `--limit` to bound context. This is Core's semantic resource graph,
 not text search, and can reveal automation/configuration relationships.
 
-15. Cursor-based pagination (future):
+15. Integration intelligence and entity provenance (implemented):
+Use `hassio ws integrations list --count` before fetching a small manifest
+slice. `integrations setup` exposes startup timing, `descriptions` provides
+admin-only integration metadata, and `wait` checks load readiness. Use
+`entity-sources --domain <domain> --limit <n>` to identify ownership without a
+full entity-state payload, and `ws slugify <text>` for server-compatible IDs.
+List envelopes always disclose total/returned counts and truncation. Treat raw
+entity IDs and integration metadata as private topology.
+
+16. Cursor-based pagination (future):
 Add `--cursor` + `--limit` for entity-heavy installations so agents can page deterministically.
 
-16. Stable machine error envelope (future):
+17. Stable machine error envelope (future):
 Standardize failures to `{ code, message, hint, retriable }` across all commands and formats.
 
 ## TOON Format Explained

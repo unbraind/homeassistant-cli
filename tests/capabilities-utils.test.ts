@@ -30,6 +30,8 @@ describe("capability planning utilities", () => {
       "hassio websocket status",
       "hassio repairs list --count",
       "hassio related entity <entity-id> --count",
+      "hassio ws integrations list --limit 20",
+      "hassio ws entity-sources --count",
       "hassio config-entries --count --format json",
       "hassio ask \"<question>\" --format json",
       "hassio tts engines --format json",
@@ -59,6 +61,7 @@ describe("capability planning utilities", () => {
   it("normalizes probe status families", () => {
     expect(normalizeProbeError("/x", new Error("401 Unauthorized")).status).toBe("unauthorized");
     expect(normalizeProbeError("/x", new Error("404 Not Found")).status).toBe("unavailable");
+    expect(normalizeProbeError("/x", new Error("unknown_command")).status).toBe("unavailable");
     expect(normalizeProbeError("/x", "offline")).toEqual({ status: "error", endpoint: "/x", message: "offline" });
   });
 

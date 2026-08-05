@@ -1384,6 +1384,9 @@ hassio ws subscribe --event-type state_changed --wait-ms 10000 --max-events 20
 hassio ws subscribe-trigger --trigger '{"trigger":"event","event_type":"doorbell"}' --wait-ms 30000
 hassio ws observe-entities --domain light --wait-ms 10000 --max-events 20
 hassio ws automation-platforms --kind all
+hassio ws integrations list --limit 20
+hassio ws entity-sources --count
+hassio ws slugify "Kitchen Ceiling Light"
 ```
 
 After authentication, the client negotiates Home Assistant's
@@ -1441,6 +1444,42 @@ events are merged by platform name, so a longer bounded wait can include
 integrations loaded after the initial catalog. Use this before authoring an
 automation, `ws target triggers|conditions` to narrow schemas to a target, and
 `ws validate-config` to validate the final definition.
+
+#### `websocket integrations`, `entity-sources`, and `slugify`
+
+Inspect stable Home Assistant Core integration metadata and entity provenance
+without memorizing raw WebSocket command names:
+
+```bash
+hassio ws integrations list [--domain <domains>] [--limit <n>|--all] [--count]
+hassio ws integrations get <domain>
+hassio ws integrations setup [--domain <domains>] [--limit <n>|--all] [--count]
+hassio ws integrations descriptions [--domain <domains>] [--limit <n>|--all] [--count]
+hassio ws integrations wait <domain>
+hassio ws entity-sources [--domain <domains>] [--entity-id <ids>] [--limit <n>|--all] [--count]
+hassio ws slugify <text>
+```
+
+`integrations list` maps `manifest/list` into domain-sorted manifest rows;
+`get` uses `manifest/get`; `setup` returns sorted `integration/setup_info`
+timings; `descriptions` flattens the admin-only
+`integration/descriptions` core/custom integration/helper catalogs into
+`{domain, source, category, translated_name, ...metadata}` rows; and `wait` reports whether a domain finished
+loading. `entity-sources` maps `entity/source` to deterministic
+`{entity_id, domain}` rows. `slugify` delegates to Core's canonical `slugify`
+handler so generated identifiers follow the server's rules. The typed slug
+handler requires Home Assistant Core 2026.8 or newer; older servers return a
+capability-classified `unknown_command` error and remain usable through every
+other command.
+
+List commands default to 100 returned rows and always report `count`,
+`returned_count`, and `truncated`. Use `--count` before requesting detail,
+`--limit` for bounded agent context, or explicit `--all` for a complete export.
+Integration domains are validated locally as lowercase letters, numbers, and
+underscores. These operations are read-only and safe with `--read-only`, though
+descriptions requires an administrator. Entity IDs and raw integration metadata
+may reveal private instance topology; do not persist live output in logs or
+source control.
 
 #### `websocket target`
 Target-resolution helpers built on HA WebSocket commands:

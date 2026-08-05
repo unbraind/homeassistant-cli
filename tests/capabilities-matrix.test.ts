@@ -126,6 +126,14 @@ describe("probeApiMatrix", () => {
     expect(wsEntry?.probe).toBe("websocket");
     expect(result.entries.find(e => e.key === "repairs")?.status).toBe("available");
     expect(result.entries.find(e => e.key === "related")?.status).toBe("available");
+    expect(result.entries.find(e => e.key === "integration_manifests")?.status).toBe("available");
+    expect(result.entries.find(e => e.key === "integration_setup")?.status).toBe("available");
+    expect(result.entries.find(e => e.key === "entity_sources")?.status).toBe("available");
+    expect(result.entries.find(e => e.key === "slugify")?.status).toBe("available");
+    expect(mockWsCall).toHaveBeenCalledWith("manifest/list", undefined);
+    expect(mockWsCall).toHaveBeenCalledWith("integration/setup_info", undefined);
+    expect(mockWsCall).toHaveBeenCalledWith("entity/source", undefined);
+    expect(mockWsCall).toHaveBeenCalledWith("slugify", { text: "hassio_cli_capability_probe" });
     expect(mockWsCall).toHaveBeenCalledWith("repairs/list_issues", undefined);
     expect(mockWsCall).toHaveBeenCalledWith("search/related", {
       item_type: "area",
@@ -139,7 +147,7 @@ describe("probeApiMatrix", () => {
       throw new Error("401 Unauthorized");
     });
     const result = await probeApiMatrix(baseConfig);
-    expect(result.entries.find(e => e.key === "repairs")?.status).toBe("error");
+    expect(result.entries.find(e => e.key === "repairs")?.status).toBe("unavailable");
     expect(result.entries.find(e => e.key === "related")?.status).toBe("unauthorized");
   });
 
