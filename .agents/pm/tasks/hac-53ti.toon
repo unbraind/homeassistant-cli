@@ -2,14 +2,14 @@ id: hac-53ti
 title: Implement typed integration metadata and entity provenance commands
 description: "Implement the production typed CLI surface, tests, documentation, live verification, and release evidence for Core integration intelligence."
 type: Task
-status: in_progress
+status: closed
 priority: 0
 tags[8]: agents,api,docs,integrations,provenance,testing,typescript,websocket
 created_at: "2026-08-05T20:34:59.713Z"
-updated_at: "2026-08-05T21:22:11.197Z"
+updated_at: "2026-08-05T21:27:46.503Z"
 deadline: "2026-08-07T20:34:59.713Z"
-assignee: codex-root
-claim_principal: codex-root
+closed_at: "2026-08-05T21:27:45.804Z"
+completed_at: "2026-08-05T21:27:45.804Z"
 author: codex-root
 estimated_minutes: 360
 acceptance_criteria: "Every command validates inputs, uses top-level imports and erasable strict TypeScript, and keeps source files below 300 code lines; All behavior is covered with meaningful assertions and repository coverage remains exactly 100/100/100/100; Built CLI passes help, formatter, setup wizard, live read-only, security, PM, changelog, auto-release dry-run, and release verification; PR includes working PM links, every bot artifact is read/reacted/replied/dispositioned, exact-head checks are green, and the branch is merged back to clean master"
@@ -25,7 +25,10 @@ reviewer: unbraind
 risk: medium
 confidence: 90
 sprint: 2026-08-integration-intelligence
-release: 2026.8.5
+release: unreleased
+resolution: "Implemented typed bounded integration manifests, setup health, descriptions, readiness, entity provenance, and slug generation with compatibility classification, docs, capability integration, and exact verification."
+expected_result: All acceptance criteria pass and the exact reviewed head merges without private data or publication.
+actual_result: "PR #85 merged as master commit 8177c0c after every required check passed; 1,344 tests retained exact 100/100/100/100, live read-only/setup/six-format acceptance passed, all bot artifacts were dispositioned, and no private value entered the repository."
 dependencies[7]{id,kind,created_at,author,source_kind,author_source}:
   hac-3kz8,related,"2026-08-05T20:34:59.713Z",codex-root,"cli:create:dep",detected
   hac-ak9g,verifies,"2026-08-05T20:34:59.713Z",codex-root,"cli:create:dep",detected
@@ -96,4 +99,5 @@ docs[5]{path,scope,note}:
   docs/INDEX.md,project,Documentation command index
   docs/LLM_INTEGRATION.md,project,Agent workflow guidance
   README.md,project,User-facing examples and feature summary
+close_reason: "Merged through PR #85 as master commit 8177c0c with complete official/live/release evidence, zero unresolved review threads, and publication intentionally deferred."
 body: "Add hassio ws integrations list|get|setup|descriptions|wait, hassio ws entity-sources, and hassio ws slugify. Normalize list-like outputs into bounded deterministic envelopes, validate domains/text/limits before network I/O, expose detailed help and schema metadata, preserve all format contracts, and retain raw ws call."
