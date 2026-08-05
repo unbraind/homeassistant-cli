@@ -2,14 +2,14 @@ id: hac-3kz8
 title: Implement typed repairs and related-resource command contracts
 description: "Build fully typed Home Assistant Repairs WebSocket/REST flow support and bounded search/related resource topology commands with strict validation, safe writes, stable formats, docs, tests, setup proof, and release-safe delivery."
 type: Task
-status: in_progress
+status: closed
 priority: 0
 tags[6]: agents,implementation,repairs,search,typescript,websocket
 created_at: "2026-08-05T19:18:16.357Z"
-updated_at: "2026-08-05T20:09:07.750Z"
+updated_at: "2026-08-05T20:14:13.084Z"
 deadline: "2026-08-07T19:18:16.357Z"
-assignee: codex-root
-claim_principal: codex-root
+closed_at: "2026-08-05T20:14:11.857Z"
+completed_at: "2026-08-05T20:14:11.857Z"
 author: codex-root
 estimated_minutes: 360
 acceptance_criteria: "Repairs commands cover list, get-issue-data, ignore/unignore, and fix-flow start/get/submit with typed request/response contracts and read-only enforcement; Related command validates all Core 2026.8 item types, supports count and positive safe-integer per-type limits, sorts deterministic resource arrays, and reports upstream failures honestly; CLI registration, exports, schema/help E2E, README, docs/API, docs/INDEX, docs/LLM_INTEGRATION, and docs/AGENT_OPTIMIZATION are current and linked; Focused, full, exact coverage, docstring, type, lint, duplication, file-size, ShellCheck, PM, changelog, audit, Trivy, history-secret, package, wizard/settings, live all-format, and auto-release dry-run gates pass"
@@ -26,6 +26,9 @@ risk: high
 confidence: 94
 sprint: api-parity-2026-08
 release: unreleased
+resolution: "Implemented typed Repairs and related-resource diagnostics, exact safety/output contracts, audited dependencies, nullable issue data, docs, capability probes, and complete verification."
+expected_result: All acceptance criteria pass and the exact reviewed head merges without private data or publication.
+actual_result: "PR #83 merged as 1174bf5; all hosted checks passed, 1,329 tests retained exact 100/100/100/100, live six-format and read-only acceptance passed, and no private value entered the repository."
 dependencies[12]{id,kind,created_at,author,source_kind,author_source}:
   hac-96i2,discovered_from,"2026-08-05T19:18:16.357Z",codex-root,"cli:create:dep",detected
   hac-97on,related,"2026-08-05T19:18:16.357Z",codex-root,"cli:create:dep",detected
@@ -114,4 +117,5 @@ docs[8]{path,scope,note}:
   docs/QUALITY_GATES.md,project,mandatory quality contract
   docs/RELEASING.md,project,automatic daily non-publishing validation contract
   README.md,project,user-facing Repairs and topology workflows
+close_reason: Merged through PR #83 as master commit 1174bf5 with complete local/live/release evidence and zero unresolved review threads.
 body: "Implement from Core 2026.8.0 schemas and installed dependency types. Use top-level imports, erasable TypeScript, no any, no dynamic imports, no trivial one-use wrappers, and no source file over 300 code lines. Normalize and sort upstream sets; bound per-type output; preserve generic passthrough; never retain raw live values."

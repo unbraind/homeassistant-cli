@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- Add agent-native repairs and related-resource diagnostics ([hac-lda1](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/features/hac-lda1.toon))
+
+### Other
+
+- Repairs and related-resource diagnostics delivery plan ([hac-ha2t](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/plans/hac-ha2t.toon))
+- Implement typed repairs and related-resource command contracts ([hac-3kz8](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-3kz8.toon))
+
 ## 2026.8.1 - 2026-08-01
 
 ### Added
