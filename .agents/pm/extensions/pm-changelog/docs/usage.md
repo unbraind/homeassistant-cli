@@ -288,7 +288,7 @@ and its history untouched in the tracker. Both flags are reported by `--explain`
 | `--version <version>` | `Unreleased` | Version heading for the standalone CLI |
 | `--release-version <version>` | - | Compatibility alias for `--version` (matches extension syntax) |
 | `--release-version-from-package` | false | Read the version heading from the nearest `package.json` |
-| `--date <date>` | today | Release date |
+| `--date <date>` | resolved tag date when available, otherwise current UTC date | Release heading date text; `YYYY-MM-DD` is recommended, and an explicit value is rendered verbatim and overrides the default |
 | `--since <date>` | - | Include items changed on or after date |
 | `--since-previous-tag` | false | Derive `--since` from the previous git tag. If the current release tag exists, the previous tag before it is used; otherwise the latest tag before `HEAD` is used. Fails with an `E_MISSING_TAG_HISTORY` diagnostic when tag history is incomplete — a shallow clone, or a `--no-tags` clone regardless of local tag count — naming the exact recovery for the detected state (e.g. `git fetch --tags --unshallow`, or `git config --unset remote.origin.tagOpt && git fetch --tags` for `--no-tags`). |
 | `--until <date>` | - | Include items changed on or before date |

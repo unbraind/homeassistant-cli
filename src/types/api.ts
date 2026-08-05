@@ -11,3 +11,4 @@ export * from "./api/lists.js";
 export * from "./api/analytics.js";
 export * from "./api/extended.js";
 export * from "./api/config.js";
+export * from "./api/diagnostics.js";

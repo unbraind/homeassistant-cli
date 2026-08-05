@@ -46,6 +46,12 @@ The standalone CLI accepts both `--flag value` and `--flag=value` for value
 options, and supports `--release-version` as a compatibility alias for
 `--version` (matching `pm changelog generate` syntax).
 
+When `--date` and a matching release-tag date are both absent, every generation
+path uses the current UTC calendar date. This keeps generated changelog bytes
+identical across developer and CI host timezones; pass `--date` when a different
+explicit business date is required. Explicit date text is rendered verbatim;
+use `YYYY-MM-DD` for a conventional changelog heading.
+
 ## Opt-in extras
 
 These flags are strictly additive — omitting them keeps output byte-for-byte identical to the default:

@@ -18,7 +18,7 @@ Complete documentation for the Home Assistant CLI tool.
 
 ## Release Status
 
-Current public release: **v2026.7.25** (2026-07-25).
+Current public release: **v2026.8.1** (2026-08-01).
 
 - `CHANGELOG.md` tracks released and unreleased changes.
 - Pre-release implementation progress and history audits are documented in `docs/PROJECT_HISTORY.md`.
@@ -222,6 +222,16 @@ All commands support global flags (`--url`, `--token`, `--format`, `--timeout`, 
 |---------|-------------|
 | `config-entries` | List/filter/count/delete integration config entries |
 
+### Repairs & Resource Topology
+
+| Command | Description |
+|---------|-------------|
+| `repairs list` | List, filter, count, and bound active repair issues |
+| `repairs show` | Read integration-provided data for one repair issue |
+| `repairs ignore` | Explicitly ignore or restore an issue with `--yes` and read-only enforcement |
+| `repairs fix` | Start, inspect, and submit administrator repair fix flows |
+| `related <item-type> <item-id>` | Find sorted, per-type bounded Home Assistant resource relationships |
+
 ### WebSocket & Supervisor
 
 | Command | Description |
@@ -248,6 +258,7 @@ All commands support global flags (`--url`, `--token`, `--format`, `--timeout`, 
 | `inspect <entity-id>` | Deep inspect entity with history |
 | `search <query>` | Search entities via API |
 | `find <pattern>` | Quick search by name/ID pattern |
+| `related <item-type> <item-id>` | Topology-aware related-resource search with count and result-type filters |
 | `ask <text>` | Ask voice assistant a question |
 
 ### Conversation & Voice Commands

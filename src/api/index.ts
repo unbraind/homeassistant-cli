@@ -20,3 +20,4 @@ export * from "./service-action.js";
 export * from "./config-entries.js";
 export * from "./errors.js";
 export * from "./base.js";
+export * from "./diagnostics.js";

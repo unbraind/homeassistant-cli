@@ -28,6 +28,8 @@ describe("capability planning utilities", () => {
     const plan = buildAgentPlan(report("available"));
     expect(plan.recommended_commands).toEqual(expect.arrayContaining([
       "hassio websocket status",
+      "hassio repairs list --count",
+      "hassio related entity <entity-id> --count",
       "hassio config-entries --count --format json",
       "hassio ask \"<question>\" --format json",
       "hassio tts engines --format json",

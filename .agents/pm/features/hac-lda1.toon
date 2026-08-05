@@ -1,0 +1,49 @@
+id: hac-lda1
+title: Add agent-native repairs and related-resource diagnostics
+description: "Expose Home Assistant 2026.8 repairs and search/related contracts as typed, bounded, format-stable CLI workflows for agent diagnosis and safe remediation."
+type: Feature
+status: open
+priority: 0
+tags[7]: agents,diagnostics,home-assistant,repairs,search,topology,websocket
+created_at: "2026-08-05T19:18:15.202Z"
+updated_at: "2026-08-05T19:18:15.202Z"
+deadline: "2026-08-07T19:18:15.202Z"
+assignee: unbraind
+author: codex-root
+estimated_minutes: 480
+acceptance_criteria: "Built hassio exposes typed bounded repairs list/detail, explicit ignore/unignore, and admin fix-flow start/read/submit operations; Built hassio exposes typed search/related topology with every current Home Assistant item type, deterministic normalized output, count and per-type bounds; Mutating repairs operations respect HASSIO_READONLY and require explicit confirmation where appropriate; Every command and global flag has detailed help and schema/documentation coverage across all supported formats; Exact 100/100/100/100 source coverage, 100 percent docstrings, file-size, duplication, static, PM, security, package, release-dry-run, setup wizard, and privacy-safe live gates pass"
+definition_of_ready: "Core 2026.8.0 tagged source, current official docs, live 2026.7.4 structural behavior, complete PM history and graph, GitHub duplicates, repository source, dependency types, baseline coverage, and private settings health inspected"
+goal: complete-agent-home-assistant-interface
+objective: typed-repairs-and-topology-diagnostics
+value: Let agents understand configuration problems and dependency blast radius without raw WebSocket payload construction or broad inventory downloads.
+impact: "Improves safe diagnosis, remediation planning, token efficiency, and programmatic automation across Home Assistant resources."
+outcome: Production-ready typed diagnostic and repair workflows merged with exact-head evidence and no unresolved review findings.
+why_now: Core 2026.8.0 is current and these durable built-in contracts remain available only through generic passthrough in the CLI.
+parent: hac-4s9j
+reviewer: unbraind
+risk: high
+confidence: 95
+sprint: api-parity-2026-08
+release: unreleased
+dependencies[8]{id,kind,created_at,author,source_kind,author_source}:
+  hac-96i2,discovered_from,"2026-08-05T19:18:15.202Z",codex-root,"cli:create:dep",detected
+  hac-ak9g,related,"2026-08-05T19:18:15.202Z",codex-root,"cli:create:dep",detected
+  hac-g36l,related,"2026-08-05T19:18:15.202Z",codex-root,"cli:create:dep",detected
+  hac-poex,related,"2026-08-05T19:18:15.202Z",codex-root,"cli:create:dep",detected
+  hac-r17v,discovered_from,"2026-08-05T19:18:15.202Z",codex-root,"cli:create:dep",detected
+  hac-r4e3,related,"2026-08-05T19:18:15.202Z",codex-root,"cli:create:dep",detected
+  hac-vooo,related,"2026-08-05T19:18:15.202Z",codex-root,"cli:create:dep",detected
+  hac-wwsi,related,"2026-08-05T19:18:15.202Z",codex-root,"cli:create:dep",detected
+comments[1]{created_at,author,text}:
+  "2026-08-05T19:18:15.202Z",codex-root,"Selected after all-status deep PM reads,verified history,graph audit,targeted duplicate searches,GitHub issue/PR search,Core 2026.8.0 source review,and privacy-safe live capability probes."
+notes[1]{created_at,author,text}:
+  "2026-08-05T19:18:15.202Z",codex-root,"Never persist credentials,LAN URL,issue identifiers/data,entity identifiers,config-entry identifiers,topology results,location,or raw live payloads in PM,git,logs,or GitHub evidence."
+learnings[1]{created_at,author,text}:
+  "2026-08-05T19:18:15.202Z",codex-root,Repairs combines read-only WebSocket issue discovery/data with mutating ignore and admin REST data-entry flows; search/related returns type-keyed resource sets and can surface upstream unknown_error for some valid integration roots.
+files[1]{path,scope,note}:
+  src/cli.ts,project,root command registration
+tests[1]{command,scope,timeout_seconds}:
+  "bun run test:coverage",project,900
+docs[1]{path,scope,note}:
+  docs/API.md,project,canonical API documentation
+body: "Research official Home Assistant developer documentation and Core 2026.8.0 source; implement typed Repairs issue discovery/detail/ignore/fix-flow operations and related-resource topology search; preserve read-only enforcement, bounded deterministic output, all formatter contracts, setup health, privacy-safe live proof, and generic WebSocket passthrough."

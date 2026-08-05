@@ -1310,6 +1310,54 @@ hassio action "toggle kitchen switch"
 hassio action "activate movie scene"
 ```
 
+## Repairs Commands
+
+Use Home Assistant's Repairs integration through typed WebSocket discovery and
+administrator HTTP fix-flow contracts:
+
+```bash
+# Read-only issue discovery
+hassio repairs list --count
+hassio repairs list --severity critical --domain homeassistant --limit 20
+hassio repairs show <domain> <issue-id> --format json-compact
+
+# Confirmed state changes
+hassio repairs ignore <domain> <issue-id> --yes
+hassio repairs ignore <domain> <issue-id> --restore --yes
+hassio repairs fix start <handler> <issue-id> --yes
+hassio repairs fix status <flow-id>
+hassio repairs fix submit <flow-id> --data '{"confirm":true}' --yes
+```
+
+`list` returns `{ count, by_severity, issues }`; `--count` omits issue rows and
+`--limit` bounds detail. `show` returns `{ domain, issue_id, issue_data }`.
+Fix commands return Home Assistant's typed data-entry flow state, including
+`flow_id`, `step_id`, `data_schema`, `errors`, or a terminal result.
+
+Ignore, restore, fix start, and fix submit require `--yes`. They are blocked by
+`--read-only` or `HASSIO_READONLY=true`; list, show, and fix status remain
+available. Issue and flow identifiers, placeholders, URLs, and issue data can
+reveal private configuration and should not be persisted.
+
+## Related Resource Topology
+
+`related` exposes Core's `search/related` resource graph with deterministic
+sorting and a separate limit for every returned resource type:
+
+```bash
+hassio related entity light.kitchen
+hassio related device <device-id> --result-type automation --limit 20
+hassio related area kitchen --count --format json-compact
+```
+
+Supported input and result types are `area`, `automation`,
+`automation_blueprint`, `config_entry`, `device`, `entity`, `floor`, `group`,
+`integration`, `label`, `person`, `scene`, `script`, and `script_blueprint`.
+The stable envelope is `{ query, count, by_type, related }`; `--count` omits
+identifiers. An upstream `unknown_error` is reported honestly because some
+integration roots can fail inside Home Assistant even when the command itself
+is registered. Returned identifiers are private instance topology.
+
 ## WebSocket Commands
 
 #### `websocket` / `ws`

@@ -112,6 +112,8 @@ import {
   createMqttCommand,
   createScheduleCommand,
   createUtilityMeterCommand,
+  createRepairsCommand,
+  createRelatedCommand,
 } from "./commands/index.js";
 import { createInspectCommand, createSummaryCommand } from "./commands/inspect.js";
 import { attachGlobalFlagsHelp } from "./utils/command-helpers.js";
@@ -265,6 +267,8 @@ program.addCommand(createRecorderCommand());
 program.addCommand(createMqttCommand());
 program.addCommand(createScheduleCommand());
 program.addCommand(createUtilityMeterCommand());
+program.addCommand(createRepairsCommand());
+program.addCommand(createRelatedCommand());
 
 attachGlobalFlagsHelp(program);
 return program;

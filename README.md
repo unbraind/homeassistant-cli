@@ -8,7 +8,7 @@ CLI for Home Assistant with token-efficient output and broad API coverage. Defau
 
 ## Project Status
 
-Current public release: `v2026.7.25` (July 25, 2026). See:
+Current public release: `v2026.8.1` (August 1, 2026). See:
 
 - [CHANGELOG](./CHANGELOG.md) for released and unreleased changes
 - [Project History](./docs/PROJECT_HISTORY.md) for pre-release implementation history and audits
@@ -37,6 +37,7 @@ Current public release: `v2026.7.25` (July 25, 2026). See:
 - **Compact Registry Discovery** - Uses Home Assistant's enabled-entity display contract for low-bandwidth agent context
 - **WebSocket API Coverage** - Generic passthrough plus typed targets, automation validation, panels, heartbeat, signed paths, and voice-assistant exposure
 - **Bounded Media Discovery** - Browse, search, and resolve media sources or players with read-only, agent-sized output
+- **Agent Diagnostics** - Typed Repairs issue/fix flows and bounded related-resource topology search
 - **Supervisor API Coverage** - Generic `supervisor api` passthrough + common shortcuts (addons, host, logs)
 - **Full TypeScript Support** - Complete type safety throughout
 - **Comprehensive Testing** - Large automated test suite with strong coverage
@@ -554,6 +555,31 @@ hassio config-entries --count
 hassio config-entries --domain mqtt
 hassio config-entries --delete <entry-id> --yes
 ```
+
+### Repairs & Related Resources
+
+```bash
+# Count active repair issues without exposing instance identifiers
+hassio repairs list --count
+
+# Inspect a bounded severity slice or one issue's integration-provided data
+hassio repairs list --severity critical --limit 20
+hassio repairs show <domain> <issue-id>
+
+# Explicitly confirmed writes; blocked by --read-only / HASSIO_READONLY=true
+hassio repairs ignore <domain> <issue-id> --yes
+hassio repairs ignore <domain> <issue-id> --restore --yes
+hassio repairs fix start <handler> <issue-id> --yes
+hassio repairs fix status <flow-id>
+hassio repairs fix submit <flow-id> --data '{"confirm":true}' --yes
+
+# Traverse Home Assistant's resource topology with per-type bounds
+hassio related entity light.kitchen --limit 20
+hassio related area kitchen --result-type automation --count
+```
+
+Repair and topology identifiers are private instance data. Prefer `--count`
+for planning, use small limits, and do not persist raw results in logs or prompts.
 
 If supervisor commands return `401` or `404`, the CLI now reports actionable guidance:
 - `401`: token/permissions issue for supervisor access
