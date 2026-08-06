@@ -5,38 +5,13 @@ import WebSocket from "ws";
 import type { Config } from "../types/options.js";
 import type { HaWebSocketServiceCallResult } from "../types/api.js";
 import { HomeAssistantReadOnlyError } from "./errors.js";
-
-interface WsEnvelope {
-  id?: number;
-  type?: string;
-  success?: boolean;
-  error?: unknown;
-  [key: string]: unknown;
-}
-
-interface PendingCall {
-  resolve: (value: unknown) => void;
-  reject: (reason: unknown) => void;
-  timer: NodeJS.Timeout;
-}
-
-interface EventBuffer {
-  events: unknown[];
-  maxEvents: number;
-  finish: () => void;
-}
-
-type WsSubscriptionType =
-  | "condition_platforms/subscribe"
-  | "subscribe_entities"
-  | "subscribe_events"
-  | "subscribe_trigger"
-  | "trigger_platforms/subscribe";
-
-interface WsConnectMessage {
-  type: "auth_required" | "auth_ok" | "auth_invalid";
-  message?: string;
-}
+import {
+  parseWebsocketMessage,
+  type EventBuffer,
+  type PendingCall,
+  type WsConnectMessage,
+  type WsSubscriptionType,
+} from "./websocket-protocol.js";
 
 export class HomeAssistantWebSocketClient {
   private readonly wsUrl: string;
@@ -86,7 +61,7 @@ export class HomeAssistantWebSocketClient {
     }
 
     socket.on("message", (raw: WebSocket.RawData) => {
-      const parsed = this.parseMessage(raw.toString());
+      const parsed = parseWebsocketMessage(raw.toString());
       if (!parsed) return;
       const messages = Array.isArray(parsed) ? parsed : [parsed];
 
@@ -178,6 +153,19 @@ export class HomeAssistantWebSocketClient {
     return await this.call("call_service", payload) as HaWebSocketServiceCallResult;
   }
 
+  /** Execute an ad hoc Home Assistant action sequence through WebSocket. */
+  async executeScript(options: {
+    sequence: Record<string, unknown> | Record<string, unknown>[];
+    variables?: Record<string, unknown>;
+  }): Promise<unknown> {
+    if (this.readOnly) {
+      throw new HomeAssistantReadOnlyError("WEBSOCKET", "/websocket/execute_script");
+    }
+    const payload: Record<string, unknown> = { sequence: options.sequence };
+    if (options.variables) payload["variables"] = options.variables;
+    return this.call("execute_script", payload);
+  }
+
   async subscribeEvents(options?: {
     eventType?: string;
     maxEvents?: number;
@@ -203,6 +191,20 @@ export class HomeAssistantWebSocketClient {
     return this.collectSubscription(
       "subscribe_trigger",
       payload,
+      options.maxEvents ?? 10,
+      options.waitMs ?? 5000,
+    );
+  }
+
+  /** Collect changed evaluations for one Home Assistant condition. */
+  async subscribeCondition(options: {
+    condition: Record<string, unknown>;
+    maxEvents?: number;
+    waitMs?: number;
+  }): Promise<unknown[]> {
+    return this.collectSubscription(
+      "subscribe_condition",
+      { condition: options.condition },
       options.maxEvents ?? 10,
       options.waitMs ?? 5000,
     );
@@ -299,20 +301,6 @@ export class HomeAssistantWebSocketClient {
     });
 
     return response;
-  }
-
-  private parseMessage(raw: string): WsEnvelope | WsEnvelope[] | null {
-    try {
-      const parsed = JSON.parse(raw) as unknown;
-      if (Array.isArray(parsed)) {
-        return parsed.filter(
-          (value): value is WsEnvelope => value !== null && typeof value === "object" && !Array.isArray(value)
-        );
-      }
-      return parsed !== null && typeof parsed === "object" ? parsed as WsEnvelope : null;
-    } catch {
-      return null;
-    }
   }
 
   private async waitForMessage<T>(): Promise<T> {

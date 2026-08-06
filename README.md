@@ -35,7 +35,7 @@ Current public release: `v2026.8.1` (August 1, 2026). See:
 - **Search Endpoint Fallback** - Falls back to local entity-state search when `/api/search` is unavailable
 - **Service Schema Intelligence** - Supports modern object-style `/api/services` payloads with filter/flat/count modes
 - **Compact Registry Discovery** - Uses Home Assistant's enabled-entity display contract for low-bandwidth agent context
-- **WebSocket API Coverage** - Generic passthrough plus typed targets, automation validation, integration intelligence, entity provenance, panels, heartbeat, signed paths, and voice-assistant exposure
+- **WebSocket API Coverage** - Generic passthrough plus typed targets, automation validation/runtime, integration intelligence, entity provenance, panels, heartbeat, signed paths, and voice-assistant exposure
 - **Bounded Media Discovery** - Browse, search, and resolve media sources or players with read-only, agent-sized output
 - **Agent Diagnostics** - Typed Repairs issue/fix flows and bounded related-resource topology search
 - **Supervisor API Coverage** - Generic `supervisor api` passthrough + common shortcuts (addons, host, logs)
@@ -524,6 +524,13 @@ hassio ws target services --entity-id group.downstairs --no-expand-group
 # Validate automation definitions without executing them
 hassio ws validate-config --action '[{"action":"light.turn_on","target":{"entity_id":"light.kitchen"}}]'
 hassio ws validate-config --file automation.json
+
+# Evaluate and observe condition truth without executing actions
+hassio ws automation-runtime test-condition --file automation.json
+hassio ws automation-runtime observe-condition --file automation.json --wait-ms 10000 --max-events 3
+
+# Execute the same file's action sequence after approval (blocked by --read-only)
+hassio ws automation-runtime execute-sequence --file automation.json
 
 # Target helper: resolve and fetch related registries
 hassio ws target related --label-id lighting

@@ -15,7 +15,7 @@
         "@eslint/js": "^10.0.1",
         "@types/node": "^22.20.1",
         "@types/ws": "^8.18.1",
-        "@unbrained/pm-cli": "^2026.8.5",
+        "@unbrained/pm-cli": "^2026.8.6",
         "@vitest/coverage-v8": "^4.1.10",
         "eslint": "^10.8.0",
         "eslint-plugin-jsdoc": "63.2.0",
@@ -257,7 +257,7 @@
 
     "@typescript-eslint/visitor-keys": ["@typescript-eslint/visitor-keys@8.66.0", "", { "dependencies": { "@typescript-eslint/types": "8.66.0", "eslint-visitor-keys": "^5.0.0" } }, "sha512-dkKR8q+lKciskj1Y3vthHktl+3cMLWGyVUP23bRiPZ5O9BRT++4EqDDV+TVeIKBL1VXVEqrJlz8MYbcnvJcAlg=="],
 
-    "@unbrained/pm-cli": ["@unbrained/pm-cli@2026.8.5", "", { "dependencies": { "@sentry/node": "10.69.0", "@toon-format/toon": "^4.1.0", "@types/node": ">=22", "commander": "^15.0.0", "fast-glob": "^3.3.3", "fast-json-patch": "^3.1.1", "npm-package-arg": "^13.0.2", "tar": "7.5.22" }, "bin": { "pm-cli": "dist/cli.js", "pm": "dist/cli.js", "pm-mcp": "dist/mcp/server.js" } }, "sha512-j3NLgJHG0AO6xqB1En8AqwVCdvdc/cu0TxXd6Xv7N2eFUQ4Q+VJvLiSvTNhKRQu0eF5jBREMePSTFKcKJcqlHw=="],
+    "@unbrained/pm-cli": ["@unbrained/pm-cli@2026.8.6", "", { "dependencies": { "@sentry/node": "10.69.0", "@toon-format/toon": "^4.1.0", "@types/node": ">=22", "commander": "^15.0.0", "fast-glob": "^3.3.3", "fast-json-patch": "^3.1.1", "npm-package-arg": "^13.0.2", "tar": "7.5.22" }, "bin": { "pm-cli": "dist/cli.js", "pm": "dist/cli.js", "pm-mcp": "dist/mcp/server.js" } }, "sha512-98pay0mtwwcWhc9dORhPo3wAmcXV1E5snPv/QMrSd9CXNhCUB3mwYRf194iYR29ttUSfMfGtrF/G8tjbC+fPKQ=="],
 
     "@vitest/coverage-v8": ["@vitest/coverage-v8@4.1.10", "", { "dependencies": { "@bcoe/v8-coverage": "^1.0.2", "@vitest/utils": "4.1.10", "ast-v8-to-istanbul": "^1.0.0", "istanbul-lib-coverage": "^3.2.2", "istanbul-lib-report": "^3.0.1", "istanbul-reports": "^3.2.0", "magicast": "^0.5.2", "obug": "^2.1.1", "std-env": "^4.0.0-rc.1", "tinyrainbow": "^3.1.0" }, "peerDependencies": { "@vitest/browser": "4.1.10", "vitest": "4.1.10" }, "optionalPeers": ["@vitest/browser"] }, "sha512-IM49HmthevbgAO4anp1hwtoT9wYe59w0LR00gr+eagHE+ZJ5lK4sLPeO0ubgoJcwLk6dehU3R24N+FbEEKDc8g=="],
 
@@ -632,8 +632,6 @@
     "@typescript-eslint/utils/@typescript-eslint/types": ["@typescript-eslint/types@8.66.0", "", {}, "sha512-H6gcYaSDOyvL3AD/jHUtUFo2jqGgn/F6nuyuZSu0QTesxL+cP4dQoIMrODRofuJC09g64+WgZ6tE19Y1N2YIFQ=="],
 
     "@typescript-eslint/visitor-keys/@typescript-eslint/types": ["@typescript-eslint/types@8.66.0", "", {}, "sha512-H6gcYaSDOyvL3AD/jHUtUFo2jqGgn/F6nuyuZSu0QTesxL+cP4dQoIMrODRofuJC09g64+WgZ6tE19Y1N2YIFQ=="],
-
-    "@unbrained/pm-cli/@toon-format/toon": ["@toon-format/toon@4.1.0", "", {}, "sha512-dBB3pkEx9QYvHnHR6rtkaBAh+7x4W/oA5ONur4G0fh7Ow69PbPuM7OFxzNRABqyxC0t6SZ3RixiGbCuaFjPDAQ=="],
 
     "eslint-scope/@types/estree": ["@types/estree@1.0.8", "", {}, "sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w=="],
 

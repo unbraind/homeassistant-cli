@@ -273,7 +273,25 @@ coalesced WebSocket frames, bounds both time and output size, unsubscribes, and
 never fires the trigger. Treat returned context and variable values as private
 instance data.
 
-### 13. Bounded WebSocket Session Discovery
+### 13. Evaluate Conditions Before Approved Execution
+
+Keep the authored automation artifact consistent across validation and runtime:
+
+```bash
+hassio ws validate-config --file automation.json --format json-compact
+hassio ws automation-runtime test-condition --file automation.json --format json-compact
+hassio ws automation-runtime observe-condition --file automation.json \
+  --wait-ms 10000 --max-events 3 --format json-compact
+hassio ws automation-runtime execute-sequence --file automation.json
+```
+
+Testing evaluates once and preserves template errors. Observation emits only
+changed evaluations and always attempts to unsubscribe. Execution is admin-only
+and state-changing, so leave read-only mode enabled through planning and remove
+it only for an approved run. The transport rejects execution before connecting
+when read-only mode is active.
+
+### 14. Bounded WebSocket Session Discovery
 
 Prefer typed commands for stable protocol operations and bound large exposure
 inventories before adding them to an agent context:
@@ -289,7 +307,7 @@ Global `--read-only` blocks `ws exposure enable|disable`. A value returned by
 `ws sign-path` is a short-lived credential: consume it immediately and never
 persist it in prompts, logs, pm items, or source control.
 
-### 14. Bounded Media Discovery
+### 15. Bounded Media Discovery
 
 Count before fetching media rows, then request only the context the agent needs:
 
@@ -308,7 +326,7 @@ boundary and retain generic `ws call` for integration-specific contracts.
 Full resolve output may contain a short-lived signed URL, so prefer
 `--metadata-only` for planning and never persist the URL.
 
-### 15. Repair and Dependency Diagnostics
+### 16. Repair and Dependency Diagnostics
 
 Count before fetching private diagnostic details, and keep topology traversal
 focused on the resource type needed for a decision:
@@ -326,7 +344,7 @@ blocked by read-only mode. `repairs fix status` is read-only. Never persist
 issue IDs, flow IDs, placeholders, URLs, or related-resource identifiers in
 prompts, PM evidence, or source control.
 
-### 16. Integration Intelligence and Entity Provenance
+### 17. Integration Intelligence and Entity Provenance
 
 Build integration-aware plans with bounded metadata before requesting entity
 or service detail:

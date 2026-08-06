@@ -1380,6 +1380,9 @@ hassio ws target services --entity-id group.downstairs --no-expand-group
 hassio ws target related --label-id lighting
 hassio ws validate-config --action '[{"action":"light.turn_on","target":{"entity_id":"light.kitchen"}}]'
 hassio ws validate-config --file automation.json
+hassio ws automation-runtime test-condition --file automation.json
+hassio ws automation-runtime observe-condition --file automation.json --wait-ms 10000
+hassio ws automation-runtime execute-sequence --file automation.json
 hassio ws subscribe --event-type state_changed --wait-ms 10000 --max-events 20
 hassio ws subscribe-trigger --trigger '{"trigger":"event","event_type":"doorbell"}' --wait-ms 30000
 hassio ws observe-entities --domain light --wait-ms 10000 --max-events 20
@@ -1575,6 +1578,55 @@ hassio ws subscribe-trigger \
   --variables '{"source":"agent-observation"}' \
   --wait-ms 30000 --max-events 5 --format json-compact
 hassio ws subscribe-trigger --file trigger.json --format toon
+```
+
+#### `websocket automation-runtime`
+
+Evaluate condition truth, observe changed evaluations, and execute ad hoc action
+sequences through stable Home Assistant Core WebSocket contracts:
+
+```bash
+hassio ws automation-runtime test-condition [options]
+hassio ws automation-runtime observe-condition [options]
+hassio ws automation-runtime execute-sequence [options]
+
+Shared input options:
+  --file <path>       Direct definition or normal automation JSON file
+  --variables <json>  Optional variables object (test and execute only)
+
+Definition options:
+  --condition <json>  Single condition object (test and observe)
+  --sequence <json>   Action object or sequence array (execute)
+
+Observation bounds:
+  --wait-ms <ms>      Positive observation duration (default: 5000)
+  --max-events <n>    Positive changed-result bound (default: 10)
+```
+
+Inline definitions take precedence over `--file`. File inputs may be direct
+definitions or ordinary automation documents: condition commands select
+`condition`/`conditions`, while execution selects `action`/`actions`/`sequence`.
+`test-condition` returns `{evaluation: "condition", result}` and preserves the
+Core boolean plus any `template_errors`. `observe-condition` uses the admin-only
+`subscribe_condition` contract, emits only changed result/error payloads, bounds
+time and rows, unsubscribes, and returns
+`{subscription: "condition", event_count, events}`.
+
+`execute-sequence` validates through Core, executes as the authenticated admin,
+and returns `{execution: "sequence", result}` with the Core context and optional
+action response. It can change Home Assistant state. Global `--read-only` blocks
+it at the transport boundary before a WebSocket connection is created. Prefer
+`validate-config`, then `test-condition`, then `observe-condition`; execute only
+after approval. Returned context, template output, and errors may contain private
+instance details and should not be persisted.
+
+```bash
+hassio ws automation-runtime test-condition \
+  --condition '{"condition":"template","value_template":"{{ is_state(\"sun.sun\", \"above_horizon\") }}"}'
+hassio ws automation-runtime observe-condition --file automation.json \
+  --wait-ms 30000 --max-events 3 --format json-compact
+hassio ws automation-runtime execute-sequence --file automation.json \
+  --variables '{"source":"approved-agent-run"}'
 ```
 
 #### Typed session and exposure operations

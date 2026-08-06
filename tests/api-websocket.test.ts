@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { EventEmitter } from "events";
 import { HomeAssistantWebSocketClient } from "../src/api/websocket.js";
+import { parseWebsocketMessage } from "../src/api/websocket-protocol.js";
 import type { Config } from "../src/types/options.js";
 
 // ──────────────────────────────────────────────────────────────
@@ -105,7 +106,6 @@ type InternalClient = {
   socket: FakeWs | null;
   pending: Map<number, unknown>;
   eventBuffers: Map<number, { events: unknown[]; maxEvents: number; finish: () => void }>;
-  parseMessage: (raw: string) => unknown;
   sendAndWait: (id: number, type: string, payload?: Record<string, unknown>) => Promise<unknown>;
   waitForMessage: <T>() => Promise<T>;
 };
@@ -130,29 +130,27 @@ describe("HomeAssistantWebSocketClient – constructor URL conversion", () => {
 });
 
 // ──────────────────────────────────────────────────────────────
-describe("HomeAssistantWebSocketClient – parseMessage()", () => {
-  const ic = new HomeAssistantWebSocketClient(baseConfig) as unknown as InternalClient;
-
+describe("parseWebsocketMessage()", () => {
   it("returns null for invalid JSON", () => {
-    expect(ic.parseMessage("not-json")).toBeNull();
+    expect(parseWebsocketMessage("not-json")).toBeNull();
   });
 
   it("returns parsed object for valid JSON", () => {
-    expect(ic.parseMessage('{"type":"ping"}')).toEqual({ type: "ping" });
+    expect(parseWebsocketMessage('{"type":"ping"}')).toEqual({ type: "ping" });
   });
 
   it("normalizes coalesced frames and discards invalid entries", () => {
-    expect(ic.parseMessage('[{"id":2,"type":"pong"},null,7,[]]')).toEqual([
+    expect(parseWebsocketMessage('[{"id":2,"type":"pong"},null,7,[]]')).toEqual([
       { id: 2, type: "pong" },
     ]);
   });
 
   it("returns null for a valid JSON primitive", () => {
-    expect(ic.parseMessage("7")).toBeNull();
+    expect(parseWebsocketMessage("7")).toBeNull();
   });
 
   it("parses empty object", () => {
-    expect(ic.parseMessage("{}")).toEqual({});
+    expect(parseWebsocketMessage("{}")).toEqual({});
   });
 });
 
@@ -553,6 +551,43 @@ describe("HomeAssistantWebSocketClient – call()", () => {
     })).rejects.toThrow("Read-only mode blocked WEBSOCKET");
     expect(mockWsConstructor).not.toHaveBeenCalled();
   });
+
+  it("executes an action sequence with variables", async () => {
+    const { client, ws } = await connectedClient();
+    hookReply(ws, (id) => ({
+      type: "result",
+      success: true,
+      result: { context: { id: "ctx" }, response: { value: 2 } },
+      id,
+    }));
+    await expect(client.executeScript({
+      sequence: [{ action: "input_number.set_value", data: { value: "{{ value }}" } }],
+      variables: { value: 2 },
+    })).resolves.toEqual({ context: { id: "ctx" }, response: { value: 2 } });
+    const message = ws.sentMessages
+      .map(entry => JSON.parse(entry) as Record<string, unknown>)
+      .find(entry => entry["type"] === "execute_script");
+    expect(message).toEqual(expect.objectContaining({
+      sequence: [{ action: "input_number.set_value", data: { value: "{{ value }}" } }],
+      variables: { value: 2 },
+    }));
+    await client.close();
+  });
+
+  it("omits absent sequence variables and blocks read-only execution before connecting", async () => {
+    const writable = new HomeAssistantWebSocketClient(baseConfig);
+    vi.spyOn(writable, "call").mockResolvedValue({ context: { id: "ctx" }, response: null });
+    await writable.executeScript({ sequence: { action: "light.turn_on" } });
+    expect(writable.call).toHaveBeenCalledWith("execute_script", {
+      sequence: { action: "light.turn_on" },
+    });
+
+    const readOnly = new HomeAssistantWebSocketClient({ ...baseConfig, readOnly: true });
+    await expect(readOnly.executeScript({
+      sequence: { action: "light.turn_on" },
+    })).rejects.toThrow("Read-only mode blocked WEBSOCKET");
+    expect(mockWsConstructor).not.toHaveBeenCalled();
+  });
 });
 
 // ──────────────────────────────────────────────────────────────
@@ -819,6 +854,31 @@ describe("HomeAssistantWebSocketClient – optimized subscriptions", () => {
     const promise = client.subscribeAutomationPlatforms({ kind: "trigger" });
     await vi.advanceTimersByTimeAsync(5000);
     await expect(promise).resolves.toEqual([]);
+    vi.useRealTimers();
+  });
+
+  it("subscribes to condition changes with explicit and default bounds", async () => {
+    vi.useFakeTimers();
+    const client = new HomeAssistantWebSocketClient(baseConfig);
+    vi.spyOn(client, "connect").mockResolvedValue(undefined);
+    const sendAndWait = vi.fn(async () => null);
+    (client as unknown as InternalClient).sendAndWait = sendAndWait;
+    vi.spyOn(client, "call").mockResolvedValue(null);
+
+    const explicit = client.subscribeCondition({
+      condition: { condition: "template", value_template: "{{ true }}" },
+      maxEvents: 2,
+      waitMs: 20,
+    });
+    await vi.advanceTimersByTimeAsync(20);
+    await expect(explicit).resolves.toEqual([]);
+    expect(sendAndWait).toHaveBeenCalledWith(1, "subscribe_condition", {
+      condition: { condition: "template", value_template: "{{ true }}" },
+    });
+
+    const defaults = client.subscribeCondition({ condition: { condition: "sun", after: "sunrise" } });
+    await vi.advanceTimersByTimeAsync(5000);
+    await expect(defaults).resolves.toEqual([]);
     vi.useRealTimers();
   });
 });

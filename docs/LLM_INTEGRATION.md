@@ -77,14 +77,24 @@ fields to the plural WebSocket payload required by current Home Assistant Core,
 rejects malformed or empty input locally, and returns per-section
 `{ valid, error }` results in the selected output format.
 
-9. Bounded media discovery (implemented):
+9. Typed automation runtime (implemented):
+After `ws validate-config`, use
+`hassio ws automation-runtime test-condition --file automation.json` to evaluate
+one condition without actions. Use `observe-condition` with small `--wait-ms`
+and `--max-events` bounds when truth changes matter. Only after approval should
+an agent use `execute-sequence`; global read-only mode rejects execution before
+network I/O. File input reuses normal `condition(s)` and `action(s)` fields, so
+the validated artifact remains the execution artifact. Treat runtime contexts,
+template output, and errors as private.
+
+10. Bounded media discovery (implemented):
 Use `hassio media browse --count` before requesting detail, then apply a small
 `--limit`. `hassio media search` supports shared media sources and
 `--entity-id` player search, with current media-class filters and stable
 `{ scope, count, results }` output. Prefer `media resolve --metadata-only`;
 the full resolve response can contain a short-lived signed credential.
 
-10. Observe Entity Deltas with Bounded Context (implemented):
+11. Observe Entity Deltas with Bounded Context (implemented):
 Use `hassio ws observe-entities --domain <domain>` instead of repeatedly fetching
 all states or consuming full `state_changed` event envelopes. The command sends
 filters to Home Assistant, expands the compact initial snapshot, preserves
@@ -92,33 +102,33 @@ lossless add/change/remove patches, stops at `--wait-ms` or `--max-events`, and
 always attempts to unsubscribe. Add `--no-initial` when only subsequent changes
 belong in the agent context.
 
-11. Discover Purpose-Specific Automation Platforms (implemented):
+12. Discover Purpose-Specific Automation Platforms (implemented):
 Use `hassio ws automation-platforms --kind all` to retrieve the current trigger
 and condition schemas published by loaded integrations. Narrow them with
 `ws target triggers|conditions`, then validate the authored configuration with
 `ws validate-config` before execution.
 
-12. Observe Automation Triggers with Bounded Context (implemented):
+13. Observe Automation Triggers with Bounded Context (implemented):
 Use `hassio ws subscribe-trigger --trigger <json>` when an agent needs to wait
 for an automation-level condition without consuming the full event bus. The
 command validates inputs locally, negotiates coalesced WebSocket frames, applies
 `--wait-ms` and `--max-events` bounds, unsubscribes, and never fires the trigger.
 It requires a Home Assistant administrator.
 
-13. Repair diagnosis and safe remediation (implemented):
+14. Repair diagnosis and safe remediation (implemented):
 Start with `hassio repairs list --count`, then request a small severity/domain
 slice. Use `repairs show` only when issue data is required. Ignore and fix-flow
 writes require `--yes` and are blocked in read-only mode; `fix status` is safe
 for observing an already-started flow. Treat every issue and flow identifier as
 private instance data.
 
-14. Related-resource topology (implemented):
+15. Related-resource topology (implemented):
 Use `hassio related <item-type> <item-id> --count` to estimate the dependency
 surface before fetching identifiers. Apply `--result-type` and a small
 per-type `--limit` to bound context. This is Core's semantic resource graph,
 not text search, and can reveal automation/configuration relationships.
 
-15. Integration intelligence and entity provenance (implemented):
+16. Integration intelligence and entity provenance (implemented):
 Use `hassio ws integrations list --count` before fetching a small manifest
 slice. `integrations setup` exposes startup timing, `descriptions` provides
 admin-only integration metadata, and `wait` checks load readiness. Use
