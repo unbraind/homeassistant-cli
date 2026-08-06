@@ -6,7 +6,7 @@ status: in_progress
 priority: 0
 tags[5]: agents,automation,delivery,live-e2e,websocket
 created_at: "2026-08-06T17:06:49.586Z"
-updated_at: "2026-08-06T17:49:19.948Z"
+updated_at: "2026-08-06T18:16:31.001Z"
 deadline: "2026-08-08T17:06:49.586Z"
 assignee: codex-root
 author: codex-root
@@ -66,8 +66,9 @@ dependencies[7]:
     kind: implements
     created_at: "2026-08-06T17:07:49.618Z"
     author: codex-root
-comments[1]{created_at,author,text}:
+comments[2]{created_at,author,text}:
   "2026-08-06T17:06:49.586Z",codex-root,Only this actively executed delivery plan is in progress; the product feature stays open until implementation proof exists.
+  "2026-08-06T18:16:30.976Z",codex-root,"CodeRabbit identified duplicate roadmap numbering in docs/LLM_INTEGRATION.md; verified as valid and corrected 16/17 to 17/18. Its separate docstring heuristic warning is contradicted by the repository-owned 131/131 source docstring gate. CodeRabbit and Sourcery full-review providers reported quota limits, which are recorded as limitations rather than approvals."
 notes[2]{created_at,author,text}:
   "2026-08-06T17:06:49.586Z",codex-root,Use blocking waits for long tests and review agents; take one final exact-head inventory after checks settle.
   "2026-08-06T17:48:46.196Z",codex-root,Auto-release dry-run was intentionally non-publishing and reported pushed=false. A temporary-workspace PM health snapshot observed a pending telemetry queue warning while all integrity checks passed; production release verification reported healthy PM state.
@@ -88,8 +89,9 @@ plan_validation[2]{text,command,expected}:
   Strict release and automatic daily release gates passed,"bun run release:verify && bun run release:auto:dry-run","Exact coverage, security, PM/changelog, build/tests, and packed npx/bunx consumers pass; dry-run reports pushed=false"
 plan_decisions[1]{ts,author,decision,rationale,evidence}:
   "2026-08-06T17:07:50.162Z",codex-root,"Expose one cohesive ws automation-runtime group with test-condition, observe-condition, and execute-sequence subcommands while retaining raw ws call.",These commands share JSON/file/variables inputs and form one discovery-to-validation-to-runtime agent workflow; grouping avoids top-level command sprawl.,Home Assistant Core 2026.8.0 commands.py schemas and existing CLI ws validate-config/subscribe-trigger patterns.
-plan_discoveries[1]{ts,author,text}:
+plan_discoveries[2]{ts,author,text}:
   "2026-08-06T17:07:50.662Z",codex-root,"Local Home Assistant 2026.7.4 supports the same three stable WebSocket command schemas as upstream 2026.8.0; live evidence will record only version and contract success, never private payloads."
+  "2026-08-06T18:16:30.476Z",codex-root,"During the hosted review wait, protected master advanced to the sole immutable daily release v2026.8.6. The branch was merged forward with the PM JSON driver; the only conflict was generated updated_at ordering, and the latest extension installer normalized it."
 plan_steps[8]:
   - id: plan-step-001
     order: 1
@@ -145,9 +147,9 @@ plan_steps[8]:
     title: "Run strict release, security, PM, changelog, and auto-release dry-run gates"
     status: completed
     created_at: "2026-08-06T17:06:49.578Z"
-    updated_at: "2026-08-06T17:48:45.269Z"
+    updated_at: "2026-08-06T18:16:29.849Z"
     owner: codex-root
-    evidence: "Clean-tree automatic daily release dry-run passed without pushing: target v2026.8.6 from v2026.8.1, release detection found 15 commits, release:verify passed, and packed npx plus bunx consumer smoke tests passed. Full gates also proved exact 100/100/100/100 coverage, 1,364 tests, audit/Trivy/history-secret cleanliness, PM validation/health, changelog consistency, build, static quality, 131/131 docstrings, and <=300 source LOC."
+    evidence: "Strict release verification passed after synchronizing with immutable master release v2026.8.6: exact 100/100/100/100 coverage, 1,364 tests, audit/Trivy/history-secret cleanliness, PM integrity, build/static/docstrings/file-size gates. Before that release landed, the clean auto-release dry-run proved the full package path and packed npx/bunx consumers with pushed=false; after synchronization, the same-day guard correctly skipped with release_already_cut_today and sole tag v2026.8.6."
     completed_at: "2026-08-06T17:48:45.269Z"
   - id: plan-step-007
     order: 7
