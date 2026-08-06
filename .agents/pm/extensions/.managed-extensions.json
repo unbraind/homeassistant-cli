@@ -1,6 +1,4 @@
 {
-  "version": 1,
-  "updated_at": "2026-08-06T17:41:43.156Z",
   "entries": [
     {
       "name": "builtin-beads-import",
@@ -304,5 +302,7 @@
         "version": "2026.8.6"
       }
     }
-  ]
+  ],
+  "updated_at": "2026-08-06T17:41:43.156Z",
+  "version": 1
 }
