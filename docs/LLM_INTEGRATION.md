@@ -137,10 +137,10 @@ full entity-state payload, and `ws slugify <text>` for server-compatible IDs.
 List envelopes always disclose total/returned counts and truncation. Treat raw
 entity IDs and integration metadata as private topology.
 
-16. Cursor-based pagination (future):
+17. Cursor-based pagination (future):
 Add `--cursor` + `--limit` for entity-heavy installations so agents can page deterministically.
 
-17. Stable machine error envelope (future):
+18. Stable machine error envelope (future):
 Standardize failures to `{ code, message, hint, retriable }` across all commands and formats.
 
 ## TOON Format Explained
