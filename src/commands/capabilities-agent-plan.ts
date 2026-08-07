@@ -43,6 +43,7 @@ export function buildAgentPlan(report: CapabilityReportSnapshot): AgentPlan {
     recommendedCommands.push("hassio related entity <entity-id> --count");
     recommendedCommands.push("hassio ws observe-entities --domain <domain> --max-events 10");
     recommendedCommands.push("hassio ws automation-platforms --kind all");
+    recommendedCommands.push("hassio ws bootstrap-integrations --count");
     recommendedCommands.push("hassio ws integrations list --limit 20");
     recommendedCommands.push("hassio ws entity-sources --count");
   } else {

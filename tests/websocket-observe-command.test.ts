@@ -21,10 +21,16 @@ const subscribeEntities = vi.fn(async () => [
 const subscribeAutomationPlatforms = vi.fn(async ({ kind }: { kind: string }) => kind === "trigger"
   ? [{ state: { fields: { entity_id: {} } } }, { event: { fields: { event_type: {} } } }]
   : [{ state: { fields: { entity_id: {} } } }]);
+const subscribeBootstrapIntegrations = vi.fn(async () => [
+  { zwave_js: 12.8, mqtt: 12.5 },
+  null,
+  { done: 0, invalid_negative: -1, invalid_text: "no" },
+  [],
+]);
 
 vi.mock("../src/api/websocket.js", () => ({
   HomeAssistantWebSocketClient: vi.fn().mockImplementation(function () {
-    return { close, subscribeEntities, subscribeAutomationPlatforms };
+    return { close, subscribeEntities, subscribeAutomationPlatforms, subscribeBootstrapIntegrations };
   }),
 }));
 
@@ -48,6 +54,7 @@ describe("websocket optimized observation commands", () => {
     close.mockClear();
     subscribeEntities.mockClear();
     subscribeAutomationPlatforms.mockClear();
+    subscribeBootstrapIntegrations.mockClear();
   });
 
   afterEach(() => {
@@ -138,5 +145,44 @@ describe("websocket optimized observation commands", () => {
       "automation-platforms", "--kind", "service",
     ], { from: "user" })).rejects.toThrow("Platform kind must be trigger, condition, or all");
     expect(subscribeAutomationPlatforms).not.toHaveBeenCalled();
+  });
+
+  it("normalizes and bounds bootstrap integration timing snapshots", async () => {
+    await createWebsocketCommand().parseAsync([
+      "bootstrap-integrations", "--wait-ms", "25", "--max-events", "4", "--limit", "2",
+    ], { from: "user" });
+
+    expect(subscribeBootstrapIntegrations).toHaveBeenCalledWith({ waitMs: 25, maxEvents: 4 });
+    expect(JSON.parse(output.join("\n"))).toEqual({
+      subscription: "bootstrap_integrations",
+      event_count: 4,
+      count: 3,
+      returned_count: 2,
+      truncated: true,
+      pending_integrations: [
+        { snapshot: 1, domain: "mqtt", elapsed_seconds: 12.5 },
+        { snapshot: 1, domain: "zwave_js", elapsed_seconds: 12.8 },
+      ],
+    });
+    expect(close).toHaveBeenCalledOnce();
+  });
+
+  it("supports count-only bootstrap output with default collection bounds", async () => {
+    await createWebsocketCommand().parseAsync([
+      "bootstrap-integrations", "--count", "--limit", "invalid",
+    ], { from: "user" });
+    expect(subscribeBootstrapIntegrations).toHaveBeenCalledWith({ waitMs: 5000, maxEvents: 10 });
+    expect(JSON.parse(output.join("\n"))).toEqual({
+      subscription: "bootstrap_integrations",
+      event_count: 4,
+      count: 3,
+    });
+  });
+
+  it.each(["--wait-ms", "--max-events"])("rejects invalid bootstrap bound %s before connecting", async (flag) => {
+    await expect(createWebsocketCommand().parseAsync([
+      "bootstrap-integrations", flag, "0",
+    ], { from: "user" })).rejects.toThrow("Must be a positive integer");
+    expect(subscribeBootstrapIntegrations).not.toHaveBeenCalled();
   });
 });

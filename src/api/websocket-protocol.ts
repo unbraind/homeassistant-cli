@@ -23,6 +23,7 @@ export interface EventBuffer {
 
 export type WsSubscriptionType =
   | "condition_platforms/subscribe"
+  | "subscribe_bootstrap_integrations"
   | "subscribe_condition"
   | "subscribe_entities"
   | "subscribe_events"

@@ -425,6 +425,21 @@ use `--key` for a translation prefix. Theme output is summary-only unless
 names, variables, and localized resources can expose private configuration; do
 not place unredacted live results in prompts or tracker evidence.
 
+### 21. Startup Readiness and Machine-Safe Setup
+
+Use count-first startup observation when Core is still loading integrations:
+
+```bash
+hassio ws bootstrap-integrations --count --wait-ms 10000 --max-events 5
+hassio ws bootstrap-integrations --limit 20 --format toon
+```
+
+The subscription emits only during bootstrap, normalizes elapsed setup seconds,
+and always unsubscribes at the configured bound. Keep live domain/timing rows out
+of prompts, PM evidence, CI logs, and source control. For unattended setup, use
+`hassio settings wizard --non-interactive --format json-compact`; stdout is one
+privacy-safe receipt, so agents can parse it directly without scraping banners.
+
 ## Best Practices for Agents
 
 ### 1. Use Appropriate Output Format

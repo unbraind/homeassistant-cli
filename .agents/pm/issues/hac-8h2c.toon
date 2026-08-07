@@ -1,0 +1,56 @@
+id: hac-8h2c
+title: Non-interactive setup wizard corrupts structured stdout
+description: "The settings wizard writes human banners, progress lines, and prose around formatter-selected output, so --format json or json-compact cannot be parsed and other advertised formats are not honored as single programmatic receipts."
+type: Issue
+status: open
+priority: 0
+tags[6]: agents,cli,formatters,regression,setup-wizard,stdout
+created_at: "2026-08-07T19:37:57.246Z"
+updated_at: "2026-08-07T19:37:57.246Z"
+deadline: "2026-08-09T19:37:57.246Z"
+assignee: codex-root
+author: codex-root
+estimated_minutes: 180
+acceptance_criteria: "Every non-interactive formatter emits one valid parseable receipt without human prefix/suffix lines; Connection success and failure are represented in the receipt without token, raw URL, location name, or other private values; Interactive wizard guidance remains intuitive and isolated config/auth/data files retain secure permissions"
+definition_of_ready: Isolated reproduction completed against live Core 2026.7.4; current wizard implementation and tests inspected; formatter utilities available
+goal: machine-safe-cli-bootstrap
+objective: strict-noninteractive-wizard-output
+value: CI and agents can configure hassio without brittle stdout scraping.
+impact: Removes a hard parser failure from the mandatory setup path and prevents accidental private-value logging.
+outcome: One deterministic setup receipt across all six supported formats with regression tests and live isolated acceptance.
+why_now: The user explicitly requires a fully working setup wizard and valid programmatic output; current behavior fails strict JSON parsing.
+parent: hac-zdp4
+reviewer: unbraind
+risk: high
+confidence: 100
+sprint: api-parity-2026-08
+release: unreleased
+severity: high
+environment: "homeassistant-cli 2026.8.6, Bun, non-interactive wizard, isolated HASSIO_CONFIG, live Home Assistant Core 2026.7.4"
+repro_steps: "Run hassio settings wizard --non-interactive with isolated HASSIO_CONFIG, environment token, valid URL, --config-read-only true, and --format json-compact; parse stdout with JSON.parse."
+expected_result: "stdout is exactly one valid JSON object describing saved paths, read-only mode, and connection outcome without secrets."
+actual_result: "stdout begins with a SETUP WIZARD banner and multiple human lines, causing JSON.parse to throw before any receipt can be consumed."
+affected_version: 2026.8.6
+component: settings-wizard
+regression: true
+customer_impact: Automated bootstrap and agent workflows cannot safely consume the advertised structured format.
+dependencies[6]{id,kind,created_at,author,source_kind,author_source}:
+  hac-0zez,related,"2026-08-07T19:37:57.246Z",codex-root,"cli:create:dep",detected
+  hac-4u0a,discovered_from,"2026-08-07T19:37:57.246Z",codex-root,"cli:create:dep",detected
+  hac-ak9g,related,"2026-08-07T19:37:57.246Z",codex-root,"cli:create:dep",detected
+  hac-ndoh,related,"2026-08-07T19:37:57.246Z",codex-root,"cli:create:dep",detected
+  hac-sv5f,related,"2026-08-07T19:37:57.246Z",codex-root,"cli:create:dep",detected
+  hac-vooo,related,"2026-08-07T19:37:57.246Z",codex-root,"cli:create:dep",detected
+comments[1]{created_at,author,text}:
+  "2026-08-07T19:37:57.246Z",codex-root,"Reproduction used a temporary directory and boolean-only inspection; no credential, URL, location, or live payload entered PM or Git."
+notes[1]{created_at,author,text}:
+  "2026-08-07T19:37:57.246Z",codex-root,The interactive path may remain conversational. The non-interactive contract must route all normal stdout through formatOutput exactly once.
+learnings[1]{created_at,author,text}:
+  "2026-08-07T19:37:57.246Z",codex-root,Secure file permissions are necessary but insufficient for agent-safe setup; stdout itself is a public API contract.
+files[1]{path,scope,note}:
+  src/commands/settings-wizard.ts,project,Wizard output and connection receipt implementation
+tests[1]{command,scope,timeout_seconds}:
+  bunx vitest run tests/settings-wizard.test.ts tests/output-formats-validation.test.ts,project,300
+docs[1]{path,scope,note}:
+  docs/API.md,project,Non-interactive wizard receipt contract
+body: "Reproduced with an isolated HASSIO_CONFIG directory and token supplied only through the environment. The wizard successfully wrote 0600 settings/auth files but stdout began with SETUP WIZARD before the requested JSON payload. Fix the non-interactive path to emit one formatter-validated receipt, represent connection-test success/failure in that receipt, keep errors actionable, and preserve the interactive guided experience."

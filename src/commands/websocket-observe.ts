@@ -4,7 +4,7 @@
 import { Command } from "commander";
 import { HomeAssistantWebSocketClient } from "../api/websocket.js";
 import { formatOutput } from "../formatters/index.js";
-import { parseLimit, resolveCommandOptions } from "../utils/command-helpers.js";
+import { formatBoundedRows, parseLimit, resolveCommandOptions } from "../utils/command-helpers.js";
 import { withExit } from "../utils/exit.js";
 
 type CompressedState = {
@@ -150,7 +150,71 @@ function createAutomationPlatformsCommand(): Command {
   return command;
 }
 
+function bootstrapRows(events: unknown[]): Record<string, unknown>[] {
+  return events.flatMap((event, index) => {
+    if (!event || typeof event !== "object" || Array.isArray(event)) return [];
+    return Object.entries(event)
+      .filter((entry): entry is [string, number] => (
+        typeof entry[1] === "number" && Number.isFinite(entry[1]) && entry[1] >= 0
+      ))
+      .sort(([left], [right]) => left.localeCompare(right))
+      .map(([domain, elapsedSeconds]) => ({
+        snapshot: index + 1,
+        domain,
+        elapsed_seconds: elapsedSeconds,
+      }));
+  });
+}
+
+function createBootstrapIntegrationsCommand(): Command {
+  const command = new Command("bootstrap-integrations")
+    .description("Observe integrations still loading during Home Assistant startup")
+    .option("--wait-ms <ms>", "Maximum observation duration", "5000")
+    .option("--max-events <n>", "Maximum bootstrap snapshots to collect", "10")
+    .option("--limit <n>", "Maximum normalized integration rows to return", "100")
+    .option("--all", "Return every normalized integration row")
+    .option("--count", "Return only snapshot and integration-row counts")
+    .addHelpText("after", `
+Examples:
+  hassio ws bootstrap-integrations --wait-ms 10000 --max-events 5
+  hassio ws bootstrap-integrations --count --format json-compact
+
+Home Assistant emits this read-only stream only while bootstrap integrations are
+still loading. An empty result on an already-started server is expected. Each
+row reports the Core-provided elapsed setup time in seconds. The command always
+unsubscribes after the event or time bound is reached.
+`);
+
+  command.action(withExit(async (options: {
+    waitMs: string;
+    maxEvents: string;
+    limit?: string;
+    all?: boolean;
+    count?: boolean;
+  }, cmd) => {
+    const waitMs = positive(options.waitMs);
+    const maxEvents = positive(options.maxEvents);
+    const { config, format } = resolveCommandOptions((cmd as Command).optsWithGlobals());
+    const client = new HomeAssistantWebSocketClient(config);
+    try {
+      const events = await client.subscribeBootstrapIntegrations({ waitMs, maxEvents });
+      console.log(formatOutput({
+        subscription: "bootstrap_integrations",
+        event_count: events.length,
+        ...formatBoundedRows(bootstrapRows(events), options, "pending_integrations"),
+      }, format));
+    } finally {
+      await client.close();
+    }
+  }));
+  return command;
+}
+
 /** Build typed bounded observation commands for the WebSocket surface. */
 export function createWebsocketObserveCommands(): Command[] {
-  return [createEntityObserveCommand(), createAutomationPlatformsCommand()];
+  return [
+    createEntityObserveCommand(),
+    createAutomationPlatformsCommand(),
+    createBootstrapIntegrationsCommand(),
+  ];
 }

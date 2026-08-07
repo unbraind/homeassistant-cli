@@ -31,6 +31,7 @@ describe("capability planning utilities", () => {
       "hassio repairs list --count",
       "hassio related entity <entity-id> --count",
       "hassio ws integrations list --limit 20",
+      "hassio ws bootstrap-integrations --count",
       "hassio ws entity-sources --count",
       "hassio config-entries --count --format json",
       "hassio ask \"<question>\" --format json",
