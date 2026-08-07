@@ -4,11 +4,13 @@
 
 ### Added
 
+- Add typed condition evaluation and action-sequence runtime ([hac-ckrs](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/features/hac-ckrs.toon))
 - Add typed WebSocket integration intelligence ([hac-vwh7](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/features/hac-vwh7.toon))
 - Add agent-native repairs and related-resource diagnostics ([hac-lda1](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/features/hac-lda1.toon))
 
 ### Other
 
+- Typed automation runtime delivery plan ([hac-3ihr](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/plans/hac-3ihr.toon))
 - Implement typed automation runtime command contracts ([hac-bzzf](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-bzzf.toon))
 - Integration intelligence delivery plan ([hac-c94k](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/plans/hac-c94k.toon))
 - Implement typed integration metadata and entity provenance commands ([hac-53ti](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-53ti.toon))
