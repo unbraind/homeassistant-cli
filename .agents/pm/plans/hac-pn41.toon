@@ -6,7 +6,7 @@ status: open
 priority: 0
 tags[6]: agents,automation,delivery,diagnostics,trace,websocket
 created_at: "2026-08-07T16:45:24.383Z"
-updated_at: "2026-08-07T17:04:15.556Z"
+updated_at: "2026-08-07T17:04:56.395Z"
 deadline: "2026-08-08T16:45:24.383Z"
 assignee: codex-root
 author: codex-root
@@ -150,9 +150,9 @@ plan_steps[8]:
     title: Publish a scoped PR and complete exact-head hosted checks plus every review-bot disposition
     status: in_progress
     created_at: "2026-08-07T16:45:24.374Z"
-    updated_at: "2026-08-07T17:02:01.872Z"
+    updated_at: "2026-08-07T17:04:56.395Z"
     owner: codex-root
-    evidence: "Preparing scoped exact-head implementation PR with PM links, hosted checks, and bot review inventory."
+    evidence: Implementation PR #91 published at exact head a9f7f06. Beginning hosted checks and complete bot review/reaction/thread inventory.
   - id: plan-step-008
     order: 8
     title: Merge to master and close PM lineage with redacted reproducible evidence
