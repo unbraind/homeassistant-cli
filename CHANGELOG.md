@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- Add agent-native frontend semantic catalog discovery ([hac-fj2b](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/features/hac-fj2b.toon))
+
+### Other
+
+- Frontend semantic catalog delivery plan ([hac-pzfs](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/plans/hac-pzfs.toon))
+- Implement typed frontend version and semantic resource commands ([hac-djof](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-djof.toon))
+
 ## 2026.8.6 - 2026-08-06
 
 ### Added

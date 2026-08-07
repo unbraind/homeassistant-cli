@@ -2,13 +2,14 @@ id: hac-fj2b
 title: Add agent-native frontend semantic catalog discovery
 description: "Expose current official Home Assistant frontend version, theme, icon, and translation WebSocket contracts through typed, bounded, format-safe hassio commands while retaining raw ws call passthrough."
 type: Feature
-status: open
+status: closed
 priority: 0
 tags[6]: agents,api,frontend,home-assistant,localization,websocket
 created_at: "2026-08-07T05:47:24.265Z"
-updated_at: "2026-08-07T06:35:28.115Z"
+updated_at: "2026-08-07T06:45:08.344Z"
 deadline: "2026-08-08T05:47:24.265Z"
-assignee: codex-root
+closed_at: "2026-08-07T06:45:08.330Z"
+completed_at: "2026-08-07T06:45:08.330Z"
 author: codex-root
 estimated_minutes: 360
 acceptance_criteria: "Typed commands cover frontend/get_version, frontend/get_themes, frontend/get_icons, and frontend/get_translations with input validation and bounded output; every command has detailed help and all six output formats remain valid; exact 100/100/100/100 source coverage and strict repository gates pass; read-only live acceptance passes against the configured Home Assistant instance without persisting private payloads"
@@ -25,6 +26,9 @@ risk: medium
 confidence: 97
 sprint: frontend-intelligence
 release: 2026.8.7
+resolution: "Delivered agent-native frontend version, theme, icon, and translation catalogs with deterministic bounds and current Home Assistant compatibility."
+expected_result: Agents and programmatic consumers can discover current frontend semantics through intuitive typed commands with complete docs and production gates.
+actual_result: "Feature merged in a617dbb through PR #89; exact coverage, six-format live acceptance, security gates, and review convergence passed. No release was published."
 dependencies[6]{id,kind,created_at,author,source_kind,author_source}:
   hac-ckrs,related,"2026-08-07T05:47:24.265Z",codex-root,"cli:create:dep",detected
   hac-r17v,related,"2026-08-07T05:47:24.265Z",codex-root,"cli:create:dep",detected
@@ -55,4 +59,5 @@ docs[5]{path,scope,note}:
   docs/INDEX.md,project,Command index and release status
   docs/LLM_INTEGRATION.md,project,LLM semantic discovery workflow
   README.md,project,User-facing command examples
+close_reason: Frontend semantic catalog feature delivered and merged with complete PM lineage.
 body: "Research and deliver the official frontend semantic catalog as one cohesive read-only WebSocket feature: version provenance, bounded theme summaries, category-scoped icons, and localized resources. Preserve generic ws call as the compatibility escape hatch and keep all live payloads private."
