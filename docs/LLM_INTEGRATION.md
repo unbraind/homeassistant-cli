@@ -16,27 +16,27 @@ This guide covers features and best practices for using Home Assistant CLI with 
 
 ## High-Impact Features for Agents/LLMs
 
-1. Capability discovery (implemented):
+### 1. Capability discovery (implemented)
 Use `hassio capabilities --format json` to retrieve instance-specific API availability, supervisor status, and orchestration hints.
 
-2. Capability-driven execution planning (implemented):
+### 2. Capability-driven execution planning (implemented)
 Use `hassio capabilities --agent-plan --format json` to get `recommended_commands`, `avoid_commands`, and `notes`.
 
-3. Structured execution profile (implemented):
+### 3. Structured execution profile (implemented)
 Use `hassio capabilities --agent-profile --format json` to get a stable profile with:
 - `preferred_output_format` (`toon`)
 - `capabilities` status matrix
 - `planning.fast_path` starter command sequence
 - `planning.streaming_ready` boolean
 
-4. One-shot context payload (implemented):
+### 4. One-shot context payload (implemented)
 Use `hassio capabilities --agent-context --redact-private --format json` to get:
 - `summary` (counts + status totals)
 - `plan` (`recommended_commands`, `avoid_commands`, `notes`)
 - `profile` (stable execution profile)
 - `suggested_sequence` (starter command chain)
 
-5. Service schema normalization + preflight validation (implemented):
+### 5. Service schema normalization + preflight validation (implemented)
 Use `hassio services --schema --format json` to retrieve normalized service rows:
 - `required_fields`
 - `optional_fields`
@@ -56,20 +56,20 @@ Agents should branch on these explicit fields instead of transport-specific raw
 payload shapes. Use `--response never` for actions that must not return data;
 the CLI rejects that policy when the action requires a response.
 
-6. Output contracts for parser-safe automation (implemented):
+### 6. Output contracts for parser-safe automation (implemented)
 Use `hassio schema --output-contracts --format json` to retrieve:
 - per-format `media_type`
 - parseability mode (`strict` or `best_effort`)
 - parser hints
 - baseline schema contracts for CI and agent tooling
 
-7. Token-bounded WebSocket exposure discovery (implemented):
+### 7. Token-bounded WebSocket exposure discovery (implemented)
 Use `hassio ws exposure list --assistant conversation --limit 25` for normalized
 rows, or `--count` before requesting detail. Use `ws panels` and `ws ping` for
 typed discovery and liveness. Signed-path output is a short-lived credential and
 must not be persisted in prompts, logs, or tracker evidence.
 
-8. Non-executing automation validation (implemented):
+### 8. Non-executing automation validation (implemented)
 Use `hassio ws validate-config --file automation.json` before creating or
 updating an automation. Agents can instead supply `--trigger`, `--condition`,
 or `--action` JSON independently. The CLI maps ordinary singular automation
@@ -77,7 +77,7 @@ fields to the plural WebSocket payload required by current Home Assistant Core,
 rejects malformed or empty input locally, and returns per-section
 `{ valid, error }` results in the selected output format.
 
-9. Typed automation runtime (implemented):
+### 9. Typed automation runtime (implemented)
 After `ws validate-config`, use
 `hassio ws automation-runtime test-condition --file automation.json` to evaluate
 one condition without actions. Use `observe-condition` with small `--wait-ms`
@@ -87,14 +87,14 @@ network I/O. File input reuses normal `condition(s)` and `action(s)` fields, so
 the validated artifact remains the execution artifact. Treat runtime contexts,
 template output, and errors as private.
 
-10. Bounded media discovery (implemented):
+### 10. Bounded media discovery (implemented)
 Use `hassio media browse --count` before requesting detail, then apply a small
 `--limit`. `hassio media search` supports shared media sources and
 `--entity-id` player search, with current media-class filters and stable
 `{ scope, count, results }` output. Prefer `media resolve --metadata-only`;
 the full resolve response can contain a short-lived signed credential.
 
-11. Observe Entity Deltas with Bounded Context (implemented):
+### 11. Observe Entity Deltas with Bounded Context (implemented)
 Use `hassio ws observe-entities --domain <domain>` instead of repeatedly fetching
 all states or consuming full `state_changed` event envelopes. The command sends
 filters to Home Assistant, expands the compact initial snapshot, preserves
@@ -102,33 +102,33 @@ lossless add/change/remove patches, stops at `--wait-ms` or `--max-events`, and
 always attempts to unsubscribe. Add `--no-initial` when only subsequent changes
 belong in the agent context.
 
-12. Discover Purpose-Specific Automation Platforms (implemented):
+### 12. Discover Purpose-Specific Automation Platforms (implemented)
 Use `hassio ws automation-platforms --kind all` to retrieve the current trigger
 and condition schemas published by loaded integrations. Narrow them with
 `ws target triggers|conditions`, then validate the authored configuration with
 `ws validate-config` before execution.
 
-13. Observe Automation Triggers with Bounded Context (implemented):
+### 13. Observe Automation Triggers with Bounded Context (implemented)
 Use `hassio ws subscribe-trigger --trigger <json>` when an agent needs to wait
 for an automation-level condition without consuming the full event bus. The
 command validates inputs locally, negotiates coalesced WebSocket frames, applies
 `--wait-ms` and `--max-events` bounds, unsubscribes, and never fires the trigger.
 It requires a Home Assistant administrator.
 
-14. Repair diagnosis and safe remediation (implemented):
+### 14. Repair diagnosis and safe remediation (implemented)
 Start with `hassio repairs list --count`, then request a small severity/domain
 slice. Use `repairs show` only when issue data is required. Ignore and fix-flow
 writes require `--yes` and are blocked in read-only mode; `fix status` is safe
 for observing an already-started flow. Treat every issue and flow identifier as
 private instance data.
 
-15. Related-resource topology (implemented):
+### 15. Related-resource topology (implemented)
 Use `hassio related <item-type> <item-id> --count` to estimate the dependency
 surface before fetching identifiers. Apply `--result-type` and a small
 per-type `--limit` to bound context. This is Core's semantic resource graph,
 not text search, and can reveal automation/configuration relationships.
 
-16. Integration intelligence and entity provenance (implemented):
+### 16. Integration intelligence and entity provenance (implemented)
 Use `hassio ws integrations list --count` before fetching a small manifest
 slice. `integrations setup` exposes startup timing, `descriptions` provides
 admin-only integration metadata, and `wait` checks load readiness. Use
@@ -137,7 +137,7 @@ full entity-state payload, and `ws slugify <text>` for server-compatible IDs.
 List envelopes always disclose total/returned counts and truncation. Treat raw
 entity IDs and integration metadata as private topology.
 
-17. Frontend semantic and localization discovery (implemented):
+### 17. Frontend semantic and localization discovery (implemented)
 Use `hassio ws frontend version` to distinguish the installed frontend package
 from the Core version. Query `frontend icons` with an official category and an
 integration filter when generating UI-aware action plans. Query `frontend
@@ -147,10 +147,10 @@ default; `--include-values` is explicit because theme variables can be large and
 private. Every catalog uses deterministic rows and count/returned/truncated
 metadata.
 
-18. Cursor-based pagination (future):
+### 18. Cursor-based pagination (future)
 Add `--cursor` + `--limit` for entity-heavy installations so agents can page deterministically.
 
-19. Stable machine error envelope (future):
+### 19. Stable machine error envelope (future)
 Standardize failures to `{ code, message, hint, retriable }` across all commands and formats.
 
 ## TOON Format Explained

@@ -1646,10 +1646,12 @@ WebSocket contracts without requiring raw protocol payloads:
   `frontend/get_translations`. It accepts `--integration <domains>`,
   `--config-flow`, `--key <prefix>`, and the shared list bounds.
 
-Catalog commands return deterministic key/value rows and the stable envelope
-`{count, returned_count, truncated, ...}`. `--count` omits resource rows. Theme
-names, variables, and translations can reveal private customizations; count
-first, request a small slice, and do not persist live payloads in source control.
+Catalog commands in row-returning modes use deterministic key/value rows and the
+stable envelope `{count, returned_count, truncated, ...}`. `--count` returns
+`count` plus the command's filter fields while omitting resource rows,
+`returned_count`, and `truncated`. Theme names, variables, and translations can
+reveal private customizations; count first, request a small slice, and do not
+persist live payloads in source control.
 
 ```bash
 hassio ws frontend version

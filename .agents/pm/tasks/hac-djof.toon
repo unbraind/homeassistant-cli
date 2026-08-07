@@ -6,7 +6,7 @@ status: in_progress
 priority: 0
 tags[6]: agents,frontend,implementation,localization,typescript,websocket
 created_at: "2026-08-07T05:48:29.648Z"
-updated_at: "2026-08-07T06:05:17.302Z"
+updated_at: "2026-08-07T06:37:33.358Z"
 deadline: "2026-08-08T05:48:29.648Z"
 assignee: codex-root
 claim_principal: codex-root
@@ -37,11 +37,12 @@ dependencies[10]{id,kind,created_at,author,source_kind,author_source}:
   hac-stpm,related,"2026-08-07T05:48:29.648Z",codex-root,"cli:create:dep",detected
   hac-sv5f,discovered_from,"2026-08-07T05:48:29.648Z",codex-root,"cli:create:dep",detected
   hac-vwh7,related,"2026-08-07T05:48:29.648Z",codex-root,"cli:create:dep",detected
-comments[3]{created_at,author,text}:
+comments[4]{created_at,author,text}:
   "2026-08-07T05:48:29.648Z",codex-root,The contract boundary is read-only and typed. Generic ws call remains the forward-compatible escape hatch for new or custom frontend commands.
   "2026-08-07T05:59:07.189Z",codex-root,Implemented four typed read-only frontend commands with deterministic bounds and local validation. Shared WebSocket output handling removes the new transport duplication and preserves exact close behavior.
   "2026-08-07T06:05:16.852Z",codex-root,Self-review against the live response found frontend icon resources grouped by integration. The normalizer now recursively flattens nested icon maps into one deterministic semantic key/value row per icon; live typed output confirms three light service icons and a correctly bounded one-row slice.
-notes[3]:
+  "2026-08-07T06:37:33.325Z",codex-root,"CodeRabbit exact-head review produced five findings. Accepted Feature delivery-link completeness API count-contract clarity release-status consistency and roadmap Markdown structure. Rejected replacing the command-level HomeAssistantWebSocketClient mock because all peer command tests mock that client while tests/api-websocket.test.ts independently exercises the real client through vi.mock(\"ws\"); merging the layers would duplicate transport coverage and weaken command-test isolation."
+notes[4]:
   - created_at: "2026-08-07T05:48:29.648Z"
     author: codex-root
     text: "Live validation must report only availability, schema keys, counts, and parser success; raw themes and translation resources stay outside PM, Git, and PR text."
@@ -76,6 +77,9 @@ notes[3]:
       translation_count_nonzero: true
       private_values_persisted: false
     event_type: live-contract-shape
+  - created_at: "2026-08-07T06:37:33.325Z"
+    author: codex-root
+    text: "Review correction validation: focused 26 tests passed typecheck and ESLint passed pm validate has no lifecycle dependency file history or format failures and markdownlint MD029 findings are eliminated by semantic numbered headings."
 learnings[2]{created_at,author,text}:
   "2026-08-07T05:48:29.648Z",codex-root,"frontend/get_icons restricts category to conditions, entity, entity_component, services, or triggers; frontend/get_translations takes language and category plus optional integration list and config_flow."
   "2026-08-07T05:59:09.182Z",codex-root,Theme variables can exceed normal process output budgets; summary-first defaults plus explicit include-values avoid accidental unbounded agent context while retaining intentional full access.
