@@ -2,14 +2,14 @@ id: hac-lwfa
 title: Implement typed automation trace command contracts
 description: Add typed bounded trace list context discovery and exact trace retrieval across command registration capability probes schema docs tests and live acceptance.
 type: Task
-status: in_progress
+status: closed
 priority: 0
 tags[7]: agents,automation,implementation,script,trace,typescript,websocket
 created_at: "2026-08-07T16:45:57.057Z"
-updated_at: "2026-08-07T17:04:56.099Z"
+updated_at: "2026-08-07T17:11:16.561Z"
 deadline: "2026-08-08T16:45:57.057Z"
-assignee: codex-root
-claim_principal: codex-root
+closed_at: "2026-08-07T17:11:16.155Z"
+completed_at: "2026-08-07T17:11:16.155Z"
 author: codex-root
 estimated_minutes: 240
 acceptance_criteria: Typed command behavior validation bounded output help schema capabilities docs tests and local live acceptance are complete
@@ -26,6 +26,9 @@ risk: medium
 confidence: high
 sprint: 2026-08-07-trace
 release: unreleased
+resolution: "Implemented and merged typed bounded trace list/context discovery and exact trace retrieval with capabilities, schema, docs, tests, and privacy-safe live verification."
+expected_result: "Production-ready read-only trace diagnostics follow official Core contracts, work on the local older Core, preserve all output formats, and pass every mandatory quality gate without publishing."
+actual_result: "PR #91 merged as 9ed1667; 1,380 tests and exact 100/100/100/100 passed locally and in hosted CI; live Core 2026.7.4 acceptance passed; no private payload was persisted and no release was published."
 dependencies[7]{id,kind,created_at,author,source_kind,author_source}:
   hac-ak9g,verifies,"2026-08-07T16:45:57.057Z",codex-root,"cli:create:dep",detected
   hac-ckrs,discovered_from,"2026-08-07T16:45:57.057Z",codex-root,"cli:create:dep",detected
@@ -34,10 +37,11 @@ dependencies[7]{id,kind,created_at,author,source_kind,author_source}:
   hac-r2z9,blocked_by,"2026-08-07T16:45:57.057Z",codex-root,"cli:create:dep",detected
   hac-suj3,blocked_by,"2026-08-07T16:45:57.057Z",codex-root,"cli:create:dep",detected
   hac-vwh7,related,"2026-08-07T16:45:57.057Z",codex-root,"cli:create:dep",detected
-comments[3]{created_at,author,text}:
+comments[4]{created_at,author,text}:
   "2026-08-07T16:45:57.057Z",codex-root,This is the only item claimed and marked in progress because it is the concrete item being edited; the parent feature and plan remain open.
   "2026-08-07T16:59:01.870Z",codex-root,Implementation adds typed traces list get and contexts commands; the API matrix probes trace/list; schema/help/docs are synchronized; live installed CLI validation passed all six formats and exact get shape; the full release verifier passed 123 files and 1380 tests at exact 100/100/100/100.
   "2026-08-07T17:04:56.099Z",codex-root,"Implementation PR #91 published at exact head a9f7f06 with canonical PM links, official Core sources, full local/live/package evidence, privacy boundary, and explicit no-publish receipt. Hosted checks and requested bot reviews now begin."
+  "2026-08-07T17:11:14.747Z",codex-root,"PR #91 merged as 9ed1667 after exact-head 870918d passed every hosted gate. Final paginated inventory had zero review threads; Codecov confirmed full patch coverage; CodeRabbit and Sourcery returned quota limitations with no findings and every bot contribution was reacted to and dispositioned. Explicit Gemini and Greptile triggers produced no provider event, recorded as unavailable rather than approval."
 notes[2]:
   - created_at: "2026-08-07T16:45:57.057Z"
     author: codex-root
@@ -82,4 +86,5 @@ docs[5]{path,scope,note}:
   docs/INDEX.md,project,Discoverable command index
   docs/LLM_INTEGRATION.md,project,Agent diagnosis workflow
   README.md,project,User-facing examples
+close_reason: "Typed automation/script trace diagnostics shipped in PR #91 and merged as 9ed1667 with complete local, live, package, hosted, privacy, and review evidence."
 body: Implement hassio ws traces list --domain automation|script with optional item filter and bounded count/all output; hassio ws traces contexts with optional paired domain and item filter plus deterministic bounded rows; and hassio ws traces get with required domain item and run identifiers preserving the exact Core trace object. Validate inputs before WebSocket construction. Do not add breakpoint or debug mutation commands.
