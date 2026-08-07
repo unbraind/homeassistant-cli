@@ -2,13 +2,14 @@ id: hac-ckrs
 title: Add typed condition evaluation and action-sequence runtime
 description: "Complete the stable Home Assistant automation runtime workflow with typed one-shot condition testing, bounded condition observation, and read-only-safe action-sequence execution."
 type: Feature
-status: open
+status: closed
 priority: 0
 tags[7]: agents,automation,conditions,home-assistant,llm,runtime,websocket
 created_at: "2026-08-06T17:05:55.428Z"
-updated_at: "2026-08-06T17:05:55.428Z"
+updated_at: "2026-08-07T05:15:29.751Z"
 deadline: "2026-08-08T17:05:55.428Z"
-assignee: unbraind
+closed_at: "2026-08-07T05:15:28.853Z"
+completed_at: "2026-08-07T05:15:28.853Z"
 author: codex-root
 estimated_minutes: 480
 acceptance_criteria: "Typed commands accept validated inline JSON and JSON files with optional variables and detailed nested help; Condition testing and bounded observation preserve Core result and template-error semantics; Action-sequence execution is blocked before network I/O whenever read-only mode is enabled; Schemas, capabilities, README, API reference, docs index, LLM guidance, and agent optimization docs remain synchronized; Focused, integration, help, wizard, all-format, live, security, PM, auto-release dry-run, and exact 100/100/100/100 coverage gates pass"
@@ -25,6 +26,9 @@ risk: high
 confidence: 94
 sprint: 2026-08-automation-runtime
 release: 2026.8.6
+resolution: "Added typed test-condition, observe-condition, and execute-sequence commands with transport-level read-only enforcement, capability/schema integration, full docs, and live acceptance."
+expected_result: "Agents can safely evaluate and observe conditions and execute approved ad hoc action sequences through intuitive typed commands with synchronized help, schemas, docs, and exact quality gates."
+actual_result: "PR #87 merged as ed94eb2. Current upstream Core contracts and live Core compatibility were verified; 1,364 tests and exact 100/100/100/100 coverage passed together with static, security, PM, changelog, built-CLI, wizard, format, and hosted gates."
 dependencies[7]{id,kind,created_at,author,source_kind,author_source}:
   hac-ak9g,blocked_by,"2026-08-06T17:05:55.428Z",codex-root,"cli:create:dep",detected
   hac-n0ix,discovered_from,"2026-08-06T17:05:55.428Z",codex-root,"cli:create:dep",detected
@@ -33,12 +37,15 @@ dependencies[7]{id,kind,created_at,author,source_kind,author_source}:
   hac-suj3,related,"2026-08-06T17:05:55.428Z",codex-root,"cli:create:dep",detected
   hac-vwh7,related,"2026-08-06T17:05:55.428Z",codex-root,"cli:create:dep",detected
   hac-wwsi,related,"2026-08-06T17:05:55.428Z",codex-root,"cli:create:dep",detected
-comments[1]{created_at,author,text}:
+comments[2]{created_at,author,text}:
   "2026-08-06T17:05:55.428Z",codex-root,"All-status PM searches for condition evaluation, condition subscription, execute_script, and automation runtime found adjacent completed lineage but no equivalent typed feature."
-notes[1]{created_at,author,text}:
+  "2026-08-07T05:15:27.695Z",codex-root,"PR #87 merged as ed94eb2 after all required PR-scoped checks passed on exact head b62c2f0. CodeRabbit’s only actionable finding was fixed and resolved; all bot artifacts were dispositioned, and provider quota/non-response was not treated as approval."
+notes[2]{created_at,author,text}:
   "2026-08-06T17:05:55.428Z",codex-root,"Credentials, raw live payloads, entity IDs, user IDs, context IDs, and location details remain only in 0600 global configuration or transient process memory and never enter Git or PM evidence."
-learnings[1]{created_at,author,text}:
+  "2026-08-07T05:15:27.695Z",codex-root,"No Home Assistant credentials, endpoint, entity identifiers, user identifiers, or raw live payloads were added to Git, GitHub, or PM evidence. No release was published."
+learnings[2]{created_at,author,text}:
   "2026-08-06T17:05:55.428Z",codex-root,"Home Assistant 2026.8.0 keeps test_condition, subscribe_condition, and execute_script stable; the local 2026.7.4 instance supports the same contracts, enabling current-plus-backward compatibility proof."
+  "2026-08-07T05:15:27.695Z",codex-root,A workflow_dispatch rerun on the exact SHA is useful evidence but does not populate pull-request branch-protection contexts; retrigger the pull_request event when an Actions incident loses the original webhook.
 files[2]{path,scope,note}:
   src/api/websocket.ts,project,Typed transport and read-only execution boundary
   src/commands/websocket.ts,project,WebSocket command registration
@@ -46,4 +53,5 @@ tests[1]{command,scope,timeout_seconds}:
   "bun run test:coverage",project,2400
 docs[1]{path,scope,note}:
   docs/API.md,project,Canonical command contract reference
+close_reason: Typed automation runtime feature shipped to protected master without publication
 body: "The CLI already discovers, validates, and subscribes to automation triggers. Stable Home Assistant Core also exposes test_condition, subscribe_condition, and execute_script. This feature completes the agent workflow from discovery and validation through runtime evaluation and guarded execution while retaining raw ws passthrough for future integration-specific contracts."

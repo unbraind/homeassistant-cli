@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026.8.7 - 2026-08-07
+
+### Other
+
+- Gate CI on strict tracked pm project health ([pmc-vm22](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/chores/pmc-vm22.toon))
+
 ## 2026.8.4 - 2026-08-04
 
 ### Fixed
