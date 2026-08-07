@@ -149,6 +149,7 @@ function getCommandSchema(): Record<string, unknown> {
         subcommands: [
           "call", "status", "subscribe", "subscribe-trigger", "target", "validate-config",
           "automation-runtime",
+          "traces",
           "observe-entities", "automation-platforms", "integrations", "entity-sources", "slugify",
           "panels", "ping", "sign-path", "exposure",
         ],

@@ -1383,6 +1383,8 @@ hassio ws validate-config --file automation.json
 hassio ws automation-runtime test-condition --file automation.json
 hassio ws automation-runtime observe-condition --file automation.json --wait-ms 10000
 hassio ws automation-runtime execute-sequence --file automation.json
+hassio ws traces list --domain automation --limit 20
+hassio ws traces contexts --count
 hassio ws subscribe --event-type state_changed --wait-ms 10000 --max-events 20
 hassio ws subscribe-trigger --trigger '{"trigger":"event","event_type":"doorbell"}' --wait-ms 30000
 hassio ws observe-entities --domain light --wait-ms 10000 --max-events 20
@@ -1627,6 +1629,51 @@ hassio ws automation-runtime observe-condition --file automation.json \
   --wait-ms 30000 --max-events 3 --format json-compact
 hassio ws automation-runtime execute-sequence --file automation.json \
   --variables '{"source":"approved-agent-run"}'
+```
+
+#### `websocket traces`
+
+Diagnose stored automation and script executions through Home Assistant Core's
+administrator-only, read-only trace contracts:
+
+```bash
+hassio ws traces list --domain automation|script \
+  [--item-id <id>] [--limit <n>|--all] [--count]
+hassio ws traces get --domain automation|script \
+  --item-id <id> --run-id <id>
+hassio ws traces contexts \
+  [--domain automation|script --item-id <id>] \
+  [--limit <n>|--all] [--count]
+```
+
+`list` calls `trace/list`, sorts summaries newest-first with deterministic
+identifier tie-breakers, defaults to 50 rows, and reports
+`{domain, item_id, count, returned_count, truncated, traces}`. `contexts` calls
+`trace/contexts`, converts the context map into context-ID-sorted rows, and uses
+the equivalent bounded envelope with `contexts`. Home Assistant requires its
+optional `domain` and `item_id` context filters together; the CLI enforces that
+pair before connecting. In either discovery command, `--count` omits rows and
+private identifiers.
+
+`get` calls `trace/get` with one `domain`, `item_id`, and `run_id`, then preserves
+the complete Core trace object at the output root. The detail includes config,
+context, trigger, step paths, execution state, and timestamps. It can therefore
+contain entity IDs, user/context IDs, template output, and other private
+instance data; consume it locally and do not persist it in source control, CI
+logs, or tracker evidence. All three commands are safe under global
+`--read-only`. Runtime breakpoint and debug mutations are intentionally outside
+this typed command group; use generic `ws call` only with an explicit safety
+review if those advanced contracts are needed.
+
+```bash
+# Estimate available evidence without identifiers
+hassio ws traces list --domain automation --count
+hassio ws traces contexts --count
+
+# Fetch a bounded summary, then retrieve only the selected exact trace
+hassio ws traces list --domain automation --item-id evening_lights --limit 5
+hassio ws traces get --domain automation \
+  --item-id evening_lights --run-id <run-id> --format json-compact
 ```
 
 #### Typed frontend semantic discovery

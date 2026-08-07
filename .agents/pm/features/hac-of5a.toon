@@ -1,0 +1,48 @@
+id: hac-of5a
+title: Add agent-native automation trace diagnostics
+description: Expose the stable Home Assistant automation and script trace contracts through typed bounded CLI commands for execution diagnosis and agent workflows.
+type: Feature
+status: open
+priority: 0
+tags[7]: agents,automation,diagnostics,home-assistant,script,trace,websocket
+created_at: "2026-08-07T16:44:25.127Z"
+updated_at: "2026-08-07T16:44:25.127Z"
+deadline: "2026-08-08T16:44:25.127Z"
+assignee: codex-root
+author: codex-root
+estimated_minutes: 300
+acceptance_criteria: Typed hassio ws traces list get and contexts commands validate automation and script domains before network I/O; List and context output is deterministic bounded countable and available in all six supported formats while exact get preserves the Core payload; Detailed nested help machine schema capability probes README and every relevant docs page stay synchronized; Built and installed hassio commands pass local Core live read-only acceptance without persisting private values; Build typecheck lint docstrings duplication file-size ShellCheck audit Trivy PM changelog auto-release dry-run package smoke and exact 100/100/100/100 coverage gates pass
+definition_of_ready: Official Core 2026.8.0 contracts inspected; local Core 2026.7.4 capability proven; all-status PM searches and duplicate scan found no existing trace item; repository is clean on a dedicated branch.
+goal: agent-native-home-assistant-operations
+objective: typed-runtime-diagnostics
+value: Let operators and LLM agents explain why automations and scripts ran failed or stopped without manually composing WebSocket payloads.
+impact: Faster incident diagnosis with token-bounded machine-readable evidence and safer read-only defaults.
+outcome: Current and backward-compatible trace discovery and retrieval with complete production evidence.
+why_now: Core 2026.8.0 confirms stable trace contracts and the CLI just completed typed automation runtime execution but lacks the corresponding diagnosis path.
+parent: hac-4s9j
+reviewer: github-review-bots
+risk: medium
+confidence: high
+sprint: 2026-08-07-trace
+release: unreleased
+dependencies[7]{id,kind,created_at,author,source_kind,author_source}:
+  hac-ak9g,blocked_by,"2026-08-07T16:44:25.127Z",codex-root,"cli:create:dep",detected
+  hac-ckrs,discovered_from,"2026-08-07T16:44:25.127Z",codex-root,"cli:create:dep",detected
+  hac-fj2b,related,"2026-08-07T16:44:25.127Z",codex-root,"cli:create:dep",detected
+  hac-r2z9,related,"2026-08-07T16:44:25.127Z",codex-root,"cli:create:dep",detected
+  hac-suj3,related,"2026-08-07T16:44:25.127Z",codex-root,"cli:create:dep",detected
+  hac-vwh7,related,"2026-08-07T16:44:25.127Z",codex-root,"cli:create:dep",detected
+  hac-wwsi,related,"2026-08-07T16:44:25.127Z",codex-root,"cli:create:dep",detected
+comments[1]{created_at,author,text}:
+  "2026-08-07T16:44:25.127Z",codex-root,Exact all-status searches for trace/list trace/get and trace/contexts returned zero items; semantic searches found adjacent automation runtime and diagnostics lineage but no equivalent trace feature.
+notes[1]{created_at,author,text}:
+  "2026-08-07T16:44:25.127Z",codex-root,Credentials endpoints entity IDs automation IDs run IDs context IDs and raw trace payloads remain outside Git and PM evidence; only redacted contract shapes counts and booleans may be recorded.
+learnings[1]{created_at,author,text}:
+  "2026-08-07T16:44:25.127Z",codex-root,Core 2026.8.0 exposes administrator-only trace/list trace/get and trace/contexts for automation and script domains; the local 2026.7.4 server supports all three contracts.
+files[1]{path,scope,note}:
+  src/commands/websocket-traces.ts,project,Typed trace command implementation
+tests[1]{command,scope,timeout_seconds,note}:
+  "bun run release:verify",project,2400,Production readiness and exact coverage
+docs[1]{path,scope,note}:
+  docs/API.md,project,Canonical command contract
+body: "Research source: official Home Assistant Core 2026.8.0 trace WebSocket implementation plus the public WebSocket API protocol. Scope: typed trace list get and context discovery for automation and script domains; deterministic bounded output; explicit identifiers for exact trace retrieval; generic ws call remains the forward-compatible escape hatch. Safety: all commands are read-only and live evidence persists only redacted schemas counts and booleans. Breakpoint mutation and runtime debug controls are intentionally excluded pending a separate safety design."

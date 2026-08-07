@@ -14,6 +14,7 @@ import { createWebsocketObserveCommands } from "./websocket-observe.js";
 import { createWebsocketIntegrationCommands } from "./websocket-integrations.js";
 import { createWebsocketAutomationRuntimeCommand } from "./websocket-automation-runtime.js";
 import { createWebsocketFrontendCommand } from "./websocket-frontend.js";
+import { createWebsocketTraceCommand } from "./websocket-traces.js";
 
 function parseJson(value?: string): Record<string, unknown> | undefined {
   if (!value) return undefined;
@@ -52,6 +53,7 @@ export function createWebsocketCommand(): Command {
   cmd.addCommand(createWebsocketValidationCommand());
   cmd.addCommand(createWebsocketAutomationRuntimeCommand());
   cmd.addCommand(createWebsocketFrontendCommand());
+  cmd.addCommand(createWebsocketTraceCommand());
   for (const command of createWebsocketObserveCommands()) cmd.addCommand(command);
   for (const command of createWebsocketIntegrationCommands()) cmd.addCommand(command);
   for (const command of createWebsocketSessionCommands()) cmd.addCommand(command);

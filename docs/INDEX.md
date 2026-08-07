@@ -236,10 +236,11 @@ All commands support global flags (`--url`, `--token`, `--format`, `--timeout`, 
 
 | Command | Description |
 |---------|-------------|
-| `websocket` / `ws` | Coalesced passthrough plus typed target, automation, integration-intelligence, frontend semantic, provenance, session, and exposure operations |
+| `websocket` / `ws` | Coalesced passthrough plus typed target, automation runtime/trace, integration-intelligence, frontend semantic, provenance, session, and exposure operations |
 | `ws subscribe-trigger` | Observe automation triggers for a bounded period without firing them (admin only) |
 | `ws observe-entities` | Collect compact state snapshots and bounded add/change/remove deltas |
 | `ws automation-platforms` | Discover current purpose-specific trigger and condition schemas |
+| `ws traces` | Count, bound, correlate, and retrieve stored automation or script execution traces |
 | `ws integrations` | List/get manifests, setup timings, descriptions, and load readiness with bounded output |
 | `ws frontend` | Discover frontend version, bounded theme summaries, icons, and localized resources |
 | `ws entity-sources` | Map readable entities to their providing integration domains |
@@ -323,6 +324,7 @@ The CLI is optimized for use by LLMs and AI agents:
 - **Service Input Validation**: `call-service --validate-input` checks payloads against live HA service definitions before execution
 - **Automation Validation**: `ws validate-config` checks triggers, conditions, and actions without executing them
 - **Automation Runtime**: `ws automation-runtime` tests and observes conditions, then executes approved sequences behind read-only enforcement
+- **Automation Trace Diagnostics**: `ws traces` provides count-first summaries, context correlation, and exact execution detail retrieval
 - **Bounded Trigger Observation**: `ws subscribe-trigger` captures automation-level events with coalesced WebSocket transport
 - **Frontend Semantic Catalogs**: `ws frontend` provides bounded version, theme, icon, and translation discovery for UI-aware agents
 - **Token-Efficient State Deltas**: `ws observe-entities` filters at the server and returns bounded normalized changes

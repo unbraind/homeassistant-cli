@@ -35,7 +35,7 @@ Current public release: `v2026.8.6` (August 6, 2026). See:
 - **Search Endpoint Fallback** - Falls back to local entity-state search when `/api/search` is unavailable
 - **Service Schema Intelligence** - Supports modern object-style `/api/services` payloads with filter/flat/count modes
 - **Compact Registry Discovery** - Uses Home Assistant's enabled-entity display contract for low-bandwidth agent context
-- **WebSocket API Coverage** - Generic passthrough plus typed targets, automation validation/runtime, integration intelligence, frontend semantic catalogs, entity provenance, panels, heartbeat, signed paths, and voice-assistant exposure
+- **WebSocket API Coverage** - Generic passthrough plus typed targets, automation validation/runtime/traces, integration intelligence, frontend semantic catalogs, entity provenance, panels, heartbeat, signed paths, and voice-assistant exposure
 - **Bounded Media Discovery** - Browse, search, and resolve media sources or players with read-only, agent-sized output
 - **Agent Diagnostics** - Typed Repairs issue/fix flows and bounded related-resource topology search
 - **Supervisor API Coverage** - Generic `supervisor api` passthrough + common shortcuts (addons, host, logs)
@@ -531,6 +531,11 @@ hassio ws automation-runtime observe-condition --file automation.json --wait-ms 
 
 # Execute the same file's action sequence after approval (blocked by --read-only)
 hassio ws automation-runtime execute-sequence --file automation.json
+
+# Diagnose stored automation/script executions without changing runtime state
+hassio ws traces list --domain automation --limit 20
+hassio ws traces contexts --count
+hassio ws traces get --domain automation --item-id <id> --run-id <run-id>
 
 # Target helper: resolve and fetch related registries
 hassio ws target related --label-id lighting

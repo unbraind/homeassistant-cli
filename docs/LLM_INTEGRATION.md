@@ -87,14 +87,23 @@ network I/O. File input reuses normal `condition(s)` and `action(s)` fields, so
 the validated artifact remains the execution artifact. Treat runtime contexts,
 template output, and errors as private.
 
-### 10. Bounded media discovery (implemented)
+### 10. Diagnose automation and script executions (implemented)
+Use `hassio ws traces list --domain automation --count` before requesting a
+small summary slice. Select one `item_id` and `run_id`, then use `traces get`
+only when step-level config, trigger, and errors are required. `traces contexts
+--count` estimates the correlation surface without exposing context IDs. These
+administrator commands are read-only, but exact trace data can contain entity,
+user, context, and template values; keep live output outside prompts, Git, CI,
+and PM evidence.
+
+### 11. Bounded media discovery (implemented)
 Use `hassio media browse --count` before requesting detail, then apply a small
 `--limit`. `hassio media search` supports shared media sources and
 `--entity-id` player search, with current media-class filters and stable
 `{ scope, count, results }` output. Prefer `media resolve --metadata-only`;
 the full resolve response can contain a short-lived signed credential.
 
-### 11. Observe Entity Deltas with Bounded Context (implemented)
+### 12. Observe Entity Deltas with Bounded Context (implemented)
 Use `hassio ws observe-entities --domain <domain>` instead of repeatedly fetching
 all states or consuming full `state_changed` event envelopes. The command sends
 filters to Home Assistant, expands the compact initial snapshot, preserves
@@ -102,33 +111,33 @@ lossless add/change/remove patches, stops at `--wait-ms` or `--max-events`, and
 always attempts to unsubscribe. Add `--no-initial` when only subsequent changes
 belong in the agent context.
 
-### 12. Discover Purpose-Specific Automation Platforms (implemented)
+### 13. Discover Purpose-Specific Automation Platforms (implemented)
 Use `hassio ws automation-platforms --kind all` to retrieve the current trigger
 and condition schemas published by loaded integrations. Narrow them with
 `ws target triggers|conditions`, then validate the authored configuration with
 `ws validate-config` before execution.
 
-### 13. Observe Automation Triggers with Bounded Context (implemented)
+### 14. Observe Automation Triggers with Bounded Context (implemented)
 Use `hassio ws subscribe-trigger --trigger <json>` when an agent needs to wait
 for an automation-level condition without consuming the full event bus. The
 command validates inputs locally, negotiates coalesced WebSocket frames, applies
 `--wait-ms` and `--max-events` bounds, unsubscribes, and never fires the trigger.
 It requires a Home Assistant administrator.
 
-### 14. Repair diagnosis and safe remediation (implemented)
+### 15. Repair diagnosis and safe remediation (implemented)
 Start with `hassio repairs list --count`, then request a small severity/domain
 slice. Use `repairs show` only when issue data is required. Ignore and fix-flow
 writes require `--yes` and are blocked in read-only mode; `fix status` is safe
 for observing an already-started flow. Treat every issue and flow identifier as
 private instance data.
 
-### 15. Related-resource topology (implemented)
+### 16. Related-resource topology (implemented)
 Use `hassio related <item-type> <item-id> --count` to estimate the dependency
 surface before fetching identifiers. Apply `--result-type` and a small
 per-type `--limit` to bound context. This is Core's semantic resource graph,
 not text search, and can reveal automation/configuration relationships.
 
-### 16. Integration intelligence and entity provenance (implemented)
+### 17. Integration intelligence and entity provenance (implemented)
 Use `hassio ws integrations list --count` before fetching a small manifest
 slice. `integrations setup` exposes startup timing, `descriptions` provides
 admin-only integration metadata, and `wait` checks load readiness. Use
@@ -137,7 +146,7 @@ full entity-state payload, and `ws slugify <text>` for server-compatible IDs.
 List envelopes always disclose total/returned counts and truncation. Treat raw
 entity IDs and integration metadata as private topology.
 
-### 17. Frontend semantic and localization discovery (implemented)
+### 18. Frontend semantic and localization discovery (implemented)
 Use `hassio ws frontend version` to distinguish the installed frontend package
 from the Core version. Query `frontend icons` with an official category and an
 integration filter when generating UI-aware action plans. Query `frontend
@@ -147,10 +156,10 @@ default; `--include-values` is explicit because theme variables can be large and
 private. Every catalog uses deterministic rows and count/returned/truncated
 metadata.
 
-### 18. Cursor-based pagination (future)
+### 19. Cursor-based pagination (future)
 Add `--cursor` + `--limit` for entity-heavy installations so agents can page deterministically.
 
-### 19. Stable machine error envelope (future)
+### 20. Stable machine error envelope (future)
 Standardize failures to `{ code, message, hint, retriable }` across all commands and formats.
 
 ## TOON Format Explained
