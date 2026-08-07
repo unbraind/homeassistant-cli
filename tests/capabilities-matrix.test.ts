@@ -136,6 +136,14 @@ describe("probeApiMatrix", () => {
     expect(result.entries.find(e => e.key === "frontend_themes")?.status).toBe("available");
     expect(result.entries.find(e => e.key === "frontend_icons")?.status).toBe("available");
     expect(result.entries.find(e => e.key === "frontend_translations")?.status).toBe("available");
+    expect(result.entries.find(e => e.key === "automatic_entity_ids")?.status).toBe("available");
+    expect(result.entries.find(e => e.key === "registry_composite_splits")?.status).toBe("available");
+    expect(result.entries.find(e => e.key === "entity_id_settings")?.status).toBe("available");
+    expect(mockWsCall).toHaveBeenCalledWith("config/entity_registry/get_automatic_entity_ids", {
+      entity_ids: ["sensor.hassio_cli_capability_probe"],
+    });
+    expect(mockWsCall).toHaveBeenCalledWith("config/device_registry/list_composite_splits", undefined);
+    expect(mockWsCall).toHaveBeenCalledWith("config/entity_registry/settings/get", undefined);
     expect(mockWsCall).toHaveBeenCalledWith("frontend/get_version", undefined);
     expect(mockWsCall).toHaveBeenCalledWith("frontend/get_themes", undefined);
     expect(mockWsCall).toHaveBeenCalledWith("frontend/get_icons", {

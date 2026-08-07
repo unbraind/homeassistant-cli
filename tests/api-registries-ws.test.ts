@@ -98,6 +98,49 @@ describe("WebSocketRegistryClient", () => {
     });
   });
 
+  it("fetches current-Core device topology contracts", async () => {
+    mockCall
+      .mockResolvedValueOnce({ legacy: { split_ids: ["device-b", "device-a"], primary_id: "device-a" } })
+      .mockResolvedValueOnce({ linked_devices: ["device-c"] });
+
+    await expect(client.getCompositeDeviceSplits()).resolves.toEqual({
+      legacy: { split_ids: ["device-b", "device-a"], primary_id: "device-a" },
+    });
+    await expect(client.getLinkedDevices("device-a")).resolves.toEqual({ linked_devices: ["device-c"] });
+    expect(mockCall).toHaveBeenNthCalledWith(1, "config/device_registry/list_composite_splits");
+    expect(mockCall).toHaveBeenNthCalledWith(2, "config/device_registry/list_linked_devices", {
+      device_id: "device-a",
+    });
+  });
+
+  it("fetches automatic entity IDs and entity-ID settings", async () => {
+    mockCall
+      .mockResolvedValueOnce({ "light.custom": "light.kitchen" })
+      .mockResolvedValueOnce({ entity_id_parts: null })
+      .mockResolvedValueOnce({ entity_id_parts: ["device", "entity"] });
+
+    await expect(client.getAutomaticEntityIds(["light.custom"])).resolves.toEqual({
+      "light.custom": "light.kitchen",
+    });
+    await expect(client.getEntityIdSettings()).resolves.toEqual({ entity_id_parts: null });
+    await expect(client.updateEntityIdSettings(["device", "entity"])).resolves.toEqual({
+      entity_id_parts: ["device", "entity"],
+    });
+    expect(mockCall).toHaveBeenNthCalledWith(1, "config/entity_registry/get_automatic_entity_ids", {
+      entity_ids: ["light.custom"],
+    });
+    expect(mockCall).toHaveBeenNthCalledWith(2, "config/entity_registry/settings/get");
+    expect(mockCall).toHaveBeenNthCalledWith(3, "config/entity_registry/settings/update", {
+      entity_id_parts: ["device", "entity"],
+    });
+  });
+
+  it("blocks entity-ID settings mutations in read-only mode before network I/O", async () => {
+    const readOnlyClient = new WebSocketRegistryClient({ ...baseConfig, readOnly: true });
+    await expect(readOnlyClient.updateEntityIdSettings(null)).rejects.toThrow("Read-only mode blocked");
+    expect(mockCall).not.toHaveBeenCalled();
+  });
+
   describe("getAreaRegistry", () => {
     it("fetches area registry via WebSocket", async () => {
       mockCall.mockResolvedValueOnce(sampleAreas);

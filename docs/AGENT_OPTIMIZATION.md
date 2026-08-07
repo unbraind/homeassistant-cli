@@ -201,7 +201,29 @@ The raw display form retains Home Assistant's compact keys. Request
 `--decode-display` for descriptive field names. Always bound rows before
 placing registry metadata in an LLM context.
 
-### 8. Token-Efficient Entity Delta Observation
+### 8. Current-Core Registry Topology
+
+Home Assistant Core 2026.8.1 can split legacy composite devices by config entry
+and expose the resulting identity links. Count first, then request a bounded
+slice before targeting migrated devices:
+
+```bash
+hassio registries composite-splits --count --format json-compact
+hassio registries composite-splits --limit 25 --format toon
+hassio registries linked-devices <device-id> --limit 25 --format json-compact
+hassio registries automatic-entity-ids light.kitchen sensor.temperature
+hassio registries entity-id-settings get
+```
+
+Use `hassio capabilities --api-matrix` to check
+`automatic_entity_ids`, `registry_composite_splits`, and `entity_id_settings`
+first. A pre-2026.8 server may return `unknown_command` for the version-gated
+probes; retain that explicit capability boundary. Naming updates require
+administrator approval and are blocked locally in read-only mode. Never persist
+live device/entity IDs or topology payloads in prompts, logs, PM evidence, or
+source control.
+
+### 9. Token-Efficient Entity Delta Observation
 
 Prefer the compact entity subscription when an agent needs a live state window.
 Server-side filters prevent unrelated state from entering the transport or model
@@ -217,7 +239,7 @@ The initial snapshot uses expanded descriptive fields. Later rows preserve
 time and event count are mandatory positive bounds, and the client unsubscribes
 at either boundary.
 
-### 9. Purpose-Specific Automation Discovery
+### 10. Purpose-Specific Automation Discovery
 
 Discover the trigger and condition schemas contributed by currently loaded
 integrations before asking an agent to author an automation:
@@ -229,7 +251,7 @@ hassio ws automation-platforms --kind all --format toon
 Use target discovery next to narrow the catalog, then validate the resulting
 definition before any configuration mutation.
 
-### 10. WebSocket Target Resolution
+### 11. WebSocket Target Resolution
 
 Use WebSocket target helpers to convert abstract targets into concrete IDs, discover valid automation primitives, and fetch only matching registry records:
 
@@ -242,7 +264,7 @@ hassio ws target services --entity-id group.downstairs --no-expand-group
 hassio ws target related --label-id lighting
 ```
 
-### 11. Validate Automations Before Execution
+### 12. Validate Automations Before Execution
 
 Use the typed WebSocket validator before an agent proposes or applies an
 automation. It does not execute actions or create configuration:
@@ -257,7 +279,7 @@ hassio ws validate-config \
 CLI values override matching fields in the file. Treat a `valid: false` result as
 a hard stop and surface the corresponding `error` to the planning loop.
 
-### 12. Bounded Automation Trigger Observation
+### 13. Bounded Automation Trigger Observation
 
 Prefer automation-level trigger subscriptions over the entire event bus when an
 agent is waiting for a specific condition:
@@ -273,7 +295,7 @@ coalesced WebSocket frames, bounds both time and output size, unsubscribes, and
 never fires the trigger. Treat returned context and variable values as private
 instance data.
 
-### 13. Evaluate Conditions Before Approved Execution
+### 14. Evaluate Conditions Before Approved Execution
 
 Keep the authored automation artifact consistent across validation and runtime:
 
@@ -291,7 +313,7 @@ and state-changing, so leave read-only mode enabled through planning and remove
 it only for an approved run. The transport rejects execution before connecting
 when read-only mode is active.
 
-### 14. Diagnose Stored Automation and Script Executions
+### 15. Diagnose Stored Automation and Script Executions
 
 Count trace evidence before retrieving identifiers or details, then follow one
 selected run from summary to exact trace:
@@ -311,7 +333,7 @@ paths. All operations are read-only, but trace/context/user/entity identifiers
 and template output are private; do not persist live detail in prompts, logs,
 PM evidence, or source control.
 
-### 15. Bounded WebSocket Session Discovery
+### 16. Bounded WebSocket Session Discovery
 
 Prefer typed commands for stable protocol operations and bound large exposure
 inventories before adding them to an agent context:
@@ -327,7 +349,7 @@ Global `--read-only` blocks `ws exposure enable|disable`. A value returned by
 `ws sign-path` is a short-lived credential: consume it immediately and never
 persist it in prompts, logs, pm items, or source control.
 
-### 16. Bounded Media Discovery
+### 17. Bounded Media Discovery
 
 Count before fetching media rows, then request only the context the agent needs:
 
@@ -346,7 +368,7 @@ boundary and retain generic `ws call` for integration-specific contracts.
 Full resolve output may contain a short-lived signed URL, so prefer
 `--metadata-only` for planning and never persist the URL.
 
-### 17. Repair and Dependency Diagnostics
+### 18. Repair and Dependency Diagnostics
 
 Count before fetching private diagnostic details, and keep topology traversal
 focused on the resource type needed for a decision:
@@ -364,7 +386,7 @@ blocked by read-only mode. `repairs fix status` is read-only. Never persist
 issue IDs, flow IDs, placeholders, URLs, or related-resource identifiers in
 prompts, PM evidence, or source control.
 
-### 18. Integration Intelligence and Entity Provenance
+### 19. Integration Intelligence and Entity Provenance
 
 Build integration-aware plans with bounded metadata before requesting entity
 or service detail:
@@ -385,7 +407,7 @@ then a small `--limit`; use `--all` only when complete export is intentional.
 These commands are read-only, but descriptions is admin-only and live metadata
 can reveal private instance topology.
 
-### 19. Frontend Semantic and Localization Discovery
+### 20. Frontend Semantic and Localization Discovery
 
 Use the installed frontend version and dedicated semantic catalogs instead of
 guessing labels or icons from Core service metadata:

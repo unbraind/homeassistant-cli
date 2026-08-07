@@ -1,0 +1,51 @@
+id: hac-vv7s
+title: Add Home Assistant 2026.8 registry topology intelligence
+description: "Expose the new Home Assistant Core 2026.8 registry topology and entity-ID naming contracts through typed, bounded, format-stable hassio commands."
+type: Feature
+status: open
+priority: 1
+tags[8]: "2026.8",agents,api,device-topology,entity-naming,home-assistant,registries,websocket
+created_at: "2026-08-07T18:15:22.620Z"
+updated_at: "2026-08-07T18:15:22.620Z"
+deadline: "2026-08-09T18:15:22.620Z"
+assignee: codex-root
+author: codex-root
+estimated_minutes: 420
+acceptance_criteria: "Typed commands cover composite splits, linked devices, automatic entity-ID previews, and entity-ID settings read/update; Write operations fail locally in read-only mode before WebSocket connection; All global output formats, recursive help, docs, schemas, package behavior, live compatibility, and 100/100/100/100 coverage pass"
+definition_of_ready: Official Core 2026.8.1 source and tests inspected; all-status PM and GitHub duplicate searches completed; live Core version recorded without private payloads.
+goal: agent-native-home-assistant-operations
+objective: current-registry-topology-parity
+value: Agents can understand device migration and identity topology without raw WebSocket payload knowledge.
+impact: Reduces unsafe device targeting and makes Home Assistant 2026.8 entity naming policy inspectable and automatable.
+outcome: Production-ready typed registry intelligence with safe mutation boundaries and backward-compatible failure semantics.
+why_now: These contracts shipped in the current Core 2026.8.1 release and are absent from the CLI while the local 2026.7.4 instance provides a real compatibility boundary.
+parent: hac-4s9j
+reviewer: unbraind
+risk: medium
+confidence: 96
+sprint: 2026-08-07-registry-topology
+release: unreleased
+dependencies[8]{id,kind,created_at,author,source_kind,author_source}:
+  hac-ahl7,discovered_from,"2026-08-07T18:15:22.620Z",codex-root,"cli:create:dep",detected
+  hac-ak9g,blocked_by,"2026-08-07T18:15:22.620Z",codex-root,"cli:create:dep",detected
+  hac-lda1,related,"2026-08-07T18:15:22.620Z",codex-root,"cli:create:dep",detected
+  hac-n0ix,related,"2026-08-07T18:15:22.620Z",codex-root,"cli:create:dep",detected
+  hac-r17v,discovered_from,"2026-08-07T18:15:22.620Z",codex-root,"cli:create:dep",detected
+  hac-sv5f,related,"2026-08-07T18:15:22.620Z",codex-root,"cli:create:dep",detected
+  hac-vwh7,related,"2026-08-07T18:15:22.620Z",codex-root,"cli:create:dep",detected
+  hac-wwsi,related,"2026-08-07T18:15:22.620Z",codex-root,"cli:create:dep",detected
+comments[1]{created_at,author,text}:
+  "2026-08-07T18:15:22.620Z",codex-root,"All-status keyword and duplicate searches found adjacent closed registry and integration work but no item for composite splits, linked devices, or entity-ID settings."
+notes[1]{created_at,author,text}:
+  "2026-08-07T18:15:22.620Z",codex-root,"Privacy boundary: never store endpoint, token, device/entity IDs, registry contents, or raw live payloads in Git or PM; durable evidence is limited to versions, contract shapes, counts, booleans, and error classifications."
+learnings[1]{created_at,author,text}:
+  "2026-08-07T18:15:22.620Z",codex-root,Core tag 2026.8.1 introduces the two device-topology reads and entity-registry settings get/update; Core 2026.7.4 is the live backward-compatibility target.
+files[2]{path,scope,note}:
+  src/api/registries.ts,project,Typed registry transport surface
+  src/types/api/registries.ts,project,Registry response and input contracts
+tests[1]{command,scope,timeout_seconds,pm_context_mode,note}:
+  "bun run release:verify",project,2400,schema,Production readiness and exact coverage
+docs[2]{path,scope,note}:
+  docs/AGENT_OPTIMIZATION.md,project,Agent workflow guidance
+  docs/API.md,project,Canonical command reference
+body: "Official Core 2026.8.1 adds config/device_registry/list_composite_splits, config/device_registry/list_linked_devices, and config/entity_registry/settings/get|update. Deliver typed CLI discovery and guarded admin mutation with deterministic output, explicit pre-2026.8 compatibility, complete docs, exact coverage, live read-only evidence, and release automation proof."

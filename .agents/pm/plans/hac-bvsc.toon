@@ -1,0 +1,107 @@
+id: hac-bvsc
+title: Home Assistant 2026.8 registry topology delivery plan
+description: Implement and ship typed current-Core registry topology and naming-policy contracts with old-Core compatibility evidence.
+type: Plan
+status: open
+priority: 1
+tags[5]: "2026.8",delivery-plan,home-assistant,registry,websocket
+created_at: "2026-08-07T18:15:23.243Z"
+updated_at: "2026-08-07T18:40:14.269Z"
+deadline: "2026-08-09T18:15:23.243Z"
+assignee: codex-root
+author: codex-root
+estimated_minutes: 420
+acceptance_criteria: Every plan step carries implementation or verification evidence before closure
+goal: agent-native-home-assistant-operations
+objective: current-registry-topology-parity
+value: Coordinates one traceable implementation and review path.
+impact: "Connects current API research to code, tests, docs, hosted review, and release proof."
+outcome: "A merged, production-ready implementation with exact-head evidence."
+why_now: Current Core contracts are missing from the typed CLI.
+parent: hac-vv7s
+reviewer: unbraind
+risk: medium
+confidence: 95
+sprint: 2026-08-07-registry-topology
+release: unreleased
+dependencies[7]{id,kind,created_at,author,source_kind,author_source}:
+  hac-6asb,related,"2026-08-07T18:15:23.243Z",codex-root,"cli:create:dep",detected
+  hac-ak9g,blocked_by,"2026-08-07T18:15:23.243Z",codex-root,"cli:create:dep",detected
+  hac-c94k,related,"2026-08-07T18:15:23.243Z",codex-root,"cli:create:dep",detected
+  hac-ha2t,related,"2026-08-07T18:15:23.243Z",codex-root,"cli:create:dep",detected
+  hac-km4t,related,"2026-08-07T18:15:23.243Z",codex-root,"cli:create:dep",detected
+  hac-vv7s,parent,"2026-08-07T18:15:23.243Z",codex-root,"cli:create:dep",detected
+  hac-yo48,related,"2026-08-07T18:15:23.243Z",codex-root,"cli:create:dep",detected
+comments[1]{created_at,author,text}:
+  "2026-08-07T18:15:23.243Z",codex-root,Plan is bounded to the exact newest registry contracts and their safe CLI ergonomics; it does not duplicate the prior compact display or integration metadata features.
+notes[1]{created_at,author,text}:
+  "2026-08-07T18:15:23.243Z",codex-root,Only the implementation task is claimed and in progress; feature and plan remain open governance containers until verified delivery.
+learnings[1]{created_at,author,text}:
+  "2026-08-07T18:15:23.243Z",codex-root,"The current live server is a compatibility fixture, not evidence that the newest official command should be omitted."
+files[1]{path,scope,note}:
+  src/commands/registries.ts,project,Command integration surface
+tests[1]{command,scope,timeout_seconds,pm_context_mode,note}:
+  "bun run release:verify",project,2400,schema,Plan validation gate
+docs[1]{path,scope,note}:
+  docs/API.md,project,Primary registry command specification
+plan_mode: approved
+plan_scope: "Typed WebSocket transport, intuitive registries subcommands, mutation safety, schemas, docs, tests, live verification, changelog, PR review, and merge closeout."
+plan_harness: codex
+plan_resume_context: Official Core 2026.8.1 is source of truth; live Core 2026.7.4 should return an explicit unsupported-command error; keep all private instance material external.
+plan_validation[3]{text,command,expected}:
+  "Privacy-safe live E2E passed, including wizard persistence, six output formats, automatic-ID preview, and explicit unknown_command compatibility for newer endpoints.","bun run test:e2e:live",Exit 0 with no private payload retained
+  "Exact release verifier passed after final capability-probe changes: 1392 tests and 100 percent statements, branches, functions, and lines; docstrings 134 of 134; PM integrity, dependency audit, Trivy, history secret scan, build, typecheck, lint, duplication, file-size, and shell gates passed.","bun run release:verify",All ten release phases pass
+  "Clean-tree conditional release dry-run completed end to end without publishing: generated a 2026.8.7 preview, reran all release gates, packed npx/bunx consumers, and identified release-relevant files since v2026.8.6.",node scripts/release/auto-release.mjs --dry-run --json --allow-same-day-release,"skipped=false, dry_run=true, pushed=false"
+plan_decisions[1]{ts,author,decision,rationale,evidence}:
+  "2026-08-07T18:28:31.831Z",codex-root,Expose the Core registry intelligence under hassio registries rather than a parallel top-level group.,"The operations share registry transport, privacy posture, output conventions, and user mental model.",Official Core 2026.8.1 config device/entity registry handlers and existing hassio registries command.
+plan_discoveries[1]{ts,author,text}:
+  "2026-08-07T18:28:32.411Z",codex-root,"Core 2026.8.1 added composite splits, linked devices, and entity-ID settings after the live 2026.7.4 server; automatic-ID preview already exists on the live server."
+plan_steps[6]:
+  - id: plan-step-001
+    order: 1
+    title: Validate official schemas and installed dependency types
+    status: completed
+    created_at: "2026-08-07T18:15:23.230Z"
+    updated_at: "2026-08-07T18:28:33.822Z"
+    evidence: "Inspected tagged Core 2026.8.1 handlers/tests, current dependency types, official REST/WebSocket docs, and live Core 2026.7.4 availability."
+    completed_at: "2026-08-07T18:28:33.822Z"
+  - id: plan-step-002
+    order: 2
+    title: Implement typed transport and safe command UX
+    status: completed
+    created_at: "2026-08-07T18:15:23.230Z"
+    updated_at: "2026-08-07T18:28:34.328Z"
+    evidence: Added exact typed WebSocket requests/responses and read-only mutation enforcement in registry client.
+    completed_at: "2026-08-07T18:28:34.328Z"
+  - id: plan-step-003
+    order: 3
+    title: "Add exhaustive unit, command, help, and format tests"
+    status: completed
+    created_at: "2026-08-07T18:15:23.230Z"
+    updated_at: "2026-08-07T18:28:34.834Z"
+    evidence: "Added intuitive registries subcommands, local validation, deterministic bounded envelopes, recursive help, and capability probes."
+    completed_at: "2026-08-07T18:28:34.834Z"
+  - id: plan-step-004
+    order: 4
+    title: "Update API, agent, index, README, and changelog documentation"
+    status: completed
+    created_at: "2026-08-07T18:15:23.230Z"
+    updated_at: "2026-08-07T18:28:35.417Z"
+    evidence: "Updated README and all relevant docs with official source links, privacy guidance, output semantics, and old-Core compatibility."
+    completed_at: "2026-08-07T18:28:35.417Z"
+  - id: plan-step-005
+    order: 5
+    title: "Run local, package, wizard, release, and live compatibility gates"
+    status: completed
+    created_at: "2026-08-07T18:15:23.230Z"
+    updated_at: "2026-08-07T18:36:49.859Z"
+    evidence: "Release verifier passed with 1392 tests, exact 100/100/100/100 coverage, 100% docstrings, clean security/PM/static gates; package dry-run and privacy-safe live E2E also passed."
+    completed_at: "2026-08-07T18:36:49.859Z"
+  - id: plan-step-006
+    order: 6
+    title: "Publish PR, close every review thread, merge, and verify master"
+    status: in_progress
+    created_at: "2026-08-07T18:15:23.230Z"
+    updated_at: "2026-08-07T18:36:50.685Z"
+    evidence: "Preparing exact scoped commit, push, PR, hosted checks, and complete bot review loop."
+body: "Sequence official-contract confirmation, typed implementation, exhaustive tests, full documentation, local/live/package proof, hosted review, merge, and PM closeout. Preserve privacy and distinguish latest-Core support from older-live-server availability."

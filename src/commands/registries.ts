@@ -8,6 +8,7 @@ import { withExit } from "../utils/exit.js";
 import { resolveCommandOptions } from "../utils/command-helpers.js";
 import type { OutputFormat, HaState } from "../types/index.js";
 import { outputEntityRegistryDisplay } from "./registry-display.js";
+import { createRegistryIntelligenceCommands } from "./registry-intelligence.js";
 
 interface RegistryOptions {
   entities?: boolean;
@@ -94,6 +95,8 @@ export function createRegistriesCommand(): Command {
       await wsClient.close();
     }
   }));
+
+  for (const subcommand of createRegistryIntelligenceCommands()) command.addCommand(subcommand);
 
   return command;
 }
