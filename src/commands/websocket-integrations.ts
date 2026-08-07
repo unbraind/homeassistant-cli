@@ -2,9 +2,7 @@
  * Defines typed Home Assistant WebSocket integration-intelligence commands.
  */
 import { Command } from "commander";
-import { HomeAssistantWebSocketClient } from "../api/websocket.js";
-import { formatOutput } from "../formatters/index.js";
-import { parseLimit, resolveCommandOptions } from "../utils/command-helpers.js";
+import { callWebsocketAndOutput, formatBoundedRows } from "../utils/command-helpers.js";
 import { withExit } from "../utils/exit.js";
 
 type ListOptions = {
@@ -67,37 +65,6 @@ function descriptionRows(result: unknown): Record<string, unknown>[] {
   });
 }
 
-function boundedRows(
-  rows: Record<string, unknown>[],
-  options: ListOptions,
-  collectionKey: string,
-): Record<string, unknown> {
-  const limit = options.all ? undefined : parseLimit(options.limit);
-  const visible = limit === undefined ? rows : rows.slice(0, limit);
-  if (options.count) return { count: rows.length };
-  return {
-    count: rows.length,
-    returned_count: visible.length,
-    truncated: visible.length < rows.length,
-    [collectionKey]: visible,
-  };
-}
-
-async function callAndOutput(
-  command: Command,
-  type: string,
-  payload: Record<string, unknown> | undefined,
-  normalize: (result: unknown) => Record<string, unknown>,
-): Promise<void> {
-  const { config, format } = resolveCommandOptions(command.optsWithGlobals());
-  const client = new HomeAssistantWebSocketClient(config);
-  try {
-    console.log(formatOutput(normalize(await client.call(type, payload)), format));
-  } finally {
-    await client.close();
-  }
-}
-
 function addListOptions(command: Command, noun: string): Command {
   return command
     .option("--domain <domains>", `Comma-separated ${noun} domains to include`)
@@ -113,12 +80,12 @@ function createIntegrationListCommand(): Command {
   );
   command.action(withExit(async (options: ListOptions, cmd) => {
     const domains = parseDomains(options.domain);
-    await callAndOutput(cmd as Command, "manifest/list", domains.length > 0 ? { integrations: domains } : undefined, (result) => {
+    await callWebsocketAndOutput(cmd as Command, "manifest/list", domains.length > 0 ? { integrations: domains } : undefined, (result) => {
       const rows = Array.isArray(result)
         ? result.filter((entry): entry is Record<string, unknown> => Boolean(entry) && typeof entry === "object")
         : [];
       rows.sort((left, right) => String(left["domain"]).localeCompare(String(right["domain"]), "en"));
-      return boundedRows(rows, options, "integrations");
+      return formatBoundedRows(rows, options, "integrations");
     });
   }));
   return command;
@@ -130,7 +97,7 @@ function createIntegrationGetCommand(): Command {
     .argument("<domain>", "Integration domain, for example light or mqtt");
   command.action(withExit(async (domain: string, _options, cmd) => {
     const validatedDomain = parseDomain(domain);
-    await callAndOutput(cmd as Command, "manifest/get", { integration: validatedDomain }, (result) => ({
+    await callWebsocketAndOutput(cmd as Command, "manifest/get", { integration: validatedDomain }, (result) => ({
       integration: result,
     }));
   }));
@@ -149,7 +116,7 @@ function createIntegrationRowsCommand(
   );
   command.action(withExit(async (options: ListOptions, cmd) => {
     const domains = new Set(parseDomains(options.domain));
-    await callAndOutput(cmd as Command, type, undefined, (result) => {
+    await callWebsocketAndOutput(cmd as Command, type, undefined, (result) => {
       const rows = toRows(result)
         .filter((entry) => domains.size === 0 || domains.has(String(entry["domain"])))
         .sort((left, right) =>
@@ -157,7 +124,7 @@ function createIntegrationRowsCommand(
           || String(left["source"]).localeCompare(String(right["source"]), "en")
           || String(left["category"]).localeCompare(String(right["category"]), "en")
         );
-      return boundedRows(rows, options, "integrations");
+      return formatBoundedRows(rows, options, "integrations");
     });
   }));
   return command;
@@ -169,7 +136,7 @@ function createIntegrationWaitCommand(): Command {
     .argument("<domain>", "Integration domain, for example homeassistant");
   command.action(withExit(async (domain: string, _options, cmd) => {
     const validatedDomain = parseDomain(domain);
-    await callAndOutput(cmd as Command, "integration/wait", { domain: validatedDomain }, (result) => ({
+    await callWebsocketAndOutput(cmd as Command, "integration/wait", { domain: validatedDomain }, (result) => ({
       domain: validatedDomain,
       ...(result && typeof result === "object" && !Array.isArray(result)
         ? result as Record<string, unknown>
@@ -217,12 +184,12 @@ function createEntitySourcesCommand(): Command {
   command.action(withExit(async (options: ListOptions & { entityId?: string }, cmd) => {
     const domains = new Set(parseDomains(options.domain));
     const entityIds = new Set(options.entityId?.split(",").map((part) => part.trim()).filter(Boolean) ?? []);
-    await callAndOutput(cmd as Command, "entity/source", undefined, (result) => {
+    await callWebsocketAndOutput(cmd as Command, "entity/source", undefined, (result) => {
       const rows = rowsFromRecord(result, "entity_id")
         .filter((entry) => domains.size === 0 || domains.has(String(entry["domain"])))
         .filter((entry) => entityIds.size === 0 || entityIds.has(String(entry["entity_id"])))
         .sort((left, right) => String(left["entity_id"]).localeCompare(String(right["entity_id"]), "en"));
-      return boundedRows(rows, options, "entities");
+      return formatBoundedRows(rows, options, "entities");
     });
   }));
   return command;
@@ -234,7 +201,7 @@ function createSlugifyCommand(): Command {
     .argument("<text>", "Text to convert into a Home Assistant slug");
   command.action(withExit(async (value: string, _options, cmd) => {
     if (value.trim().length === 0) throw new Error("Slug text must not be empty");
-    await callAndOutput(cmd as Command, "slugify", { text: value }, (result) => ({ input: value, result }));
+    await callWebsocketAndOutput(cmd as Command, "slugify", { text: value }, (result) => ({ input: value, result }));
   }));
   return command;
 }

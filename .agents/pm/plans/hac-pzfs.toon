@@ -1,0 +1,105 @@
+id: hac-pzfs
+title: Frontend semantic catalog delivery plan
+description: "Plan current-contract research, typed implementation, exact gates, private live acceptance, and exact-head GitHub review for Home Assistant frontend semantic discovery."
+type: Plan
+status: open
+priority: 0
+tags[5]: agents,frontend,localization,plan,websocket
+created_at: "2026-08-07T05:48:06.080Z"
+updated_at: "2026-08-07T05:59:17.130Z"
+deadline: "2026-08-08T05:48:06.080Z"
+assignee: codex-root
+author: codex-root
+estimated_minutes: 330
+acceptance_criteria: Every step records direct evidence; only the implementation task is claimed and in progress; all source tests and strict quality gates pass; exact-head checks and available bot reviews are fully dispositioned before merge
+definition_of_ready: Canonical feature hac-fj2b exists after all-status duplicate search and official/live schema confirmation.
+goal: best-agent-home-assistant-cli
+objective: deliver-frontend-semantic-catalog
+value: Provides a reproducible implementation and review path with privacy boundaries.
+impact: Makes the feature understandable and executable by stateless agents through PM context and graph traversal.
+outcome: Merged production-ready frontend semantic discovery with honest non-publication closeout.
+why_now: The official semantic APIs fill a current agent discovery gap and are confirmed live.
+parent: hac-fj2b
+reviewer: unbraind
+risk: medium
+confidence: 97
+sprint: frontend-intelligence
+release: 2026.8.7
+dependencies[6]{id,kind,created_at,author,source_kind,author_source}:
+  hac-ckrs,related,"2026-08-07T05:48:06.080Z",codex-root,"cli:create:dep",detected
+  hac-fj2b,parent,"2026-08-07T05:48:06.080Z",codex-root,"cli:create:dep",detected
+  hac-r17v,related,"2026-08-07T05:48:06.080Z",codex-root,"cli:create:dep",detected
+  hac-stpm,related,"2026-08-07T05:48:06.080Z",codex-root,"cli:create:dep",detected
+  hac-sv5f,related,"2026-08-07T05:48:06.080Z",codex-root,"cli:create:dep",detected
+  hac-vwh7,related,"2026-08-07T05:48:06.080Z",codex-root,"cli:create:dep",detected
+comments[1]{created_at,author,text}:
+  "2026-08-07T05:48:06.080Z",codex-root,Research completed against current Home Assistant developer docs and home-assistant/core frontend schemas before plan creation.
+notes[1]{created_at,author,text}:
+  "2026-08-07T05:48:06.080Z",codex-root,Use PM validation events for redacted counts and booleans only; raw frontend resources remain local.
+learnings[1]{created_at,author,text}:
+  "2026-08-07T05:48:06.080Z",codex-root,"The live instance is older than current development Core, so official contract and live compatibility remain separate evidence dimensions."
+files[2]{path,scope,note}:
+  src/commands/websocket-frontend.ts,project,Primary implementation surface
+  src/commands/capabilities-api-probes.ts,project,Capability discovery integration
+tests[1]{command,path,scope,timeout_seconds,note}:
+  "bun run release:verify",tests/websocket-frontend-command.test.ts,project,2400,Full production readiness gate
+docs[2]{path,scope,note}:
+  docs/API.md,project,Typed command contract
+  docs/LLM_INTEGRATION.md,project,Agent workflow
+plan_mode: approved
+plan_scope: "frontend/get_version, frontend/get_themes, frontend/get_icons, frontend/get_translations, capability discovery, docs, tests, and non-publishing release readiness"
+plan_harness: codex
+plan_resume_context: Official current Core schemas and live Core 2026.7.4 support are confirmed. Implement one typed ws frontend family with bounded outputs and privacy-safe validation; then run exact repository and hosted review gates.
+plan_validation[1]{text,command,expected}:
+  "Live Core 2026.7.4 supports all four frontend contracts; version is present, icon and translation resources return nonzero bounded test counts, and themes return the documented default/theme keys.",HASSIO_READONLY=true hassio ws call -T frontend/<contract> --format json-compact,Read-only calls succeed and only redacted shapes/counts are retained
+plan_discoveries[1]{ts,author,text}:
+  "2026-08-07T05:48:47.820Z",codex-root,"Current home-assistant/core frontend schemas define frontend/get_version with no payload, frontend/get_themes with no payload, frontend/get_icons with required category and optional integration list, and frontend/get_translations with required language/category plus optional integration list/config_flow."
+plan_steps[6]:
+  - id: plan-step-001
+    order: 1
+    title: Capture official schemas and live compatibility
+    status: completed
+    created_at: "2026-08-07T05:48:06.073Z"
+    updated_at: "2026-08-07T05:48:48.937Z"
+    evidence: "Verified current official developer WebSocket documentation, home-assistant/core frontend schemas at current dev head, and privacy-safe live compatibility on Core 2026.7.4 for all four contracts."
+    completed_at: "2026-08-07T05:48:48.937Z"
+  - id: plan-step-002
+    order: 2
+    title: Implement typed bounded frontend discovery
+    status: completed
+    created_at: "2026-08-07T05:48:06.073Z"
+    updated_at: "2026-08-07T05:59:10.492Z"
+    evidence: "Implemented typed frontend version, bounded theme summaries, icon catalogs, and translation catalogs; registration and capability probes are complete."
+    completed_at: "2026-08-07T05:59:10.492Z"
+  - id: plan-step-003
+    order: 3
+    title: Add exact unit coverage and help/output assertions
+    status: completed
+    created_at: "2026-08-07T05:48:06.073Z"
+    updated_at: "2026-08-07T05:59:12.105Z"
+    evidence: "Focused tests cover validation, normalization, sorting, bounds, unexpected shapes, close-on-error, help, and capability probes; full suite passes 1374 tests at exact 100/100/100/100."
+    completed_at: "2026-08-07T05:59:12.105Z"
+  - id: plan-step-004
+    order: 4
+    title: Document agent workflows and capability matrix
+    status: completed
+    created_at: "2026-08-07T05:48:06.073Z"
+    updated_at: "2026-08-07T05:59:13.611Z"
+    evidence: "Updated README and docs/API.md, docs/INDEX.md, docs/AGENT_OPTIMIZATION.md, and docs/LLM_INTEGRATION.md with command contracts, bounds, privacy guidance, and examples."
+    completed_at: "2026-08-07T05:59:13.611Z"
+  - id: plan-step-005
+    order: 5
+    title: Run full local and live read-only acceptance
+    status: completed
+    created_at: "2026-08-07T05:48:06.073Z"
+    updated_at: "2026-08-07T05:59:16.196Z"
+    evidence: "Built node dist/cli.js passed temporary-config live acceptance on Core 2026.7.4; setup wizard, every frontend contract, six output formats, and privacy-safe count/shape assertions passed."
+    completed_at: "2026-08-07T05:59:16.196Z"
+  - id: plan-step-006
+    order: 6
+    title: Converge GitHub checks and review feedback
+    status: in_progress
+    created_at: "2026-08-07T05:48:06.073Z"
+    updated_at: "2026-08-07T05:59:17.129Z"
+    evidence: "Preparing exact-head local gates, commit, PR checks, and complete bot review inventory."
+body: "The plan keeps official contract research separate from live compatibility evidence, adds a focused typed command family, validates every formatter and help surface, and carries the exact head through CI and bot review without publishing."

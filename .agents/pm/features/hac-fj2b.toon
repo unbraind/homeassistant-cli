@@ -1,0 +1,49 @@
+id: hac-fj2b
+title: Add agent-native frontend semantic catalog discovery
+description: "Expose current official Home Assistant frontend version, theme, icon, and translation WebSocket contracts through typed, bounded, format-safe hassio commands while retaining raw ws call passthrough."
+type: Feature
+status: open
+priority: 0
+tags[6]: agents,api,frontend,home-assistant,localization,websocket
+created_at: "2026-08-07T05:47:24.265Z"
+updated_at: "2026-08-07T05:47:24.265Z"
+deadline: "2026-08-08T05:47:24.265Z"
+assignee: codex-root
+author: codex-root
+estimated_minutes: 360
+acceptance_criteria: "Typed commands cover frontend/get_version, frontend/get_themes, frontend/get_icons, and frontend/get_translations with input validation and bounded output; every command has detailed help and all six output formats remain valid; exact 100/100/100/100 source coverage and strict repository gates pass; read-only live acceptance passes against the configured Home Assistant instance without persisting private payloads"
+definition_of_ready: All-status duplicate search is clean for this scope; current official Core schemas and live instance support are confirmed; prior WebSocket lineages and repository conventions are understood.
+goal: best-agent-home-assistant-cli
+objective: typed-frontend-semantic-catalog
+value: Agents can discover version-specific visual semantics and localized labels without hand-authoring raw protocol payloads.
+impact: "Improves deterministic planning, accessible presentation, localization, and forward-compatible automation generation."
+outcome: A documented typed frontend discovery family with bounded machine-readable results and live proof.
+why_now: Home Assistant removed translated action descriptions from get_services and current Core exposes dedicated icon and translation catalogs; the CLI lacks a discoverable typed surface.
+parent: hac-4s9j
+reviewer: unbraind
+risk: medium
+confidence: 97
+sprint: frontend-intelligence
+release: 2026.8.7
+dependencies[6]{id,kind,created_at,author,source_kind,author_source}:
+  hac-ckrs,related,"2026-08-07T05:47:24.265Z",codex-root,"cli:create:dep",detected
+  hac-r17v,related,"2026-08-07T05:47:24.265Z",codex-root,"cli:create:dep",detected
+  hac-r4e3,related,"2026-08-07T05:47:24.265Z",codex-root,"cli:create:dep",detected
+  hac-stpm,related,"2026-08-07T05:47:24.265Z",codex-root,"cli:create:dep",detected
+  hac-sv5f,discovered_from,"2026-08-07T05:47:24.265Z",codex-root,"cli:create:dep",detected
+  hac-vwh7,related,"2026-08-07T05:47:24.265Z",codex-root,"cli:create:dep",detected
+comments[1]{created_at,author,text}:
+  "2026-08-07T05:47:24.265Z",codex-root,Official developer documentation and current home-assistant/core frontend WebSocket schemas were refreshed on 2026-08-07; four typed read-only contracts are confirmed on live Core 2026.7.4.
+notes[1]{created_at,author,text}:
+  "2026-08-07T05:47:24.265Z",codex-root,"Persist only contract names, schema fields, version booleans, counts, and validation status. Never persist themes, translations, entity identifiers, user data, endpoints, or credentials."
+learnings[1]{created_at,author,text}:
+  "2026-08-07T05:47:24.265Z",codex-root,Dedicated frontend icon and translation contracts replace assumptions based on get_services descriptions and preserve compatibility with current Home Assistant localization behavior.
+files[2]{path,scope,note}:
+  src/commands/websocket-frontend.ts,project,Typed frontend discovery command family
+  src/commands/websocket.ts,project,WebSocket command composition
+tests[1]{command,path,scope,timeout_seconds,note}:
+  "bun run test:coverage",tests/websocket-frontend-command.test.ts,project,2400,Exact source coverage gate
+docs[2]{path,scope,note}:
+  docs/AGENT_OPTIMIZATION.md,project,Agent discovery workflow
+  docs/API.md,project,Command reference and privacy guidance
+body: "Research and deliver the official frontend semantic catalog as one cohesive read-only WebSocket feature: version provenance, bounded theme summaries, category-scoped icons, and localized resources. Preserve generic ws call as the compatibility escape hatch and keep all live payloads private."

@@ -2,7 +2,9 @@
  * Provides shared command helpers behavior for the Home Assistant CLI runtime.
  */
 import type { Command } from "commander";
+import { HomeAssistantWebSocketClient } from "../api/websocket.js";
 import { getConfig } from "../config/index.js";
+import { formatOutput } from "../formatters/index.js";
 import type { Config, OutputFormat } from "../types/index.js";
 
 export type GlobalOptions = {
@@ -12,6 +14,12 @@ export type GlobalOptions = {
   timeout?: number;
   readOnly?: boolean | string;
   config?: string;
+};
+
+export type BoundedListOptions = {
+  all?: boolean;
+  count?: boolean;
+  limit?: string;
 };
 
 /**
@@ -39,6 +47,39 @@ export function parseLimit(value?: string): number | undefined {
   }
 
   return limit;
+}
+
+/** Format deterministic rows with count metadata and an optional positive bound. */
+export function formatBoundedRows(
+  rows: Record<string, unknown>[],
+  options: BoundedListOptions,
+  collectionKey: string,
+): Record<string, unknown> {
+  if (options.count) return { count: rows.length };
+  const limit = options.all ? undefined : parseLimit(options.limit);
+  const visible = limit === undefined ? rows : rows.slice(0, limit);
+  return {
+    count: rows.length,
+    returned_count: visible.length,
+    truncated: visible.length < rows.length,
+    [collectionKey]: visible,
+  };
+}
+
+/** Execute a typed WebSocket request, format its normalized result, and always close the client. */
+export async function callWebsocketAndOutput(
+  command: Command,
+  type: string,
+  payload: Record<string, unknown> | undefined,
+  normalize: (result: unknown) => Record<string, unknown>,
+): Promise<void> {
+  const { config, format } = resolveCommandOptions(command.optsWithGlobals());
+  const client = new HomeAssistantWebSocketClient(config);
+  try {
+    console.log(formatOutput(normalize(await client.call(type, payload)), format));
+  } finally {
+    await client.close();
+  }
 }
 
 const GLOBAL_FLAGS_HELP = `

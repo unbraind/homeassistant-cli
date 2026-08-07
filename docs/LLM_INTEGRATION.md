@@ -137,10 +137,20 @@ full entity-state payload, and `ws slugify <text>` for server-compatible IDs.
 List envelopes always disclose total/returned counts and truncation. Treat raw
 entity IDs and integration metadata as private topology.
 
-17. Cursor-based pagination (future):
+17. Frontend semantic and localization discovery (implemented):
+Use `hassio ws frontend version` to distinguish the installed frontend package
+from the Core version. Query `frontend icons` with an official category and an
+integration filter when generating UI-aware action plans. Query `frontend
+translations` with language/category plus `--count` or a small `--limit` when
+localized labels are required. `frontend themes` returns bounded summaries by
+default; `--include-values` is explicit because theme variables can be large and
+private. Every catalog uses deterministic rows and count/returned/truncated
+metadata.
+
+18. Cursor-based pagination (future):
 Add `--cursor` + `--limit` for entity-heavy installations so agents can page deterministically.
 
-18. Stable machine error envelope (future):
+19. Stable machine error envelope (future):
 Standardize failures to `{ code, message, hint, retriable }` across all commands and formats.
 
 ## TOON Format Explained

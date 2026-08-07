@@ -45,6 +45,36 @@ export const REST_PROBES: RestProbe[] = [
 
 export const WEBSOCKET_PROBES: WebsocketProbe[] = [
   {
+    key: "frontend_version",
+    commandType: "frontend/get_version",
+    endpoint: "/api/websocket#frontend/get_version",
+    commandGroup: "websocket",
+    commands: ["hassio ws frontend version"],
+  },
+  {
+    key: "frontend_themes",
+    commandType: "frontend/get_themes",
+    endpoint: "/api/websocket#frontend/get_themes",
+    commandGroup: "websocket",
+    commands: ["hassio ws frontend themes --limit 20"],
+  },
+  {
+    key: "frontend_icons",
+    commandType: "frontend/get_icons",
+    endpoint: "/api/websocket#frontend/get_icons",
+    commandGroup: "websocket",
+    commands: ["hassio ws frontend icons --category services --integration light --limit 50"],
+    payload: { category: "services", integration: ["light"] },
+  },
+  {
+    key: "frontend_translations",
+    commandType: "frontend/get_translations",
+    endpoint: "/api/websocket#frontend/get_translations",
+    commandGroup: "websocket",
+    commands: ["hassio ws frontend translations --language en --category services --integration light --count"],
+    payload: { language: "en", category: "services", integration: ["light"] },
+  },
+  {
     key: "automation_runtime",
     commandType: "test_condition",
     endpoint: "/api/websocket#test_condition",

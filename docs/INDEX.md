@@ -18,7 +18,7 @@ Complete documentation for the Home Assistant CLI tool.
 
 ## Release Status
 
-Current public release: **v2026.8.1** (2026-08-01).
+Current public release: **v2026.8.6** (2026-08-06).
 
 - `CHANGELOG.md` tracks released and unreleased changes.
 - Pre-release implementation progress and history audits are documented in `docs/PROJECT_HISTORY.md`.
@@ -236,11 +236,12 @@ All commands support global flags (`--url`, `--token`, `--format`, `--timeout`, 
 
 | Command | Description |
 |---------|-------------|
-| `websocket` / `ws` | Coalesced passthrough plus typed target, automation, integration-intelligence, provenance, session, and exposure operations |
+| `websocket` / `ws` | Coalesced passthrough plus typed target, automation, integration-intelligence, frontend semantic, provenance, session, and exposure operations |
 | `ws subscribe-trigger` | Observe automation triggers for a bounded period without firing them (admin only) |
 | `ws observe-entities` | Collect compact state snapshots and bounded add/change/remove deltas |
 | `ws automation-platforms` | Discover current purpose-specific trigger and condition schemas |
 | `ws integrations` | List/get manifests, setup timings, descriptions, and load readiness with bounded output |
+| `ws frontend` | Discover frontend version, bounded theme summaries, icons, and localized resources |
 | `ws entity-sources` | Map readable entities to their providing integration domains |
 | `ws slugify` | Generate identifiers with Home Assistant Core's canonical slug rules |
 | `ws validate-config` | Validate trigger, condition, and action definitions without executing them |
@@ -323,6 +324,7 @@ The CLI is optimized for use by LLMs and AI agents:
 - **Automation Validation**: `ws validate-config` checks triggers, conditions, and actions without executing them
 - **Automation Runtime**: `ws automation-runtime` tests and observes conditions, then executes approved sequences behind read-only enforcement
 - **Bounded Trigger Observation**: `ws subscribe-trigger` captures automation-level events with coalesced WebSocket transport
+- **Frontend Semantic Catalogs**: `ws frontend` provides bounded version, theme, icon, and translation discovery for UI-aware agents
 - **Token-Efficient State Deltas**: `ws observe-entities` filters at the server and returns bounded normalized changes
 - **Automation Platform Discovery**: `ws automation-platforms` returns current trigger and condition schemas
 - **Integration Intelligence**: `ws integrations`, `ws entity-sources`, and `ws slugify` provide bounded metadata, provenance, readiness, and identifier contracts

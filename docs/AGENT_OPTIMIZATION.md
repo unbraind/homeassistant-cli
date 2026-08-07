@@ -365,6 +365,24 @@ then a small `--limit`; use `--all` only when complete export is intentional.
 These commands are read-only, but descriptions is admin-only and live metadata
 can reveal private instance topology.
 
+### 18. Frontend Semantic and Localization Discovery
+
+Use the installed frontend version and dedicated semantic catalogs instead of
+guessing labels or icons from Core service metadata:
+
+```bash
+hassio ws frontend version
+hassio ws frontend themes --count
+hassio ws frontend icons --category services --integration light --limit 25
+hassio ws frontend translations --language en --category services --integration light --count
+```
+
+Count before retrieving catalogs, narrow icons/translations by integration, and
+use `--key` for a translation prefix. Theme output is summary-only unless
+`--include-values` is explicit. All operations are read-only, but custom theme
+names, variables, and localized resources can expose private configuration; do
+not place unredacted live results in prompts or tracker evidence.
+
 ## Best Practices for Agents
 
 ### 1. Use Appropriate Output Format

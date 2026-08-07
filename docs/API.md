@@ -1629,6 +1629,37 @@ hassio ws automation-runtime execute-sequence --file automation.json \
   --variables '{"source":"approved-agent-run"}'
 ```
 
+#### Typed frontend semantic discovery
+
+`ws frontend` exposes the current official read-only Home Assistant frontend
+WebSocket contracts without requiring raw protocol payloads:
+
+- `version` calls `frontend/get_version` and returns the installed frontend
+  package version independently from the Core version.
+- `themes` calls `frontend/get_themes` and defaults to bounded summaries with
+  `name` and `variable_count`. Use `--name`, `--limit`, `--all`, or `--count`;
+  request raw theme variables only with `--include-values`.
+- `icons --category <category>` calls `frontend/get_icons`. Official categories
+  are `conditions`, `entity`, `entity_component`, `services`, and `triggers`.
+  Use `--integration <domains>` to narrow the server response.
+- `translations --language <code> --category <category>` calls
+  `frontend/get_translations`. It accepts `--integration <domains>`,
+  `--config-flow`, `--key <prefix>`, and the shared list bounds.
+
+Catalog commands return deterministic key/value rows and the stable envelope
+`{count, returned_count, truncated, ...}`. `--count` omits resource rows. Theme
+names, variables, and translations can reveal private customizations; count
+first, request a small slice, and do not persist live payloads in source control.
+
+```bash
+hassio ws frontend version
+hassio ws frontend themes --limit 20
+hassio ws frontend themes --name "My Theme" --include-values
+hassio ws frontend icons --category services --integration light --limit 50
+hassio ws frontend translations --language en --category services \
+  --integration light --key component.light --limit 50
+```
+
 #### Typed session and exposure operations
 
 - `ws panels` returns the registered frontend panels via `get_panels`.
