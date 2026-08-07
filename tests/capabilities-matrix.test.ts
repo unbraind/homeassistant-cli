@@ -139,6 +139,8 @@ describe("probeApiMatrix", () => {
     expect(result.entries.find(e => e.key === "automatic_entity_ids")?.status).toBe("available");
     expect(result.entries.find(e => e.key === "registry_composite_splits")?.status).toBe("available");
     expect(result.entries.find(e => e.key === "entity_id_settings")?.status).toBe("available");
+    expect(result.entries.find(e => e.key === "bootstrap_integrations")?.status).toBe("available");
+    expect(mockWsCall).toHaveBeenCalledWith("subscribe_bootstrap_integrations", undefined);
     expect(mockWsCall).toHaveBeenCalledWith("config/entity_registry/get_automatic_entity_ids", {
       entity_ids: ["sensor.hassio_cli_capability_probe"],
     });

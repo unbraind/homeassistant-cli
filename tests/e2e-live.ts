@@ -81,7 +81,7 @@ function assert(condition: boolean, message: string): void {
   }
 }
 
-run([
+const setupReceipt = parseJson(run([
   "settings",
   "wizard",
   "--non-interactive",
@@ -90,11 +90,17 @@ run([
   "--default-timeout",
   "30000",
   "--skip-test",
+  "--format",
+  "json-compact",
 ], {
   HASSIO_URL: process.env.HASSIO_URL,
   HASSIO_TOKEN: process.env.HASSIO_TOKEN,
   HASSIO_READONLY: "true",
-});
+})) as Record<string, unknown>;
+const setupDefaults = setupReceipt["defaults"] as Record<string, unknown> | undefined;
+assert(setupReceipt["setup"] === "complete", "non-interactive setup receipt is not valid JSON");
+assert(setupDefaults?.["format"] === "toon", "setup receipt omitted saved default format");
+assert(setupDefaults?.["read_only"] === true, "setup receipt omitted read-only safety mode");
 
 const paths = parseJson(run(["settings", "path"])) as Record<string, string>;
 assert(Boolean(paths["settings"] && paths["auth"] && paths["data"]), "settings path output is incomplete");
@@ -401,6 +407,22 @@ for (const format of ["toon", "json", "json-compact", "yaml", "table", "markdown
     assert(typeof parseYaml(observationOutput) === "object", "invalid ws entity observation YAML");
   }
   assert(observationOutput.length > 0, `empty ws entity observation output for format ${format}`);
+}
+
+for (const format of ["toon", "json", "json-compact", "yaml", "table", "markdown"] as const) {
+  const bootstrapOutput = run([
+    "ws", "bootstrap-integrations", "--wait-ms", "1", "--max-events", "1", "--count", "--format", format,
+  ]);
+  if (format === "json" || format === "json-compact") {
+    const bootstrap = parseJson(bootstrapOutput) as Record<string, unknown>;
+    assert(bootstrap["subscription"] === "bootstrap_integrations", "invalid bootstrap subscription type");
+    assert(typeof bootstrap["event_count"] === "number", "invalid bootstrap event count");
+    assert(typeof bootstrap["count"] === "number", "invalid bootstrap integration count");
+  }
+  if (format === "yaml") {
+    assert(typeof parseYaml(bootstrapOutput) === "object", "invalid bootstrap integration YAML");
+  }
+  assert(bootstrapOutput.length > 0, `empty bootstrap integration output for format ${format}`);
 }
 
 const wsAutomationPlatforms = parseJson(

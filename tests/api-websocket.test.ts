@@ -857,6 +857,26 @@ describe("HomeAssistantWebSocketClient – optimized subscriptions", () => {
     vi.useRealTimers();
   });
 
+  it("subscribes to bootstrap integration snapshots with explicit and default bounds", async () => {
+    vi.useFakeTimers();
+    const client = new HomeAssistantWebSocketClient(baseConfig);
+    vi.spyOn(client, "connect").mockResolvedValue(undefined);
+    const sendAndWait = vi.fn(async () => null);
+    (client as unknown as InternalClient).sendAndWait = sendAndWait;
+    vi.spyOn(client, "call").mockResolvedValue(null);
+
+    const explicit = client.subscribeBootstrapIntegrations({ maxEvents: 2, waitMs: 20 });
+    await vi.advanceTimersByTimeAsync(20);
+    await expect(explicit).resolves.toEqual([]);
+    expect(sendAndWait).toHaveBeenCalledWith(1, "subscribe_bootstrap_integrations", undefined);
+
+    const defaults = client.subscribeBootstrapIntegrations({});
+    await vi.advanceTimersByTimeAsync(5000);
+    await expect(defaults).resolves.toEqual([]);
+    expect(sendAndWait).toHaveBeenCalledWith(2, "subscribe_bootstrap_integrations", undefined);
+    vi.useRealTimers();
+  });
+
   it("subscribes to condition changes with explicit and default bounds", async () => {
     vi.useFakeTimers();
     const client = new HomeAssistantWebSocketClient(baseConfig);

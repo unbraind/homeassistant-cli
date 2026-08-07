@@ -1,0 +1,109 @@
+id: hac-xxi3
+title: Implement typed startup readiness and strict setup receipts
+description: "Add reusable subscribe_bootstrap_integrations transport and typed bounded command, then repair the non-interactive settings wizard so all output formats emit one deterministic privacy-safe receipt."
+type: Task
+status: in_progress
+priority: 0
+tags[9]: agents,bootstrap,coverage,docs,formatters,setup-wizard,startup,typescript,websocket
+created_at: "2026-08-07T19:38:17.942Z"
+updated_at: "2026-08-07T19:56:01.268Z"
+deadline: "2026-08-09T19:38:17.942Z"
+assignee: codex-root
+claim_principal: codex-root
+author: codex-root
+estimated_minutes: 480
+acceptance_criteria: "Transport, command, wizard, capabilities, schema, help, docs, unit/integration/live tests, all formats, and package/release gates meet the parent feature contracts"
+definition_of_ready: "Feature hac-4u0a, plan hac-zdp4, issue hac-8h2c, official sources, live compatibility, current source/tests, dependencies, and duplicate searches are complete"
+goal: agent-native-home-assistant-operations
+objective: implement-startup-readiness-and-setup-receipts
+value: "Deliver the actual source, tests, docs, and evidence that close both startup gaps."
+impact: Typed readiness diagnostics and strict setup automation become first-class supported workflows.
+outcome: A reviewed merged production tranche with exact coverage and no publication.
+why_now: The parent feature and reproduced regression are ready for implementation.
+parent: hac-zdp4
+reviewer: unbraind
+risk: high
+confidence: 96
+sprint: api-parity-2026-08
+release: unreleased
+dependencies[11]{id,kind,created_at,author,source_kind,author_source}:
+  hac-1iz2,related,"2026-08-07T19:38:17.942Z",codex-root,"cli:create:dep",detected
+  hac-4u0a,implements,"2026-08-07T19:38:17.942Z",codex-root,"cli:create:dep",detected
+  hac-8h2c,related,"2026-08-07T19:38:17.942Z",codex-root,"cli:create:dep",detected
+  hac-ak9g,blocked_by,"2026-08-07T19:38:17.942Z",codex-root,"cli:create:dep",detected
+  hac-g36l,related,"2026-08-07T19:38:17.942Z",codex-root,"cli:create:dep",detected
+  hac-soop,related,"2026-08-07T19:38:17.942Z",codex-root,"cli:create:dep",detected
+  hac-sv5f,related,"2026-08-07T19:38:17.942Z",codex-root,"cli:create:dep",detected
+  hac-vooo,blocked_by,"2026-08-07T19:38:17.942Z",codex-root,"cli:create:dep",detected
+  hac-vv7s,related,"2026-08-07T19:38:17.942Z",codex-root,"cli:create:dep",detected
+  hac-vwh7,discovered_from,"2026-08-07T19:38:17.942Z",codex-root,"cli:create:dep",detected
+  hac-wwsi,related,"2026-08-07T19:38:17.942Z",codex-root,"cli:create:dep",detected
+comments[2]{created_at,author,text}:
+  "2026-08-07T19:38:17.942Z",codex-root,"This is the only item to claim and mark in_progress because it is the concrete item whose source, tests, and docs are being edited."
+  "2026-08-07T19:52:36.850Z",codex-root,Implemented the stable Core bootstrap integration subscription through the existing bounded collector; normalized only finite nonnegative timings into deterministic rows; synchronized capability and machine-schema discovery; repaired non-interactive setup to emit one privacy-safe formatter receipt while preserving interactive prose.
+notes[2]:
+  - created_at: "2026-08-07T19:38:17.942Z"
+    author: codex-root
+    text: "Live bootstrap timing events and setup values are inspected only in-process; durable evidence records version, event/row counts, keys, booleans, and pass/fail status."
+  - created_at: "2026-08-07T19:52:37.358Z"
+    author: codex-root
+    text: "{\"coverage\":{\"branches\":100,\"functions\":100,\"lines\":100,\"statements\":100},\"focused_tests\":111,\"formats\":[\"toon\",\"json\",\"json-compact\",\"yaml\",\"table\",\"markdown\"],\"full_tests\":1405,\"home_assistant_latest_version\":\"2026.8.1\",\"home_assistant_live_version\":\"2026.7.4\",\"live_read_only\":true,\"private_data_persisted\":false,\"scope\":\"local_and_live\",\"type\":\"validation\"}"
+    format: json
+    data:
+      type: validation
+      scope: local_and_live
+      home_assistant_live_version: 2026.7.4
+      home_assistant_latest_version: 2026.8.1
+      focused_tests: 111
+      full_tests: 1405
+      coverage:
+        statements: 100
+        branches: 100
+        functions: 100
+        lines: 100
+      live_read_only: true
+      formats[6]: toon,json,json-compact,yaml,table,markdown
+      private_data_persisted: false
+    event_type: validation
+learnings[2]{created_at,author,text}:
+  "2026-08-07T19:38:17.942Z",codex-root,The existing bounded subscription collector already centralizes unsubscribe cleanup; extend its explicit union and reuse it rather than create a second transport.
+  "2026-08-07T19:56:01.268Z",codex-root,"Linked tests that invoke quality:pm must run with tracker PM context; the default schema sandbox intentionally contains no project items and therefore makes strict orphan checks fail."
+files[13]{path,scope,note}:
+  src/api/websocket-protocol.ts,project,Stable subscription type contract
+  src/api/websocket.ts,project,Typed bootstrap subscription transport
+  src/commands/capabilities-agent-plan.ts,project,Agent execution recommendation
+  src/commands/capabilities-api-probes.ts,project,Live capability matrix probe
+  src/commands/llm-extended.ts,project,Machine schema discovery surface
+  src/commands/settings-wizard.ts,project,Strict setup receipt implementation
+  src/commands/websocket-observe.ts,project,Startup readiness command and normalization
+  tests/api-websocket.test.ts,project,Transport lifecycle behavior
+  tests/capabilities-matrix.test.ts,project,Capability contract
+  tests/capabilities-utils.test.ts,project,Agent plan contract
+  tests/e2e-live.ts,project,Read-only live acceptance and strict setup parse
+  tests/settings-wizard.test.ts,project,All formatter receipts and interactive compatibility
+  tests/websocket-observe-command.test.ts,project,Normalization bounds count and validation
+tests[4]:
+  - command: "bun run release:verify"
+    scope: project
+    timeout_seconds: 1800
+  - command: "bun run test:coverage"
+    scope: project
+    timeout_seconds: 600
+    note: Exact 100 percent statements branches functions and lines
+  - command: bunx vitest run tests/api-websocket.test.ts tests/websocket-observe-command.test.ts tests/settings-wizard.test.ts tests/capabilities-matrix.test.ts tests/help-surface-e2e.test.ts
+    scope: project
+    timeout_seconds: 600
+  - command: "HASSIO_READONLY=true bun run test:e2e:live"
+    scope: project
+    timeout_seconds: 600
+    note: Requires externally configured URL and token and persists no live data
+test_runs[2]{run_id,kind,status,started_at,finished_at,recorded_at,passed,failed,skipped}:
+  test-local-msjd4vfs-0hrksd,test,failed,"2026-08-07T19:53:41.420Z","2026-08-07T19:53:55.240Z","2026-08-07T19:53:55.240Z",0,1,0
+  test-local-msjd6hit-6ccq5e,test,passed,"2026-08-07T19:54:08.658Z","2026-08-07T19:55:10.516Z","2026-08-07T19:55:10.516Z",1,0,0
+docs[5]{path,scope,note}:
+  docs/AGENT_OPTIMIZATION.md,project,Agent startup-readiness guidance
+  docs/API.md,project,Startup readiness and wizard contracts
+  docs/INDEX.md,project,Documentation discoverability
+  docs/LLM_INTEGRATION.md,project,Agent bootstrap guidance
+  README.md,project,User quick-start and WebSocket examples
+body: "Implement without any, dynamic imports, guessed external types, artificial branches, ignore directives, or trivial one-use wrappers. Normalize Core Record<string, number> events into deterministic domain/elapsed rows, retain snapshot counts, bound duration/events, and always unsubscribe. Add capability/schema/help/docs/live E2E coverage. Refactor wizard connection testing to return typed data rather than print; format once in non-interactive mode and preserve interactive prose. Validate exact output schemas and secure isolated files."

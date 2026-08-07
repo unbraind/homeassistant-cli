@@ -1,0 +1,179 @@
+id: hac-zdp4
+title: Startup readiness and machine-safe setup delivery plan
+description: "Research, implement, verify, review, merge, and close typed bootstrap integration readiness plus strict non-interactive setup receipts without publishing a release."
+type: Plan
+status: open
+priority: 0
+tags[7]: agents,bootstrap,delivery,home-assistant,setup-wizard,startup,websocket
+created_at: "2026-08-07T19:37:31.293Z"
+updated_at: "2026-08-07T19:56:03.243Z"
+deadline: "2026-08-10T19:37:31.293Z"
+assignee: codex-root
+author: codex-root
+estimated_minutes: 600
+acceptance_criteria: "Every plan step has reproducible privacy-safe evidence, linked files/docs/tests, and an explicit terminal status"
+definition_of_ready: "Official source, live compatibility, isolated wizard reproduction, all-status PM state, duplicate candidates, latest package versions, repository baseline, and release model are known"
+goal: agent-native-home-assistant-operations
+objective: deliver-startup-readiness-and-setup-contracts
+value: "One resumable evidence graph spans API research, implementation, setup reliability, quality, review, and release-safe closure."
+impact: Future agents can reconstruct why each contract exists and how it was verified without raw private data.
+outcome: A merged exact-head production tranche with all plan steps complete and a clean unclaimed tracker.
+why_now: The missing stable subscription and reproduced wizard parsing defect are both startup-path gaps.
+parent: hac-4u0a
+reviewer: unbraind
+risk: high
+confidence: 96
+sprint: api-parity-2026-08
+release: unreleased
+dependencies[10]:
+  - id: hac-1iz2
+    kind: related
+    created_at: "2026-08-07T19:37:31.293Z"
+    author: codex-root
+    source_kind: "cli:create:dep"
+    author_source: detected
+  - id: hac-4u0a
+    kind: parent
+    created_at: "2026-08-07T19:37:31.293Z"
+    author: codex-root
+    source_kind: "cli:create:dep"
+    author_source: detected
+  - id: hac-ak9g
+    kind: blocked_by
+    created_at: "2026-08-07T19:37:31.293Z"
+    author: codex-root
+    source_kind: "cli:create:dep"
+    author_source: detected
+  - id: hac-n0ix
+    kind: related
+    created_at: "2026-08-07T19:37:31.293Z"
+    author: codex-root
+    source_kind: "cli:create:dep"
+    author_source: detected
+  - id: hac-sv5f
+    kind: related
+    created_at: "2026-08-07T19:37:31.293Z"
+    author: codex-root
+    source_kind: "cli:create:dep"
+    author_source: detected
+  - id: hac-vooo
+    kind: blocked_by
+    created_at: "2026-08-07T19:37:31.293Z"
+    author: codex-root
+    source_kind: "cli:create:dep"
+    author_source: detected
+  - id: hac-vv7s
+    kind: related
+    created_at: "2026-08-07T19:37:31.293Z"
+    author: codex-root
+    source_kind: "cli:create:dep"
+    author_source: detected
+  - id: hac-vwh7
+    kind: related
+    created_at: "2026-08-07T19:37:31.293Z"
+    author: codex-root
+    source_kind: "cli:create:dep"
+    author_source: detected
+  - id: hac-xxi3
+    kind: implements
+    created_at: "2026-08-07T19:38:43.475Z"
+    author: codex-root
+  - id: hac-8h2c
+    kind: discovered_from
+    created_at: "2026-08-07T19:38:43.540Z"
+    author: codex-root
+comments[1]{created_at,author,text}:
+  "2026-08-07T19:37:31.293Z",codex-root,"Only the concrete child implementation task will be claimed and marked in_progress; feature, plan, and defect remain open until evidence closure."
+notes[1]{created_at,author,text}:
+  "2026-08-07T19:37:31.293Z",codex-root,"Use blocking waits for long gates and review providers, then one fresh exact-head inventory. Never persist live integration timing maps or private setup values."
+learnings[1]{created_at,author,text}:
+  "2026-08-07T19:37:31.293Z",codex-root,Startup readiness spans both server bootstrap progress and client bootstrap output; one delivery plan can coordinate them while separate canonical items retain defect and feature semantics.
+files[1]{path,scope,note}:
+  src/commands/websocket-observe.ts,project,Typed startup observation command
+tests[1]{command,scope,timeout_seconds}:
+  "bun run release:verify",project,1800
+docs[1]{path,scope,note}:
+  docs/API.md,project,Startup readiness API and setup contracts
+plan_mode: executing
+plan_scope: "Home Assistant Core startup subscription transport, typed CLI UX, setup wizard formatter contract, schemas, capabilities, docs, tests, live read-only acceptance, hosted review, merge, and PM closeout."
+plan_harness: codex
+plan_resume_context: "Continue on agent/startup-readiness-bootstrap-wizard. Official Core 2026.8.1 subscribe_bootstrap_integrations emits Record<string, number> via dispatcher; frontend uses the same type. Live Core is 2026.7.4. Isolated settings wizard corrupts json-compact with human banner. Only concrete implementation task should be claimed/in_progress."
+plan_validation[1]{text,command,expected}:
+  "Focused tests, full exact coverage, static gates, build, and read-only live E2E passed across all six output formats.","bun run test:coverage and HASSIO_READONLY=true bun run test:e2e:live",100/100/100/100 coverage and parseable nonempty output in every format without private receipt fields.
+plan_decisions[1]{ts,author,decision,rationale,evidence}:
+  "2026-08-07T19:52:37.795Z",codex-root,Expose startup readiness as a typed bounded ws subcommand rather than require generic passthrough.,"A typed surface provides deterministic schemas, bounded capture, automatic unsubscribe, capabilities discovery, help, and agent guidance while retaining generic passthrough for forward compatibility.",Core 2026.8.1 stable command registry and existing HomeAssistantWebSocketClient collector.
+plan_discoveries[1]{ts,author,text}:
+  "2026-08-07T19:52:38.192Z",codex-root,"Non-interactive setup mixed banner and prose with requested structured output, so strict JSON consumers failed before reaching a receipt."
+plan_steps[9]:
+  - id: plan-step-001
+    order: 1
+    title: "Validate official Core, frontend, developer docs, live server, PM graph, dependencies, and exact duplicates"
+    status: completed
+    created_at: "2026-08-07T19:37:31.269Z"
+    updated_at: "2026-08-07T19:38:43.398Z"
+    evidence: "Official developer WebSocket guide master 55ea633, Core 2026.8.1 command registry and bootstrap dispatcher, frontend BootstrapIntegrationsTimings type, live Core 2026.7.4, 85 PM items/364 edges, zero duplicate clusters/findings, pm-cli and pm-changelog 2026.8.7, clean master and release state verified without private persistence."
+    completed_at: "2026-08-07T19:38:43.398Z"
+  - id: plan-step-002
+    order: 2
+    title: "Create canonical feature, plan, issue, and implementation lineage with deep typed relations"
+    status: completed
+    created_at: "2026-08-07T19:37:31.269Z"
+    updated_at: "2026-08-07T19:38:43.308Z"
+    evidence: "Created Feature hac-4u0a, Plan hac-zdp4, Issue hac-8h2c, and Task hac-xxi3 with parent, discovered_from, implements, related, blocked_by, file, docs, tests, comments, notes, learnings, acceptance, goal, objective, risk, release, and privacy metadata; only hac-xxi3 is claimed/in_progress."
+    completed_at: "2026-08-07T19:38:43.308Z"
+  - id: plan-step-003
+    order: 3
+    title: Implement typed bounded bootstrap integration subscription transport and command
+    status: completed
+    created_at: "2026-08-07T19:37:31.269Z"
+    updated_at: "2026-08-07T19:52:38.989Z"
+    evidence: "Added stable protocol union, bounded subscribeBootstrapIntegrations transport, deterministic validation and normalization, count/all/limit/event/time bounds, automatic close/unsubscribe, detailed help, and behavioral tests."
+    completed_at: "2026-08-07T19:52:38.989Z"
+    linked_items[1]{id,kind,note}:
+      hac-xxi3,implements,"Concrete source, tests, docs, and validation task"
+  - id: plan-step-004
+    order: 4
+    title: Fix strict non-interactive setup wizard formatter receipts and failure semantics
+    status: completed
+    created_at: "2026-08-07T19:37:31.269Z"
+    updated_at: "2026-08-07T19:52:39.373Z"
+    evidence: "Non-interactive wizard now suppresses human prompts and banner, emits exactly one selected-format receipt, redacts URL token and location, preserves secure files on connection failure, and retains interactive compatibility with dedicated success/failure tests."
+    completed_at: "2026-08-07T19:52:39.373Z"
+    linked_items[1]{id,kind,note}:
+      hac-8h2c,discovered_from,Isolated setup acceptance defect reproduced during research
+  - id: plan-step-005
+    order: 5
+    title: "Synchronize capabilities, machine schema, README, docs, and live acceptance"
+    status: completed
+    created_at: "2026-08-07T19:37:31.269Z"
+    updated_at: "2026-08-07T19:52:39.766Z"
+    evidence: "Updated capability matrix and agent plan, machine schema, README, API index, LLM integration and optimization docs; live Core 2026.7.4 accepted the read-only subscription and all six format outputs."
+    completed_at: "2026-08-07T19:52:39.766Z"
+  - id: plan-step-006
+    order: 6
+    title: "Run focused tests, all formats, isolated wizard, full exact coverage, quality, security, PM, package, and release dry-run gates"
+    status: completed
+    created_at: "2026-08-07T19:37:31.269Z"
+    updated_at: "2026-08-07T19:56:02.492Z"
+    evidence: "Canonical PM-linked release verification passed in tracker context: install, audit, static, latest PM and pm-changelog, tracker validate and health, build, 1405 tests, exact 5299/5299 statements 2809/2809 branches 1155/1155 functions 4850/4850 lines, Trivy, staged and history secret scans, commit audit. Changelog check unchanged; packed npx and bunx smoke passed; read-only live E2E passed."
+    completed_at: "2026-08-07T19:56:02.492Z"
+  - id: plan-step-007
+    order: 7
+    title: "Commit, push, open a PM-linked ready PR, and request every configured review provider"
+    status: in_progress
+    created_at: "2026-08-07T19:37:31.269Z"
+    updated_at: "2026-08-07T19:56:03.242Z"
+    evidence: Preparing intentional commit and PM-linked PR after final staged secret scan.
+  - id: plan-step-008
+    order: 8
+    title: "Wait once for all checks and reviews, disposition every artifact with reactions and inline replies, then fix and retrigger until exact-head clean"
+    status: pending
+    created_at: "2026-08-07T19:37:31.269Z"
+    updated_at: "2026-08-07T19:37:31.269Z"
+  - id: plan-step-009
+    order: 9
+    title: "Merge to master, complete PM evidence and claims, regenerate canonical changelog, and verify no publication"
+    status: pending
+    created_at: "2026-08-07T19:37:31.269Z"
+    updated_at: "2026-08-07T19:37:31.269Z"
+body: "All steps must retain privacy-safe contract evidence, synchronize help/schema/docs/capabilities, preserve exact formatter validity, and end with exact-head hosted checks and bot-thread disposition. No release publication is authorized."

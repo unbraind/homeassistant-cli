@@ -45,6 +45,13 @@ export const REST_PROBES: RestProbe[] = [
 
 export const WEBSOCKET_PROBES: WebsocketProbe[] = [
   {
+    key: "bootstrap_integrations",
+    commandType: "subscribe_bootstrap_integrations",
+    endpoint: "/api/websocket#subscribe_bootstrap_integrations",
+    commandGroup: "websocket",
+    commands: ["hassio ws bootstrap-integrations --count"],
+  },
+  {
     key: "automatic_entity_ids",
     commandType: "config/entity_registry/get_automatic_entity_ids",
     endpoint: "/api/websocket#config/entity_registry/get_automatic_entity_ids",

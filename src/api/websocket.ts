@@ -248,6 +248,19 @@ export class HomeAssistantWebSocketClient {
     );
   }
 
+  /** Collect snapshots of integrations still loading during Home Assistant bootstrap. */
+  async subscribeBootstrapIntegrations(options: {
+    maxEvents?: number;
+    waitMs?: number;
+  }): Promise<unknown[]> {
+    return this.collectSubscription(
+      "subscribe_bootstrap_integrations",
+      undefined,
+      options.maxEvents ?? 10,
+      options.waitMs ?? 5000,
+    );
+  }
+
   private async collectSubscription(
     type: WsSubscriptionType,
     payload: Record<string, unknown> | undefined,

@@ -69,7 +69,7 @@ Configuration is loaded in priority order (later overrides earlier):
 
 | Command | Description |
 |---------|-------------|
-| `settings wizard` | Interactive setup wizard |
+| `settings wizard` | Interactive wizard or single-receipt non-interactive setup for agents/CI |
 | `settings setup` | Alias for `settings wizard` |
 | `settings init` | Initialize from environment variables |
 | `settings validate` | Validate configuration and test connection |
@@ -251,6 +251,7 @@ All commands support global flags (`--url`, `--token`, `--format`, `--timeout`, 
 | `ws subscribe-trigger` | Observe automation triggers for a bounded period without firing them (admin only) |
 | `ws observe-entities` | Collect compact state snapshots and bounded add/change/remove deltas |
 | `ws automation-platforms` | Discover current purpose-specific trigger and condition schemas |
+| `ws bootstrap-integrations` | Observe bounded Core startup integration timing snapshots with count-first output |
 | `ws traces` | Count, bound, correlate, and retrieve stored automation or script execution traces |
 | `ws integrations` | List/get manifests, setup timings, descriptions, and load readiness with bounded output |
 | `ws frontend` | Discover frontend version, bounded theme summaries, icons, and localized resources |
@@ -340,6 +341,7 @@ The CLI is optimized for use by LLMs and AI agents:
 - **Frontend Semantic Catalogs**: `ws frontend` provides bounded version, theme, icon, and translation discovery for UI-aware agents
 - **Token-Efficient State Deltas**: `ws observe-entities` filters at the server and returns bounded normalized changes
 - **Automation Platform Discovery**: `ws automation-platforms` returns current trigger and condition schemas
+- **Startup Readiness**: `ws bootstrap-integrations` provides bounded count-first pending integration timing snapshots
 - **Integration Intelligence**: `ws integrations`, `ws entity-sources`, and `ws slugify` provide bounded metadata, provenance, readiness, and identifier contracts
 - **Agent Plan Output**: `hassio capabilities --agent-plan` returns command recommendations and avoid-lists based on live capability probes
 - **Agent Profile Output**: `hassio capabilities --agent-profile` returns a stable execution profile (`preferred_output_format`, `capabilities`, `planning.fast_path`, `streaming_ready`)

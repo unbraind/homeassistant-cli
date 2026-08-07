@@ -1,4 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { Command } from "commander";
+import { parse as parseYaml } from "yaml";
 
 const { mockSaveConfig, mockSaveData, mockGetConfigSnapshot } = vi.hoisted(() => ({
   mockSaveConfig: vi.fn(),
@@ -53,6 +55,21 @@ import { createSetupCommand, createWizardCommand } from "../src/commands/setting
 const exitSpy = vi.spyOn(process, "exit").mockImplementation(() => undefined as never);
 
 describe("settings wizard command", () => {
+  async function runNonInteractive(args: string[], format = "json-compact"): Promise<string[]> {
+    const output: string[] = [];
+    const originalLog = console.log;
+    console.log = (message: string) => output.push(message);
+    const program = new Command()
+      .option("-f, --format <format>")
+      .addCommand(createWizardCommand());
+    try {
+      await program.parseAsync(["--format", format, "wizard", ...args], { from: "user" });
+      return output;
+    } finally {
+      console.log = originalLog;
+    }
+  }
+
   beforeEach(() => {
     mockSaveConfig.mockReset();
     mockSaveData.mockReset();
@@ -67,45 +84,44 @@ describe("settings wizard command", () => {
     vi.clearAllMocks();
   });
 
-  it("saves config in non-interactive mode", async () => {
-    const cmd = createWizardCommand();
-    const output: string[] = [];
-    const originalLog = console.log;
-    console.log = (msg: string) => output.push(msg);
-
-    await cmd.parseAsync(
-      [
+  it.each(["toon", "json", "json-compact", "yaml", "table", "markdown"])(
+    "saves config and emits one %s receipt in non-interactive mode",
+    async (receiptFormat) => {
+      const output = await runNonInteractive([
         "--non-interactive",
-        "--ha-url",
-        "http://localhost:8123",
-        "--ha-token",
-        "token-123",
-        "--default-format",
-        "toon",
-        "--default-timeout",
-        "25000",
-        "--config-read-only",
-        "true",
+        "--ha-url", "http://localhost:8123",
+        "--ha-token", "token-123",
+        "--default-format", "toon",
+        "--default-timeout", "25000",
+        "--config-read-only", "true",
         "--skip-test",
-      ],
-      { from: "user" }
-    );
+      ], receiptFormat);
 
-    console.log = originalLog;
-
-    expect(mockSaveConfig).toHaveBeenCalledWith(
-      {
+      expect(mockSaveConfig).toHaveBeenCalledWith({
         url: "http://localhost:8123",
         token: "token-123",
         outputFormat: "toon",
         timeout: 25000,
         readOnly: true,
-      },
-      undefined
-    );
-    expect(mockMaybePromptToStarRepo).toHaveBeenCalledTimes(1);
-    expect(output.join("\n")).toContain("saved_settings:/tmp/hassio-wizard-test.json");
-  });
+      }, undefined);
+      expect(mockMaybePromptToStarRepo).not.toHaveBeenCalled();
+      expect(output).toHaveLength(1);
+      expect(output[0]).not.toContain("SETUP WIZARD");
+      expect(output[0]).not.toContain("token-123");
+      expect(output[0]).not.toContain("http://localhost:8123");
+      if (receiptFormat === "json" || receiptFormat === "json-compact") {
+        expect(JSON.parse(output[0] ?? "")).toEqual(expect.objectContaining({
+          setup: "complete",
+          defaults: { format: "toon", timeout_ms: 25000, read_only: true },
+          connection: { status: "skipped" },
+        }));
+      } else if (receiptFormat === "yaml") {
+        expect(parseYaml(output[0] ?? "")).toEqual(expect.objectContaining({ setup: "complete" }));
+      } else {
+        expect(output[0]?.length).toBeGreaterThan(0);
+      }
+    },
+  );
 
   it("fails when required values are missing in non-interactive mode", async () => {
     const cmd = createWizardCommand();
@@ -163,72 +179,45 @@ describe("settings wizard command", () => {
     mockGetStatus.mockResolvedValueOnce({ message: "API running." });
     mockGetConfig.mockResolvedValueOnce({ version: "2026.1.3", location_name: "Home" });
 
-    const cmd = createWizardCommand();
-    const output: string[] = [];
-    const originalLog = console.log;
-    console.log = (msg: string) => output.push(msg);
-
-    await cmd.parseAsync(
-      [
-        "--non-interactive",
-        "--ha-url",
-        "http://localhost:8123",
-        "--ha-token",
-        "token-123",
-      ],
-      { from: "user" }
-    );
-
-    console.log = originalLog;
+    const output = await runNonInteractive([
+      "--non-interactive", "--ha-url", "http://localhost:8123", "--ha-token", "token-123",
+    ]);
 
     expect(mockSaveConfig).toHaveBeenCalled();
     expect(mockSaveData).toHaveBeenCalledWith(
       expect.objectContaining({ lastVersion: "2026.1.3", lastLocation: "Home" }),
       undefined
     );
-    const allOutput = output.join("\n");
-    expect(allOutput).toContain("status:API running.");
-    expect(allOutput).toContain("version:2026.1.3");
-    expect(allOutput).toContain("location:Home");
+    expect(output).toHaveLength(1);
+    expect(JSON.parse(output[0] ?? "").connection).toEqual({
+      status: "connected", api_status: "API running.", version: "2026.1.3",
+    });
+    expect(output[0]).not.toContain("Home");
   });
 
   it("handles connection test failure gracefully", async () => {
     mockGetStatus.mockRejectedValueOnce(new Error("Connection refused"));
 
-    const cmd = createWizardCommand();
-    const errorOutput: string[] = [];
-    const originalError = console.error;
-    console.error = (msg: string) => errorOutput.push(msg);
-
-    await cmd.parseAsync(
-      [
-        "--non-interactive",
-        "--ha-url",
-        "http://localhost:8123",
-        "--ha-token",
-        "token-123",
-      ],
-      { from: "user" }
-    );
-
-    console.error = originalError;
+    const output = await runNonInteractive([
+      "--non-interactive", "--ha-url", "http://localhost:8123", "--ha-token", "token-123",
+    ]);
 
     // Config should still be saved even if connection test fails
     expect(mockSaveConfig).toHaveBeenCalled();
-    const errText = errorOutput.join("\n");
-    expect(errText).toContain("Connection test failed");
+    expect(JSON.parse(output[0] ?? "").connection).toEqual({
+      status: "failed",
+      message: "Configuration saved but connection failed. Verify URL and token.",
+    });
+    expect(output[0]).not.toContain("Connection refused");
   });
 
   it("stringifies non-Error connection failures", async () => {
     mockGetStatus.mockRejectedValueOnce("connection unavailable");
-    const errors: string[] = [];
-    const originalError = console.error;
-    console.error = (...messages: unknown[]) => errors.push(messages.map(String).join(" "));
-    await createWizardCommand().parseAsync([
+    const output = await runNonInteractive([
       "--non-interactive", "--ha-url", "http://localhost:8123", "--ha-token", "token-123",
-    ], { from: "user" });
-    console.error = originalError;
-    expect(errors.join("\n")).toContain("connection unavailable");
+    ]);
+    expect(JSON.parse(output[0] ?? "").connection.status).toBe("failed");
+    expect(output[0]).not.toContain("connection unavailable");
   });
 
   it("normalizes URL by removing trailing slash", async () => {
@@ -311,6 +300,68 @@ describe("settings wizard command", () => {
     expect(mockRlClose).toHaveBeenCalled();
   });
 
+  it.each([
+    { outcome: "connected", failure: undefined },
+    { outcome: "failed", failure: new Error("Connection refused") },
+  ])("reports an interactive $outcome connection test", async ({ outcome, failure }) => {
+    const answers = ["http://ha.local:8123", "my-token", "toon", "30000", "yes"];
+    let callIndex = 0;
+    mockRlQuestion.mockImplementation((_prompt: string, callback: (answer: string) => void) => {
+      callback(answers[callIndex++] ?? "");
+    });
+    if (failure) {
+      mockGetStatus.mockRejectedValueOnce(failure);
+    } else {
+      mockGetStatus.mockResolvedValueOnce({ message: "API running." });
+      mockGetConfig.mockResolvedValueOnce({ version: "2026.8.1", location_name: "Home" });
+    }
+    const output: string[] = [];
+    const errors: string[] = [];
+    const originalLog = console.log;
+    const originalError = console.error;
+    console.log = (message: string) => output.push(message);
+    console.error = (message: string) => errors.push(message);
+
+    try {
+      await createWizardCommand().parseAsync([], { from: "user" });
+    } finally {
+      console.log = originalLog;
+      console.error = originalError;
+    }
+
+    expect(mockMaybePromptToStarRepo).toHaveBeenCalledOnce();
+    if (outcome === "connected") {
+      expect(output).toEqual(expect.arrayContaining([
+        "status:API running.", "version:2026.8.1", "read_only:true",
+      ]));
+      expect(errors).toEqual([]);
+    } else {
+      expect(errors.join("\n")).toContain("Connection refused");
+      expect(errors.join("\n")).toContain("Configuration saved but connection failed");
+    }
+  });
+
+  it("reports interactive configuration failures", async () => {
+    const answers = ["http://ha.local:8123", "my-token", "toon", "30000", "yes"];
+    let callIndex = 0;
+    mockRlQuestion.mockImplementation((_prompt: string, callback: (answer: string) => void) => {
+      callback(answers[callIndex++] ?? "");
+    });
+    mockSaveConfig.mockImplementationOnce(() => { throw new Error("Storage unavailable"); });
+    const errors: string[] = [];
+    const originalError = console.error;
+    console.error = (...messages: unknown[]) => errors.push(messages.map(String).join(" "));
+
+    try {
+      await createWizardCommand().parseAsync(["--skip-test"], { from: "user" });
+    } finally {
+      console.error = originalError;
+    }
+
+    expect(errors).toContain("\nERROR: Storage unavailable");
+    expect(exitSpy).toHaveBeenCalledWith(1);
+  });
+
   it("retries promptRequired when empty input is provided", async () => {
     // First URL answer is empty, second is valid; token provided directly
     let callIndex = 0;
@@ -390,14 +441,13 @@ describe("settings wizard command", () => {
 
   it("stringifies non-Error setup failures", async () => {
     mockSaveConfig.mockImplementationOnce(() => { throw "storage unavailable"; });
-    const errors: string[] = [];
-    const originalError = console.error;
-    console.error = (...messages: unknown[]) => errors.push(messages.map(String).join(" "));
-    await createWizardCommand().parseAsync([
+    const output = await runNonInteractive([
       "--non-interactive", "--ha-url", "http://localhost:8123", "--ha-token", "token", "--skip-test",
-    ], { from: "user" });
-    console.error = originalError;
-    expect(errors.join("\n")).toContain("storage unavailable");
+    ]);
+    expect(JSON.parse(output[0] ?? "")).toEqual({
+      setup: "failed",
+      error: { code: "configuration_error", message: "storage unavailable" },
+    });
     expect(exitSpy).toHaveBeenCalledWith(1);
   });
 
@@ -417,7 +467,7 @@ describe("settings wizard command", () => {
     );
 
     expect(cmd.name()).toBe("setup");
-    expect(mockMaybePromptToStarRepo).toHaveBeenCalledTimes(1);
+    expect(mockMaybePromptToStarRepo).not.toHaveBeenCalled();
     expect(mockSaveConfig).toHaveBeenCalledWith(
       expect.objectContaining({
         url: "http://localhost:8123",

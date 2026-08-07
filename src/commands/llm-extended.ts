@@ -150,7 +150,7 @@ function getCommandSchema(): Record<string, unknown> {
           "call", "status", "subscribe", "subscribe-trigger", "target", "validate-config",
           "automation-runtime",
           "traces",
-          "observe-entities", "automation-platforms", "integrations", "entity-sources", "slugify",
+          "observe-entities", "automation-platforms", "bootstrap-integrations", "integrations", "entity-sources", "slugify",
           "panels", "ping", "sign-path", "exposure",
         ],
         options: ["--connect-test"],

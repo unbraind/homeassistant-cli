@@ -91,7 +91,8 @@ hassio settings wizard --non-interactive \
   --ha-url "http://homeassistant.local:8123" \
   --ha-token "your-long-lived-access-token" \
   --config-read-only true \
-  --skip-test
+  --skip-test \
+  --format json-compact
 
 # Test connection
 hassio status
@@ -563,6 +564,9 @@ hassio ws observe-entities --domain light --wait-ms 10000 --max-events 20
 
 # Discover current purpose-specific automation platform schemas
 hassio ws automation-platforms --kind all
+
+# Observe integrations that remain pending during Home Assistant bootstrap
+hassio ws bootstrap-integrations --wait-ms 10000 --max-events 5
 
 # Inspect loaded integrations without raw WebSocket payload knowledge
 hassio ws integrations list --limit 20

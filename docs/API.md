@@ -370,6 +370,12 @@ If `gh` is installed/authenticated and the repo is not starred yet, prompts to s
 Use `--non-interactive` for agent/CI setup to avoid prompts.
 Use `--config-read-only true|false` to save the safety setting; the global
 boolean `--read-only` flag applies only to the current invocation.
+Non-interactive mode writes exactly one receipt through the requested global
+formatter. The receipt contains `setup`, secure settings/auth/data paths,
+`defaults`, a connection status, and `next_command`; it never contains the token,
+URL, or Home Assistant location. A failed connection leaves the saved files in
+place and reports a generic failure inside the same receipt, while configuration
+validation failures return `{setup: "failed", error}` in the selected format.
 
 #### `capabilities`
 Probe and cache runtime capabilities for this Home Assistant instance.
@@ -1428,6 +1434,7 @@ hassio ws subscribe --event-type state_changed --wait-ms 10000 --max-events 20
 hassio ws subscribe-trigger --trigger '{"trigger":"event","event_type":"doorbell"}' --wait-ms 30000
 hassio ws observe-entities --domain light --wait-ms 10000 --max-events 20
 hassio ws automation-platforms --kind all
+hassio ws bootstrap-integrations --wait-ms 10000 --max-events 5
 hassio ws integrations list --limit 20
 hassio ws entity-sources --count
 hassio ws slugify "Kitchen Ceiling Light"
@@ -1488,6 +1495,27 @@ events are merged by platform name, so a longer bounded wait can include
 integrations loaded after the initial catalog. Use this before authoring an
 automation, `ws target triggers|conditions` to narrow schemas to a target, and
 `ws validate-config` to validate the final definition.
+
+#### `websocket bootstrap-integrations`
+
+Observe Core's stable `subscribe_bootstrap_integrations` readiness stream for a
+bounded window:
+
+```bash
+hassio ws bootstrap-integrations \
+  --wait-ms 10000 --max-events 5 --limit 100
+hassio ws bootstrap-integrations --count --format json-compact
+```
+
+Each Core event maps integration domains to elapsed setup seconds. The CLI
+normalizes valid values into deterministic
+`{snapshot, domain, elapsed_seconds}` rows and returns
+`{subscription, event_count, count, returned_count?, truncated?, pending_integrations?}`.
+Use `--count` when integration names are not needed, `--all` to remove the row
+bound, and positive `--wait-ms`, `--max-events`, and `--limit` values. The stream
+emits only while bootstrap work remains, so zero events on an already-started
+server is expected. The command is read-only and always attempts
+`unsubscribe_events` cleanup.
 
 #### `websocket integrations`, `entity-sources`, and `slugify`
 

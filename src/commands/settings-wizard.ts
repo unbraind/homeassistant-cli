@@ -5,6 +5,7 @@ import { Command } from "commander";
 import { createInterface } from "node:readline";
 import { HomeAssistantClient } from "../api/index.js";
 import { getAuthPath, getConfigPath, getConfigSnapshot, getDataPath, saveConfig, saveData } from "../config/index.js";
+import { formatOutput } from "../formatters/index.js";
 import { withExit } from "../utils/exit.js";
 import { maybePromptToStarRepo } from "../utils/github-star.js";
 import type { OutputFormat } from "../types/index.js";
@@ -20,14 +21,18 @@ interface WizardOptions {
   configReadOnly?: string;
 }
 
+type ConnectionResult =
+  | { status: "connected"; api_status: string; version: string }
+  | { status: "failed"; detail: string }
+  | { status: "skipped" };
+
 async function testConnection(config: {
   url: string;
   token: string;
   outputFormat: OutputFormat;
   timeout: number;
   readOnly: boolean;
-}, configPath?: string): Promise<void> {
-  console.log("\nTesting connection...");
+}, configPath?: string): Promise<ConnectionResult> {
   const client = new HomeAssistantClient(config);
   try {
     const status = await client.getStatus();
@@ -37,14 +42,9 @@ async function testConnection(config: {
       lastVersion: haConfig.version,
       lastLocation: haConfig.location_name,
     }, configPath);
-    console.log(`status:${status.message}`);
-    console.log(`version:${haConfig.version}`);
-    console.log(`location:${haConfig.location_name}`);
-    console.log(`read_only:${config.readOnly}`);
+    return { status: "connected", api_status: status.message, version: haConfig.version };
   } catch (error) {
-    console.error("\nERROR: Connection test failed");
-    console.error(error instanceof Error ? error.message : String(error));
-    console.error("\nConfiguration saved but connection failed. Verify URL and token.");
+    return { status: "failed", detail: error instanceof Error ? error.message : String(error) };
   }
 }
 
@@ -59,19 +59,24 @@ export function createWizardCommand(): Command {
     .option("--config-read-only <boolean>", "Saved read-only safety mode for non-interactive setup")
     .option("--skip-test", "Skip connection test after configuration")
     .action(withExit(async (options: WizardOptions, cmd) => {
-      await maybePromptToStarRepo();
+      const nonInteractive = options.nonInteractive === true;
+      const globalFormat = ((cmd as Command).optsWithGlobals() as { format?: OutputFormat }).format;
+      let receiptFormat: OutputFormat = globalFormat ?? "toon";
       const configPath = getConfigPathFromCommand(cmd as Command);
       const existing = getConfigSnapshot(withConfigPath(configPath));
 
-      console.log("\nSETUP WIZARD\n");
+      if (!nonInteractive) {
+        await maybePromptToStarRepo();
+        console.log("\nSETUP WIZARD\n");
+      }
 
       try {
-        const nonInteractive = options.nonInteractive === true;
         let urlInput = options.haUrl || existing.url;
         let token = options.haToken || existing.token;
         let format = parseFormat(options.defaultFormat || existing.outputFormat || "toon") as OutputFormat;
         let timeout = parseTimeout(options.defaultTimeout || String(existing.timeout ?? 30000)) as number;
         let readOnly = parseBoolean(options.configReadOnly || (existing.readOnly ? "yes" : "no")) as boolean;
+        receiptFormat = globalFormat ?? format;
 
         if (!nonInteractive) {
           const rl = createInterface({ input: process.stdin, output: process.stdout });
@@ -128,17 +133,48 @@ export function createWizardCommand(): Command {
         };
 
         saveConfig(config, configPath);
-        console.log(`\nsaved_settings:${getConfigPath(configPath)}`);
-        console.log(`saved_auth:${getAuthPath(configPath)}`);
-        console.log(`saved_data:${getDataPath(configPath)}`);
+        const connection = options.skipTest
+          ? { status: "skipped" } as const
+          : await testConnection(config, configPath);
+        const receipt = {
+          setup: "complete",
+          saved: {
+            settings: getConfigPath(configPath),
+            auth: getAuthPath(configPath),
+            data: getDataPath(configPath),
+          },
+          defaults: { format, timeout_ms: timeout, read_only: readOnly },
+          connection: connection.status === "failed"
+            ? { status: "failed", message: "Configuration saved but connection failed. Verify URL and token." }
+            : connection,
+          next_command: "hassio status",
+        };
 
-        if (!options.skipTest) {
-          await testConnection(config, configPath);
+        if (nonInteractive) {
+          console.log(formatOutput(receipt, receiptFormat));
+          return;
         }
-
+        console.log(`\nsaved_settings:${receipt.saved.settings}`);
+        console.log(`saved_auth:${receipt.saved.auth}`);
+        console.log(`saved_data:${receipt.saved.data}`);
+        if (connection.status === "connected") {
+          console.log("\nTesting connection...");
+          console.log(`status:${connection.api_status}`);
+          console.log(`version:${connection.version}`);
+          console.log(`read_only:${readOnly}`);
+        } else if (connection.status === "failed") {
+          console.error("\nERROR: Connection test failed");
+          console.error(connection.detail);
+          console.error("\nConfiguration saved but connection failed. Verify URL and token.");
+        }
         console.log("\nSetup complete. Run: hassio status");
       } catch (error) {
-        console.error("\nERROR:", error instanceof Error ? error.message : String(error));
+        const message = error instanceof Error ? error.message : String(error);
+        if (nonInteractive) {
+          console.log(formatOutput({ setup: "failed", error: { code: "configuration_error", message } }, receiptFormat));
+        } else {
+          console.error("\nERROR:", message);
+        }
         process.exit(1);
       }
     }));
