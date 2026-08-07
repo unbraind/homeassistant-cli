@@ -368,6 +368,40 @@ const integrationReady = parseJson(
 ) as Record<string, unknown>;
 assert(integrationReady["integration_loaded"] === true, "homeassistant integration did not report ready");
 
+const frontendVersion = parseJson(
+  run(["ws", "frontend", "version", "--format", "json"])
+) as Record<string, unknown>;
+assert(typeof frontendVersion["version"] === "string", "invalid frontend version shape");
+
+for (const format of ["toon", "json", "json-compact", "yaml", "table", "markdown"] as const) {
+  const themesOutput = run(["ws", "frontend", "themes", "--count", "--format", format]);
+  const iconsOutput = run([
+    "ws", "frontend", "icons", "--category", "services", "--integration", "light",
+    "--limit", "1", "--format", format,
+  ]);
+  const translationsOutput = run([
+    "ws", "frontend", "translations", "--language", "en", "--category", "services",
+    "--integration", "light", "--count", "--format", format,
+  ]);
+  if (format === "json" || format === "json-compact") {
+    const themes = parseJson(themesOutput) as Record<string, unknown>;
+    const icons = parseJson(iconsOutput) as Record<string, unknown>;
+    const translations = parseJson(translationsOutput) as Record<string, unknown>;
+    assert(typeof themes["count"] === "number", "invalid frontend theme count");
+    assert(typeof icons["count"] === "number", "invalid frontend icon count");
+    assert(Array.isArray(icons["icons"]), "invalid frontend icon rows");
+    assert(typeof translations["count"] === "number", "invalid frontend translation count");
+  }
+  if (format === "yaml") {
+    assert(typeof parseYaml(themesOutput) === "object", "invalid frontend themes YAML");
+    assert(typeof parseYaml(iconsOutput) === "object", "invalid frontend icons YAML");
+    assert(typeof parseYaml(translationsOutput) === "object", "invalid frontend translations YAML");
+  }
+  assert(themesOutput.length > 0, `empty frontend themes output for format ${format}`);
+  assert(iconsOutput.length > 0, `empty frontend icons output for format ${format}`);
+  assert(translationsOutput.length > 0, `empty frontend translations output for format ${format}`);
+}
+
 const slugOutcome = runOutcome(["ws", "slugify", "Kitchen Ceiling Light", "--format", "json"]);
 if (slugOutcome.status === 0) {
   const slug = parseJson(slugOutcome.stdout) as Record<string, unknown>;

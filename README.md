@@ -8,7 +8,7 @@ CLI for Home Assistant with token-efficient output and broad API coverage. Defau
 
 ## Project Status
 
-Current public release: `v2026.8.1` (August 1, 2026). See:
+Current public release: `v2026.8.6` (August 6, 2026). See:
 
 - [CHANGELOG](./CHANGELOG.md) for released and unreleased changes
 - [Project History](./docs/PROJECT_HISTORY.md) for pre-release implementation history and audits
@@ -35,7 +35,7 @@ Current public release: `v2026.8.1` (August 1, 2026). See:
 - **Search Endpoint Fallback** - Falls back to local entity-state search when `/api/search` is unavailable
 - **Service Schema Intelligence** - Supports modern object-style `/api/services` payloads with filter/flat/count modes
 - **Compact Registry Discovery** - Uses Home Assistant's enabled-entity display contract for low-bandwidth agent context
-- **WebSocket API Coverage** - Generic passthrough plus typed targets, automation validation/runtime, integration intelligence, entity provenance, panels, heartbeat, signed paths, and voice-assistant exposure
+- **WebSocket API Coverage** - Generic passthrough plus typed targets, automation validation/runtime, integration intelligence, frontend semantic catalogs, entity provenance, panels, heartbeat, signed paths, and voice-assistant exposure
 - **Bounded Media Discovery** - Browse, search, and resolve media sources or players with read-only, agent-sized output
 - **Agent Diagnostics** - Typed Repairs issue/fix flows and bounded related-resource topology search
 - **Supervisor API Coverage** - Generic `supervisor api` passthrough + common shortcuts (addons, host, logs)
@@ -554,6 +554,12 @@ hassio ws integrations wait homeassistant
 # Map entity ownership and generate Home Assistant-compatible slugs
 hassio ws entity-sources --domain light --limit 20
 hassio ws slugify "Kitchen Ceiling Light"
+
+# Discover frontend version and bounded semantic/localization catalogs
+hassio ws frontend version
+hassio ws frontend themes --count
+hassio ws frontend icons --category services --integration light --limit 50
+hassio ws frontend translations --language en --category services --integration light --count
 
 # Observe automation triggers without firing them (admin only)
 hassio ws subscribe-trigger \

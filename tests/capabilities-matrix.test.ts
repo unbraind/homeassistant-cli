@@ -131,6 +131,21 @@ describe("probeApiMatrix", () => {
     expect(result.entries.find(e => e.key === "entity_sources")?.status).toBe("available");
     expect(result.entries.find(e => e.key === "slugify")?.status).toBe("available");
     expect(result.entries.find(e => e.key === "automation_runtime")?.status).toBe("available");
+    expect(result.entries.find(e => e.key === "frontend_version")?.status).toBe("available");
+    expect(result.entries.find(e => e.key === "frontend_themes")?.status).toBe("available");
+    expect(result.entries.find(e => e.key === "frontend_icons")?.status).toBe("available");
+    expect(result.entries.find(e => e.key === "frontend_translations")?.status).toBe("available");
+    expect(mockWsCall).toHaveBeenCalledWith("frontend/get_version", undefined);
+    expect(mockWsCall).toHaveBeenCalledWith("frontend/get_themes", undefined);
+    expect(mockWsCall).toHaveBeenCalledWith("frontend/get_icons", {
+      category: "services",
+      integration: ["light"],
+    });
+    expect(mockWsCall).toHaveBeenCalledWith("frontend/get_translations", {
+      language: "en",
+      category: "services",
+      integration: ["light"],
+    });
     expect(mockWsCall).toHaveBeenCalledWith("test_condition", {
       condition: { condition: "template", value_template: "{{ true }}" },
     });
