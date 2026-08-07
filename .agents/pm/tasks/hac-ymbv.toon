@@ -2,14 +2,14 @@ id: hac-ymbv
 title: Implement typed registry topology and entity naming contracts
 description: "Add typed clients and hassio registries subcommands for current Core registry topology and naming settings, with strict input validation and read-only enforcement."
 type: Task
-status: in_progress
+status: closed
 priority: 1
 tags[8]: coverage,device-topology,docs,entity-id-settings,live-e2e,registries,typescript,websocket
 created_at: "2026-08-07T18:15:23.981Z"
-updated_at: "2026-08-07T18:46:59.639Z"
+updated_at: "2026-08-07T18:59:28.155Z"
 deadline: "2026-08-09T18:15:23.981Z"
-assignee: codex-root
-claim_principal: codex-root
+closed_at: "2026-08-07T18:59:27.770Z"
+completed_at: "2026-08-07T18:59:27.770Z"
 author: codex-root
 estimated_minutes: 360
 acceptance_criteria: "No any, dynamic imports, non-erasable syntax, one-use wrapper helpers, guessed dependency types, or source file above 300 LOC; Unit and command tests assert payloads, normalization, validation, cleanup, read-only blocking, old-server errors, and all output contracts; Release verifier, PM validation, changelog check, package smoke, wizard acceptance, live read-only E2E, and hosted checks are green"
@@ -25,7 +25,10 @@ reviewer: unbraind
 risk: medium
 confidence: 94
 sprint: 2026-08-07-registry-topology
-release: unreleased
+release: 2026.8.7
+resolution: Merged typed registry topology and entity-ID naming intelligence in PR #93 with Core-exact validation and complete tests/docs/PM evidence.
+expected_result: "Typed commands, guarded mutation, deterministic formats, complete docs, exact coverage, live compatibility, and hosted review merge."
+actual_result: PR #93 merged as a66d1a6; 1392 tests and exact 100/100/100/100 coverage passed; live 2026.7.4 compatibility was classified; three findings were fixed; all available checks and threads closed green.
 dependencies[8]{id,kind,created_at,author,source_kind,author_source}:
   hac-3kz8,related,"2026-08-07T18:15:23.981Z",codex-root,"cli:create:dep",detected
   hac-53ti,related,"2026-08-07T18:15:23.981Z",codex-root,"cli:create:dep",detected
@@ -35,15 +38,17 @@ dependencies[8]{id,kind,created_at,author,source_kind,author_source}:
   hac-bvsc,related,"2026-08-07T18:15:23.981Z",codex-root,"cli:create:dep",detected
   hac-vooo,verifies,"2026-08-07T18:15:23.981Z",codex-root,"cli:create:dep",detected
   hac-vv7s,implements,"2026-08-07T18:15:23.981Z",codex-root,"cli:create:dep",detected
-comments[4]{created_at,author,text}:
+comments[5]{created_at,author,text}:
   "2026-08-07T18:15:23.981Z",codex-root,Implementation scope is the exact tagged Core contract; arbitrary integration-specific WebSocket commands remain available through hassio ws call and are not reimplemented here.
   "2026-08-07T18:28:30.851Z",codex-root,"Core 2026.8.1 source inspection identified composite split topology, linked-device discovery, global entity-ID settings, and the previously untyped automatic-ID preview. Normalized CLI envelopes retain provenance, deterministic ordering, count, returned_count, and truncation where applicable."
   "2026-08-07T18:36:48.491Z",codex-root,"Upstream PM core issue filed after four all-state searches: unbraind/pm-cli#930 documents pm duplicates --status all silently scanning zero items. The canonical duplicate check used the safe unfiltered command, which scanned all 85 items and found zero clusters."
   "2026-08-07T18:46:59.639Z",codex-root,"CodeRabbit review verified against tagged Core 2026.8.1: adopted exact entity-ID validation, including domain-only consecutive-underscore rejection; aligned the 2026.8.1 docs boundary; and enriched canonical Feature/Plan evidence."
-notes[3]{created_at,author,text}:
+  "2026-08-07T18:59:25.027Z",codex-root,"PR #93 merged as a66d1a6 after exact-head b65f433 produced three findings and 44b21b3 resolved all three. Final inventory: 10 conversation comments, 12 reviews, 3 threads, zero unresolved; every bot contribution usefulness-reacted. Gemini and Greptile remained unavailable after two triggers and the full window; CodeRabbit full command and Sourcery were quota-limited, while CodeRabbit automatic review, Codecov, and every hosted runner were green."
+notes[4]{created_at,author,text}:
   "2026-08-07T18:15:23.981Z",codex-root,"The live server predates these contracts. Expected live outcome is structured unknown_command, not fabricated success or a fallback that changes semantics."
   "2026-08-07T18:28:31.361Z",codex-root,Read-only live E2E passed against Core 2026.7.4. automatic-entity-ids succeeds; composite-splits and entity-id-settings return unknown_command and are classified as version availability rather than converted into empty data.
   "2026-08-07T18:40:14.736Z",codex-root,"Automatic daily release evidence: the latest scheduled hosted run succeeded with no_changes_since_last_tag at v2026.8.6, and the clean local conditional dry-run completed for v2026.8.7 without pushing or tagging."
+  "2026-08-07T18:59:25.416Z",codex-root,"No package was published and no release tag was created. The next automatic daily release remains the owner of version, changelog release section, immutable tag, and publication."
 learnings[1]{created_at,author,text}:
   "2026-08-07T18:15:23.981Z",codex-root,"Entity-ID settings accept null or a unique ordered subset of floor, area, device, entity that must contain device and entity."
 files[9]{path,scope,note}:
@@ -78,4 +83,5 @@ docs[5]{path,scope,note}:
   docs/INDEX.md,project,Discoverability index
   docs/LLM_INTEGRATION.md,project,LLM compatibility guidance
   README.md,project,User-facing feature summary
+close_reason: "Implementation, live acceptance, exact coverage, review feedback, hosted checks, and merge are complete."
 body: "Implement exact Core 2026.8.1 schemas, deterministic normalized envelopes, count/bounds where collections may grow, local validation before network I/O, guarded admin mutation, recursive help, all formatter proofs, complete documentation, live 2026.7.4 compatibility classification, and full shipping evidence."
