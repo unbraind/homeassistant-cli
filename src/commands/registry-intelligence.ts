@@ -14,7 +14,7 @@ type ListOptions = {
   limit?: string;
 };
 
-const ENTITY_ID_PATTERN = /^[a-z0-9_]+\.[a-z0-9_]+$/;
+const ENTITY_ID_PATTERN = /^(?![a-z0-9_]*__)[a-z0-9](?:[a-z0-9_]*[a-z0-9])?\.[a-z0-9](?:[a-z0-9_]*[a-z0-9])?$/;
 const ENTITY_NAME_PARTS = new Set<HaEntityNamePart>(["area", "device", "entity", "floor"]);
 
 function addListOptions(command: Command): Command {

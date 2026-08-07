@@ -91,23 +91,30 @@ describe("registry topology and entity-ID settings commands", () => {
   it("previews de-duplicated automatic entity IDs in requested order", async () => {
     mocks.getAutomaticEntityIds.mockResolvedValue({
       "light.custom": "light.kitchen",
-      "sensor.unknown": null,
+      "sensor.unknown__value": null,
     });
     await createRegistriesCommand().parseAsync([
-      "automatic-entity-ids", "light.custom,sensor.unknown", "light.custom",
+      "automatic-entity-ids", "light.custom,sensor.unknown__value", "light.custom",
     ], { from: "user" });
-    expect(mocks.getAutomaticEntityIds).toHaveBeenCalledWith(["light.custom", "sensor.unknown"]);
+    expect(mocks.getAutomaticEntityIds).toHaveBeenCalledWith(["light.custom", "sensor.unknown__value"]);
     expect(JSON.parse(output[0] ?? "")).toEqual({
       count: 2,
       entity_ids: [
         { entity_id: "light.custom", automatic_entity_id: "light.kitchen" },
-        { entity_id: "sensor.unknown", automatic_entity_id: null },
+        { entity_id: "sensor.unknown__value", automatic_entity_id: null },
       ],
     });
   });
 
   it("rejects malformed or empty entity ID inputs before network I/O", async () => {
-    for (const values of [["Bad Value"], [","]]) {
+    for (const values of [
+      ["Bad Value"],
+      [","],
+      ["_light.kitchen"],
+      ["light.kitchen_"],
+      ["light__zone.kitchen"],
+      ["light._kitchen"],
+    ]) {
       await expect(createRegistriesCommand().parseAsync([
         "automatic-entity-ids", ...values,
       ], { from: "user" })).rejects.toThrow();

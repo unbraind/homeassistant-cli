@@ -217,7 +217,7 @@ hassio registries entity-id-settings get
 
 Use `hassio capabilities --api-matrix` to check
 `automatic_entity_ids`, `registry_composite_splits`, and `entity_id_settings`
-first. A pre-2026.8 server may return `unknown_command` for the version-gated
+first. A server before Core 2026.8.1 may return `unknown_command` for the version-gated
 probes; retain that explicit capability boundary. Naming updates require
 administrator approval and are blocked locally in read-only mode. Never persist
 live device/entity IDs or topology payloads in prompts, logs, PM evidence, or

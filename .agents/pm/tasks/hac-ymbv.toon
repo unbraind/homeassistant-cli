@@ -6,7 +6,7 @@ status: in_progress
 priority: 1
 tags[8]: coverage,device-topology,docs,entity-id-settings,live-e2e,registries,typescript,websocket
 created_at: "2026-08-07T18:15:23.981Z"
-updated_at: "2026-08-07T18:40:14.736Z"
+updated_at: "2026-08-07T18:46:59.639Z"
 deadline: "2026-08-09T18:15:23.981Z"
 assignee: codex-root
 claim_principal: codex-root
@@ -35,10 +35,11 @@ dependencies[8]{id,kind,created_at,author,source_kind,author_source}:
   hac-bvsc,related,"2026-08-07T18:15:23.981Z",codex-root,"cli:create:dep",detected
   hac-vooo,verifies,"2026-08-07T18:15:23.981Z",codex-root,"cli:create:dep",detected
   hac-vv7s,implements,"2026-08-07T18:15:23.981Z",codex-root,"cli:create:dep",detected
-comments[3]{created_at,author,text}:
+comments[4]{created_at,author,text}:
   "2026-08-07T18:15:23.981Z",codex-root,Implementation scope is the exact tagged Core contract; arbitrary integration-specific WebSocket commands remain available through hassio ws call and are not reimplemented here.
   "2026-08-07T18:28:30.851Z",codex-root,"Core 2026.8.1 source inspection identified composite split topology, linked-device discovery, global entity-ID settings, and the previously untyped automatic-ID preview. Normalized CLI envelopes retain provenance, deterministic ordering, count, returned_count, and truncation where applicable."
   "2026-08-07T18:36:48.491Z",codex-root,"Upstream PM core issue filed after four all-state searches: unbraind/pm-cli#930 documents pm duplicates --status all silently scanning zero items. The canonical duplicate check used the safe unfiltered command, which scanned all 85 items and found zero clusters."
+  "2026-08-07T18:46:59.639Z",codex-root,"CodeRabbit review verified against tagged Core 2026.8.1: adopted exact entity-ID validation, including domain-only consecutive-underscore rejection; aligned the 2026.8.1 docs boundary; and enriched canonical Feature/Plan evidence."
 notes[3]{created_at,author,text}:
   "2026-08-07T18:15:23.981Z",codex-root,"The live server predates these contracts. Expected live outcome is structured unknown_command, not fabricated success or a fallback that changes semantics."
   "2026-08-07T18:28:31.361Z",codex-root,Read-only live E2E passed against Core 2026.7.4. automatic-entity-ids succeeds; composite-splits and entity-id-settings return unknown_command and are classified as version availability rather than converted into empty data.

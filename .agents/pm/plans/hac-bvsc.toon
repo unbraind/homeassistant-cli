@@ -6,7 +6,7 @@ status: open
 priority: 1
 tags[5]: "2026.8",delivery-plan,home-assistant,registry,websocket
 created_at: "2026-08-07T18:15:23.243Z"
-updated_at: "2026-08-07T18:40:14.269Z"
+updated_at: "2026-08-07T18:46:59.214Z"
 deadline: "2026-08-09T18:15:23.243Z"
 assignee: codex-root
 author: codex-root
@@ -78,8 +78,8 @@ plan_steps[6]:
     title: "Add exhaustive unit, command, help, and format tests"
     status: completed
     created_at: "2026-08-07T18:15:23.230Z"
-    updated_at: "2026-08-07T18:28:34.834Z"
-    evidence: "Added intuitive registries subcommands, local validation, deterministic bounded envelopes, recursive help, and capability probes."
+    updated_at: "2026-08-07T18:46:59.213Z"
+    evidence: "Focused transport, command, capability, and recursive-help suites assert WebSocket payloads, Core entity-ID validation, deterministic bounds/counts, all formatter routing, read-only guards, cleanup, and old-server errors; live E2E validates six output formats."
     completed_at: "2026-08-07T18:28:34.834Z"
   - id: plan-step-004
     order: 4
