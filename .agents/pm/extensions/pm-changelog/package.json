@@ -1,6 +1,6 @@
 {
   "name": "pm-changelog",
-  "version": "2026.8.4",
+  "version": "2026.8.6",
   "description": "Generate CHANGELOG.md files from pm-cli items for local and CI usage",
   "repository": {
     "type": "git",
@@ -118,15 +118,17 @@
   },
   "coverageGate": {
     "sources": [
-      "src"
+      "src",
+      "scripts/docstring-gate.ts",
+      "scripts/sync-version.ts"
     ],
     "tests": [
       "test/*.test.ts"
     ],
     "thresholds": {
-      "lines": 89,
-      "branches": 78,
-      "functions": 90
+      "lines": 93,
+      "branches": 92,
+      "functions": 93
     },
     "ignore": [
       "src/types.ts"

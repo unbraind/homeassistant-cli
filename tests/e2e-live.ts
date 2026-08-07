@@ -272,6 +272,39 @@ assert(wsTriggerSubscription["event_count"] === 0, "unexpected ws trigger subscr
 assert(Array.isArray(wsTriggerSubscription["events"]), "invalid ws trigger subscription events shape");
 
 for (const format of ["toon", "json", "json-compact", "yaml", "table", "markdown"] as const) {
+  const conditionOutput = run([
+    "ws", "automation-runtime", "test-condition",
+    "--condition", '{"condition":"template","value_template":"{{ true }}"}',
+    "--format", format,
+  ]);
+  if (format === "json" || format === "json-compact") {
+    const evaluation = parseJson(conditionOutput) as Record<string, unknown>;
+    assert(evaluation["evaluation"] === "condition", "invalid condition evaluation envelope");
+    const result = evaluation["result"] as Record<string, unknown> | undefined;
+    assert(result?.["result"] === true, "condition evaluation did not return true");
+  }
+  if (format === "yaml") {
+    assert(typeof parseYaml(conditionOutput) === "object", "invalid condition evaluation YAML");
+  }
+  assert(conditionOutput.length > 0, `empty condition evaluation output for format ${format}`);
+}
+
+const wsConditionObservation = parseJson(run([
+  "ws", "automation-runtime", "observe-condition",
+  "--condition", '{"condition":"template","value_template":"{{ true }}"}',
+  "--wait-ms", "1", "--max-events", "1", "--format", "json",
+])) as Record<string, unknown>;
+assert(wsConditionObservation["subscription"] === "condition", "invalid condition subscription type");
+assert(wsConditionObservation["event_count"] === 1, "condition subscription missed initial result");
+assert(Array.isArray(wsConditionObservation["events"]), "invalid condition subscription events shape");
+
+const wsSequenceWrite = runOutcome([
+  "ws", "automation-runtime", "execute-sequence", "--sequence", '{"delay":0}',
+]);
+assert(wsSequenceWrite.status !== 0, "read-only sequence execution unexpectedly succeeded");
+assert(wsSequenceWrite.stderr.includes("Read-only mode blocked"), "sequence execution lacked read-only classification");
+
+for (const format of ["toon", "json", "json-compact", "yaml", "table", "markdown"] as const) {
   const observationOutput = run([
     "ws", "observe-entities", "--domain", "sun", "--wait-ms", "1", "--max-events", "1", "--format", format,
   ]);

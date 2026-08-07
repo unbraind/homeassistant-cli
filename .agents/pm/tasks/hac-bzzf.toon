@@ -1,0 +1,73 @@
+id: hac-bzzf
+title: Implement typed automation runtime command contracts
+description: "Add typed condition test/observe and guarded action-sequence execution across transport, commands, schemas, docs, and tests."
+type: Task
+status: closed
+priority: 0
+tags[5]: automation,commands,conditions,typescript,websocket
+created_at: "2026-08-06T17:07:19.586Z"
+updated_at: "2026-08-06T17:41:30.466Z"
+deadline: "2026-08-07T17:07:19.586Z"
+closed_at: "2026-08-06T17:41:30.448Z"
+completed_at: "2026-08-06T17:41:30.448Z"
+author: codex-root
+estimated_minutes: 300
+acceptance_criteria: "Typed command behavior, read-only enforcement, bounded output, help, schemas, docs, and tests are complete"
+definition_of_ready: Plan step 1 records official and live contracts.
+goal: best-agent-home-assistant-cli
+objective: implement-typed-automation-runtime
+value: Turns the runtime contracts into safe discoverable CLI operations.
+impact: Closes the implementation gap between static automation validation and execution.
+outcome: Code and documentation are release-ready with exact coverage.
+why_now: The parent plan is executing and this is the active implementation unit.
+parent: hac-3ihr
+reviewer: unbraind
+risk: high
+confidence: 94
+sprint: 2026-08-automation-runtime
+release: 2026.8.6
+resolution: "Implemented typed test-condition, observe-condition, and execute-sequence contracts with guarded execution, schemas, docs, and live acceptance."
+expected_result: "Typed commands, transport safety, synchronized documentation, and exact quality gates are complete."
+actual_result: "All three commands passed focused and live behavior checks; release:verify passed 1,364 tests, exact 100/100/100/100 coverage, static, PM, audit, Trivy, history-secret, build, and commit-quality gates."
+dependencies[4]{id,kind,created_at,author,source_kind,author_source}:
+  hac-ak9g,verifies,"2026-08-06T17:07:19.586Z",codex-root,"cli:create:dep",detected
+  hac-ckrs,implements,"2026-08-06T17:07:19.586Z",codex-root,"cli:create:dep",detected
+  hac-r2z9,blocked_by,"2026-08-06T17:07:19.586Z",codex-root,"cli:create:dep",detected
+  hac-suj3,blocked_by,"2026-08-06T17:07:19.586Z",codex-root,"cli:create:dep",detected
+comments[2]{created_at,author,text}:
+  "2026-08-06T17:07:19.586Z",codex-root,"Keep this task open until code, tests, docs, and local/live verification are complete; only the executing parent plan remains in progress during initial implementation."
+  "2026-08-06T17:31:08.961Z",codex-root,"Implementation adds three nested commands, one transport read-only boundary, current capability probing, normal automation-file reuse, and stable envelopes. Focused typecheck plus 99 tests passed before the full suite."
+notes[1]{created_at,author,text}:
+  "2026-08-06T17:07:19.586Z",codex-root,Use Home Assistant Core response shapes verbatim at the transport boundary and normalize only for deterministic CLI envelopes.
+learnings[2]{created_at,author,text}:
+  "2026-08-06T17:07:19.586Z",codex-root,test_condition can return template_errors alongside a boolean; subscribe_condition emits only changed result/error payloads once per second; execute_script returns context plus optional response.
+  "2026-08-06T17:31:09.800Z",codex-root,Moving frame types and parsing into websocket-protocol.ts kept websocket.ts within the enforced 300-code-line ceiling without hiding behavior or weakening coverage.
+files[13]{path,scope,note}:
+  .agents/pm/extensions/pm-changelog/manifest.json,project,Current changelog extension contract
+  bun.lock,project,Reproducible dependency graph
+  package.json,project,Current PM CLI governance dependency
+  src/api/websocket-protocol.ts,project,Focused frame and subscription contracts
+  src/api/websocket.ts,project,Transport contracts and read-only guard
+  src/commands/capabilities-api-probes.ts,project,Live automation runtime capability probe
+  src/commands/llm-extended.ts,project,Machine-readable command schema
+  src/commands/websocket-automation-runtime.ts,project,Typed runtime command group
+  src/commands/websocket.ts,project,Registration
+  tests/api-websocket.test.ts,project,Transport and read-only coverage
+  tests/capabilities-matrix.test.ts,project,Capability mapping coverage
+  tests/e2e-live.ts,project,Installed live acceptance
+  tests/websocket-automation-runtime-command.test.ts,project,Command behavior coverage
+tests[6]{command,scope,timeout_seconds}:
+  "bun run quality:static",project,1200
+  "bun run release:auto:dry-run",project,1200
+  bun run test -- tests/websocket-automation-runtime-command.test.ts tests/api-websocket.test.ts tests/capabilities-matrix.test.ts tests/llm-extended.test.ts,project,600
+  "bun run test:coverage",project,2400
+  "bun run test:e2e:help",project,600
+  "bun run test:e2e:live",project,1200
+docs[5]{path,scope,note}:
+  docs/AGENT_OPTIMIZATION.md,project,Safe agent execution workflow
+  docs/API.md,project,CLI contract reference
+  docs/INDEX.md,project,Discoverable command index
+  docs/LLM_INTEGRATION.md,project,LLM planning and execution sequence
+  README.md,project,User-facing runtime examples
+close_reason: Typed automation runtime implementation and acceptance complete
+body: Implement the canonical feature hac-ckrs under delivery plan hac-3ihr. Reuse existing JSON/file parsing and subscription infrastructure where that keeps semantics clear; keep source files below 300 non-comment LOC and preserve exact coverage.

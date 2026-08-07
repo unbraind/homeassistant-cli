@@ -9,6 +9,7 @@
 
 ### Other
 
+- Implement typed automation runtime command contracts ([hac-bzzf](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-bzzf.toon))
 - Integration intelligence delivery plan ([hac-c94k](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/plans/hac-c94k.toon))
 - Implement typed integration metadata and entity provenance commands ([hac-53ti](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-53ti.toon))
 - Repairs and related-resource diagnostics delivery plan ([hac-ha2t](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/plans/hac-ha2t.toon))

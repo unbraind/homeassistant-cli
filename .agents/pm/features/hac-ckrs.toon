@@ -1,0 +1,49 @@
+id: hac-ckrs
+title: Add typed condition evaluation and action-sequence runtime
+description: "Complete the stable Home Assistant automation runtime workflow with typed one-shot condition testing, bounded condition observation, and read-only-safe action-sequence execution."
+type: Feature
+status: open
+priority: 0
+tags[7]: agents,automation,conditions,home-assistant,llm,runtime,websocket
+created_at: "2026-08-06T17:05:55.428Z"
+updated_at: "2026-08-06T17:05:55.428Z"
+deadline: "2026-08-08T17:05:55.428Z"
+assignee: unbraind
+author: codex-root
+estimated_minutes: 480
+acceptance_criteria: "Typed commands accept validated inline JSON and JSON files with optional variables and detailed nested help; Condition testing and bounded observation preserve Core result and template-error semantics; Action-sequence execution is blocked before network I/O whenever read-only mode is enabled; Schemas, capabilities, README, API reference, docs index, LLM guidance, and agent optimization docs remain synchronized; Focused, integration, help, wizard, all-format, live, security, PM, auto-release dry-run, and exact 100/100/100/100 coverage gates pass"
+definition_of_ready: Official stable 2026.8.0 source and latest developer docs confirm contracts; live 2026.7.4 instance confirms compatibility; all-status PM and GitHub searches find no equivalent typed feature.
+goal: best-agent-home-assistant-cli
+objective: typed-automation-runtime
+value: "Let agents validate assumptions, observe condition truth, and run reusable action sequences without raw protocol construction."
+impact: "Improves safety, explainability, and prompt efficiency for automation authoring and operation."
+outcome: A production-ready typed automation runtime surface with private-instance-safe evidence and no release publication.
+why_now: Static validation and trigger observation are already shipped; the remaining stable runtime commands form the next coherent agent workflow.
+parent: hac-4s9j
+reviewer: unbraind
+risk: high
+confidence: 94
+sprint: 2026-08-automation-runtime
+release: 2026.8.6
+dependencies[7]{id,kind,created_at,author,source_kind,author_source}:
+  hac-ak9g,blocked_by,"2026-08-06T17:05:55.428Z",codex-root,"cli:create:dep",detected
+  hac-n0ix,discovered_from,"2026-08-06T17:05:55.428Z",codex-root,"cli:create:dep",detected
+  hac-r2z9,related,"2026-08-06T17:05:55.428Z",codex-root,"cli:create:dep",detected
+  hac-stpm,related,"2026-08-06T17:05:55.428Z",codex-root,"cli:create:dep",detected
+  hac-suj3,related,"2026-08-06T17:05:55.428Z",codex-root,"cli:create:dep",detected
+  hac-vwh7,related,"2026-08-06T17:05:55.428Z",codex-root,"cli:create:dep",detected
+  hac-wwsi,related,"2026-08-06T17:05:55.428Z",codex-root,"cli:create:dep",detected
+comments[1]{created_at,author,text}:
+  "2026-08-06T17:05:55.428Z",codex-root,"All-status PM searches for condition evaluation, condition subscription, execute_script, and automation runtime found adjacent completed lineage but no equivalent typed feature."
+notes[1]{created_at,author,text}:
+  "2026-08-06T17:05:55.428Z",codex-root,"Credentials, raw live payloads, entity IDs, user IDs, context IDs, and location details remain only in 0600 global configuration or transient process memory and never enter Git or PM evidence."
+learnings[1]{created_at,author,text}:
+  "2026-08-06T17:05:55.428Z",codex-root,"Home Assistant 2026.8.0 keeps test_condition, subscribe_condition, and execute_script stable; the local 2026.7.4 instance supports the same contracts, enabling current-plus-backward compatibility proof."
+files[2]{path,scope,note}:
+  src/api/websocket.ts,project,Typed transport and read-only execution boundary
+  src/commands/websocket.ts,project,WebSocket command registration
+tests[1]{command,scope,timeout_seconds}:
+  "bun run test:coverage",project,2400
+docs[1]{path,scope,note}:
+  docs/API.md,project,Canonical command contract reference
+body: "The CLI already discovers, validates, and subscribes to automation triggers. Stable Home Assistant Core also exposes test_condition, subscribe_condition, and execute_script. This feature completes the agent workflow from discovery and validation through runtime evaluation and guarded execution while retaining raw ws passthrough for future integration-specific contracts."

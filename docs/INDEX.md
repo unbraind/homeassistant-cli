@@ -244,6 +244,7 @@ All commands support global flags (`--url`, `--token`, `--format`, `--timeout`, 
 | `ws entity-sources` | Map readable entities to their providing integration domains |
 | `ws slugify` | Generate identifiers with Home Assistant Core's canonical slug rules |
 | `ws validate-config` | Validate trigger, condition, and action definitions without executing them |
+| `ws automation-runtime` | Test/observe condition truth and execute read-only-guarded action sequences |
 | `supervisor api` | Raw Supervisor proxy passthrough |
 | `supervisor addons` | Add-on list/info/start/stop/restart |
 | `supervisor host` | Host reboot/shutdown |
@@ -320,6 +321,7 @@ The CLI is optimized for use by LLMs and AI agents:
 - **API Matrix Probe**: `hassio capabilities --api-matrix` returns live endpoint checks with mapped CLI commands and recommendations
 - **Service Input Validation**: `call-service --validate-input` checks payloads against live HA service definitions before execution
 - **Automation Validation**: `ws validate-config` checks triggers, conditions, and actions without executing them
+- **Automation Runtime**: `ws automation-runtime` tests and observes conditions, then executes approved sequences behind read-only enforcement
 - **Bounded Trigger Observation**: `ws subscribe-trigger` captures automation-level events with coalesced WebSocket transport
 - **Token-Efficient State Deltas**: `ws observe-entities` filters at the server and returns bounded normalized changes
 - **Automation Platform Discovery**: `ws automation-platforms` returns current trigger and condition schemas

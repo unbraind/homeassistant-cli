@@ -45,6 +45,18 @@ export const REST_PROBES: RestProbe[] = [
 
 export const WEBSOCKET_PROBES: WebsocketProbe[] = [
   {
+    key: "automation_runtime",
+    commandType: "test_condition",
+    endpoint: "/api/websocket#test_condition",
+    commandGroup: "websocket",
+    commands: [
+      "hassio ws automation-runtime test-condition --condition <json>",
+      "hassio ws automation-runtime observe-condition --condition <json>",
+      "hassio ws automation-runtime execute-sequence --sequence <json>",
+    ],
+    payload: { condition: { condition: "template", value_template: "{{ true }}" } },
+  },
+  {
     key: "integration_manifests",
     commandType: "manifest/list",
     endpoint: "/api/websocket#manifest/list",

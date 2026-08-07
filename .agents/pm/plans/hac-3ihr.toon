@@ -1,0 +1,167 @@
+id: hac-3ihr
+title: Typed automation runtime delivery plan
+description: "Research, implement, validate, review, and merge typed condition evaluation, condition observation, and action-sequence execution without publishing a release."
+type: Plan
+status: in_progress
+priority: 0
+tags[5]: agents,automation,delivery,live-e2e,websocket
+created_at: "2026-08-06T17:06:49.586Z"
+updated_at: "2026-08-06T18:16:31.001Z"
+deadline: "2026-08-08T17:06:49.586Z"
+assignee: codex-root
+author: codex-root
+estimated_minutes: 480
+acceptance_criteria: Every plan step has reproducible evidence and linked artifacts
+definition_of_ready: Canonical feature hac-ckrs is deduplicated and official/live contracts are verified.
+goal: best-agent-home-assistant-cli
+objective: ship-typed-automation-runtime
+value: Creates a resumable end-to-end implementation and delivery record.
+impact: "Coordinates contract correctness, safe execution, documentation, validation, review, and merge."
+outcome: "Feature merged with exact-head evidence, no unresolved actionable feedback, and no publication."
+why_now: The cohesive runtime gap is researched and ready for implementation.
+parent: hac-ckrs
+reviewer: unbraind
+risk: high
+confidence: 94
+sprint: 2026-08-automation-runtime
+release: 2026.8.6
+dependencies[7]:
+  - id: hac-ak9g
+    kind: related
+    created_at: "2026-08-06T17:06:49.586Z"
+    author: codex-root
+    source_kind: "cli:create:dep"
+    author_source: detected
+  - id: hac-ckrs
+    kind: parent
+    created_at: "2026-08-06T17:06:49.586Z"
+    author: codex-root
+    source_kind: "cli:create:dep"
+    author_source: detected
+  - id: hac-r2z9
+    kind: related
+    created_at: "2026-08-06T17:06:49.586Z"
+    author: codex-root
+    source_kind: "cli:create:dep"
+    author_source: detected
+  - id: hac-suj3
+    kind: related
+    created_at: "2026-08-06T17:06:49.586Z"
+    author: codex-root
+    source_kind: "cli:create:dep"
+    author_source: detected
+  - id: hac-vwh7
+    kind: related
+    created_at: "2026-08-06T17:06:49.586Z"
+    author: codex-root
+    source_kind: "cli:create:dep"
+    author_source: detected
+  - id: hac-wwsi
+    kind: related
+    created_at: "2026-08-06T17:06:49.586Z"
+    author: codex-root
+    source_kind: "cli:create:dep"
+    author_source: detected
+  - id: hac-bzzf
+    kind: implements
+    created_at: "2026-08-06T17:07:49.618Z"
+    author: codex-root
+comments[2]{created_at,author,text}:
+  "2026-08-06T17:06:49.586Z",codex-root,Only this actively executed delivery plan is in progress; the product feature stays open until implementation proof exists.
+  "2026-08-06T18:16:30.976Z",codex-root,"CodeRabbit identified duplicate roadmap numbering in docs/LLM_INTEGRATION.md; verified as valid and corrected 16/17 to 17/18. Its separate docstring heuristic warning is contradicted by the repository-owned 131/131 source docstring gate. CodeRabbit and Sourcery full-review providers reported quota limits, which are recorded as limitations rather than approvals."
+notes[2]{created_at,author,text}:
+  "2026-08-06T17:06:49.586Z",codex-root,Use blocking waits for long tests and review agents; take one final exact-head inventory after checks settle.
+  "2026-08-06T17:48:46.196Z",codex-root,Auto-release dry-run was intentionally non-publishing and reported pushed=false. A temporary-workspace PM health snapshot observed a pending telemetry queue warning while all integrity checks passed; production release verification reported healthy PM state.
+learnings[1]{created_at,author,text}:
+  "2026-08-06T17:06:49.586Z",codex-root,"Meaningful graph depth comes from parent, plan-step, provenance, verification, and quality lineage rather than arbitrary edge multiplication."
+files[1]{path,scope,note}:
+  src/commands/websocket.ts,project,Command registration surface
+tests[1]{command,scope,timeout_seconds}:
+  "bun run release:verify",project,2400
+docs[1]{path,scope,note}:
+  docs/RELEASING.md,project,Delivery and release verification contract
+plan_mode: executing
+plan_scope: "Stable Home Assistant WebSocket automation runtime contracts plus synchronized agent, schema, help, wizard, quality, and delivery evidence."
+plan_harness: codex
+plan_resume_context: "Continue on agent/typed-automation-runtime. Official stable 2026.8.0 and live 2026.7.4 contracts are confirmed. Keep secrets outside Git, preserve exact coverage, and finish through PR reviews, checks, merge, and clean master without release publication."
+plan_validation[2]{text,command,expected}:
+  Official/latest and live compatibility contract established,Home Assistant 2026.8.0 source schema inspection plus read-only hassio ws calls,"test_condition, subscribe_condition, and execute_script inputs/results match current source"
+  Strict release and automatic daily release gates passed,"bun run release:verify && bun run release:auto:dry-run","Exact coverage, security, PM/changelog, build/tests, and packed npx/bunx consumers pass; dry-run reports pushed=false"
+plan_decisions[1]{ts,author,decision,rationale,evidence}:
+  "2026-08-06T17:07:50.162Z",codex-root,"Expose one cohesive ws automation-runtime group with test-condition, observe-condition, and execute-sequence subcommands while retaining raw ws call.",These commands share JSON/file/variables inputs and form one discovery-to-validation-to-runtime agent workflow; grouping avoids top-level command sprawl.,Home Assistant Core 2026.8.0 commands.py schemas and existing CLI ws validate-config/subscribe-trigger patterns.
+plan_discoveries[2]{ts,author,text}:
+  "2026-08-06T17:07:50.662Z",codex-root,"Local Home Assistant 2026.7.4 supports the same three stable WebSocket command schemas as upstream 2026.8.0; live evidence will record only version and contract success, never private payloads."
+  "2026-08-06T18:16:30.476Z",codex-root,"During the hosted review wait, protected master advanced to the sole immutable daily release v2026.8.6. The branch was merged forward with the PM JSON driver; the only conflict was generated updated_at ordering, and the latest extension installer normalized it."
+plan_steps[8]:
+  - id: plan-step-001
+    order: 1
+    title: "Capture official, dependency-type, repository, and live contracts"
+    status: completed
+    created_at: "2026-08-06T17:06:49.578Z"
+    updated_at: "2026-08-06T17:07:51.738Z"
+    evidence: Latest official developer docs and stable 2026.8.0 Core source inspected; installed ws/types and all 73 PM items reviewed; local Core 2026.7.4 connectivity and current contract availability verified with private output excluded from durable evidence.
+    completed_at: "2026-08-06T17:07:51.738Z"
+  - id: plan-step-002
+    order: 2
+    title: Implement typed condition and action-sequence runtime commands
+    status: completed
+    created_at: "2026-08-06T17:06:49.578Z"
+    updated_at: "2026-08-06T17:31:10.663Z"
+    owner: codex-root
+    evidence: "Implemented automation-runtime test-condition, observe-condition, and execute-sequence; added transport-level read-only enforcement; extracted WebSocket protocol contracts to keep all source files <=300 LOC; upgraded PM CLI and pm-changelog to 2026.8.6."
+    completed_at: "2026-08-06T17:31:10.663Z"
+    linked_items[1]{id,kind,note}:
+      hac-bzzf,implements,"Implementation task owns code, tests, docs, and local acceptance"
+    files[2]{path,note}:
+      src/api/websocket.ts,Transport runtime contracts
+      src/commands/websocket-automation-runtime.ts,Typed command group
+  - id: plan-step-003
+    order: 3
+    title: "Add behavior-focused unit, integration, help, and schema coverage"
+    status: completed
+    created_at: "2026-08-06T17:06:49.578Z"
+    updated_at: "2026-08-06T17:31:12.396Z"
+    owner: codex-root
+    evidence: "Added dedicated command, client, capability, schema, help, and live acceptance coverage. Full suite passes 1,364 tests and enforced exact 100/100/100/100 thresholds; 131/131 source docstrings and file-size gate pass."
+    completed_at: "2026-08-06T17:31:12.396Z"
+  - id: plan-step-004
+    order: 4
+    title: Synchronize README and all docs surfaces
+    status: completed
+    created_at: "2026-08-06T17:06:49.578Z"
+    updated_at: "2026-08-06T17:31:14.354Z"
+    owner: codex-root
+    evidence: "README plus API, INDEX, LLM_INTEGRATION, and AGENT_OPTIMIZATION document inputs, envelopes, admin/read-only boundaries, privacy, validation-to-execution flow, and examples."
+    completed_at: "2026-08-06T17:31:14.354Z"
+  - id: plan-step-005
+    order: 5
+    title: "Run installed CLI, wizard, format, live read-only, and reversible execution acceptance"
+    status: completed
+    created_at: "2026-08-06T17:06:49.578Z"
+    updated_at: "2026-08-06T17:31:16.708Z"
+    owner: codex-root
+    evidence: "Actual globally linked hassio binary passed six live output formats, one-shot/observed conditions, read-only rejection, harmless approved delay-zero execution, nested/global help, and isolated 0600 wizard/auth/settings round-trip against local Core 2026.7.4."
+    completed_at: "2026-08-06T17:31:16.708Z"
+  - id: plan-step-006
+    order: 6
+    title: "Run strict release, security, PM, changelog, and auto-release dry-run gates"
+    status: completed
+    created_at: "2026-08-06T17:06:49.578Z"
+    updated_at: "2026-08-06T18:16:29.849Z"
+    owner: codex-root
+    evidence: "Strict release verification passed after synchronizing with immutable master release v2026.8.6: exact 100/100/100/100 coverage, 1,364 tests, audit/Trivy/history-secret cleanliness, PM integrity, build/static/docstrings/file-size gates. Before that release landed, the clean auto-release dry-run proved the full package path and packed npx/bunx consumers with pushed=false; after synchronization, the same-day guard correctly skipped with release_already_cut_today and sole tag v2026.8.6."
+    completed_at: "2026-08-06T17:48:45.269Z"
+  - id: plan-step-007
+    order: 7
+    title: Publish PR and converge all review feedback on exact head
+    status: in_progress
+    created_at: "2026-08-06T17:06:49.578Z"
+    updated_at: "2026-08-06T17:49:19.947Z"
+    owner: codex-root
+  - id: plan-step-008
+    order: 8
+    title: Merge and verify clean protected master without publishing
+    status: pending
+    created_at: "2026-08-06T17:06:49.578Z"
+    updated_at: "2026-08-06T17:06:49.578Z"
+body: "The plan converts the researched stable Core contracts into a typed CLI surface, complete test and documentation evidence, safe live acceptance, and exact-head GitHub delivery. Private instance details are excluded from durable artifacts."
