@@ -2,14 +2,14 @@ id: hac-djof
 title: Implement typed frontend version and semantic resource commands
 description: "Add a typed ws frontend command family for version, themes, icons, and translations with strict category/input validation, deterministic flattening, count/filter/limit bounds, complete help, capability probes, docs, and tests."
 type: Task
-status: in_progress
+status: closed
 priority: 0
 tags[6]: agents,frontend,implementation,localization,typescript,websocket
 created_at: "2026-08-07T05:48:29.648Z"
-updated_at: "2026-08-07T06:37:33.358Z"
+updated_at: "2026-08-07T06:45:07.526Z"
 deadline: "2026-08-08T05:48:29.648Z"
-assignee: codex-root
-claim_principal: codex-root
+closed_at: "2026-08-07T06:45:07.126Z"
+completed_at: "2026-08-07T06:45:07.126Z"
 author: codex-root
 estimated_minutes: 240
 acceptance_criteria: "A focused source module under 300 LOC registers version, themes, icons, and translations; categories and CSV integration inputs validate before connection; resource-heavy responses support count and positive limit bounds with deterministic ordering; capability metadata, focused tests, E2E help, docs, and exact coverage are updated; live read-only commands succeed without persisting private output"
@@ -26,6 +26,9 @@ risk: medium
 confidence: 98
 sprint: frontend-intelligence
 release: 2026.8.7
+resolution: "Implemented typed bounded frontend version, theme, icon, and translation discovery with shared WebSocket output helpers, capability probes, complete docs, and privacy-safe live acceptance."
+expected_result: "Current official frontend WebSocket contracts are intuitive CLI commands with validated bounded format-safe output, exact coverage, live read-only proof, and green hosted gates."
+actual_result: "Merged as a617dbb via PR #89; 1,374 tests and 100/100/100/100 coverage passed, all required GitHub checks were green, CodeRabbit findings converged, and no private live data entered Git."
 dependencies[10]{id,kind,created_at,author,source_kind,author_source}:
   hac-53ti,related,"2026-08-07T05:48:29.648Z",codex-root,"cli:create:dep",detected
   hac-97on,related,"2026-08-07T05:48:29.648Z",codex-root,"cli:create:dep",detected
@@ -108,4 +111,5 @@ docs[5]{path,scope,note}:
   docs/INDEX.md,project,Command index and release status
   docs/LLM_INTEGRATION.md,project,LLM workflow examples
   README.md,project,User-facing discovery examples
+close_reason: "Typed frontend semantic discovery shipped through merged PR #89 with exact local, live, hosted, and review evidence."
 body: "Implement the current official read-only frontend WebSocket schemas without dynamic imports, any, or one-use wrapper helpers. Normalize nested resources into stable rows where useful, preserve raw values only when explicitly requested, apply deterministic sorting and positive bounds, and verify all advertised output formats against the live instance."
