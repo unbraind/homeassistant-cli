@@ -2,13 +2,14 @@ id: hac-8h2c
 title: Non-interactive setup wizard corrupts structured stdout
 description: "The settings wizard writes human banners, progress lines, and prose around formatter-selected output, so --format json or json-compact cannot be parsed and other advertised formats are not honored as single programmatic receipts."
 type: Issue
-status: open
+status: closed
 priority: 0
 tags[6]: agents,cli,formatters,regression,setup-wizard,stdout
 created_at: "2026-08-07T19:37:57.246Z"
-updated_at: "2026-08-07T19:37:57.246Z"
+updated_at: "2026-08-07T20:05:48.609Z"
 deadline: "2026-08-09T19:37:57.246Z"
-assignee: codex-root
+closed_at: "2026-08-07T20:05:48.589Z"
+completed_at: "2026-08-07T20:05:48.589Z"
 author: codex-root
 estimated_minutes: 180
 acceptance_criteria: "Every non-interactive formatter emits one valid parseable receipt without human prefix/suffix lines; Connection success and failure are represented in the receipt without token, raw URL, location name, or other private values; Interactive wizard guidance remains intuitive and isolated config/auth/data files retain secure permissions"
@@ -28,9 +29,11 @@ release: unreleased
 severity: high
 environment: "homeassistant-cli 2026.8.6, Bun, non-interactive wizard, isolated HASSIO_CONFIG, live Home Assistant Core 2026.7.4"
 repro_steps: "Run hassio settings wizard --non-interactive with isolated HASSIO_CONFIG, environment token, valid URL, --config-read-only true, and --format json-compact; parse stdout with JSON.parse."
-expected_result: "stdout is exactly one valid JSON object describing saved paths, read-only mode, and connection outcome without secrets."
-actual_result: "stdout begins with a SETUP WIZARD banner and multiple human lines, causing JSON.parse to throw before any receipt can be consumed."
+resolution: Non-interactive wizard now suppresses interactive banners and prompts and emits exactly one selected-format receipt with privacy-safe connection semantics.
+expected_result: Every non-interactive formatter produces one parseable programmatic receipt without URL token location or mixed human prose.
+actual_result: All six format unit and live acceptance cases pass; JSON and YAML parse strictly; failure receipts are generic and saved config remains secure.
 affected_version: 2026.8.6
+fixed_version: unreleased
 component: settings-wizard
 regression: true
 customer_impact: Automated bootstrap and agent workflows cannot safely consume the advertised structured format.
@@ -53,4 +56,5 @@ tests[1]{command,scope,timeout_seconds}:
   bunx vitest run tests/settings-wizard.test.ts tests/output-formats-validation.test.ts,project,300
 docs[1]{path,scope,note}:
   docs/API.md,project,Non-interactive wizard receipt contract
+close_reason: Fixed by PR #95 with strict all-format setup receipts and preserved interactive behavior.
 body: "Reproduced with an isolated HASSIO_CONFIG directory and token supplied only through the environment. The wizard successfully wrote 0600 settings/auth files but stdout began with SETUP WIZARD before the requested JSON payload. Fix the non-interactive path to emit one formatter-validated receipt, represent connection-test success/failure in that receipt, keep errors actionable, and preserve the interactive guided experience."

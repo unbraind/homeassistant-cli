@@ -2,14 +2,14 @@ id: hac-xxi3
 title: Implement typed startup readiness and strict setup receipts
 description: "Add reusable subscribe_bootstrap_integrations transport and typed bounded command, then repair the non-interactive settings wizard so all output formats emit one deterministic privacy-safe receipt."
 type: Task
-status: in_progress
+status: closed
 priority: 0
 tags[9]: agents,bootstrap,coverage,docs,formatters,setup-wizard,startup,typescript,websocket
 created_at: "2026-08-07T19:38:17.942Z"
-updated_at: "2026-08-07T19:59:12.303Z"
+updated_at: "2026-08-07T20:05:47.813Z"
 deadline: "2026-08-09T19:38:17.942Z"
-assignee: codex-root
-claim_principal: codex-root
+closed_at: "2026-08-07T20:05:47.451Z"
+completed_at: "2026-08-07T20:05:47.451Z"
 author: codex-root
 estimated_minutes: 480
 acceptance_criteria: "Transport, command, wizard, capabilities, schema, help, docs, unit/integration/live tests, all formats, and package/release gates meet the parent feature contracts"
@@ -26,6 +26,9 @@ risk: high
 confidence: 96
 sprint: api-parity-2026-08
 release: unreleased
+resolution: Delivered typed bounded startup-readiness transport and command plus strict privacy-safe non-interactive setup receipts; merged in PR #95 after complete local live hosted and package verification.
+expected_result: Transport command wizard capabilities schema help docs tests live formats and release gates meet the feature contracts without publishing.
+actual_result: Merged at e9d0e3f with all required checks green exact 100/100/100/100 coverage 1405 tests read-only live Core compatibility six formatter proofs secure isolated setup and no publication.
 dependencies[11]{id,kind,created_at,author,source_kind,author_source}:
   hac-1iz2,related,"2026-08-07T19:38:17.942Z",codex-root,"cli:create:dep",detected
   hac-4u0a,implements,"2026-08-07T19:38:17.942Z",codex-root,"cli:create:dep",detected
@@ -107,4 +110,5 @@ docs[5]{path,scope,note}:
   docs/INDEX.md,project,Documentation discoverability
   docs/LLM_INTEGRATION.md,project,Agent bootstrap guidance
   README.md,project,User quick-start and WebSocket examples
+close_reason: "Implemented, verified, reviewed, and merged startup readiness plus machine-safe setup receipts in PR #95."
 body: "Implement without any, dynamic imports, guessed external types, artificial branches, ignore directives, or trivial one-use wrappers. Normalize Core Record<string, number> events into deterministic domain/elapsed rows, retain snapshot counts, bound duration/events, and always unsubscribe. Add capability/schema/help/docs/live E2E coverage. Refactor wizard connection testing to return typed data rather than print; format once in non-interactive mode and preserve interactive prose. Validate exact output schemas and secure isolated files."

@@ -2,13 +2,14 @@ id: hac-4u0a
 title: Add agent-safe Home Assistant startup readiness intelligence
 description: Complete the stable Core startup-readiness surface with a typed bounded subscribe_bootstrap_integrations command and restore strict machine-readable setup-wizard receipts across every formatter.
 type: Feature
-status: open
+status: closed
 priority: 0
 tags[9]: agents,api,bootstrap,home-assistant,integrations,setup-wizard,startup,typescript,websocket
 created_at: "2026-08-07T19:36:45.297Z"
-updated_at: "2026-08-07T19:36:45.297Z"
+updated_at: "2026-08-07T20:05:49.401Z"
 deadline: "2026-08-10T19:36:45.297Z"
-assignee: codex-root
+closed_at: "2026-08-07T20:05:49.383Z"
+completed_at: "2026-08-07T20:05:49.383Z"
 author: codex-root
 estimated_minutes: 600
 acceptance_criteria: "Built hassio exposes a typed bounded bootstrap integration observation command with deterministic summaries, validation, auto-unsubscribe cleanup, detailed help, schema, capabilities, and all six output formats; Non-interactive settings wizard stdout is exactly one valid TOON, JSON, JSON-compact, YAML, table, or Markdown receipt and connection failures are represented deterministically without leaking secrets; Isolated setup writes secure settings/auth/data files; live read-only startup acceptance retains only redacted counts, booleans, versions, and field names; Build, typecheck, lint, docstrings, duplication, file-size, ShellCheck, audit, Trivy, PM/changelog, release dry-run, package smoke, help E2E, and exact 100/100/100/100 coverage pass"
@@ -25,6 +26,9 @@ risk: high
 confidence: 96
 sprint: api-parity-2026-08
 release: unreleased
+resolution: Added stable Home Assistant startup integration readiness intelligence and repaired client bootstrap receipts across implementation discovery docs tests and live acceptance.
+expected_result: Agents can discover observe and consume bounded startup readiness and automate setup through deterministic schemas.
+actual_result: Typed command capability matrix machine schema agent plan documentation exact coverage live read-only acceptance and hosted merge completed in PR #95.
 dependencies[8]{id,kind,created_at,author,source_kind,author_source}:
   hac-1iz2,related,"2026-08-07T19:36:45.297Z",codex-root,"cli:create:dep",detected
   hac-ak9g,blocked_by,"2026-08-07T19:36:45.297Z",codex-root,"cli:create:dep",detected
@@ -46,4 +50,5 @@ tests[1]{command,scope,timeout_seconds}:
   "bun run release:verify",project,1800
 docs[1]{path,scope,note}:
   docs/API.md,project,Startup readiness and setup receipt contracts
+close_reason: Delivered startup-readiness intelligence and machine-safe setup as a production-ready no-publish tranche.
 body: "Research current Home Assistant 2026.8.1 developer documentation, tagged Core source, frontend client types, and live 2026.7.4 behavior. Implement typed auto-unsubscribing startup observation, capability/schema/help integration, and a setup wizard that emits one valid formatter payload in non-interactive mode while retaining interactive guidance. Keep credentials, endpoints, integration names, timing payloads, and topology outside Git and PM evidence."

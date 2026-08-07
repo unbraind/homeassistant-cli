@@ -4,12 +4,19 @@
 
 ### Added
 
+- Add agent-safe Home Assistant startup readiness intelligence ([hac-4u0a](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/features/hac-4u0a.toon))
 - Add Home Assistant 2026.8 registry topology intelligence ([hac-vv7s](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/features/hac-vv7s.toon))
 - Add agent-native automation trace diagnostics ([hac-of5a](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/features/hac-of5a.toon))
 - Add agent-native frontend semantic catalog discovery ([hac-fj2b](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/features/hac-fj2b.toon))
 
+### Fixed
+
+- Non-interactive setup wizard corrupts structured stdout ([hac-8h2c](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/issues/hac-8h2c.toon))
+
 ### Other
 
+- Startup readiness and machine-safe setup delivery plan ([hac-zdp4](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/plans/hac-zdp4.toon))
+- Implement typed startup readiness and strict setup receipts ([hac-xxi3](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-xxi3.toon))
 - Home Assistant 2026.8 registry topology delivery plan ([hac-bvsc](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/plans/hac-bvsc.toon))
 - Implement typed registry topology and entity naming contracts ([hac-ymbv](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-ymbv.toon))
 - Automation trace diagnostics delivery plan ([hac-pn41](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/plans/hac-pn41.toon))
