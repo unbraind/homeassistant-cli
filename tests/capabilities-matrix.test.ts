@@ -131,6 +131,7 @@ describe("probeApiMatrix", () => {
     expect(result.entries.find(e => e.key === "entity_sources")?.status).toBe("available");
     expect(result.entries.find(e => e.key === "slugify")?.status).toBe("available");
     expect(result.entries.find(e => e.key === "automation_runtime")?.status).toBe("available");
+    expect(result.entries.find(e => e.key === "automation_traces")?.status).toBe("available");
     expect(result.entries.find(e => e.key === "frontend_version")?.status).toBe("available");
     expect(result.entries.find(e => e.key === "frontend_themes")?.status).toBe("available");
     expect(result.entries.find(e => e.key === "frontend_icons")?.status).toBe("available");
@@ -149,6 +150,7 @@ describe("probeApiMatrix", () => {
     expect(mockWsCall).toHaveBeenCalledWith("test_condition", {
       condition: { condition: "template", value_template: "{{ true }}" },
     });
+    expect(mockWsCall).toHaveBeenCalledWith("trace/list", { domain: "automation" });
     expect(mockWsCall).toHaveBeenCalledWith("manifest/list", undefined);
     expect(mockWsCall).toHaveBeenCalledWith("integration/setup_info", undefined);
     expect(mockWsCall).toHaveBeenCalledWith("entity/source", undefined);

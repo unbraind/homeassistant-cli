@@ -305,6 +305,41 @@ assert(wsSequenceWrite.status !== 0, "read-only sequence execution unexpectedly 
 assert(wsSequenceWrite.stderr.includes("Read-only mode blocked"), "sequence execution lacked read-only classification");
 
 for (const format of ["toon", "json", "json-compact", "yaml", "table", "markdown"] as const) {
+  const traceOutput = run(["ws", "traces", "list", "--domain", "automation", "--limit", "1", "--format", format]);
+  const contextOutput = run(["ws", "traces", "contexts", "--count", "--format", format]);
+  if (format === "json" || format === "json-compact") {
+    const traces = parseJson(traceOutput) as Record<string, unknown>;
+    const contexts = parseJson(contextOutput) as Record<string, unknown>;
+    assert(traces["domain"] === "automation", "invalid automation trace domain");
+    assert(typeof traces["count"] === "number", "invalid automation trace count");
+    assert(Array.isArray(traces["traces"]), "invalid automation trace rows");
+    assert(typeof contexts["count"] === "number", "invalid trace context count");
+    assert(!("contexts" in contexts), "trace context count exposed private identifiers");
+  }
+  if (format === "yaml") {
+    assert(typeof parseYaml(traceOutput) === "object", "invalid automation trace YAML");
+    assert(typeof parseYaml(contextOutput) === "object", "invalid trace context YAML");
+  }
+  assert(traceOutput.length > 0, `empty automation trace output for format ${format}`);
+  assert(contextOutput.length > 0, `empty trace context output for format ${format}`);
+}
+
+const traceList = parseJson(
+  run(["ws", "traces", "list", "--domain", "automation", "--limit", "1", "--format", "json"])
+) as Record<string, unknown>;
+const traceRows = traceList["traces"] as Array<Record<string, unknown>> | undefined;
+const traceItemId = traceRows?.[0]?.["item_id"];
+const traceRunId = traceRows?.[0]?.["run_id"];
+if (typeof traceItemId === "string" && typeof traceRunId === "string") {
+  const traceDetail = parseJson(run([
+    "ws", "traces", "get", "--domain", "automation",
+    "--item-id", traceItemId, "--run-id", traceRunId, "--format", "json",
+  ], undefined, "ws traces get --domain automation --item-id <redacted> --run-id <redacted> --format json")) as Record<string, unknown>;
+  assert(traceDetail["domain"] === "automation", "invalid exact trace domain");
+  assert(typeof traceDetail["trace"] === "object", "exact trace omitted step details");
+}
+
+for (const format of ["toon", "json", "json-compact", "yaml", "table", "markdown"] as const) {
   const observationOutput = run([
     "ws", "observe-entities", "--domain", "sun", "--wait-ms", "1", "--max-events", "1", "--format", format,
   ]);

@@ -1,0 +1,84 @@
+id: hac-lwfa
+title: Implement typed automation trace command contracts
+description: Add typed bounded trace list context discovery and exact trace retrieval across command registration capability probes schema docs tests and live acceptance.
+type: Task
+status: in_progress
+priority: 0
+tags[7]: agents,automation,implementation,script,trace,typescript,websocket
+created_at: "2026-08-07T16:45:57.057Z"
+updated_at: "2026-08-07T16:59:01.870Z"
+deadline: "2026-08-08T16:45:57.057Z"
+assignee: codex-root
+claim_principal: codex-root
+author: codex-root
+estimated_minutes: 240
+acceptance_criteria: Typed command behavior validation bounded output help schema capabilities docs tests and local live acceptance are complete
+definition_of_ready: Feature hac-of5a and plan hac-pn41 capture official source live compatibility privacy boundaries and non-duplicate evidence.
+goal: agent-native-home-assistant-operations
+objective: typed-runtime-diagnostics
+value: Give agents a direct diagnosis path from execution history to exact trace detail.
+impact: Reduce time and token cost for automation and script troubleshooting.
+outcome: Production-ready trace CLI tranche merged without publication.
+why_now: The adjacent typed automation runtime is shipped and live trace contracts are verified.
+parent: hac-pn41
+reviewer: github-review-bots
+risk: medium
+confidence: high
+sprint: 2026-08-07-trace
+release: unreleased
+dependencies[7]{id,kind,created_at,author,source_kind,author_source}:
+  hac-ak9g,verifies,"2026-08-07T16:45:57.057Z",codex-root,"cli:create:dep",detected
+  hac-ckrs,discovered_from,"2026-08-07T16:45:57.057Z",codex-root,"cli:create:dep",detected
+  hac-fj2b,related,"2026-08-07T16:45:57.057Z",codex-root,"cli:create:dep",detected
+  hac-of5a,implements,"2026-08-07T16:45:57.057Z",codex-root,"cli:create:dep",detected
+  hac-r2z9,blocked_by,"2026-08-07T16:45:57.057Z",codex-root,"cli:create:dep",detected
+  hac-suj3,blocked_by,"2026-08-07T16:45:57.057Z",codex-root,"cli:create:dep",detected
+  hac-vwh7,related,"2026-08-07T16:45:57.057Z",codex-root,"cli:create:dep",detected
+comments[2]{created_at,author,text}:
+  "2026-08-07T16:45:57.057Z",codex-root,This is the only item claimed and marked in progress because it is the concrete item being edited; the parent feature and plan remain open.
+  "2026-08-07T16:59:01.870Z",codex-root,Implementation adds typed traces list get and contexts commands; the API matrix probes trace/list; schema/help/docs are synchronized; live installed CLI validation passed all six formats and exact get shape; the full release verifier passed 123 files and 1380 tests at exact 100/100/100/100.
+notes[2]:
+  - created_at: "2026-08-07T16:45:57.057Z"
+    author: codex-root
+    text: Exact get returns potentially private trace data only to the requesting local process; tests and PM evidence retain schemas and counts only.
+  - created_at: "2026-08-07T16:59:01.287Z"
+    author: codex-root
+    text: "{\"coverage\":{\"branches\":100,\"functions\":100,\"lines\":100,\"statements\":100},\"docstring_files\":133,\"formats\":6,\"live_core\":\"2026.7.4\",\"official_core\":\"2026.8.0\",\"private_payloads_persisted\":false,\"release_verify\":true,\"scope\":\"local-and-live\",\"trace_commands\":3,\"type\":\"verification\",\"unit_tests\":1380}"
+    format: json
+    data:
+      type: verification
+      scope: local-and-live
+      official_core: 2026.8.0
+      live_core: 2026.7.4
+      unit_tests: 1380
+      coverage:
+        statements: 100
+        branches: 100
+        functions: 100
+        lines: 100
+      docstring_files: 133
+      formats: 6
+      trace_commands: 3
+      private_payloads_persisted: false
+      release_verify: true
+    event_type: verification
+learnings[1]{created_at,author,text}:
+  "2026-08-07T16:45:57.057Z",codex-root,Trace list requires domain and optional item_id while trace contexts accepts neither field or the inclusive domain plus item_id pair; both contracts are administrator-only and read-only.
+files[7]{path,scope,note}:
+  src/commands/websocket-traces.ts,project,Typed command behavior
+  src/commands/websocket.ts,project,Command registration
+  src/commands/capabilities-api-probes.ts,project,Live capability probing
+  src/commands/llm-extended.ts,project,Machine-readable command schema
+  tests/websocket-traces-command.test.ts,project,Behavior branch and format coverage
+  tests/capabilities-matrix.test.ts,project,Capability contract coverage
+  tests/e2e-live.ts,project,Privacy-safe installed live acceptance
+tests[2]{command,scope,timeout_seconds,note}:
+  "bun run release:verify",project,2400,Exact coverage and production readiness
+  bunx vitest run tests/websocket-traces-command.test.ts tests/capabilities-matrix.test.ts tests/help-surface-e2e.test.ts,project,900,Focused behavioral and help proof
+docs[5]{path,scope,note}:
+  docs/AGENT_OPTIMIZATION.md,project,Token-bounded trace guidance
+  docs/API.md,project,Detailed command contracts
+  docs/INDEX.md,project,Discoverable command index
+  docs/LLM_INTEGRATION.md,project,Agent diagnosis workflow
+  README.md,project,User-facing examples
+body: Implement hassio ws traces list --domain automation|script with optional item filter and bounded count/all output; hassio ws traces contexts with optional paired domain and item filter plus deterministic bounded rows; and hassio ws traces get with required domain item and run identifiers preserving the exact Core trace object. Validate inputs before WebSocket construction. Do not add breakpoint or debug mutation commands.

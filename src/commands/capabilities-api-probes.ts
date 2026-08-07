@@ -45,6 +45,18 @@ export const REST_PROBES: RestProbe[] = [
 
 export const WEBSOCKET_PROBES: WebsocketProbe[] = [
   {
+    key: "automation_traces",
+    commandType: "trace/list",
+    endpoint: "/api/websocket#trace/list",
+    commandGroup: "websocket",
+    commands: [
+      "hassio ws traces list --domain automation --limit 20",
+      "hassio ws traces get --domain automation --item-id <id> --run-id <id>",
+      "hassio ws traces contexts --limit 20",
+    ],
+    payload: { domain: "automation" },
+  },
+  {
     key: "frontend_version",
     commandType: "frontend/get_version",
     endpoint: "/api/websocket#frontend/get_version",
