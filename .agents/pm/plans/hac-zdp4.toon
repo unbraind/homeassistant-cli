@@ -6,7 +6,7 @@ status: open
 priority: 0
 tags[7]: agents,bootstrap,delivery,home-assistant,setup-wizard,startup,websocket
 created_at: "2026-08-07T19:37:31.293Z"
-updated_at: "2026-08-07T19:56:03.243Z"
+updated_at: "2026-08-07T19:59:13.003Z"
 deadline: "2026-08-10T19:37:31.293Z"
 assignee: codex-root
 author: codex-root
@@ -160,16 +160,18 @@ plan_steps[9]:
   - id: plan-step-007
     order: 7
     title: "Commit, push, open a PM-linked ready PR, and request every configured review provider"
-    status: in_progress
+    status: completed
     created_at: "2026-08-07T19:37:31.269Z"
-    updated_at: "2026-08-07T19:56:03.242Z"
-    evidence: Preparing intentional commit and PM-linked PR after final staged secret scan.
+    updated_at: "2026-08-07T19:59:12.669Z"
+    evidence: "Committed 6688dc0 with detailed conventional message, pushed agent/startup-readiness-bootstrap-wizard, and opened ready PR #95 with working master-relative PM Markdown links and complete validation/source/privacy summary. Review providers will be requested from the resulting PM-evidence head."
+    completed_at: "2026-08-07T19:59:12.669Z"
   - id: plan-step-008
     order: 8
     title: "Wait once for all checks and reviews, disposition every artifact with reactions and inline replies, then fix and retrigger until exact-head clean"
-    status: pending
+    status: in_progress
     created_at: "2026-08-07T19:37:31.269Z"
-    updated_at: "2026-08-07T19:37:31.269Z"
+    updated_at: "2026-08-07T19:59:13.002Z"
+    evidence: Preparing exact-head provider requests and one blocking check/review wait.
   - id: plan-step-009
     order: 9
     title: "Merge to master, complete PM evidence and claims, regenerate canonical changelog, and verify no publication"

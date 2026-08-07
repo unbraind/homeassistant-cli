@@ -6,7 +6,7 @@ status: in_progress
 priority: 0
 tags[9]: agents,bootstrap,coverage,docs,formatters,setup-wizard,startup,typescript,websocket
 created_at: "2026-08-07T19:38:17.942Z"
-updated_at: "2026-08-07T19:56:01.268Z"
+updated_at: "2026-08-07T19:59:12.303Z"
 deadline: "2026-08-09T19:38:17.942Z"
 assignee: codex-root
 claim_principal: codex-root
@@ -38,9 +38,10 @@ dependencies[11]{id,kind,created_at,author,source_kind,author_source}:
   hac-vv7s,related,"2026-08-07T19:38:17.942Z",codex-root,"cli:create:dep",detected
   hac-vwh7,discovered_from,"2026-08-07T19:38:17.942Z",codex-root,"cli:create:dep",detected
   hac-wwsi,related,"2026-08-07T19:38:17.942Z",codex-root,"cli:create:dep",detected
-comments[2]{created_at,author,text}:
+comments[3]{created_at,author,text}:
   "2026-08-07T19:38:17.942Z",codex-root,"This is the only item to claim and mark in_progress because it is the concrete item whose source, tests, and docs are being edited."
   "2026-08-07T19:52:36.850Z",codex-root,Implemented the stable Core bootstrap integration subscription through the existing bounded collector; normalized only finite nonnegative timings into deterministic rows; synchronized capability and machine-schema discovery; repaired non-interactive setup to emit one privacy-safe formatter receipt while preserving interactive prose.
+  "2026-08-07T19:59:12.303Z",codex-root,"Pull request #95 opened at exact implementation head 6688dc0: https://github.com/unbraind/homeassistant-cli/pull/95. The body links all four canonical PM artifacts and records official contracts, privacy boundaries, local/live gates, and no-publication scope."
 notes[2]:
   - created_at: "2026-08-07T19:38:17.942Z"
     author: codex-root
