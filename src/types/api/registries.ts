@@ -80,6 +80,25 @@ export interface HaDeviceRegistryEntry {
   via_device_id: string | null;
 }
 
+export interface HaCompositeDeviceSplit {
+  primary_id: string | null;
+  split_ids: string[];
+}
+
+export type HaCompositeDeviceSplits = Record<string, HaCompositeDeviceSplit>;
+
+export interface HaLinkedDevicesResponse {
+  linked_devices: string[];
+}
+
+export type HaAutomaticEntityIds = Record<string, string | null>;
+
+export type HaEntityNamePart = "area" | "device" | "entity" | "floor";
+
+export interface HaEntityRegistrySettings {
+  entity_id_parts: HaEntityNamePart[] | null;
+}
+
 export interface HaAreaRegistryEntry {
   aliases: string[];
   area_id: string;

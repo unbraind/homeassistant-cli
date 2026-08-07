@@ -157,6 +157,53 @@ assert(Array.isArray(decodedRows), "invalid decoded compact registry rows");
 assert(typeof decodedRows[0]?.["entity_id"] === "string", "invalid decoded compact registry entity ID");
 assert(typeof decodedRows[0]?.["platform"] === "string", "invalid decoded compact registry platform");
 
+const proposedEntityId = "sensor.hassio_cli_contract_probe";
+for (const format of ["toon", "json", "json-compact", "yaml", "table", "markdown"] as const) {
+  const automaticIds = run([
+    "registries", "automatic-entity-ids", proposedEntityId, "--format", format,
+  ]);
+  if (format === "json" || format === "json-compact") {
+    const parsed = parseJson(automaticIds) as Record<string, unknown>;
+    const rows = parsed["entity_ids"] as Array<Record<string, unknown>> | undefined;
+    assert(parsed["count"] === 1, "invalid automatic entity-ID count");
+    assert(rows?.[0]?.["entity_id"] === proposedEntityId, "invalid automatic entity-ID row");
+  }
+  if (format === "yaml") {
+    assert(typeof parseYaml(automaticIds) === "object", "invalid automatic entity-ID YAML");
+  }
+  assert(automaticIds.length > 0, `empty automatic entity-ID output for format ${format}`);
+}
+
+const compositeSplits = runOutcome([
+  "registries", "composite-splits", "--count", "--format", "json",
+]);
+if (compositeSplits.status === 0) {
+  const parsed = parseJson(compositeSplits.stdout) as Record<string, unknown>;
+  assert(typeof parsed["count"] === "number", "invalid composite split count");
+} else {
+  assert(
+    compositeSplits.stderr.includes("unknown_command"),
+    "composite split discovery failed without compatibility classification",
+  );
+}
+
+const entityIdSettings = runOutcome([
+  "registries", "entity-id-settings", "get", "--format", "json",
+]);
+if (entityIdSettings.status === 0) {
+  const parsed = parseJson(entityIdSettings.stdout) as Record<string, unknown>;
+  assert(typeof parsed["uses_default"] === "boolean", "invalid entity-ID settings shape");
+  assert(
+    parsed["entity_id_parts"] === null || Array.isArray(parsed["entity_id_parts"]),
+    "invalid entity-ID naming parts",
+  );
+} else {
+  assert(
+    entityIdSettings.stderr.includes("unknown_command"),
+    "entity-ID settings failed without compatibility classification",
+  );
+}
+
 const configEntries = parseJson(run(["config-entries", "--count", "--format", "json"])) as Record<string, unknown>;
 assert(typeof configEntries["count"] === "number", "invalid config-entries --count JSON shape");
 

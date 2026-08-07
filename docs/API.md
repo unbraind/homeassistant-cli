@@ -651,6 +651,45 @@ the full registry through the CLI.
 
 > **Note**: Full registry modes use WebSocket API (`config/entity_registry/list`, etc.). Area discovery falls back to entity states if WebSocket registry access is unavailable.
 
+#### Registry topology and entity-ID settings (Core 2026.8.1+)
+
+Use typed subcommands to inspect device-registry migrations, find devices that
+share identifiers or connections across config entries, preview automatic
+entity IDs, and manage Home Assistant's global entity-ID naming policy:
+
+```bash
+hassio registries composite-splits [--limit <n>|--all] [--count]
+hassio registries linked-devices <device-id> [--limit <n>|--all] [--count]
+hassio registries automatic-entity-ids <entity-ids...>
+hassio registries entity-id-settings get
+hassio registries entity-id-settings update --parts <ordered-csv>
+hassio registries entity-id-settings update --reset
+```
+
+`composite-splits` returns deterministic rows with
+`composite_device_id`, `split_device_ids`, and `primary_device_id`.
+`linked-devices` returns the source device plus sorted linked device rows.
+Both default to 100 rows and expose `count`, `returned_count`, and `truncated`;
+use `--count` before adding topology to an agent context.
+
+`automatic-entity-ids` accepts space- or comma-separated `domain.object_id`
+values, removes duplicates while preserving request order, and returns nullable
+automatic IDs. A null value means the supplied entity is not in the registry.
+
+Entity-ID naming parts are an ordered unique subset of `floor`, `area`,
+`device`, and `entity`; `device` and `entity` are mandatory. `update` requires
+an administrator and is blocked locally before network I/O when read-only mode
+is enabled. `--reset` restores Home Assistant's default policy. The corresponding
+API-matrix probes are `automatic_entity_ids`, `registry_composite_splits`, and
+`entity_id_settings`.
+
+The topology and settings contracts are defined by the tagged Core 2026.8.1
+[device registry](https://github.com/home-assistant/core/blob/2026.8.1/homeassistant/components/config/device_registry.py)
+and [entity registry](https://github.com/home-assistant/core/blob/2026.8.1/homeassistant/components/config/entity_registry.py)
+implementations; automatic-ID preview is also available on some older releases.
+Older servers may return `unknown_command` for version-gated entries; this is an
+availability boundary, not a malformed empty result.
+
 ### Registry CRUD Operations
 
 #### `area-create`

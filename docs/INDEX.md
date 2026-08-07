@@ -232,6 +232,17 @@ All commands support global flags (`--url`, `--token`, `--format`, `--timeout`, 
 | `repairs fix` | Start, inspect, and submit administrator repair fix flows |
 | `related <item-type> <item-id>` | Find sorted, per-type bounded Home Assistant resource relationships |
 
+### Registry Intelligence
+
+| Command | Description |
+|---------|-------------|
+| `registries --display` | Read Home Assistant's compact enabled-entity registry with bounds and optional descriptive keys |
+| `registries composite-splits` | Map legacy composite device IDs to their Core 2026.8.1 split replacements |
+| `registries linked-devices <device-id>` | Find cross-config-entry devices sharing identifiers or connections |
+| `registries automatic-entity-ids <ids...>` | Preview nullable automatic entity IDs without changing the registry |
+| `registries entity-id-settings get` | Inspect the global automatic entity-ID naming policy |
+| `registries entity-id-settings update` | Set or reset the admin-only naming policy with read-only enforcement |
+
 ### WebSocket & Supervisor
 
 | Command | Description |
@@ -315,7 +326,7 @@ The CLI is optimized for use by LLMs and AI agents:
 - **Batch Operations**: Execute multiple operations efficiently
 - **Structured Output**: Predictable, parseable formats
 - **Entity Discovery**: Comprehensive entity exploration
-- **Registry Access**: Query entity/device/area metadata
+- **Registry Intelligence**: Query entity/device/area metadata, migration topology, linked identities, and naming policy
 - **Statistics**: Historical data and analytics
 - **List Management**: Todo lists, shopping list, notifications
 - **Search Fallback**: Automatically uses local entity-state search if `/api/search` is unavailable

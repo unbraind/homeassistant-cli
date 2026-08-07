@@ -45,6 +45,31 @@ export const REST_PROBES: RestProbe[] = [
 
 export const WEBSOCKET_PROBES: WebsocketProbe[] = [
   {
+    key: "automatic_entity_ids",
+    commandType: "config/entity_registry/get_automatic_entity_ids",
+    endpoint: "/api/websocket#config/entity_registry/get_automatic_entity_ids",
+    commandGroup: "registries",
+    commands: ["hassio registries automatic-entity-ids <entity-id>"],
+    payload: { entity_ids: ["sensor.hassio_cli_capability_probe"] },
+  },
+  {
+    key: "registry_composite_splits",
+    commandType: "config/device_registry/list_composite_splits",
+    endpoint: "/api/websocket#config/device_registry/list_composite_splits",
+    commandGroup: "registries",
+    commands: ["hassio registries composite-splits --count"],
+  },
+  {
+    key: "entity_id_settings",
+    commandType: "config/entity_registry/settings/get",
+    endpoint: "/api/websocket#config/entity_registry/settings/get",
+    commandGroup: "registries",
+    commands: [
+      "hassio registries entity-id-settings get",
+      "hassio registries entity-id-settings update --parts device,entity",
+    ],
+  },
+  {
     key: "automation_traces",
     commandType: "trace/list",
     endpoint: "/api/websocket#trace/list",

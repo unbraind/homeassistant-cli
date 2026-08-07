@@ -372,6 +372,34 @@ hassio registries --devices --count
 - Find devices without an area
 - Check firmware versions
 
+### Device Migration Topology and Entity Naming
+
+Inspect new registry identity contracts without composing raw WebSocket
+payloads:
+
+```bash
+# Count before retrieving potentially private topology
+hassio registries composite-splits --count --format json-compact
+
+# Map one device to identities supplied by other config entries
+hassio registries linked-devices <device-id> --limit 25 --format json-compact
+
+# Preview automatic entity IDs without mutating the registry
+hassio registries automatic-entity-ids light.kitchen sensor.temperature
+
+# Inspect naming policy; mutation requires admin approval
+hassio registries entity-id-settings get
+hassio --read-only registries entity-id-settings update --reset # blocked locally
+```
+
+Run `hassio capabilities --api-matrix` and inspect
+`automatic_entity_ids`, `registry_composite_splits`, and `entity_id_settings`
+before selecting these commands. Older Core releases may return
+`unknown_command` for the version-gated probes. Do not convert that response
+into an empty success: it distinguishes unsupported capability from a supported
+registry with zero matching rows. Device IDs, entity IDs, and the returned
+topology are private instance data and must remain outside durable agent context.
+
 ### Area Registry
 
 Access area (room) information:

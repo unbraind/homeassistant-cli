@@ -34,7 +34,7 @@ Current public release: `v2026.8.6` (August 6, 2026). See:
 - **Fast Topology Snapshot** - `hassio summary` returns domain/state counts for quick agent planning
 - **Search Endpoint Fallback** - Falls back to local entity-state search when `/api/search` is unavailable
 - **Service Schema Intelligence** - Supports modern object-style `/api/services` payloads with filter/flat/count modes
-- **Compact Registry Discovery** - Uses Home Assistant's enabled-entity display contract for low-bandwidth agent context
+- **Registry Intelligence** - Compact entity discovery plus Core 2026.8 device migration topology and entity-ID naming policy
 - **WebSocket API Coverage** - Generic passthrough plus typed targets, automation validation/runtime/traces, integration intelligence, frontend semantic catalogs, entity provenance, panels, heartbeat, signed paths, and voice-assistant exposure
 - **Bounded Media Discovery** - Browse, search, and resolve media sources or players with read-only, agent-sized output
 - **Agent Diagnostics** - Typed Repairs issue/fix flows and bounded related-resource topology search
@@ -488,7 +488,22 @@ hassio registries --display --domain light --limit 25
 
 # Descriptive keys for JSON pipelines
 hassio registries --decode-display --area-id kitchen --limit 25 --format json-compact
+
+# Core 2026.8 device migration and cross-integration identity topology
+hassio registries composite-splits --count
+hassio registries linked-devices <device-id> --limit 25
+
+# Preview automatic IDs, then inspect the global naming policy
+hassio registries automatic-entity-ids light.kitchen sensor.temperature
+hassio registries entity-id-settings get
+
+# Admin-only mutation; blocked locally by --read-only/HASSIO_READONLY=true
+hassio registries entity-id-settings update --parts floor,area,device,entity
 ```
+
+The composite-split, linked-device, and naming-settings commands require Home
+Assistant Core 2026.8.1 or newer. Older servers report `unknown_command`; use
+`hassio capabilities --api-matrix` to detect support before planning a workflow.
 
 ### WebSocket & Supervisor
 
