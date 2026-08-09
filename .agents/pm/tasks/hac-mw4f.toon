@@ -6,7 +6,7 @@ status: closed
 priority: 0
 tags[7]: agents,api,home-assistant,live-e2e,target,typescript,websocket
 created_at: "2026-08-09T21:30:10.685Z"
-updated_at: "2026-08-09T21:52:11.918Z"
+updated_at: "2026-08-09T22:09:34.965Z"
 deadline: "2026-08-10T21:30:10.685Z"
 closed_at: "2026-08-09T21:52:02.513Z"
 completed_at: "2026-08-09T21:52:02.513Z"
