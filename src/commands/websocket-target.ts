@@ -18,6 +18,17 @@ type TargetOptions = {
 
 type TargetOptionKey = Exclude<keyof TargetOptions, "includeSecondary">;
 
+type ExtractOptions = {
+  expandGroup: boolean;
+  includeSecondary?: boolean;
+};
+
+type ExtractPayload = {
+  target: Record<string, string[]>;
+  expand_group: boolean;
+  primary_entities_only?: boolean;
+};
+
 type ExtractedTarget = {
   referenced_entities?: unknown;
   referenced_devices?: unknown;
@@ -65,10 +76,10 @@ function toTargetPayload(options: TargetOptions): Record<string, string[]> {
 
 function toExtractPayload(
   target: Record<string, string[]>,
-  options: TargetOptions & { expandGroup: boolean }
-): Record<string, unknown> {
-  const payload: Record<string, unknown> = { target, expand_group: options.expandGroup };
-  if (options.includeSecondary) payload["primary_entities_only"] = false;
+  options: ExtractOptions
+): ExtractPayload {
+  const payload: ExtractPayload = { target, expand_group: options.expandGroup };
+  if (options.includeSecondary) payload.primary_entities_only = false;
   return payload;
 }
 
