@@ -516,7 +516,10 @@ if (slugOutcome.status === 0) {
 }
 
 const wsTargetExtract = parseJson(
-  run(["ws", "target", "extract", "--entity-id", sampleEntityId, "--format", "json"])
+  run([
+    "ws", "target", "extract", "--entity-id", sampleEntityId,
+    "--include-secondary", "--format", "json",
+  ])
 ) as Record<string, unknown>;
 assert(typeof wsTargetExtract["target"] === "object", "invalid ws target extract target shape");
 assert(typeof wsTargetExtract["result"] === "object", "invalid ws target extract result shape");

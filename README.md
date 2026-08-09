@@ -530,6 +530,7 @@ hassio ws call -T get_states
 
 # Target helper: resolve target selectors to concrete IDs
 hassio ws target extract --area-id kitchen
+hassio ws target extract --device-id <id> --include-secondary
 
 # Discover automation primitives that apply to a target
 hassio ws target triggers --entity-id light.kitchen

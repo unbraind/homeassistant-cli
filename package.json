@@ -32,7 +32,7 @@
     "quality:duplication": "jscpd src --min-lines 5 --min-tokens 50 --threshold 4.36 --reporters console",
     "quality:file-size": "node scripts/quality/file-size.mjs",
     "quality:shell": "find scripts -name '*.sh' -print0 | xargs -0 shellcheck",
-    "quality:pm": "mkdir -p .agents/pm/locks .agents/pm/search && PM_TELEMETRY_DISABLED=1 bun run changelog:pm:install && PM_TELEMETRY_DISABLED=1 bunx @unbrained/pm-cli@latest merge install && PM_TELEMETRY_DISABLED=1 bunx @unbrained/pm-cli@latest validate --check-files --check-resolution --check-history-drift --strict-exit --json && PM_TELEMETRY_DISABLED=1 bunx @unbrained/pm-cli@latest health --check-only --strict-exit --json",
+    "quality:pm": "mkdir -p .agents/pm/locks .agents/pm/search && PM_TELEMETRY_DISABLED=1 bun run changelog:pm:install && PM_TELEMETRY_DISABLED=1 bunx @unbrained/pm-cli@latest merge install && PM_TELEMETRY_DISABLED=1 bunx @unbrained/pm-cli@latest gc --scope runtime --json && PM_TELEMETRY_DISABLED=1 bunx @unbrained/pm-cli@latest validate --check-files --check-resolution --check-history-drift --strict-exit --json && PM_TELEMETRY_DISABLED=1 bunx @unbrained/pm-cli@latest health --check-only --strict-exit --json",
     "quality:static": "bun run typecheck && bun run lint && bun run quality:docstrings && bun run quality:duplication && bun run quality:file-size && bun run quality:shell",
     "review:loop": "node scripts/reviews/pr-review-loop.mjs",
     "review:inventory": "bun run review:loop -- inventory",
@@ -72,20 +72,20 @@
     "@toon-format/toon": "^4.1.1",
     "commander": "^15.0.0",
     "undici": "^8.10.0",
-    "ws": "^8.21.2",
+    "ws": "^8.21.3",
     "yaml": "^2.9.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/node": "^22.20.1",
     "@types/ws": "^8.18.1",
-    "@unbrained/pm-cli": "^2026.8.7",
+    "@unbrained/pm-cli": "^2026.8.9",
     "@vitest/coverage-v8": "^4.1.10",
-    "eslint": "^10.8.0",
-    "eslint-plugin-jsdoc": "63.2.0",
+    "eslint": "^10.8.1",
+    "eslint-plugin-jsdoc": "63.3.3",
     "globals": "^17.9.0",
-    "jscpd": "5.0.12",
-    "tsx": "^4.23.8",
+    "jscpd": "5.0.14",
+    "tsx": "^4.23.11",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.66.0",
     "vitest": "^4.1.10"
@@ -93,6 +93,7 @@
   "overrides": {
     "brace-expansion": "5.0.9",
     "flatted": "3.4.2",
+    "nanoid": "3.3.17",
     "picomatch": "4.0.5",
     "postcss": "8.5.25"
   },

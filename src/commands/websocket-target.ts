@@ -13,6 +13,7 @@ type TargetOptions = {
   areaId?: string;
   floorId?: string;
   labelId?: string;
+  includeSecondary?: boolean;
 };
 
 type ExtractedTarget = {
@@ -41,7 +42,10 @@ function stringArray(value: unknown): string[] {
 
 function toTargetPayload(options: TargetOptions): Record<string, string[]> {
   const target: Record<string, string[]> = {};
-  const mappings: Array<[keyof TargetOptions, string]> = [
+  const mappings: Array<[
+    "entityId" | "deviceId" | "areaId" | "floorId" | "labelId",
+    string,
+  ]> = [
     ["entityId", "entity_id"],
     ["deviceId", "device_id"],
     ["areaId", "area_id"],
@@ -153,15 +157,18 @@ function createExtractCommand(): Command {
     new Command("extract")
       .description("Expand selectors into referenced and missing target IDs")
       .option("--expand-group", "Expand group members in target resolution", false)
+      .option("--include-secondary", "Include non-primary entities in target resolution", false)
   );
   command.action(withExit(async (options: TargetOptions & { expandGroup: boolean }, cmd) => {
     const target = toTargetPayload(options);
+    const payload: Record<string, unknown> = {
+      target,
+      expand_group: options.expandGroup,
+    };
+    if (options.includeSecondary) payload["primary_entities_only"] = false;
     await withClient(cmd as Command, async (client) => ({
       target,
-      result: await client.call("extract_from_target", {
-        target,
-        expand_group: options.expandGroup,
-      }),
+      result: await client.call("extract_from_target", payload),
     }));
   }));
   return command;
@@ -172,14 +179,17 @@ function createRelatedCommand(): Command {
     new Command("related")
       .description("Resolve target IDs and return only matching registry entries")
       .option("--expand-group", "Expand group members in target resolution", false)
+      .option("--include-secondary", "Include non-primary entities before registry lookup", false)
   );
   command.action(withExit(async (options: TargetOptions & { expandGroup: boolean }, cmd) => {
     const target = toTargetPayload(options);
     await withClient(cmd as Command, async (client) => {
-      const extracted = await client.call("extract_from_target", {
+      const extractPayload: Record<string, unknown> = {
         target,
         expand_group: options.expandGroup,
-      }) as ExtractedTarget;
+      };
+      if (options.includeSecondary) extractPayload["primary_entities_only"] = false;
+      const extracted = await client.call("extract_from_target", extractPayload) as ExtractedTarget;
       const ids = extractedIds(extracted, target);
       const entityResult = ids.entities.length
         ? await client.call("config/entity_registry/get_entries", { entity_ids: ids.entities })
@@ -226,6 +236,7 @@ export function createWebsocketTargetCommand(): Command {
     .addHelpText("after", `
 Examples:
   hassio ws target extract --entity-id light.kitchen
+  hassio ws target extract --device-id abc123 --include-secondary
   hassio ws target triggers --area-id kitchen
   hassio ws target conditions --label-id security
   hassio ws target services --area-id kitchen

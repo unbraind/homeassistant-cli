@@ -257,12 +257,17 @@ Use WebSocket target helpers to convert abstract targets into concrete IDs, disc
 
 ```bash
 hassio ws target extract --area-id kitchen
+hassio ws target extract --device-id <id> --include-secondary
 hassio ws target triggers --entity-id light.kitchen
 hassio ws target conditions --entity-id light.kitchen
 hassio ws target services --entity-id light.kitchen
 hassio ws target services --entity-id group.downstairs --no-expand-group
 hassio ws target related --label-id lighting
 ```
+
+Target extraction uses Home Assistant's smaller primary-entity view by default.
+Use `--include-secondary` only when an agent needs complete configuration or
+diagnostic topology; the larger result may expose additional private entity IDs.
 
 ### 12. Validate Automations Before Execution
 

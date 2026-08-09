@@ -1,0 +1,93 @@
+id: hac-0t0w
+title: Target topology and secure delivery execution plan
+description: Execution and evidence plan for the current-Core target selection gap and the advisory-blocked daily release pipeline.
+type: Plan
+status: open
+priority: 0
+tags[5]: api,plan,release,security,websocket
+created_at: "2026-08-09T21:29:34.800Z"
+updated_at: "2026-08-09T21:40:37.964Z"
+deadline: "2026-08-11T21:29:34.800Z"
+assignee: codex-root
+author: codex-root
+estimated_minutes: 420
+acceptance_criteria: Every step has implementation or verification evidence and exact-head hosted status before closeout
+goal: best-agent-home-assistant-cli
+objective: complete-target-topology-and-secure-daily-delivery
+value: Keep a reproducible evidence chain across API and release changes.
+impact: Prevents missing contract and release-gate regressions.
+outcome: A complete reviewed production-ready tranche.
+why_now: The latest current-Core gap and scheduled security blocker are simultaneously actionable.
+parent: hac-17iu
+reviewer: unbraind
+risk: high
+confidence: 97
+sprint: 2026-08-target-topology
+release: unreleased
+dependencies[5]{id,kind,created_at,author,source_kind,author_source}:
+  hac-17iu,parent,"2026-08-09T21:29:34.800Z",codex-root,"cli:create:dep",detected
+  hac-4u0a,related,"2026-08-09T21:29:34.800Z",codex-root,"cli:create:dep",detected
+  hac-96i2,related,"2026-08-09T21:29:34.800Z",codex-root,"cli:create:dep",detected
+  hac-r17v,related,"2026-08-09T21:29:34.800Z",codex-root,"cli:create:dep",detected
+  hac-wwsi,related,"2026-08-09T21:29:34.800Z",codex-root,"cli:create:dep",detected
+files[2]{path,scope,note}:
+  src/commands/websocket-target.ts,project,target implementation
+  package.json,project,dependency constraints
+tests[1]{command,scope,timeout_seconds,note}:
+  "bun run release:verify",project,2400,aggregate gate
+docs[1]{path,scope,note}:
+  docs/RELEASING.md,project,daily release model
+plan_mode: executing
+plan_scope: "Official contract research, typed target option, compatible dependency remediation, complete docs and strict local/live/hosted verification."
+plan_harness: codex
+plan_resume_context: Core 2026.8.1 added primary_entities_only; live is 2026.7.4; security and auto-release fail on nanoid below 3.3.17. Never persist private live data.
+plan_decisions[1]{ts,author,decision,rationale,evidence}:
+  "2026-08-09T21:30:24.486Z",codex-root,"Expose an affirmative --include-secondary flag while preserving Core's primary-only default; apply it to extract and related topology only, because triggers conditions and services do not accept primary_entities_only.","An affirmative opt-in is intuitive, prevents payload expansion by default, and maps exactly to primary_entities_only:false without inventing fallback behavior.",Tagged Core command schema and current CLI payload inspection
+plan_discoveries[1]{ts,author,text}:
+  "2026-08-09T21:30:24.102Z",codex-root,Core 2026.8.1 is the latest release; commands.py defines primary_entities_only default true for extract_from_target. The live server is 2026.7.4 and the option was introduced in Core during the 2026.5 development cycle.
+plan_steps[6]:
+  - id: plan-step-001
+    order: 1
+    title: Record official and live target extraction contracts
+    status: completed
+    created_at: "2026-08-09T21:29:34.792Z"
+    updated_at: "2026-08-09T21:30:24.887Z"
+    evidence: "Official 2026.8.1 source, introduction commit, live 2026.7.4 version, current help/payload behavior, and prior PM lineage recorded without private data."
+    completed_at: "2026-08-09T21:30:24.887Z"
+  - id: plan-step-002
+    order: 2
+    title: Implement typed secondary-entity topology and tests
+    status: completed
+    created_at: "2026-08-09T21:29:34.792Z"
+    updated_at: "2026-08-09T21:40:11.741Z"
+    evidence: "Implemented typed --include-secondary target extraction and related payload support with unit, help, live E2E, and actual hassio read-only acceptance."
+    completed_at: "2026-08-09T21:40:11.741Z"
+  - id: plan-step-003
+    order: 3
+    title: Restore security and daily-release dependency gates
+    status: completed
+    created_at: "2026-08-09T21:29:34.792Z"
+    updated_at: "2026-08-09T21:40:12.168Z"
+    evidence: Updated compatible audited dependency graph; bun security audit passes with nanoid 3.3.17 and latest pm-cli 2026.8.9.
+    completed_at: "2026-08-09T21:40:12.168Z"
+  - id: plan-step-004
+    order: 4
+    title: Synchronize help schema documentation and PM changelog
+    status: completed
+    created_at: "2026-08-09T21:29:34.792Z"
+    updated_at: "2026-08-09T21:40:37.428Z"
+    evidence: "Synchronized command help, README, API, agent and LLM documentation; PM changelog generation follows verified closure."
+    completed_at: "2026-08-09T21:40:37.428Z"
+  - id: plan-step-005
+    order: 5
+    title: Run exact coverage static security live setup and dry-run release gates
+    status: in_progress
+    created_at: "2026-08-09T21:29:34.792Z"
+    updated_at: "2026-08-09T21:40:37.964Z"
+  - id: plan-step-006
+    order: 6
+    title: Ship through exact-head hosted review and merge closeout
+    status: pending
+    created_at: "2026-08-09T21:29:34.792Z"
+    updated_at: "2026-08-09T21:29:34.792Z"
+body: "## Evidence order\\n\\nPreserve official-current versus live-server availability, implement only the missing typed control, patch the audited dependency chain, keep setup behavior regression-tested, and carry the exact head through every review/check surface before merge."

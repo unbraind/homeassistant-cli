@@ -1564,6 +1564,7 @@ Target-resolution helpers built on HA WebSocket commands:
 ```bash
 hassio ws target extract --entity-id light.kitchen
 hassio ws target extract --area-id kitchen --expand-group
+hassio ws target extract --device-id <id> --include-secondary
 hassio ws target triggers --entity-id light.kitchen
 hassio ws target conditions --area-id kitchen
 hassio ws target services --area-id kitchen,living_room --label-id lighting
@@ -1579,7 +1580,9 @@ Common selector flags (all `target` subcommands):
 
 Each target helper requires at least one selector. `extract` preserves Home Assistant's
 `referenced_entities`, `referenced_devices`, `referenced_areas`, and `missing_*`
-response fields. The generic `ws call` command remains the forward-compatible path
+response fields. `extract` and `related` default to Home Assistant's primary entities;
+pass `--include-secondary` when configuration, diagnostic, or other non-primary
+entities are required for complete topology. The generic `ws call` command remains the forward-compatible path
 for every integration-specific WebSocket command. See the official
 [WebSocket API contract](https://developers.home-assistant.io/docs/api/websocket/).
 
