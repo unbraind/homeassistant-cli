@@ -1,0 +1,47 @@
+id: hac-17iu
+title: Add complete target topology and restore secure release automation
+description: Expose Home Assistant target secondary-entity extraction through the typed agent workflow and restore the mandatory security and automatic-release gates blocked by the current transitive advisory.
+type: Feature
+status: open
+priority: 0
+tags[8]: agents,api,automation,dependencies,home-assistant,release,security,websocket
+created_at: "2026-08-09T21:29:19.428Z"
+updated_at: "2026-08-09T21:29:19.428Z"
+deadline: "2026-08-11T21:29:19.428Z"
+assignee: codex-root
+author: codex-root
+estimated_minutes: 420
+acceptance_criteria: "Typed target extraction and related discovery can explicitly include non-primary entities using the official current-Core schema; all formats/help/schema/docs remain correct; dependency audit, exact 100/100/100/100 coverage, docstrings, static/security gates, setup acceptance, live read-only E2E, and automatic-release dry run pass; no credentials or live identifiers enter Git or PM"
+definition_of_ready: "All-status PM duplicate search, full prior target/release lineage, Core 2026.8.1 tagged source, current official docs, live 2026.7.4 behavior, scheduled failure logs, and latest compatible package versions have been inspected."
+goal: best-agent-home-assistant-cli
+objective: complete-target-topology-and-secure-daily-delivery
+value: Give agents accurate target topology while keeping every mandatory production gate operational.
+impact: Improves automation planning correctness and unblocks secure daily releases.
+outcome: "A reviewed, merged, fully verified current-Core discovery and release-safety tranche with no publication."
+why_now: The typed target helper omits an official response-selection control and the scheduled release/security workflows are currently failing on a high advisory.
+parent: hac-4s9j
+reviewer: unbraind
+risk: high
+confidence: 97
+sprint: 2026-08-target-topology
+release: unreleased
+dependencies[5]{id,kind,created_at,author,source_kind,author_source}:
+  hac-4u0a,related,"2026-08-09T21:29:19.428Z",codex-root,"cli:create:dep",detected
+  hac-96i2,discovered_from,"2026-08-09T21:29:19.428Z",codex-root,"cli:create:dep",detected
+  hac-r17v,related,"2026-08-09T21:29:19.428Z",codex-root,"cli:create:dep",detected
+  hac-wwsi,related,"2026-08-09T21:29:19.428Z",codex-root,"cli:create:dep",detected
+  hac-x41n,related,"2026-08-09T21:29:19.428Z",codex-root,"cli:create:dep",detected
+comments[1]{created_at,author,text}:
+  "2026-08-09T21:29:19.428Z",codex-root,"Duplicate search found no existing secondary-entity extraction or current nanoid regression item; prior target, compact-registry, setup, security, and release items are linked instead of recreated."
+notes[1]{created_at,author,text}:
+  "2026-08-09T21:29:19.428Z",codex-root,"Privacy boundary: credentials, endpoint details, raw live entity IDs, registry rows, user metadata, and hosted payloads remain outside Git and PM; retain only versions, counts, booleans, field names, and pass/fail classifications."
+learnings[1]{created_at,author,text}:
+  "2026-08-09T21:29:19.428Z",codex-root,Core source is authoritative for primary_entities_only even though the public WebSocket guide currently documents only expand_group for extraction.
+files[2]{path,scope,note}:
+  src/commands/websocket-target.ts,project,typed target topology
+  package.json,project,security and tooling constraints
+tests[1]{command,scope,timeout_seconds,note}:
+  "bun run release:verify",project,2400,aggregate production gate
+docs[1]{path,scope,note}:
+  docs/API.md,project,target contract
+body: "## Scope\\n\\nDeliver one coherent current-Core and production-readiness tranche: typed primary/secondary target topology, bounded related-registry use, current compatible dependency and PM tooling updates, complete docs/help/schema/tests, privacy-safe live acceptance, and automatic-release dry-run proof without publishing."

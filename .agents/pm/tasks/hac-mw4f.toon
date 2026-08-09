@@ -1,0 +1,65 @@
+id: hac-mw4f
+title: Expose non-primary entities in typed target topology
+description: Add an explicit typed CLI control for Core's primary_entities_only extraction schema and propagate it through related-registry discovery without changing safe defaults.
+type: Task
+status: closed
+priority: 0
+tags[7]: agents,api,home-assistant,live-e2e,target,typescript,websocket
+created_at: "2026-08-09T21:30:10.685Z"
+updated_at: "2026-08-09T22:09:34.965Z"
+deadline: "2026-08-10T21:30:10.685Z"
+closed_at: "2026-08-09T21:52:02.513Z"
+completed_at: "2026-08-09T21:52:02.513Z"
+author: codex-root
+estimated_minutes: 180
+acceptance_criteria: ws target extract and related expose a clear flag for secondary entities; default and opt-in payloads match Core 2026.8.1; tests assert behavior; live 2026.7.4 accepts the option; docs/help/schema and six formats remain valid; exact coverage stays 100/100/100/100
+definition_of_ready: "Core tagged schema and introduction commit, prior target lineage, current CLI behavior, and live version are known."
+goal: best-agent-home-assistant-cli
+objective: lossless-agent-target-topology
+value: Let agents plan automations against complete entity topology when needed.
+impact: Avoids silently omitting secondary entities such as configuration or diagnostic entities from explicit topology work.
+outcome: Typed safe primary/secondary target discovery.
+why_now: The Core control has existed since 2026.5 but is absent from the typed CLI surface.
+parent: hac-17iu
+reviewer: unbraind
+risk: medium
+confidence: 99
+sprint: 2026-08-target-topology
+release: unreleased
+resolution: Added explicit --include-secondary support to extract and related while preserving primary-only defaults.
+expected_result: Opt-in requests send primary_entities_only=false and default requests omit it.
+actual_result: "Focused tests, all 1,407 tests, exact 100/100/100/100 coverage, built help, and live 2026.7.4 read-only execution passed."
+dependencies[4]{id,kind,created_at,author,source_kind,author_source}:
+  hac-0t0w,implements,"2026-08-09T21:30:10.685Z",codex-root,"cli:create:dep",detected
+  hac-4u0a,related,"2026-08-09T21:30:10.685Z",codex-root,"cli:create:dep",detected
+  hac-96i2,discovered_from,"2026-08-09T21:30:10.685Z",codex-root,"cli:create:dep",detected
+  hac-ahl7,related,"2026-08-09T21:30:10.685Z",codex-root,"cli:create:dep",detected
+comments[2]{created_at,author,text}:
+  "2026-08-09T21:30:10.685Z",codex-root,Official Core 2026.8.1 schema defines primary_entities_only with default true; the local CLI currently omits the payload field and cannot opt out.
+  "2026-08-09T21:30:25.699Z",codex-root,"Implementation decision: use --include-secondary on extract and related; emit primary_entities_only:false only when set so the default wire payload remains backward-compatible."
+notes[1]{created_at,author,text}:
+  "2026-08-09T21:30:10.685Z",codex-root,Live assertions must use an ephemeral discovered entity selector and retain only structural pass/fail evidence.
+learnings[1]{created_at,author,text}:
+  "2026-08-09T21:30:10.685Z",codex-root,Preserving the upstream primary-only default avoids surprising payload growth; complete topology should be explicit.
+files[3]{path,scope,note}:
+  src/commands/websocket-target.ts,project,typed option and payload
+  tests/e2e-live.ts,project,privacy-safe live acceptance
+  tests/websocket-command.test.ts,project,command regression
+tests[3]:
+  - command: bun run test -- tests/websocket-command.test.ts
+    scope: project
+    timeout_seconds: 300
+    note: focused contract
+  - command: "bun run test:coverage"
+    scope: project
+  - command: "HASSIO_READONLY=true bun run test:e2e:live"
+    scope: project
+    timeout_seconds: 900
+    note: external-config live acceptance
+docs[4]{path,scope,note}:
+  docs/AGENT_OPTIMIZATION.md,project,agent topology guidance
+  docs/API.md,project,canonical option reference
+  docs/LLM_INTEGRATION.md,project,LLM bootstrap guidance
+  README.md,project,user-facing target topology example
+close_reason: "Official and live contracts align; opt-in secondary target topology is implemented, documented, and covered by unit, help, actual CLI, and privacy-safe live E2E acceptance."
+body: "## Contract\\n\\nKeep primary-only extraction as the default. When explicitly requested, send primary_entities_only:false for extract and related commands, preserve lossless upstream results, and validate all help/output formats plus live read-only behavior."

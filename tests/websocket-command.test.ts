@@ -200,6 +200,18 @@ describe("websocket command", () => {
     });
   });
 
+  it("includes secondary entities only when explicitly requested", async () => {
+    call.mockResolvedValueOnce({});
+    await createWebsocketCommand().parseAsync([
+      "target", "extract", "--device-id", "device-1", "--include-secondary",
+    ], { from: "user" });
+    expect(call).toHaveBeenCalledWith("extract_from_target", {
+      target: { device_id: ["device-1"] },
+      expand_group: false,
+      primary_entities_only: false,
+    });
+  });
+
   it("supports target services helper with mixed selectors", async () => {
     call.mockResolvedValueOnce(["light.turn_on", "light.turn_off"]);
 
@@ -267,6 +279,18 @@ describe("websocket command", () => {
     expect(parsed.related.areas).toHaveLength(1);
     expect(parsed.related.floors).toHaveLength(1);
     expect(parsed.related.labels).toHaveLength(1);
+  });
+
+  it("can include secondary entities in related registry discovery", async () => {
+    call.mockResolvedValueOnce({});
+    await createWebsocketCommand().parseAsync([
+      "target", "related", "--area-id", "kitchen", "--include-secondary", "--expand-group",
+    ], { from: "user" });
+    expect(call).toHaveBeenNthCalledWith(1, "extract_from_target", {
+      target: { area_id: ["kitchen"] },
+      expand_group: true,
+      primary_entities_only: false,
+    });
   });
 
   it("supports legacy extracted keys and explicit floor/label selectors", async () => {

@@ -13,8 +13,13 @@
 
 - Non-interactive setup wizard corrupts structured stdout ([hac-8h2c](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/issues/hac-8h2c.toon))
 
+### Security
+
+- Nanoid advisory blocks security and automatic release gates ([hac-ndy5](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/issues/hac-ndy5.toon))
+
 ### Other
 
+- Expose non-primary entities in typed target topology ([hac-mw4f](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-mw4f.toon))
 - Startup readiness and machine-safe setup delivery plan ([hac-zdp4](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/plans/hac-zdp4.toon))
 - Implement typed startup readiness and strict setup receipts ([hac-xxi3](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/tasks/hac-xxi3.toon))
 - Home Assistant 2026.8 registry topology delivery plan ([hac-bvsc](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/plans/hac-bvsc.toon))

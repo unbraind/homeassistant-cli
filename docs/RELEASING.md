@@ -82,6 +82,10 @@ bun run release:dry-run
 bun run release:auto:dry-run
 ```
 
+The PM quality gate clears only disposable runtime caches before strict
+validation. This forces an authoritative item/history rescan after managed
+extension setup; it never rewrites PM items or append-only history.
+
 To inspect the next additional same-day version without mutating files:
 
 ```bash
