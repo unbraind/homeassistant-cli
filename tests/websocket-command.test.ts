@@ -284,11 +284,11 @@ describe("websocket command", () => {
   it("can include secondary entities in related registry discovery", async () => {
     call.mockResolvedValueOnce({});
     await createWebsocketCommand().parseAsync([
-      "target", "related", "--area-id", "kitchen", "--include-secondary",
+      "target", "related", "--area-id", "kitchen", "--include-secondary", "--expand-group",
     ], { from: "user" });
     expect(call).toHaveBeenNthCalledWith(1, "extract_from_target", {
       target: { area_id: ["kitchen"] },
-      expand_group: false,
+      expand_group: true,
       primary_entities_only: false,
     });
   });

@@ -16,6 +16,8 @@ type TargetOptions = {
   includeSecondary?: boolean;
 };
 
+type TargetOptionKey = Exclude<keyof TargetOptions, "includeSecondary">;
+
 type ExtractedTarget = {
   referenced_entities?: unknown;
   referenced_devices?: unknown;
@@ -42,10 +44,7 @@ function stringArray(value: unknown): string[] {
 
 function toTargetPayload(options: TargetOptions): Record<string, string[]> {
   const target: Record<string, string[]> = {};
-  const mappings: Array<[
-    "entityId" | "deviceId" | "areaId" | "floorId" | "labelId",
-    string,
-  ]> = [
+  const mappings: Array<[TargetOptionKey, string]> = [
     ["entityId", "entity_id"],
     ["deviceId", "device_id"],
     ["areaId", "area_id"],
@@ -62,6 +61,15 @@ function toTargetPayload(options: TargetOptions): Record<string, string[]> {
     throw new Error("At least one target selector is required");
   }
   return target;
+}
+
+function toExtractPayload(
+  target: Record<string, string[]>,
+  options: TargetOptions & { expandGroup: boolean }
+): Record<string, unknown> {
+  const payload: Record<string, unknown> = { target, expand_group: options.expandGroup };
+  if (options.includeSecondary) payload["primary_entities_only"] = false;
+  return payload;
 }
 
 function extractedIds(extracted: ExtractedTarget, target: Record<string, string[]>) {
@@ -161,14 +169,9 @@ function createExtractCommand(): Command {
   );
   command.action(withExit(async (options: TargetOptions & { expandGroup: boolean }, cmd) => {
     const target = toTargetPayload(options);
-    const payload: Record<string, unknown> = {
-      target,
-      expand_group: options.expandGroup,
-    };
-    if (options.includeSecondary) payload["primary_entities_only"] = false;
     await withClient(cmd as Command, async (client) => ({
       target,
-      result: await client.call("extract_from_target", payload),
+      result: await client.call("extract_from_target", toExtractPayload(target, options)),
     }));
   }));
   return command;
@@ -184,12 +187,10 @@ function createRelatedCommand(): Command {
   command.action(withExit(async (options: TargetOptions & { expandGroup: boolean }, cmd) => {
     const target = toTargetPayload(options);
     await withClient(cmd as Command, async (client) => {
-      const extractPayload: Record<string, unknown> = {
-        target,
-        expand_group: options.expandGroup,
-      };
-      if (options.includeSecondary) extractPayload["primary_entities_only"] = false;
-      const extracted = await client.call("extract_from_target", extractPayload) as ExtractedTarget;
+      const extracted = await client.call(
+        "extract_from_target",
+        toExtractPayload(target, options)
+      ) as ExtractedTarget;
       const ids = extractedIds(extracted, target);
       const entityResult = ids.entities.length
         ? await client.call("config/entity_registry/get_entries", { entity_ids: ids.entities })
