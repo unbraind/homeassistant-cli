@@ -6,7 +6,7 @@ status: closed
 priority: 0
 tags[6]: audit,dependencies,github-actions,nanoid,release,security
 created_at: "2026-08-09T21:30:11.184Z"
-updated_at: "2026-08-09T21:52:12.478Z"
+updated_at: "2026-08-09T22:01:54.758Z"
 deadline: "2026-08-10T21:30:11.184Z"
 closed_at: "2026-08-09T21:52:03.706Z"
 completed_at: "2026-08-09T21:52:03.706Z"
@@ -55,9 +55,9 @@ learnings[2]{created_at,author,text}:
 files[2]{path,scope,note}:
   package.json,project,compatible override and tooling versions
   bun.lock,project,frozen audited graph
-tests[2]{command,scope}:
-  "bun run release:auto:dry-run",project
-  "bun run security:audit",project
+tests[2]{command,scope,timeout_seconds,note}:
+  "bun run release:auto:dry-run",project,2400,no-publish daily release proof
+  "bun run security:audit",project,300,advisory gate
 docs[1]{path,scope,note}:
   docs/RELEASING.md,project,automatic release behavior
 close_reason: "Compatible dependency remediation restored strict security and automatic release preparation; independent tag, GitHub release, and npm checks confirm no publication."
