@@ -2,13 +2,14 @@ id: hac-17iu
 title: Add complete target topology and restore secure release automation
 description: Expose Home Assistant target secondary-entity extraction through the typed agent workflow and restore the mandatory security and automatic-release gates blocked by the current transitive advisory.
 type: Feature
-status: open
+status: closed
 priority: 0
 tags[8]: agents,api,automation,dependencies,home-assistant,release,security,websocket
 created_at: "2026-08-09T21:29:19.428Z"
-updated_at: "2026-08-09T21:29:19.428Z"
+updated_at: "2026-08-09T22:23:09.683Z"
 deadline: "2026-08-11T21:29:19.428Z"
-assignee: codex-root
+closed_at: "2026-08-09T22:23:09.258Z"
+completed_at: "2026-08-09T22:23:09.258Z"
 author: codex-root
 estimated_minutes: 420
 acceptance_criteria: "Typed target extraction and related discovery can explicitly include non-primary entities using the official current-Core schema; all formats/help/schema/docs remain correct; dependency audit, exact 100/100/100/100 coverage, docstrings, static/security gates, setup acceptance, live read-only E2E, and automatic-release dry run pass; no credentials or live identifiers enter Git or PM"
@@ -25,18 +26,23 @@ risk: high
 confidence: 97
 sprint: 2026-08-target-topology
 release: unreleased
+resolution: "Added opt-in secondary target topology, restored secure daily-release automation, and shipped the production-ready tranche."
+expected_result: "A fully typed, documented, agent-optimized target topology feature with exact test/security gates and functioning automatic release workflow."
+actual_result: "PR #98 merged with 1,407 tests and exact 100% coverage; master CI/Security and hosted Auto Release dry-run passed; package publication remained unchanged."
 dependencies[5]{id,kind,created_at,author,source_kind,author_source}:
   hac-4u0a,related,"2026-08-09T21:29:19.428Z",codex-root,"cli:create:dep",detected
   hac-96i2,discovered_from,"2026-08-09T21:29:19.428Z",codex-root,"cli:create:dep",detected
   hac-r17v,related,"2026-08-09T21:29:19.428Z",codex-root,"cli:create:dep",detected
   hac-wwsi,related,"2026-08-09T21:29:19.428Z",codex-root,"cli:create:dep",detected
   hac-x41n,related,"2026-08-09T21:29:19.428Z",codex-root,"cli:create:dep",detected
-comments[1]{created_at,author,text}:
+comments[2]{created_at,author,text}:
   "2026-08-09T21:29:19.428Z",codex-root,"Duplicate search found no existing secondary-entity extraction or current nanoid regression item; prior target, compact-registry, setup, security, and release items are linked instead of recreated."
+  "2026-08-09T22:23:08.070Z",codex-root,Delivered by PR #98 and merged as e73df8a7da31717caa4c6ad4643ce499dc6f44e6. Exact-head bot inventory and all required checks were clean. Hosted Auto Release run 31339096837 and master CI/Security passed; issue #97 was closed with explicit no-publish evidence.
 notes[1]{created_at,author,text}:
   "2026-08-09T21:29:19.428Z",codex-root,"Privacy boundary: credentials, endpoint details, raw live entity IDs, registry rows, user metadata, and hosted payloads remain outside Git and PM; retain only versions, counts, booleans, field names, and pass/fail classifications."
-learnings[1]{created_at,author,text}:
+learnings[2]{created_at,author,text}:
   "2026-08-09T21:29:19.428Z",codex-root,Core source is authoritative for primary_entities_only even though the public WebSocket guide currently documents only expand_group for extraction.
+  "2026-08-09T22:23:07.662Z",codex-root,"A hosted no-push workflow dispatch is the decisive end-to-end proof for release automation changes: it exercises the real runner, dependency graph, verification, and version selection while independent tag, release, and registry reads prove that publication did not occur."
 files[2]{path,scope,note}:
   src/commands/websocket-target.ts,project,typed target topology
   package.json,project,security and tooling constraints
@@ -44,4 +50,5 @@ tests[1]{command,scope,timeout_seconds,note}:
   "bun run release:verify",project,2400,aggregate production gate
 docs[1]{path,scope,note}:
   docs/API.md,project,target contract
+close_reason: "Target topology, security remediation, documentation, full verification, hosted review, merge, and no-publish release proof are complete."
 body: "## Scope\\n\\nDeliver one coherent current-Core and production-readiness tranche: typed primary/secondary target topology, bounded related-registry use, current compatible dependency and PM tooling updates, complete docs/help/schema/tests, privacy-safe live acceptance, and automatic-release dry-run proof without publishing."

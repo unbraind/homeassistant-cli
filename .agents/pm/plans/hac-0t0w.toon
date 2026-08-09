@@ -2,13 +2,14 @@ id: hac-0t0w
 title: Target topology and secure delivery execution plan
 description: Execution and evidence plan for the current-Core target selection gap and the advisory-blocked daily release pipeline.
 type: Plan
-status: open
+status: closed
 priority: 0
 tags[5]: api,plan,release,security,websocket
 created_at: "2026-08-09T21:29:34.800Z"
-updated_at: "2026-08-09T22:08:46.165Z"
+updated_at: "2026-08-09T22:23:08.819Z"
 deadline: "2026-08-11T21:29:34.800Z"
-assignee: codex-root
+closed_at: "2026-08-09T22:23:08.429Z"
+completed_at: "2026-08-09T22:23:08.429Z"
 author: codex-root
 estimated_minutes: 420
 acceptance_criteria: Every step has implementation or verification evidence and exact-head hosted status before closeout
@@ -24,12 +25,19 @@ risk: high
 confidence: 97
 sprint: 2026-08-target-topology
 release: unreleased
+resolution: Completed the full target-topology and secure-delivery execution plan through merge and hosted dry-run closeout.
+expected_result: "Typed current-Core target topology, restored mandatory gates, exact verification, reviewed merge, and no publication."
+actual_result: "PR #98 merged; all hosted gates and Auto Release dry-run passed; no v2026.8.9 tag, release, or npm package exists."
 dependencies[5]{id,kind,created_at,author,source_kind,author_source}:
   hac-17iu,parent,"2026-08-09T21:29:34.800Z",codex-root,"cli:create:dep",detected
   hac-4u0a,related,"2026-08-09T21:29:34.800Z",codex-root,"cli:create:dep",detected
   hac-96i2,related,"2026-08-09T21:29:34.800Z",codex-root,"cli:create:dep",detected
   hac-r17v,related,"2026-08-09T21:29:34.800Z",codex-root,"cli:create:dep",detected
   hac-wwsi,related,"2026-08-09T21:29:34.800Z",codex-root,"cli:create:dep",detected
+comments[1]{created_at,author,text}:
+  "2026-08-09T22:22:50.178Z",codex-root,"PR #98 merged exact reviewed head ca287b181964b827aa73152de191a4c891c21612 as e73df8a7da31717caa4c6ad4643ce499dc6f44e6. All exact-head checks passed; final review inventory had zero unresolved threads and zero unreacted bot artifacts. CodeRabbit and Sourcery completed useful review loops; Greptile and Gemini were requested repeatedly but remained silent and are recorded as unavailable, not approvals."
+notes[1]{created_at,author,text}:
+  "2026-08-09T22:22:50.798Z",codex-root,"Hosted no-publish evidence: Auto Release run 31339096837 succeeded at merge commit e73df8a7 with dry_run=true, pushed=false, target v2026.8.9. Independent remote tag, GitHub release, and npm registry reads show no v2026.8.9 publication and npm remains 2026.8.6."
 files[2]{path,scope,note}:
   src/commands/websocket-target.ts,project,target implementation
   package.json,project,dependency constraints
@@ -37,7 +45,8 @@ tests[1]{command,scope,timeout_seconds,note}:
   "bun run release:verify",project,2400,aggregate gate
 docs[1]{path,scope,note}:
   docs/RELEASING.md,project,daily release model
-plan_mode: executing
+close_reason: "All six execution steps completed with exact-head review, merge, hosted workflow, and independent no-publish evidence."
+plan_mode: completed
 plan_scope: "Official contract research, typed target option, compatible dependency remediation, complete docs and strict local/live/hosted verification."
 plan_harness: codex
 plan_resume_context: Core 2026.8.1 added primary_entities_only; live is 2026.7.4; security and auto-release fail on nanoid below 3.3.17. Never persist private live data.
@@ -47,51 +56,11 @@ plan_decisions[1]{ts,author,decision,rationale,evidence}:
   "2026-08-09T21:30:24.486Z",codex-root,"Expose an affirmative --include-secondary flag while preserving Core's primary-only default; apply it to extract and related topology only, because triggers conditions and services do not accept primary_entities_only.","An affirmative opt-in is intuitive, prevents payload expansion by default, and maps exactly to primary_entities_only:false without inventing fallback behavior.",Tagged Core command schema and current CLI payload inspection
 plan_discoveries[1]{ts,author,text}:
   "2026-08-09T21:30:24.102Z",codex-root,Core 2026.8.1 is the latest release; commands.py defines primary_entities_only default true for extract_from_target. The live server is 2026.7.4 and the option was introduced in Core during the 2026.5 development cycle.
-plan_steps[6]:
-  - id: plan-step-001
-    order: 1
-    title: Record official and live target extraction contracts
-    status: completed
-    created_at: "2026-08-09T21:29:34.792Z"
-    updated_at: "2026-08-09T21:30:24.887Z"
-    evidence: "Official 2026.8.1 source, introduction commit, live 2026.7.4 version, current help/payload behavior, and prior PM lineage recorded without private data."
-    completed_at: "2026-08-09T21:30:24.887Z"
-  - id: plan-step-002
-    order: 2
-    title: Implement typed secondary-entity topology and tests
-    status: completed
-    created_at: "2026-08-09T21:29:34.792Z"
-    updated_at: "2026-08-09T21:40:11.741Z"
-    evidence: "Implemented typed --include-secondary target extraction and related payload support with unit, help, live E2E, and actual hassio read-only acceptance."
-    completed_at: "2026-08-09T21:40:11.741Z"
-  - id: plan-step-003
-    order: 3
-    title: Restore security and daily-release dependency gates
-    status: completed
-    created_at: "2026-08-09T21:29:34.792Z"
-    updated_at: "2026-08-09T21:40:12.168Z"
-    evidence: Updated compatible audited dependency graph; bun security audit passes with nanoid 3.3.17 and latest pm-cli 2026.8.9.
-    completed_at: "2026-08-09T21:40:12.168Z"
-  - id: plan-step-004
-    order: 4
-    title: Synchronize help schema documentation and PM changelog
-    status: completed
-    created_at: "2026-08-09T21:29:34.792Z"
-    updated_at: "2026-08-09T21:40:37.428Z"
-    evidence: "Synchronized command help, README, API, agent and LLM documentation; PM changelog generation follows verified closure."
-    completed_at: "2026-08-09T21:40:37.428Z"
-  - id: plan-step-005
-    order: 5
-    title: Run exact coverage static security live setup and dry-run release gates
-    status: completed
-    created_at: "2026-08-09T21:29:34.792Z"
-    updated_at: "2026-08-09T21:52:04.230Z"
-    evidence: "Full release verification passed: 1,407 tests, exact 100/100/100/100 coverage, docstrings 134/134, audit, Trivy, history secret scan, PM integrity, live E2E and setup coverage. Auto-release dry-run selected v2026.8.9 with pushed=false; tags, releases and npm remained unchanged."
-    completed_at: "2026-08-09T21:52:04.230Z"
-  - id: plan-step-006
-    order: 6
-    title: Ship through exact-head hosted review and merge closeout
-    status: in_progress
-    created_at: "2026-08-09T21:29:34.792Z"
-    updated_at: "2026-08-09T21:52:04.782Z"
+plan_steps[6]{id,order,title,status,created_at,updated_at,evidence,completed_at}:
+  plan-step-001,1,Record official and live target extraction contracts,completed,"2026-08-09T21:29:34.792Z","2026-08-09T21:30:24.887Z","Official 2026.8.1 source, introduction commit, live 2026.7.4 version, current help/payload behavior, and prior PM lineage recorded without private data.","2026-08-09T21:30:24.887Z"
+  plan-step-002,2,Implement typed secondary-entity topology and tests,completed,"2026-08-09T21:29:34.792Z","2026-08-09T21:40:11.741Z","Implemented typed --include-secondary target extraction and related payload support with unit, help, live E2E, and actual hassio read-only acceptance.","2026-08-09T21:40:11.741Z"
+  plan-step-003,3,Restore security and daily-release dependency gates,completed,"2026-08-09T21:29:34.792Z","2026-08-09T21:40:12.168Z",Updated compatible audited dependency graph; bun security audit passes with nanoid 3.3.17 and latest pm-cli 2026.8.9.,"2026-08-09T21:40:12.168Z"
+  plan-step-004,4,Synchronize help schema documentation and PM changelog,completed,"2026-08-09T21:29:34.792Z","2026-08-09T21:40:37.428Z","Synchronized command help, README, API, agent and LLM documentation; PM changelog generation follows verified closure.","2026-08-09T21:40:37.428Z"
+  plan-step-005,5,Run exact coverage static security live setup and dry-run release gates,completed,"2026-08-09T21:29:34.792Z","2026-08-09T21:52:04.230Z","Full release verification passed: 1,407 tests, exact 100/100/100/100 coverage, docstrings 134/134, audit, Trivy, history secret scan, PM integrity, live E2E and setup coverage. Auto-release dry-run selected v2026.8.9 with pushed=false; tags, releases and npm remained unchanged.","2026-08-09T21:52:04.230Z"
+  plan-step-006,6,Ship through exact-head hosted review and merge closeout,completed,"2026-08-09T21:29:34.792Z","2026-08-09T22:22:51.275Z","PR #98 merged after exact-head checks and complete bot artifact inventory. Hosted CI, Security, Dependabot, and Auto Release dry-run passed on merge commit e73df8a7; no tag, release, or package was published.","2026-08-09T22:22:51.275Z"
 body: "## Evidence order\\n\\nPreserve official-current versus live-server availability, implement only the missing typed control, patch the audited dependency chain, keep setup behavior regression-tested, and carry the exact head through every review/check surface before merge."

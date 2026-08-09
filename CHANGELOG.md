@@ -15,6 +15,8 @@
 
 ### Security
 
+- Add complete target topology and restore secure release automation ([hac-17iu](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/features/hac-17iu.toon))
+- Target topology and secure delivery execution plan ([hac-0t0w](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/plans/hac-0t0w.toon))
 - Nanoid advisory blocks security and automatic release gates ([hac-ndy5](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/issues/hac-ndy5.toon))
 
 ### Other
