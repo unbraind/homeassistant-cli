@@ -6,7 +6,7 @@ status: open
 priority: 0
 tags[5]: api,plan,release,security,websocket
 created_at: "2026-08-09T21:29:34.800Z"
-updated_at: "2026-08-09T21:40:37.964Z"
+updated_at: "2026-08-09T21:52:04.783Z"
 deadline: "2026-08-11T21:29:34.800Z"
 assignee: codex-root
 author: codex-root
@@ -81,13 +81,15 @@ plan_steps[6]:
   - id: plan-step-005
     order: 5
     title: Run exact coverage static security live setup and dry-run release gates
-    status: in_progress
+    status: completed
     created_at: "2026-08-09T21:29:34.792Z"
-    updated_at: "2026-08-09T21:40:37.964Z"
+    updated_at: "2026-08-09T21:52:04.230Z"
+    evidence: "Full release verification passed: 1,407 tests, exact 100/100/100/100 coverage, docstrings 134/134, audit, Trivy, history secret scan, PM integrity, live E2E and setup coverage. Auto-release dry-run selected v2026.8.9 with pushed=false; tags, releases and npm remained unchanged."
+    completed_at: "2026-08-09T21:52:04.230Z"
   - id: plan-step-006
     order: 6
     title: Ship through exact-head hosted review and merge closeout
-    status: pending
+    status: in_progress
     created_at: "2026-08-09T21:29:34.792Z"
-    updated_at: "2026-08-09T21:29:34.792Z"
+    updated_at: "2026-08-09T21:52:04.782Z"
 body: "## Evidence order\\n\\nPreserve official-current versus live-server availability, implement only the missing typed control, patch the audited dependency chain, keep setup behavior regression-tested, and carry the exact head through every review/check surface before merge."
