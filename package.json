@@ -1,6 +1,6 @@
 {
   "name": "@unbrained/homeassistant-cli",
-  "version": "2026.8.6",
+  "version": "2026.8.10",
   "description": "Agent-optimized CLI tool for interacting with the Home Assistant API",
   "repository": {
     "type": "git",
