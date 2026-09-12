@@ -80,15 +80,15 @@
     "@types/node": "^22.20.1",
     "@types/ws": "^8.18.1",
     "@unbrained/pm-cli": "^2026.8.9",
-    "@vitest/coverage-v8": "^4.1.10",
+    "@vitest/coverage-v8": "^5.0.0",
     "eslint": "^10.8.1",
-    "eslint-plugin-jsdoc": "63.3.3",
+    "eslint-plugin-jsdoc": "64.3.6",
     "globals": "^17.9.0",
-    "jscpd": "5.0.14",
+    "jscpd": "5.2.0",
     "tsx": "^4.23.11",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.66.0",
-    "vitest": "^4.1.10"
+    "vitest": "^5.0.0"
   },
   "overrides": {
     "brace-expansion": "5.0.9",
