@@ -7,6 +7,7 @@ Thanks for contributing.
 - Bun (latest)
 - Node.js 22.19+ (CI uses Node 22)
 - Git
+- OpenSSL for the synthetic TLS proxy tests (required in CI; those tests skip locally if the executable is missing)
 
 ## Local Setup
 

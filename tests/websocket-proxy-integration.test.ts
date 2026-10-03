@@ -95,6 +95,16 @@ describe("real local proxy WebSocket transport", () => {
     expect(target.messages.at(-1)?.["type"]).toBe("config/device_registry/list");
   });
 
+  it("coalesces concurrent registry calls into one authenticated proxy connection", async () => {
+    const target = await registryServer();
+    const proxy = await proxyServer(target.port);
+    vi.stubEnv("HTTP_PROXY", `http://127.0.0.1:${proxy.port}`);
+    const registry = client("http://proxy-only.invalid:8123");
+    expect(await Promise.all([registry.getEntityRegistry(), registry.getDeviceRegistry()])).toEqual([[], []]);
+    expect(proxy.requests).toHaveLength(1);
+    expect(target.messages.filter(message => message["type"] === "auth")).toHaveLength(1);
+  });
+
   it("connects directly for a matching NO_PROXY host and port", async () => {
     const target = await registryServer();
     const proxy = await proxyServer(target.port, 502);
@@ -121,6 +131,27 @@ describe("real local proxy WebSocket transport", () => {
     expect(Date.now() - start).toBeLessThan(1000);
     expect(peers).toHaveLength(1);
     await vi.waitFor(() => expect(peers.every(peer => peer.readableEnded)).toBe(true));
+  });
+
+  it("closes a shared pending CONNECT and rejects every concurrent caller", async () => {
+    const proxy = createServer();
+    const peers: Socket[] = [];
+    proxy.on("connect", (_request, socket) => { peers.push(socket as Socket); socket.resume(); });
+    const port = await listen(proxy);
+    resources.push(async () => { for (const peer of peers) peer.destroy(); });
+    vi.stubEnv("HTTP_PROXY", `http://127.0.0.1:${port}`);
+    const registry = new WebSocketRegistryClient({ ...config, timeout: 5000, url: "http://proxy-only.invalid:8123" });
+    resources.push(() => registry.close());
+    const outcomes = Promise.allSettled([registry.getDeviceRegistry(), registry.getEntityRegistry()]);
+    await vi.waitFor(() => expect(peers).toHaveLength(1));
+    const start = Date.now();
+    await registry.close();
+    expect(await outcomes).toEqual([
+      { status: "rejected", reason: new Error("WebSocket connection closed") },
+      { status: "rejected", reason: new Error("WebSocket connection closed") },
+    ]);
+    expect(Date.now() - start).toBeLessThan(1500);
+    await vi.waitFor(() => expect(peers.every(peer => peer.readableEnded || peer.destroyed)).toBe(true));
   });
 
   it("keeps established proxy connections alive past the connection timeout", async () => {

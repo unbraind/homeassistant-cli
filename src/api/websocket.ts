@@ -7,8 +7,10 @@ import type { HaWebSocketServiceCallResult } from "../types/api.js";
 import { HomeAssistantReadOnlyError } from "./errors.js";
 import { websocketProxyAgent } from "./websocket-proxy.js";
 import { waitForWebSocketMessage } from "./websocket-handshake.js";
+import { closeWebSocketResources } from "./websocket-lifecycle.js";
 import {
-  parseWebsocketMessage,
+  dispatchWebsocketMessage,
+  rejectWebsocketCalls,
   type EventBuffer,
   type PendingCall,
   type WsConnectMessage,
@@ -22,6 +24,9 @@ export class HomeAssistantWebSocketClient {
   private readonly readOnly: boolean;
   private socket: WebSocket | null = null;
   private proxyAgent: ReturnType<typeof websocketProxyAgent> = false;
+  private connecting: Promise<void> | null = null;
+  private closing: Promise<void> | null = null;
+  private connectionAbort: AbortController | null = null;
   private nextId = 1;
   private pending = new Map<number, PendingCall>();
   private eventBuffers = new Map<number, EventBuffer>();
@@ -38,19 +43,35 @@ export class HomeAssistantWebSocketClient {
   }
 
   async connect(): Promise<void> {
-    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-      return;
-    }
-
+    if (this.closing) await this.closing;
+    if (this.connecting) return this.connecting;
+    if (this.socket && this.socket.readyState === WebSocket.OPEN) return;
+    const controller = new AbortController();
+    this.connectionAbort = controller;
+    const operation = this.openConnection(controller);
+    this.connecting = operation;
     try {
-      await this.connectSocket();
+      await operation;
+    } finally {
+      this.connecting = null;
+      this.connectionAbort = null;
+    }
+  }
+
+  private async openConnection(controller: AbortController): Promise<void> {
+    await this.disposeConnection();
+    controller.signal.throwIfAborted();
+    try {
+      await this.connectSocket(controller.signal);
+      controller.signal.throwIfAborted();
     } catch (error) {
-      await this.close();
+      controller.abort(error);
+      await this.disposeConnection();
       throw error;
     }
   }
 
-  private async connectSocket(): Promise<void> {
+  private async connectSocket(signal: AbortSignal): Promise<void> {
     this.proxyAgent = websocketProxyAgent(this.wsUrl);
     const socket = new WebSocket(this.wsUrl, {
       handshakeTimeout: this.timeout,
@@ -58,61 +79,24 @@ export class HomeAssistantWebSocketClient {
     });
     this.socket = socket;
     socket.on("error", (error: Error) => {
-      for (const pending of this.pending.values()) {
-        clearTimeout(pending.timer);
-        pending.reject(error);
-      }
-      this.pending.clear();
+      if (this.socket === socket) rejectWebsocketCalls(this.pending, error);
     });
 
-    const authRequired = await waitForWebSocketMessage<WsConnectMessage>(socket, this.timeout);
+    const authRequired = await waitForWebSocketMessage<WsConnectMessage>(socket, this.timeout, signal);
     if (authRequired.type !== "auth_required") {
       throw new Error(`Unexpected WebSocket handshake response: ${JSON.stringify(authRequired)}`);
     }
 
+    signal.throwIfAborted();
     socket.send(JSON.stringify({ type: "auth", access_token: this.token }));
-    const authResult = await waitForWebSocketMessage<WsConnectMessage>(socket, this.timeout);
+    const authResult = await waitForWebSocketMessage<WsConnectMessage>(socket, this.timeout, signal);
     if (authResult.type !== "auth_ok") {
       throw new Error(authResult.message ?? "WebSocket authentication failed");
     }
 
+    signal.throwIfAborted();
     socket.on("message", (raw: WebSocket.RawData) => {
-      const parsed = parseWebsocketMessage(raw.toString());
-      if (!parsed) return;
-      const messages = Array.isArray(parsed) ? parsed : [parsed];
-
-      for (const message of messages) {
-        if (message.type === "event" && typeof message.id === "number") {
-          const buffer = this.eventBuffers.get(message.id);
-          if (buffer) {
-            if (buffer.events.length < buffer.maxEvents) {
-              buffer.events.push(message["event"] ?? message);
-              if (buffer.events.length === buffer.maxEvents) buffer.finish();
-            }
-            continue;
-          }
-        }
-
-        if (typeof message.id !== "number") continue;
-        const pending = this.pending.get(message.id);
-        if (!pending) continue;
-        clearTimeout(pending.timer);
-        this.pending.delete(message.id);
-
-        if (message.success === false) {
-          pending.reject(new Error(
-            typeof message.error === "string" ? message.error : JSON.stringify(message.error)
-          ));
-          continue;
-        }
-
-        if ("result" in message) {
-          pending.resolve(message["result"]);
-          continue;
-        }
-
-        pending.resolve(message);
-      }
+      if (this.socket === socket) dispatchWebsocketMessage(raw.toString(), this.pending, this.eventBuffers);
     });
 
     await this.sendAndWait(this.nextId++, "supported_features", {
@@ -121,22 +105,30 @@ export class HomeAssistantWebSocketClient {
   }
 
   async close(): Promise<void> {
+    if (this.closing) return this.closing;
+    this.connectionAbort?.abort(new Error("WebSocket connection closed"));
+    const operation = this.finishClose(this.connecting);
+    this.closing = operation;
+    try {
+      await operation;
+    } finally {
+      this.closing = null;
+    }
+  }
+
+  private async finishClose(connecting: Promise<void> | null): Promise<void> {
+    await this.disposeConnection();
+    if (connecting) await connecting.catch(() => undefined);
+  }
+
+  private async disposeConnection(): Promise<void> {
     const socket = this.socket;
-    const destroyAgent = () => {
-      if (this.proxyAgent) this.proxyAgent.destroy();
-      this.proxyAgent = false;
-    };
-    if (!socket) { destroyAgent(); return; }
-    await new Promise<void>((resolve) => {
-      socket.once("close", () => resolve());
-      socket.once("error", () => resolve());
-      socket.close();
-      setTimeout(() => resolve(), 250);
-    });
-    destroyAgent();
+    const agent = this.proxyAgent;
     this.socket = null;
-    this.pending.clear();
+    this.proxyAgent = false;
+    rejectWebsocketCalls(this.pending, new Error("WebSocket connection closed"));
     this.eventBuffers.clear();
+    await closeWebSocketResources(socket, agent);
   }
 
   async call(type: string, payload?: Record<string, unknown>): Promise<unknown> {

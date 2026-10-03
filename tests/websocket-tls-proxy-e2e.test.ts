@@ -1,4 +1,4 @@
-import { execFile } from "node:child_process";
+import { execFile, spawnSync } from "node:child_process";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { createServer as createHttpServer } from "node:http";
 import { createServer as createHttpsServer } from "node:https";
@@ -10,12 +10,16 @@ import { promisify } from "node:util";
 import { WebSocketServer } from "ws";
 import { describe, expect, it, vi } from "vitest";
 
-const run = promisify(execFile);
+import { canRunOpenSslTests } from "./helpers/tls-prerequisites.js";
 
-describe("verified TLS through WebSocket environment proxies", () => {
+const run = promisify(execFile);
+const hasOpenSsl = canRunOpenSslTests(spawnSync("openssl", ["version"]), Boolean(process.env["CI"]));
+
+describe.skipIf(!hasOpenSsl)("verified TLS through WebSocket environment proxies (requires OpenSSL)", () => {
   it.each(["http", "https"].flatMap(scheme => ["node", "bun"].map(runtime => ({ scheme, runtime }))))(
     "retrieves WSS registries through an $scheme proxy on $runtime", async ({ scheme, runtime }) => {
     const directory = await mkdtemp(join(tmpdir(), "ha-tls-proxy-test-"));
+    try {
     const keyPath = join(directory, "key.pem");
     const certPath = join(directory, "cert.pem");
     // Generate disposable test-only trust material; never weaken TLS verification.
@@ -113,6 +117,8 @@ describe("verified TLS through WebSocket environment proxies", () => {
       await new Promise<void>(resolve => ws.close(() => resolve()));
       await new Promise<void>(resolve => target.close(() => resolve()));
       await new Promise<void>(resolve => proxy.close(() => resolve()));
+    }
+    } finally {
       await rm(directory, { recursive: true, force: true });
     }
   }, 15_000);

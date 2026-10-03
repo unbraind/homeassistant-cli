@@ -49,3 +49,54 @@ export function parseWebsocketMessage(raw: string): WsEnvelope | WsEnvelope[] | 
     return null;
   }
 }
+
+/** Dispatch a parsed response only within the connection that received it. */
+export function dispatchWebsocketMessage(
+  raw: string, pendingCalls: Map<number, PendingCall>, eventBuffers: Map<number, EventBuffer>,
+): void {
+  const parsed = parseWebsocketMessage(raw);
+  if (!parsed) return;
+  const messages = Array.isArray(parsed) ? parsed : [parsed];
+
+  for (const message of messages) {
+    if (message.type === "event" && typeof message.id === "number") {
+      const buffer = eventBuffers.get(message.id);
+      if (buffer) {
+        if (buffer.events.length < buffer.maxEvents) {
+          buffer.events.push(message["event"] ?? message);
+          if (buffer.events.length === buffer.maxEvents) buffer.finish();
+        }
+        continue;
+      }
+    }
+
+    if (typeof message.id !== "number") continue;
+    const pending = pendingCalls.get(message.id);
+    if (!pending) continue;
+    clearTimeout(pending.timer);
+    pendingCalls.delete(message.id);
+
+    if (message.success === false) {
+      pending.reject(new Error(
+        typeof message.error === "string" ? message.error : JSON.stringify(message.error)
+      ));
+      continue;
+    }
+
+    if ("result" in message) {
+      pending.resolve(message["result"]);
+      continue;
+    }
+
+    pending.resolve(message);
+  }
+}
+
+/** Settle and clear all outstanding calls when their connection is disposed. */
+export function rejectWebsocketCalls(pending: Map<number, PendingCall>, error: Error): void {
+  for (const call of pending.values()) {
+    clearTimeout(call.timer);
+    call.reject(error);
+  }
+  pending.clear();
+}

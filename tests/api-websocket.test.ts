@@ -925,3 +925,162 @@ describe("HomeAssistantWebSocketClient – optimized subscriptions", () => {
     vi.useRealTimers();
   });
 });
+
+/** Let a connection continuation settle without an arbitrary sleep. */
+async function nextTurn(): Promise<void> {
+  await new Promise<void>(resolve => setImmediate(resolve));
+}
+
+/** Complete a manually controlled authentication and feature negotiation. */
+async function authenticate(ws: FakeWs): Promise<void> {
+  ws.emit("message", Buffer.from(JSON.stringify({ type: "auth_required" })));
+  await nextTurn();
+  ws.emit("message", Buffer.from(JSON.stringify({ type: "auth_ok" })));
+  await nextTurn();
+  const feature = ws.sentMessages.map(value => JSON.parse(value)).find(message => message.type === "supported_features");
+  ws.emit("message", Buffer.from(JSON.stringify({ id: feature.id, type: "result", success: true, result: null })));
+  await nextTurn();
+}
+
+describe("WebSocket concurrent connection lifecycle", () => {
+  beforeEach(() => { mockWsConstructor.mockClear(); wsHelpers.clearNext(); });
+
+  it("coalesces concurrent connect calls", async () => {
+    const ws = buildAuthWs();
+    wsHelpers.setNextWs(ws);
+    const client = new HomeAssistantWebSocketClient(baseConfig);
+    await Promise.all([client.connect(), client.connect(), client.connect()]);
+    expect(mockWsConstructor).toHaveBeenCalledTimes(1);
+    expect(ws.sentMessages.map(value => JSON.parse(value)).filter(message => message.type === "auth")).toHaveLength(1);
+    await client.close();
+  });
+
+  it("does not send calls on an OPEN but unauthenticated socket", async () => {
+    const ws = new FakeWs();
+    wsHelpers.setNextWs(ws);
+    const client = new HomeAssistantWebSocketClient(baseConfig);
+    const connecting = client.connect();
+    await nextTurn();
+    const call = client.call("ping");
+    await nextTurn();
+    expect(ws.sentMessages).toEqual([]);
+    await authenticate(ws);
+    await connecting;
+    const ping = ws.sentMessages.map(value => JSON.parse(value)).find(message => message.type === "ping");
+    expect(ping).toBeDefined();
+    ws.emit("message", Buffer.from(JSON.stringify({ id: ping.id, type: "result", result: "pong" })));
+    await expect(call).resolves.toBe("pong");
+    expect(mockWsConstructor).toHaveBeenCalledTimes(1);
+    await client.close();
+  });
+
+  it("shares authentication failure and permits a fresh retry", async () => {
+    const ws = new FakeWs();
+    wsHelpers.setNextWs(ws);
+    const client = new HomeAssistantWebSocketClient(baseConfig);
+    const outcomes = Promise.allSettled([client.connect(), client.connect()]);
+    await nextTurn();
+    ws.emit("message", Buffer.from(JSON.stringify({ type: "auth_required" })));
+    await nextTurn();
+    ws.emit("message", Buffer.from(JSON.stringify({ type: "auth_invalid", message: "denied" })));
+    expect(await outcomes).toEqual([
+      { status: "rejected", reason: new Error("denied") }, { status: "rejected", reason: new Error("denied") },
+    ]);
+    wsHelpers.setNextWs(buildAuthWs());
+    await client.connect();
+    expect(mockWsConstructor).toHaveBeenCalledTimes(2);
+    await client.close();
+  });
+
+  it.each(["greeting", "authentication", "features"])("cancels %s, coalesces close, and queues a safe reconnect", async stage => {
+    const ws = new FakeWs();
+    ws.close = vi.fn();
+    wsHelpers.setNextWs(ws);
+    const client = new HomeAssistantWebSocketClient(baseConfig);
+    const outcome = client.connect().catch(error => error);
+    await nextTurn();
+    if (stage !== "greeting") {
+      ws.emit("message", Buffer.from(JSON.stringify({ type: "auth_required" })));
+      await nextTurn();
+    }
+    if (stage === "features") {
+      ws.emit("message", Buffer.from(JSON.stringify({ type: "auth_ok" })));
+      await nextTurn();
+    }
+    const closing = Promise.all([client.close(), client.close()]);
+    const fresh = new FakeWs();
+    wsHelpers.setNextWs(fresh);
+    const reconnecting = client.connect();
+    await nextTurn();
+    expect(mockWsConstructor).toHaveBeenCalledTimes(1);
+    expect(ws.close).toHaveBeenCalledTimes(1);
+    ws.emit("close");
+    await closing;
+    expect(await outcome).toEqual(new Error("WebSocket connection closed"));
+    await nextTurn();
+    await authenticate(fresh);
+    await reconnecting;
+    expect((client as unknown as InternalClient).socket).toBe(fresh);
+    expect(mockWsConstructor).toHaveBeenCalledTimes(2);
+    await client.close();
+  });
+
+  it.each(["auth_required", "auth_ok", "supported_features"])("cancels when close races a just-received %s frame", async stage => {
+    const ws = new FakeWs();
+    wsHelpers.setNextWs(ws);
+    const client = new HomeAssistantWebSocketClient(baseConfig);
+    const outcome = client.connect().catch(error => error);
+    await nextTurn();
+    if (stage !== "auth_required") {
+      ws.emit("message", Buffer.from(JSON.stringify({ type: "auth_required" })));
+      await nextTurn();
+    }
+    if (stage === "supported_features") {
+      ws.emit("message", Buffer.from(JSON.stringify({ type: "auth_ok" })));
+      await nextTurn();
+      const feature = ws.sentMessages.map(value => JSON.parse(value)).find(message => message.type === stage);
+      ws.emit("message", Buffer.from(JSON.stringify({ id: feature.id, type: "result", success: true, result: null })));
+    } else {
+      ws.emit("message", Buffer.from(JSON.stringify({ type: stage })));
+    }
+    await client.close();
+    expect(await outcome).toEqual(new Error("WebSocket connection closed"));
+    expect((client as unknown as InternalClient).socket).toBeNull();
+    expect((client as unknown as InternalClient).pending.size).toBe(0);
+  });
+
+  it("cancels a connection before its socket is created", async () => {
+    const client = new HomeAssistantWebSocketClient(baseConfig);
+    const outcome = client.connect().catch(error => error);
+    await client.close();
+    expect(await outcome).toEqual(new Error("WebSocket connection closed"));
+    expect(mockWsConstructor).not.toHaveBeenCalled();
+    wsHelpers.setNextWs(buildAuthWs());
+    await client.connect();
+    await client.close();
+  });
+
+  it("ignores stale messages and errors after disposing a previous connection", async () => {
+    const old = buildAuthWs();
+    wsHelpers.setNextWs(old);
+    const client = new HomeAssistantWebSocketClient(baseConfig);
+    await client.connect();
+    old.readyState = 3;
+    const close = vi.spyOn(old, "close");
+    const fresh = buildAuthWs();
+    wsHelpers.setNextWs(fresh);
+    await client.connect();
+    expect(close).toHaveBeenCalledTimes(1);
+    let settled = false;
+    const call = client.call("ping").then(value => { settled = true; return value; });
+    await nextTurn();
+    const ping = fresh.sentMessages.map(value => JSON.parse(value)).find(message => message.type === "ping");
+    old.emit("error", new Error("obsolete connection error"));
+    old.emit("message", Buffer.from(JSON.stringify({ id: ping.id, type: "result", result: "stale" })));
+    await nextTurn();
+    expect(settled).toBe(false);
+    fresh.emit("message", Buffer.from(JSON.stringify({ id: ping.id, type: "result", result: "current" })));
+    await expect(call).resolves.toBe("current");
+    await client.close();
+  });
+});
