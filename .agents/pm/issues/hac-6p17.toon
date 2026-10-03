@@ -1,0 +1,53 @@
+id: hac-6p17
+title: Honor environment proxies and report registry failures
+description: "Fix GitHub issue #103: WebSocket reads ignore proxy configuration and registry commands hide failures as successful empty output."
+type: Issue
+status: closed
+priority: 1
+tags[3]: bug,proxy,registries
+created_at: "2026-10-03T15:14:26.568Z"
+updated_at: "2026-10-03T15:36:33.977Z"
+closed_at: "2026-10-03T15:36:33.564Z"
+completed_at: "2026-10-03T15:36:33.564Z"
+author: dot-homeassistant-proxy
+parent: hac-4s9j
+severity: medium
+repro_steps: "See https://github.com/unbraind/homeassistant-cli/issues/103; validate only with synthetic local servers."
+resolution: "HTTP(S) environment proxies and NO_PROXY now route all WebSocket operations through bounded, cancellable CONNECT agents. Registry queries retain sanitized failure records and exit nonzero. Immediate authentication frames and failed-auth retries are handled safely."
+expected_result: Proxy-only and bypass routing work; HTTP and HTTPS proxies preserve TLS verification; failures never appear as successful empty registries or leak credentials.
+actual_result: "1453 synthetic tests passed with exact 100/100/100/100 coverage, including Node and Bun CLI TLS proxy, silent-proxy timeout, bypass, credential-redaction, and failure-exit tests. Build, lint, typecheck, PM validation, package smoke and dependency audit passed. ShellCheck and Trivy unavailable locally; hosted verification pending."
+affected_version: 2026.8.10
+component: websocket
+files[16]{path,scope,note}:
+  src/api/websocket-handshake.ts,project,Proxy-aware bounded WebSocket transport
+  src/api/websocket-protocol.ts,project,Proxy-aware bounded WebSocket transport
+  src/api/websocket-proxy.ts,project,Proxy-aware bounded WebSocket transport
+  src/api/websocket.ts,project,Proxy-aware bounded WebSocket transport
+  src/commands/registries.ts,project,Explicit sanitized registry failure reporting
+  src/commands/registry-crud.ts,project,Explicit sanitized registry failure reporting
+  src/commands/registry-display.ts,project,Explicit sanitized registry failure reporting
+  src/commands/registry-errors.ts,project,Explicit sanitized registry failure reporting
+  src/commands/registry-intelligence.ts,project,Explicit sanitized registry failure reporting
+  tests/api-websocket-proxy.test.ts,project,Synthetic proxy routing and TLS regression coverage
+  tests/api-websocket.test.ts,project,WebSocket handshake and cleanup regression coverage
+  tests/registries-command.test.ts,project,Registry failure and exit status regression coverage
+  tests/registries-exit-e2e.test.ts,project,Registry failure and exit status regression coverage
+  tests/registries.test.ts,project,Registry failure and exit status regression coverage
+  tests/websocket-proxy-integration.test.ts,project,Synthetic proxy routing and TLS regression coverage
+  tests/websocket-tls-proxy-e2e.test.ts,project,Synthetic proxy routing and TLS regression coverage
+tests[1]{command,scope,timeout_seconds,provenance{author,created_at,source_kind,source_ref}}:
+  bun run test -- tests/api-websocket.test.ts tests/api-websocket-proxy.test.ts tests/websocket-proxy-integration.test.ts tests/websocket-tls-proxy-e2e.test.ts tests/registries-command.test.ts tests/registries-exit-e2e.test.ts,project,120,dot-homeassistant-proxy,"2026-10-03T15:32:06.222Z",local_mutation,fix/websocket-environment-proxy
+test_runs[1]:
+  - run_id: test-local-musjzx8o-x2k2lb
+    kind: test
+    status: passed
+    started_at: "2026-10-03T15:35:16.249Z"
+    finished_at: "2026-10-03T15:35:21.864Z"
+    recorded_at: "2026-10-03T15:35:21.864Z"
+    passed: 1
+    failed: 0
+    skipped: 0
+    executions[1]{command,requested_pm_context_mode,pm_context_mode,workspace_context_mode,trust_reason}:
+      bun run test -- tests/api-websocket.test.ts tests/api-websocket-proxy.test.ts tests/websocket-proxy-integration.test.ts tests/websocket-tls-proxy-e2e.test.ts tests/registries-command.test.ts tests/registries-exit-e2e.test.ts,schema,schema,source,local_source_ref
+close_reason: "Implemented and verified the proxy/registry fix locally; draft PR review, hosted checks, merge, and publication remain pending."
+body: ""

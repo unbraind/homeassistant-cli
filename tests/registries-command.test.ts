@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { createRegistriesCommand } from "../src/commands/registries.js";
 import { HomeAssistantApiError } from "../src/api/index.js";
+import { sanitizeRegistryError } from "../src/commands/registry-errors.js";
 
 const exitSpy = vi.spyOn(process, "exit").mockImplementation(() => undefined as never);
 
@@ -118,6 +119,21 @@ function captureLog(fn: () => Promise<void>): Promise<string> {
   });
 }
 
+async function captureFailure(args: string[]): Promise<{ output: string; error: Error }> {
+  let failure: unknown;
+  const output = await captureLog(async () => {
+    try {
+      await createRegistriesCommand().parseAsync(args, { from: "user" });
+    } catch (error) {
+      failure = error;
+    }
+  });
+  expect(failure).toBeInstanceOf(Error);
+  expect((failure as Error).message).toContain("Registry query failed:");
+  expect(close).toHaveBeenCalledTimes(1);
+  return { output, error: failure as Error };
+}
+
 describe("registries command", () => {
   beforeEach(() => {
     getEntityRegistry.mockClear();
@@ -204,11 +220,15 @@ describe("registries command", () => {
 
   it("reports compact display endpoint failures without falling back to private full rows", async () => {
     getEntityRegistryForDisplay.mockRejectedValueOnce(new Error("WS failed"));
-    const result = await captureLog(() =>
-      createRegistriesCommand().parseAsync(["--display"], { from: "user" })
-    );
-    expect(result).toContain("Compact entity registry display is unavailable");
-    expect(close).toHaveBeenCalled();
+    const { output, error } = await captureFailure(["--display"]);
+    expect(JSON.parse(output)).toEqual({
+      entity_registry_display: [],
+      message: "Compact entity registry display is unavailable.",
+      success: false,
+      error: "WS failed",
+    });
+    expect(error.message).toContain("WS failed");
+    expect(getEntityRegistry).not.toHaveBeenCalled();
   });
 
   it("rejects an invalid compact display limit before requesting registry data", async () => {
@@ -291,7 +311,7 @@ describe("registries command", () => {
     expect(result).toContain("Lighting");
   });
 
-  it("handles entity registry failure gracefully", async () => {
+  it("reports every unavailable registry before failing the command", async () => {
     getEntityRegistry.mockRejectedValueOnce(new Error("WS failed"));
     getDeviceRegistry.mockRejectedValueOnce(new Error("WS failed"));
     getAreaRegistry.mockRejectedValueOnce(new Error("WS failed"));
@@ -299,13 +319,13 @@ describe("registries command", () => {
     getLabelRegistry.mockRejectedValueOnce(new Error("WS failed"));
     getCategoryRegistry.mockRejectedValueOnce(new Error("WS failed"));
 
-    const cmd = createRegistriesCommand();
-    const result = await captureLog(() =>
-      cmd.parseAsync([], { from: "user" })
-    );
-
-    // Should not throw, just show empty/fallback results
-    expect(result).toBeDefined();
+    const { output, error } = await captureFailure([]);
+    expect(output.match(/"success": false/g)).toHaveLength(6);
+    expect(error.message).toContain("WS failed");
+    for (const method of [getEntityRegistry, getDeviceRegistry, getAreaRegistry,
+      getFloorRegistry, getLabelRegistry, getCategoryRegistry]) {
+      expect(method).toHaveBeenCalledTimes(1);
+    }
   });
 
   it("uses --entity alias for --entities", async () => {
@@ -376,27 +396,38 @@ describe("registries command", () => {
       { entity_id: "sensor.no_area", state: "20", attributes: {} },
     ]);
 
-    const result = JSON.parse(await captureLog(() =>
-      createRegistriesCommand().parseAsync(["--areas"], { from: "user" })
-    )) as { area_registry: Array<{ area_id: string }>; message: string };
-    expect(result.area_registry).toEqual([{ area_id: "kitchen" }]);
-    expect(result.message).toContain("entity states");
+    const { output, error } = await captureFailure(["--areas"]);
+    expect(JSON.parse(output)).toEqual({
+      area_registry: [{ area_id: "kitchen" }],
+      message: "Area registry from entity states (WebSocket unavailable)",
+      success: false,
+      error: "WS failed",
+    });
+    expect(error.message).toContain("WS failed");
   });
 
   it("reports empty areas after an ordinary fallback failure", async () => {
     getAreaRegistry.mockRejectedValueOnce(new Error("WS failed"));
     getStates.mockRejectedValueOnce(new Error("REST failed"));
-    const result = await captureLog(() =>
-      createRegistriesCommand().parseAsync(["--areas"], { from: "user" })
-    );
-    expect(result).toContain("Area registry unavailable");
+    const { output, error } = await captureFailure(["--areas"]);
+    expect(JSON.parse(output)).toEqual({
+      area_registry: [],
+      message: "Area registry unavailable.",
+      success: false,
+      error: "WS failed",
+      fallback_error: "REST failed",
+    });
+    expect(error.message).toContain("WS failed; REST failed");
   });
 
-  it("preserves typed Home Assistant errors from the area fallback", async () => {
+  it("preserves the WebSocket and typed Home Assistant fallback failure causes", async () => {
     getAreaRegistry.mockRejectedValueOnce(new Error("WS failed"));
     getStates.mockRejectedValueOnce(new HomeAssistantApiError("unauthorized", 401));
-    await expect(createRegistriesCommand().parseAsync(["--areas"], { from: "user" })).rejects.toThrow("unauthorized");
-    expect(close).toHaveBeenCalled();
+    const { output, error } = await captureFailure(["--areas"]);
+    expect(JSON.parse(output)).toMatchObject({
+      success: false, error: "WS failed", fallback_error: "unauthorized",
+    });
+    expect(error.message).toContain("WS failed; unauthorized");
   });
 
   it.each([
@@ -407,10 +438,115 @@ describe("registries command", () => {
     ["category", getCategoryRegistry, "Category registry unavailable"],
   ])("reports a focused %s registry failure", async (option, method, message) => {
     method.mockRejectedValueOnce(new Error("WS failed"));
-    const result = await captureLog(() =>
-      createRegistriesCommand().parseAsync([`--${option}`], { from: "user" })
+    const { output, error } = await captureFailure([`--${option}`]);
+    expect(JSON.parse(output)).toMatchObject({ success: false, error: "WS failed" });
+    expect(output).toContain(message);
+    expect(error.message).toContain("WS failed");
+  });
+
+
+  it("retains successful results when another selected registry fails", async () => {
+    getEntityRegistry.mockRejectedValueOnce(new Error("Authentication failed"));
+    const { output, error } = await captureFailure(["--entities", "--devices"]);
+    expect(output).toContain('"success": false');
+    expect(output).toContain('"error": "Authentication failed"');
+    expect(output).toContain('"name": "Hue Bulb"');
+    expect(getDeviceRegistry).toHaveBeenCalledTimes(1);
+    expect(error.message).toContain("Authentication failed");
+  });
+
+  it("keeps an empty successful registry distinct from an unavailable one", async () => {
+    getEntityRegistry.mockResolvedValueOnce([]);
+    const output = await captureLog(() =>
+      createRegistriesCommand().parseAsync(["--entities"], { from: "user" })
     );
-    expect(result).toContain(message);
-    expect(close).toHaveBeenCalled();
+    expect(JSON.parse(output)).toEqual({ entity_registry: [] });
+    expect(close).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not report a fabricated zero count when a registry is unavailable", async () => {
+    getDeviceRegistry.mockRejectedValueOnce("connection refused");
+    const { output, error } = await captureFailure(["--devices", "--count"]);
+    expect(JSON.parse(output)).toEqual({
+      device_registry: [],
+      message: "Device registry unavailable.",
+      success: false,
+      error: "connection refused",
+    });
+    expect(error.message).toContain("connection refused");
+  });
+
+  it("honors count for partial state-based area results without hiding failure", async () => {
+    getAreaRegistry.mockRejectedValueOnce(new Error("WS timeout"));
+    getStates.mockResolvedValueOnce([
+      { entity_id: "light.one", state: "on", attributes: { area_id: "kitchen" } },
+      { entity_id: "light.two", state: "off", attributes: { area_id: "kitchen" } },
+    ]);
+    const { output } = await captureFailure(["--areas", "--count"]);
+    expect(JSON.parse(output)).toEqual({
+      area_registry_count: 1,
+      message: "Area registry from entity states (WebSocket unavailable)",
+      success: false,
+      error: "WS timeout",
+    });
+  });
+
+  it.each(["--entities", "--display"])("redacts credentials from %s output and the final error", async (option) => {
+    const sentinel = "Auth failed for test-token at http://proxy-user:proxy-password@proxy.invalid:8080; Bearer bearer-sentinel";
+    const method = option === "--display" ? getEntityRegistryForDisplay : getEntityRegistry;
+    method.mockRejectedValueOnce(new Error(sentinel));
+    const { output, error } = await captureFailure([option]);
+    for (const text of [output, error.message]) {
+      expect(text).toContain("Auth failed");
+      expect(text).toContain("proxy.invalid:8080");
+      expect(text).toContain("[redacted]");
+      for (const secret of ["test-token", "proxy-user", "proxy-password", "bearer-sentinel"]) {
+        expect(text).not.toContain(secret);
+      }
+    }
+  });
+
+  it("redacts credentials from both area failure causes", async () => {
+    getAreaRegistry.mockRejectedValueOnce(new Error("WS denied test-token"));
+    getStates.mockRejectedValueOnce(new Error("REST denied password=fallback-secret"));
+    const { output, error } = await captureFailure(["--areas"]);
+    expect(JSON.parse(output)).toMatchObject({
+      error: "WS denied [redacted]",
+      fallback_error: "REST denied password=[redacted]",
+    });
+    expect(error.message).not.toContain("test-token");
+    expect(error.message).not.toContain("fallback-secret");
+  });
+});
+
+describe("registry error sanitization", () => {
+  it("retains ordinary and non-Error failure causes with an empty token", () => {
+    expect(sanitizeRegistryError(new Error("connect ECONNREFUSED"), "")).toBe("connect ECONNREFUSED");
+    expect(sanitizeRegistryError("WebSocket timeout", "")).toBe("WebSocket timeout");
+    expect(sanitizeRegistryError(undefined, "")).toBe("undefined");
+  });
+
+  it("redacts raw and encoded configured tokens", () => {
+    expect(sanitizeRegistryError("Failed token+with/slashes and token%2Bwith%2Fslashes", "token+with/slashes"))
+      .toBe("Failed [redacted] and [redacted]");
+  });
+
+  it("redacts URL userinfo, auth headers, query and JSON credentials", () => {
+    const result = sanitizeRegistryError([
+      "connect socks5://name:p%40ss@proxy.invalid:1080/",
+      "Authorization: Basic base64-sentinel",
+      "Proxy-Authorization: Bearer header-sentinel",
+      "https://ha.invalid/api?access_token=query-sentinel&safe=yes",
+      '\"token\":\"json-sentinel\"',
+      "api_key=key-sentinel password=password-sentinel secret=secret-sentinel",
+    ].join("; "), "unrelated-token");
+    expect(result).toBe([
+      "connect socks5://[redacted]@proxy.invalid:1080/",
+      "Authorization: Basic [redacted]",
+      "Proxy-Authorization: Bearer [redacted]",
+      "https://ha.invalid/api?access_token=[redacted]&safe=yes",
+      '\"token\":\"[redacted]\"',
+      "api_key=[redacted] password=[redacted] secret=[redacted]",
+    ].join("; "));
   });
 });

@@ -55,8 +55,13 @@ npm test
 Regenerate changelog:
 
 ```bash
-npm run changelog
+npm run changelog:full
 ```
+
+This is the only generator, and `changelog:check` verifies exactly what it
+writes. Rendering in prepend mode instead produces a file the gate rejects,
+because replace mode also emits an `## Unreleased` section for closed but
+unreleased work and orders released items by their `release:` field.
 
 Verify changelog:
 
@@ -79,7 +84,7 @@ Recommended checks:
 ```bash
 pm health --json
 pm validate --json --check-metadata --check-resolution --check-lifecycle --check-command-references --check-history-drift --strict-exit
-pm list-all --json
+pm --output-budget unbounded --output-limit unbounded list --all --json
 ```
 
 Every release-readiness item should record:

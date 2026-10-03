@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { EventEmitter } from "events";
 import { HomeAssistantWebSocketClient } from "../src/api/websocket.js";
+import { waitForWebSocketMessage } from "../src/api/websocket-handshake.js";
+import type WebSocket from "ws";
 import { parseWebsocketMessage } from "../src/api/websocket-protocol.js";
 import type { Config } from "../src/types/options.js";
 
@@ -107,7 +109,6 @@ type InternalClient = {
   pending: Map<number, unknown>;
   eventBuffers: Map<number, { events: unknown[]; maxEvents: number; finish: () => void }>;
   sendAndWait: (id: number, type: string, payload?: Record<string, unknown>) => Promise<unknown>;
-  waitForMessage: <T>() => Promise<T>;
 };
 
 // ══════════════════════════════════════════════════════════════
@@ -168,14 +169,25 @@ describe("HomeAssistantWebSocketClient – waitForMessage() error cases", () => 
     const client = new HomeAssistantWebSocketClient(baseConfig);
     const ic = client as unknown as InternalClient;
     ic.socket = null;
-    await expect(ic.waitForMessage()).rejects.toThrow("WebSocket not initialized");
+    await expect(waitForWebSocketMessage(ic.socket as unknown as WebSocket, fastConfig.timeout)).rejects.toThrow("WebSocket not initialized");
+  });
+
+  it.each(["error", "close"])("cleans up a handshake interrupted by %s", async event => {
+    const ws = new FakeWs(1);
+    const result = waitForWebSocketMessage(ws as unknown as WebSocket, fastConfig.timeout);
+    const rejection = expect(result).rejects.toThrow(event === "error" ? "ECONNRESET" : "closed during authentication");
+    ws.emit(event, new Error("ECONNRESET"));
+    await rejection;
+    expect(ws.listenerCount("message")).toBe(0);
+    expect(ws.listenerCount("error")).toBe(0);
+    expect(ws.listenerCount("close")).toBe(0);
   });
 
   it("times out when no message arrives", async () => {
     const client = new HomeAssistantWebSocketClient(fastConfig);
     const ic = client as unknown as InternalClient;
     ic.socket = new FakeWs(1);
-    await expect(ic.waitForMessage()).rejects.toThrow(/timed out/i);
+    await expect(waitForWebSocketMessage(ic.socket as unknown as WebSocket, fastConfig.timeout)).rejects.toThrow(/timed out/i);
   }, 5000);
 });
 
@@ -409,6 +421,17 @@ describe("HomeAssistantWebSocketClient – call()", () => {
     const { client, ws } = await connectedClient();
     hookReply(ws, (id) => ({ type: "result", success: true, result: { count: 42 }, id }));
     expect(await client.call("config/entity_registry/list")).toEqual({ count: 42 });
+    await client.close();
+  });
+
+  it("rejects pending calls on a late transport error without an unhandled event", async () => {
+    const { client, ws } = await connectedClient();
+    const call = client.call("ping");
+    const rejection = expect(call).rejects.toThrow("connection lost");
+    await new Promise(resolve => setImmediate(resolve));
+    ws.emit("error", new Error("connection lost"));
+    await rejection;
+    expect((client as unknown as InternalClient).pending.size).toBe(0);
     await client.close();
   });
 

@@ -5,6 +5,8 @@ import WebSocket from "ws";
 import type { Config } from "../types/options.js";
 import type { HaWebSocketServiceCallResult } from "../types/api.js";
 import { HomeAssistantReadOnlyError } from "./errors.js";
+import { websocketProxyAgent } from "./websocket-proxy.js";
+import { waitForWebSocketMessage } from "./websocket-handshake.js";
 import {
   parseWebsocketMessage,
   type EventBuffer,
@@ -19,6 +21,7 @@ export class HomeAssistantWebSocketClient {
   private readonly timeout: number;
   private readonly readOnly: boolean;
   private socket: WebSocket | null = null;
+  private proxyAgent: ReturnType<typeof websocketProxyAgent> = false;
   private nextId = 1;
   private pending = new Map<number, PendingCall>();
   private eventBuffers = new Map<number, EventBuffer>();
@@ -39,23 +42,36 @@ export class HomeAssistantWebSocketClient {
       return;
     }
 
-    const socket = new WebSocket(this.wsUrl, { handshakeTimeout: this.timeout });
-    this.socket = socket;
+    try {
+      await this.connectSocket();
+    } catch (error) {
+      await this.close();
+      throw error;
+    }
+  }
 
-    await new Promise<void>((resolve, reject) => {
-      const onOpen = () => resolve();
-      const onError = (err: Error) => reject(err);
-      socket.once("open", onOpen);
-      socket.once("error", onError);
+  private async connectSocket(): Promise<void> {
+    this.proxyAgent = websocketProxyAgent(this.wsUrl);
+    const socket = new WebSocket(this.wsUrl, {
+      handshakeTimeout: this.timeout,
+      agent: this.proxyAgent,
+    });
+    this.socket = socket;
+    socket.on("error", (error: Error) => {
+      for (const pending of this.pending.values()) {
+        clearTimeout(pending.timer);
+        pending.reject(error);
+      }
+      this.pending.clear();
     });
 
-    const authRequired = await this.waitForMessage<WsConnectMessage>();
+    const authRequired = await waitForWebSocketMessage<WsConnectMessage>(socket, this.timeout);
     if (authRequired.type !== "auth_required") {
       throw new Error(`Unexpected WebSocket handshake response: ${JSON.stringify(authRequired)}`);
     }
 
     socket.send(JSON.stringify({ type: "auth", access_token: this.token }));
-    const authResult = await this.waitForMessage<WsConnectMessage>();
+    const authResult = await waitForWebSocketMessage<WsConnectMessage>(socket, this.timeout);
     if (authResult.type !== "auth_ok") {
       throw new Error(authResult.message ?? "WebSocket authentication failed");
     }
@@ -99,24 +115,25 @@ export class HomeAssistantWebSocketClient {
       }
     });
 
-    try {
-      await this.sendAndWait(this.nextId++, "supported_features", {
-        features: { coalesce_messages: 1 },
-      });
-    } catch (error) {
-      await this.close();
-      throw error;
-    }
+    await this.sendAndWait(this.nextId++, "supported_features", {
+      features: { coalesce_messages: 1 },
+    });
   }
 
   async close(): Promise<void> {
     const socket = this.socket;
-    if (!socket) return;
+    const destroyAgent = () => {
+      if (this.proxyAgent) this.proxyAgent.destroy();
+      this.proxyAgent = false;
+    };
+    if (!socket) { destroyAgent(); return; }
     await new Promise<void>((resolve) => {
       socket.once("close", () => resolve());
+      socket.once("error", () => resolve());
       socket.close();
       setTimeout(() => resolve(), 250);
     });
+    destroyAgent();
     this.socket = null;
     this.pending.clear();
     this.eventBuffers.clear();
@@ -316,24 +333,4 @@ export class HomeAssistantWebSocketClient {
     return response;
   }
 
-  private async waitForMessage<T>(): Promise<T> {
-    const socket = this.socket;
-    if (!socket) {
-      throw new Error("WebSocket not initialized");
-    }
-
-    return new Promise<T>((resolve, reject) => {
-      const timer = setTimeout(() => reject(new Error("WebSocket handshake timed out")), this.timeout);
-      const onMessage = (raw: WebSocket.RawData) => {
-        clearTimeout(timer);
-        try {
-          const parsed = JSON.parse(raw.toString()) as T;
-          resolve(parsed);
-        } catch (error) {
-          reject(error);
-        }
-      };
-      socket.once("message", onMessage);
-    });
-  }
 }

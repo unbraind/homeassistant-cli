@@ -366,6 +366,24 @@ Configuration is loaded in this order (later overrides earlier):
 | `HASSIO_READONLY` | Block write operations (`true`/`false`) | `false` |
 | `HASSIO_CONFIG` | Custom config file path | `~/.hassio-cli/settings.json` |
 
+### Environment proxies
+
+WebSocket commands (including registries) honor `HTTP_PROXY` for `ws://`,
+`HTTPS_PROXY` for `wss://`, and `ALL_PROXY` as a fallback. HTTP and HTTPS proxy
+URLs are supported through CONNECT tunnels; proxy credentials stay on the proxy
+request and are redacted from diagnostics. Lowercase variables take precedence.
+This support does not require `NODE_USE_ENV_PROXY=1`.
+
+`NO_PROXY` (or lowercase `no_proxy`) bypasses the proxy for comma- or
+space-separated exact hosts, optional `host:port` entries, and suffixes beginning
+with `.` or `*`. `NO_PROXY=*` bypasses all proxies. A bare hostname matches only
+that hostname; `.example.com` matches subdomains. Default ports are 80 for `ws`
+and 443 for `wss`; IPv6 entries use brackets. CIDR ranges are not supported.
+
+Registry failures now exit nonzero and include `success: false` plus a sanitized
+`error` in the output, even when partial results or state-based area fallback are
+available. An empty successfully retrieved registry continues to exit zero.
+
 ### Settings Commands
 
 ```bash

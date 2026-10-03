@@ -1,5 +1,160 @@
 # Changelog
 
+## 2026.9.25 - 2026-09-25
+
+### Added
+
+- Add opt-in Dependabot dependency sections so item-less release windows still get notes ([pmc-ny9i](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/features/pmc-ny9i.toon))
+
+### Fixed
+
+- Include extension-registered item types in changelog generation and body previews ([pmc-k1oq](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-k1oq.toon))
+- A publish that npm accepts late is reported as failed and the GitHub Release is skipped on bun mirror lag ([pmc-piam](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-piam.toon))
+
+### Other
+
+- Certify pm CLI 2026.9.23 and adopt the guarded pm-ops merge-driver launcher ([pmc-pcax](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/chores/pmc-pcax.toon))
+
+## 2026.9.23 - 2026-09-23
+
+### Other
+
+- Certify pm CLI 2026.9.21 and install merge drivers through the canonical pm-ops launcher ([pmc-psin](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/chores/pmc-psin.toon))
+
+## 2026.9.18 - 2026-09-18
+
+### Other
+
+- Certify pm CLI 2026.9.17 ([pmc-r1qu](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/chores/pmc-r1qu.toon))
+
+## 2026.9.15 - 2026-09-15
+
+### Fixed
+
+- Include configured custom item types in changelog generation and export ([pmc-vnke](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-vnke.toon))
+
+## 2026.9.13 - 2026-09-13
+
+### Other
+
+- Group the codeql-action init and analyze updates so Dependabot stops splitting a pair that must match ([pmc-fi6u](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/chores/pmc-fi6u.toon))
+- Certify pm CLI 2026.9.12 and the pm-ops 2026.9.11 auditor ([pmc-s7bi](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/chores/pmc-s7bi.toon))
+
+## 2026.9.10 - 2026-09-10
+
+### Fixed
+
+- Require explicit tagged status evidence for incomplete SDK inputs ([pmc-sonp](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-sonp.toon))
+- Preserve historical schemas and physical tracker roots during release membership verification ([pmc-j6cb](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-j6cb.toon))
+- Keep branch-only completions out of release tags that do not contain them ([pmc-3jq8](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-3jq8.toon))
+
+### Other
+
+- Prepare reviewed pm-changelog 2026.9.10 release metadata ([pmc-l0tg](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/chores/pmc-l0tg.toon))
+
+## 2026.9.9 - 2026-09-09
+
+### Fixed
+
+- Measure changelog parser CPU time without counting descheduled workers ([pmc-zoqj](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-zoqj.toon))
+
+## 2026.9.6 - 2026-09-06
+
+### Other
+
+- Pin pm-cli 2026.9.5 and rename extension --explain ([pmc-662o](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/chores/pmc-662o.toon))
+
+## 2026.9.2 - 2026-09-02
+
+### Fixed
+
+- The installed pm resolver's memo makes three untested failures appear and disappear from exact coverage ([pmc-kd73](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-kd73.toon))
+- The empty-windows fallback re-fabricates a dated placeholder heading on the library path ([pmc-zgnm](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-zgnm.toon))
+- Suppressed pending release can relocate or drop an item (Greptile issue 2, PR \#174) ([pmc-hox8](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-hox8.toon))
+- Pending release windows must not claim a never-released package version ([pmc-1vma](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-1vma.toon))
+- Extension surface has no --no-pending-release equivalent (Greptile issue 1, PR \#174) ([pmc-zj2w](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-zj2w.toon))
+
+## 2026.9.1 - 2026-09-01
+
+### Other
+
+- Converge the pinned pm-cli on 2026.8.31 and repair history hashes ([pmc-y7al](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/chores/pmc-y7al.toon))
+
+## 2026.8.31 - 2026-08-31
+
+### Fixed
+
+- Every release publish invocation must retain provenance attestation ([pmc-473n](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-473n.toon))
+
+## 2026.8.30 - 2026-08-30
+
+### Fixed
+
+- Pending release windows clamp work to the display date ([pmc-n7fl](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-n7fl.toon))
+
+## 2026.8.29 - 2026-08-29
+
+### Other
+
+- Enable GitHub CodeQL code scanning ([pmc-n72l](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/chores/pmc-n72l.toon))
+
+## 2026.8.22 - 2026-08-27
+
+### Fixed
+
+- Read the pm workspace with canonical complete reads instead of default budgets ([pmc-n07l](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-n07l.toon))
+- Raise pm-changelog source coverage gates to 100/100/100 ([pmc-wvnz](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-wvnz.toon))
+- Use canonical unbounded list reads with pm CLI 2026.8.20 ([pmc-6j4o](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-6j4o.toon))
+
+### Security
+
+- The identity gate deadlocks the one remediation its own failure message prescribes ([pmc-s92t](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-s92t.toon))
+- Remove historical host paths and non-public Git identities before release approval ([pmc-t8tj](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-t8tj.toon))
+
+### Other
+
+- Align CI+release workflows with peer pm-\* packages (Node 22 + Bun) ([pmc-078v](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/tasks/pmc-078v.toon))
+
+## 2026.8.17 - 2026-08-17
+
+### Fixed
+
+- Add tag-aware fallback dates for release-gated changelogs ([pmc-x49u](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-x49u.toon))
+
+## 2026.8.16 - 2026-08-16
+
+### Fixed
+
+- pm-changelog consumes a truncated `pm list-all` answer as if it were complete ([pmc-wv37](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-wv37.toon))
+
+## 2026.8.12 - 2026-08-12
+
+### Fixed
+
+- Classifier misroutes Issues with CLI command-name titles (update/change) to Changed not Fixed ([pmc-874d](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-874d.toon))
+
+### Other
+
+- Prove classifier precedence across every weak title signal ([pmc-hscf](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/tasks/pmc-hscf.toon))
+- Adopt pm-cli 2026.8.11 for current history verification ([pmc-ypbc](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/chores/pmc-ypbc.toon))
+
+## 2026.8.9 - 2026-08-10
+
+### Fixed
+
+- Node 22 exact branch coverage is nondeterministic across identical CI reruns ([pmc-v18w](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-v18w.toon))
+- Repository-local pm 2026.8.6 prepare removes the 2026.8.7 extension merge fence ([pmc-rdc3](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-rdc3.toon))
+- Propagate the docstring gate entry guard fix ([pmc-g5f7](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-g5f7.toon))
+- changelog:check verified in prepend mode against a replace-mode CHANGELOG, making the gate unsatisfiable ([pmc-s2bk](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-s2bk.toon))
+- The release merge-wait read branch protection which the workflow token can never read ([pmc-o58h](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-o58h.toon))
+- Retire the vendored docstring gate for the canonical pm-ops analyzer ([pmc-j0dx](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-j0dx.toon))
+- Self-referential release-context test freezes the package version the release bump mutates ([pmc-iygx](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-iygx.toon))
+- Node-CLI acceptance test assumes pmc-or-pm item prefixes and leaks the invoking PM tracker ([pmc-femy](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-femy.toon))
+
+### Other
+
+- Cover pm-changelog cli.ts and extension.ts to reach the 100/100/100 aggregate ([pmc-p5l1](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/tasks/pmc-p5l1.toon))
+
 ## 2026.8.7 - 2026-08-07
 
 ### Other
@@ -32,13 +187,10 @@
 
 ### Added
 
+- Enforce a real coverage gate by running tests against TypeScript sources ([pmc-6jr4](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/features/pmc-6jr4.toon))
 - Adopt authoritative completion-timestamp contract from pm-cli SDK ([pmc-366b](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/features/pmc-366b.toon))
 
 ## 2026.7.29 - 2026-07-28
-
-### Added
-
-- Enforce a real coverage gate by running tests against TypeScript sources ([pmc-6jr4](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/features/pmc-6jr4.toon))
 
 ### Fixed
 
@@ -289,12 +441,6 @@
 
 - Committed CHANGELOG.md stale vs current history (orphaned release tags) ([pmc-e3sy](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-e3sy.toon))
 
-## 2026.5.29-1 - 2026-05-29
-
-### Fixed
-
-- Classifier misroutes Issues with CLI command-name titles (update/change) to Changed not Fixed ([pmc-874d](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-874d.toon))
-
 ## 2026.5.27-1 - 2026-05-27
 
 ### Added
@@ -305,18 +451,14 @@
 
 ### Other
 
+- Release readiness hardening for pm-changelog ([pmc-14cx](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/tasks/pmc-14cx.toon))
 - Bump @unbrained/pm-cli SDK to \>=2026.5.24 ([pmc-cfhf](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/tasks/pmc-cfhf.toon))
-- Align CI+release workflows with peer pm-\* packages (Node 22 + Bun) ([pmc-078v](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/tasks/pmc-078v.toon))
 
 ## 2026.5.26 - 2026-05-25
 
 ### Fixed
 
 - Fix release tag date drift in changelog checks ([pmc-7dm6](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-7dm6.toon))
-
-### Other
-
-- Release readiness hardening for pm-changelog ([pmc-14cx](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/tasks/pmc-14cx.toon))
 
 ## 2026.5.25 - 2026-05-25
 
@@ -359,7 +501,7 @@
 
 ## 2026.5.24-10 - 2026-05-24
 
-### Added
+### Fixed
 
 - Add package-owned release context flags ([pmc-34gb](https://github.com/unbraind/pm-changelog/blob/main/.agents/pm/issues/pmc-34gb.toon))
 
