@@ -33,7 +33,7 @@ pm changelog generate --mode prepend --release-version "$GITHUB_REF_NAME"
 pm changelog generate --check --mode prepend --release-version "$GITHUB_REF_NAME"
 ```
 
-The extension command uses `--release-version` because `pm --version` is a global CLI flag. The same applies to `--explain`: `pm --explain` expands root help, so the extension exposes selection diagnostics as `--explain-selection`. The standalone CLI keeps `--explain`.
+The extension command uses `--release-version` because `pm --version` is a global CLI flag.
 
 ## Standalone CLI
 
@@ -101,7 +101,7 @@ npx pm-changelog --stdout --version 1.2.0
 Read JSON from a previous step:
 
 ```bash
-pm --output-budget unbounded --output-limit unbounded list --all --json | npx pm-changelog --stdin --stdout
+pm list-all --json | npx pm-changelog --stdin --stdout
 ```
 
 Use a pinned or wrapped pm executable:
@@ -138,31 +138,7 @@ npx pm-changelog --all-release-tags --mode replace --output CHANGELOG.md \
 
 `--all-release-tags` creates a newest-first `Unreleased` section for closed items after the latest tag, then one section per matching git tag. Release section dates come from the tag commit timestamp. Items with a `release` field whose value matches a known tag (`v2026.05.24-7`, `2026.05.24-7`, etc.) are bucketed into that tag's section regardless of timestamps; items without a matching `release` field use each item's authoritative `completed_at`, then fall back to the inferred `closed_at`, `updated_at`, and `created_at` for legacy records. Empty release windows are omitted unless `--include-empty` is passed.
 
-For live tracker reads, the CLI and extension also verify undeclared items against
-the item state stored in each tag. Work completed on a branch before an unrelated
-release stays `Unreleased` until the first tag contains its selected status. A
-pending release being prepared can include that work before its tag exists.
-Explicit release declarations remain authoritative; tags with no tracker
-documents retain historical timestamp placement. Membership reads use Git blobs
-and the public pm SDK parser, and malformed evidence fails generation.
-This behavior is tracked in [pmc-3jq8](../.agents/pm/issues/pmc-3jq8.toon).
-Tagged items use their tag's settings and schema files, so later schema changes
-do not invalidate historical metadata. Repository-root and symlinked tracker
-paths are supported; schema references outside the tagged repository cannot
-provide versioned evidence and fail generation. These compatibility guarantees
-are tracked in [pmc-j6cb](../.agents/pm/issues/pmc-j6cb.toon).
-
-Pure API inputs and standalone `--input`/`--stdin` documents retain timestamp
-placement because they need not describe the local tracker. SDK callers can opt
-into the same verification by passing
-`releaseMembership: await resolveGitReleaseMembership(options, pmRoot)` alongside
-their existing `options` to `createChangelog` or `writeChangelog`. Import
-`resolveGitReleaseMembership` from `pm-changelog`. Selection diagnostics report
-corrected visible entries under `attribution_provenance.release_membership`.
-
 Pair `--all-release-tags` with `--release-version-from-package` (or `--version v<x>`) to insert a section for the pending release before the tag is created — for example during CI when bumping `package.json` ahead of `git tag`.
-
-The pending-release section is only correct when a release is actually being cut. In a package whose `package.json` version has never been released or tagged, that version is a placeholder, not a release — the generator would otherwise emit a heading that asserts a release that never happened. Pass `--no-pending-release` to say "nothing is being released right now": the pending window is suppressed and the leading `Unreleased` window is kept instead.
 
 Each item entry becomes a link: `- Fix something ([pmc-abc](https://github.com/owner/repo/blob/main/.agents/pm/issues/pmc-abc.toon))`. The type subdirectory (`issues/`, `tasks/`, `chores/`, `features/`, `epics/`) is resolved automatically from the item's type.
 
@@ -216,7 +192,7 @@ npx pm-changelog --changelog-json --suggest-semver
 npx pm-changelog --all-release-tags --limit 1 --suggest-semver   # bump for just the newest release
 ```
 
-Append a short preview of each item body to its entry (first N characters, single-lined; truncated with an ellipsis when longer). When sourcing items from `pm` directly, the CLI requests bodies through its canonical unbounded whole-tracker list with `--include-body`; the extension loads them on demand. The preview falls back to the item `description` when the body is empty, so it always has content against real pm items:
+Append a short preview of each item body to its entry (first N characters, single-lined; truncated with an ellipsis when longer). When sourcing items from `pm` directly, the CLI requests bodies via `pm list-all --json --include-body`; the extension loads them on demand. The preview falls back to the item `description` when the body is empty, so it always has content against real pm items:
 
 ```bash
 npx pm-changelog --stdout --body-preview 80
@@ -257,7 +233,7 @@ The same flags are available on the pm extension command:
 pm changelog generate --stdout --section-by status
 pm changelog generate --stdout --conventional --contributors
 pm changelog generate --changelog-json
-pm changelog generate --stdout --explain-selection
+pm changelog generate --stdout --explain
 ```
 
 Attribute work to the release that actually shipped it, instead of to whenever the tracker was closed:
@@ -305,9 +281,9 @@ and its history untouched in the tracker. Both flags are reported by `--explain`
 | `--stdout` | false | Print markdown instead of writing a file |
 | `--input <file>` | - | Read pm JSON from a file |
 | `--stdin` | false | Read pm JSON from stdin |
-| `--pm-root <dir>` | - | Run an unbounded `pm --pm-path <dir> --output-budget unbounded --output-limit unbounded list --all --json` read |
+| `--pm-root <dir>` | - | Run `pm --pm-path <dir> list-all --json` |
 | `--pm-bin <file>` | `pm` | pm executable to run |
-| `--pm-arg <arg>` | - | Extra global argument passed before the canonical list command; repeat for multiple args |
+| `--pm-arg <arg>` | - | Extra argument passed before `list-all --json`; repeat for multiple args |
 | `--pm-cwd <dir>` | - | Working directory for running pm |
 | `--version <version>` | `Unreleased` | Version heading for the standalone CLI |
 | `--release-version <version>` | - | Compatibility alias for `--version` (matches extension syntax) |
@@ -319,7 +295,6 @@ and its history untouched in the tracker. Both flags are reported by `--explain`
 | `--until-release-tag` | false | Derive `--until` from the current release tag when it exists (`v<version>` or `<version>`). Useful after a release tag has been created so post-release tracker changes do not move the published section. Fails with an `E_MISSING_TAG_HISTORY` diagnostic when tag history is incomplete — a shallow clone, or a `--no-tags` clone regardless of local tag count — naming the exact recovery for the detected state (e.g. `git fetch --tags --unshallow`, or `git config --unset remote.origin.tagOpt && git fetch --tags` for `--no-tags`). |
 | `--all-release-tags` | false | Rebuild full changelog history from git release tag windows, including an `Unreleased` section for post-latest-tag closed items. Fails with an `E_MISSING_TAG_HISTORY` diagnostic when tag history is incomplete — a shallow clone, or a `--no-tags` clone regardless of local tag count — naming the exact recovery for the detected state (e.g. `git fetch --tags --unshallow`, or `git config --unset remote.origin.tagOpt && git fetch --tags` for `--no-tags`). |
 | `--release-tag-pattern <glob>` | `v*` | Git tag glob used by `--all-release-tags`. |
-| `--no-pending-release` | false | Suppress the pending-release window `--all-release-tags` derives from an untagged `--version` / `--release-version-from-package`. Pass it when nothing is being released right now — a `package.json` version that has never been released or tagged is a placeholder, not a release — so the leading `Unreleased` window is kept instead of a heading that asserts a release that never happened. No-op when the version is already tagged, so release runs and healthy repos are unaffected |
 | `--status <list>` | `closed` | Comma-separated statuses |
 | `--group-by <mode>` | `version` | `version`, `release`, or `milestone` (controls how release sections are bucketed) |
 | `--section-by <mode>` | `category` | Within-release grouping: `category` (default, keep-a-changelog), `type`, `status`, or `label` |
@@ -330,7 +305,6 @@ and its history untouched in the tracker. Both flags are reported by `--explain`
 | `--changelog-json` | false | Print the full structured changelog document (releases -> sections -> items) as JSON to stdout. Distinct from `--json` (CI summary) |
 | `--explain` | false | Emit item-selection diagnostics (`selection_report`) showing stage counts, exclusion reasons, sample items, completion-timestamp attribution provenance (`attribution_provenance`: authoritative `completed_at` vs inferred fallback counts and sample ids), and actionable hints |
 | `--breaking-changes` | false | Emit an additional `Breaking Changes` section per release listing items detected as breaking (a truthy `breaking` flag, a `breaking`/`breaking-change` tag, or the standalone word `breaking` in type/title; negated phrasings like `non-breaking` are ignored) |
-| `--dependency-updates` | false | Add a `### Dependencies` section (listed last) to each release, with one bullet per Dependabot commit (`<type>(deps|deps-dev): bump …`) between the previous and current release tags; a pending release reads to `HEAD`, and a history-rewritten previous tag falls back to the window's time bounds. A release with no closed items but such commits still gets its version heading. Also emitted in `--changelog-json` and `--summary`, and accepted by `pm changelog export`. PR numbers link to GitHub only when `--item-url-base` is a `https://github.com/<owner>/<repo>/…` URL. Not combinable with `--group-by release` or `milestone` |
 | `--suggest-semver` | false | Print a suggested semver bump (`major`/`minor`/`patch`/`none`) as JSON to stdout; never writes the changelog. Computed from the same visible release sections as the output (respects `--limit`/`--since-version`). Also embedded in `--changelog-json` output |
 | `--body-preview <n>` | - | Append the first N characters of each item's body to its entry (single-lined, truncated with an ellipsis when longer). Loads bodies via `--include-body`; falls back to the item `description` when the body is empty |
 | `--emoji-prefix` | false | Prefix section headings with conventional emoji (`Added 🎉`, `Fixed 🐛`, ...); unknown headings pass through unchanged |
