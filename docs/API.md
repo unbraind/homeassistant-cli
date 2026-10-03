@@ -657,6 +657,17 @@ the full registry through the CLI.
 
 > **Note**: Full registry modes use WebSocket API (`config/entity_registry/list`, etc.). Area discovery falls back to entity states if WebSocket registry access is unavailable.
 
+Registry failures (including `--display`) produce an explicit `success: false`
+record with a sanitized `error` cause, and the command exits with status 1 after
+reporting all selected registries. Successful results retain their existing
+shape. An empty successful registry is therefore distinct from an unavailable
+registry; a failed `--count` does not report a misleading zero count.
+State-based area fallback data is still returned, but is marked unsuccessful
+because it is only partial registry data. If that fallback also fails,
+`fallback_error` preserves its sanitized cause alongside the WebSocket error.
+Diagnostics redact the configured Home Assistant token, URL credentials, and
+authorization credentials.
+
 #### Registry topology and entity-ID settings (Core 2026.8.1+)
 
 Use typed subcommands to inspect device-registry migrations, find devices that

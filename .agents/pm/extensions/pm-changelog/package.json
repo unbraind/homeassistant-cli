@@ -1,6 +1,6 @@
 {
   "name": "pm-changelog",
-  "version": "2026.8.7",
+  "version": "2026.9.25",
   "description": "Generate CHANGELOG.md files from pm-cli items for local and CI usage",
   "repository": {
     "type": "git",
@@ -45,21 +45,22 @@
     "build": "tsc",
     "check": "npm run typecheck",
     "build:test": "tsc -p tsconfig.test.json",
-    "changelog": "node dist/cli.js --pm-root .agents/pm --mode prepend --output CHANGELOG.md --release-version-from-package --since-previous-tag --until-release-tag --item-url-base https://github.com/unbraind/pm-changelog/blob/main/.agents/pm --respect-item-release",
-    "changelog:full": "node dist/cli.js --pm-root .agents/pm --mode replace --output CHANGELOG.md --all-release-tags --release-version-from-package --item-url-base https://github.com/unbraind/pm-changelog/blob/main/.agents/pm --respect-item-release",
-    "changelog:check": "npm run changelog -- --check",
+    "changelog:full": "node dist/cli.js --pm-root .agents/pm --mode replace --output CHANGELOG.md --all-release-tags --release-version-from-package --date-from-version --item-url-base https://github.com/unbraind/pm-changelog/blob/main/.agents/pm --respect-item-release --pm-bin ./node_modules/.bin/pm --pm-arg=--output-budget --pm-arg=unbounded --pm-arg=--output-limit --pm-arg=unbounded",
+    "changelog:check": "npm run changelog:full -- --check",
     "audit:prod": "node --input-type=module -e \"import { spawnSync } from 'node:child_process'; import { devNull } from 'node:os'; const env = { ...process.env, npm_config_userconfig: devNull, NPM_CONFIG_USERCONFIG: devNull }; for (const key of Object.keys(env)) if (key.toLowerCase() === 'npm_config_allow_scripts') delete env[key]; const win = process.platform === 'win32'; const r = spawnSync(win ? 'npm.cmd' : 'npm', ['audit', '--omit=dev', '--ignore-scripts'], { stdio: 'inherit', env, shell: win }); process.exit(r.status ?? 1);\"",
     "pack:dry-run": "npm pack --dry-run",
     "prepack": "npm run build",
-    "release:check": "npm run check && npm run docstring && npm run coverage && npm run audit:prod && npm run pack:dry-run && npm run changelog:check",
+    "release:check": "npm run check && npm run docstring && npm run coverage && npm run audit:prod && npm run pack:dry-run && npm run changelog:check && npm run verify:release-changelog-date && npm run verify:release-publish-attestation",
     "test": "npm run build && npm run build:test && node --test test/*.test.ts",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run release:check",
-    "release:notes": "node dist/cli.js --pm-root .agents/pm --stdout --since-previous-tag --until-release-tag --release-version-from-package --item-url-base https://github.com/unbraind/pm-changelog/blob/main/.agents/pm --pm-bin ./node_modules/.bin/pm --github-step-summary --respect-item-release",
-    "prepare": "node scripts/prepare-merge-driver.mjs",
+    "release:notes": "node dist/cli.js --pm-root .agents/pm --stdout --since-previous-tag --until-release-tag --release-version-from-package --date-from-version --item-url-base https://github.com/unbraind/pm-changelog/blob/main/.agents/pm --pm-bin ./node_modules/.bin/pm --github-step-summary --respect-item-release --pm-arg=--output-budget --pm-arg=unbounded --pm-arg=--output-limit --pm-arg=unbounded",
+    "prepare": "node scripts/prepare-merge-driver.ts",
     "merge:install": "pm merge install",
     "coverage": "npm run build && npm run build:test && node scripts/coverage-gate.ts",
-    "docstring": "node scripts/docstring-gate.ts"
+    "docstring": "node scripts/docstring-gate.ts",
+    "verify:release-changelog-date": "node scripts/verify-release-changelog-date.ts",
+    "verify:release-publish-attestation": "node scripts/verify-release-publish-attestation.ts"
   },
   "pm": {
     "aliases": [
@@ -98,7 +99,7 @@
     ]
   },
   "peerDependencies": {
-    "@unbrained/pm-cli": ">=2026.8.3"
+    "@unbrained/pm-cli": ">=2026.8.20"
   },
   "keywords": [
     "pm-cli",
@@ -120,15 +121,18 @@
     "sources": [
       "src",
       "scripts/docstring-gate.ts",
-      "scripts/sync-version.ts"
+      "scripts/prepare-merge-driver.ts",
+      "scripts/sync-version.ts",
+      "scripts/main-invocation.ts",
+      "scripts/verify-release-publish-attestation.ts"
     ],
     "tests": [
       "test/*.test.ts"
     ],
     "thresholds": {
-      "lines": 93,
-      "branches": 92,
-      "functions": 93
+      "lines": 100,
+      "branches": 100,
+      "functions": 100
     },
     "ignore": [
       "src/types.ts"

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": "2026-08-10T04:16:26.029Z",
+  "updated_at": "2026-10-03T15:37:07.443Z",
   "entries": [
     {
       "name": "builtin-beads-import",
@@ -233,7 +233,7 @@
       "name": "pm-changelog",
       "directory": "pm-changelog",
       "scope": "project",
-      "manifest_version": "2026.8.7",
+      "manifest_version": "2026.9.25",
       "manifest_entry": "./dist/extension.js",
       "capabilities": [
         "commands",
@@ -295,13 +295,13 @@
         "preflight_ownership": []
       },
       "installed_at": "2026-07-21T17:02:03.952Z",
-      "updated_at": "2026-08-07T05:14:54.369Z",
+      "updated_at": "2026-10-03T15:22:01.611Z",
       "source": {
         "kind": "npm",
         "input": "npm:pm-changelog",
         "location": "package",
         "package": "pm-changelog",
-        "version": "2026.8.7"
+        "version": "2026.9.25"
       }
     }
   ]

@@ -9,6 +9,7 @@ import type {
 } from "../types/index.js";
 import { parseLimit } from "../utils/command-helpers.js";
 import type { WebSocketRegistryClient } from "../api/registries.js";
+import type { RegistryFailureReporter } from "./registry-errors.js";
 
 export interface RegistryDisplayOptions {
   areaId?: string;
@@ -23,6 +24,7 @@ export async function outputEntityRegistryDisplay(
   client: WebSocketRegistryClient,
   options: RegistryDisplayOptions,
   format: OutputFormat,
+  reportFailure: RegistryFailureReporter,
 ): Promise<void> {
   const limit = options.limit === undefined ? undefined : parseLimit(options.limit);
   try {
@@ -73,10 +75,10 @@ export async function outputEntityRegistryDisplay(
       }),
     );
     console.log(formatOutput({ entity_registry_display: decoded }, format));
-  } catch {
-    console.log(formatOutput({
+  } catch (error) {
+    reportFailure({
       entity_registry_display: [],
       message: "Compact entity registry display is unavailable.",
-    }, format));
+    }, error);
   }
 }

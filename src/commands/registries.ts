@@ -2,13 +2,14 @@
  * Defines the registries command surface, options, help, and output behavior.
  */
 import { Command } from "commander";
-import { WebSocketRegistryClient, HomeAssistantClient, HomeAssistantApiError } from "../api/index.js";
+import { WebSocketRegistryClient, HomeAssistantClient } from "../api/index.js";
 import { formatOutput } from "../formatters/index.js";
 import { withExit } from "../utils/exit.js";
 import { resolveCommandOptions } from "../utils/command-helpers.js";
 import type { OutputFormat, HaState } from "../types/index.js";
 import { outputEntityRegistryDisplay } from "./registry-display.js";
 import { createRegistryIntelligenceCommands } from "./registry-intelligence.js";
+import { createRegistryFailureReporter, type RegistryFailureReporter } from "./registry-errors.js";
 
 interface RegistryOptions {
   entities?: boolean;
@@ -59,6 +60,7 @@ export function createRegistriesCommand(): Command {
     const globalOpts = cmd.optsWithGlobals();
     const { config, format } = resolveCommandOptions(globalOpts);
     const wsClient = new WebSocketRegistryClient(config);
+    const failures = createRegistryFailureReporter(format, config.token);
 
     const useEntities = options.entities || options.entity;
     const useDevices = options.devices || options.device;
@@ -72,28 +74,29 @@ export function createRegistriesCommand(): Command {
 
     try {
       if (useDisplay) {
-        await outputEntityRegistryDisplay(wsClient, options, format);
+        await outputEntityRegistryDisplay(wsClient, options, format, failures.report);
       } else if (showAll || useEntities) {
-        await outputEntityRegistry(wsClient, options, format);
+        await outputEntityRegistry(wsClient, options, format, failures.report);
       }
       if (showAll || useDevices) {
-        await outputDeviceRegistry(wsClient, options, format);
+        await outputDeviceRegistry(wsClient, options, format, failures.report);
       }
       if (showAll || useAreas) {
-        await outputAreaRegistry(wsClient, config, options, format);
+        await outputAreaRegistry(wsClient, config, options, format, failures.report);
       }
       if (showAll || useFloors) {
-        await outputFloorRegistry(wsClient, options, format);
+        await outputFloorRegistry(wsClient, options, format, failures.report);
       }
       if (showAll || useLabels) {
-        await outputLabelRegistry(wsClient, options, format);
+        await outputLabelRegistry(wsClient, options, format, failures.report);
       }
       if (showAll || useCategories) {
-        await outputCategoryRegistry(wsClient, options, format);
+        await outputCategoryRegistry(wsClient, options, format, failures.report);
       }
     } finally {
       await wsClient.close();
     }
+    failures.throwIfFailed();
   }));
 
   for (const subcommand of createRegistryIntelligenceCommands()) command.addCommand(subcommand);
@@ -104,7 +107,8 @@ export function createRegistriesCommand(): Command {
 async function outputEntityRegistry(
   wsClient: WebSocketRegistryClient,
   options: RegistryOptions,
-  format: OutputFormat
+  format: OutputFormat,
+  reportFailure: RegistryFailureReporter,
 ): Promise<void> {
   try {
     let entities = await wsClient.getEntityRegistry();
@@ -120,18 +124,19 @@ async function outputEntityRegistry(
     const key = options.count ? "entity_registry_count" : "entity_registry";
     const value = options.count ? entities.length : entities;
     console.log(formatOutput({ [key]: value }, format));
-  } catch {
-    console.log(formatOutput({
+  } catch (error) {
+    reportFailure({
       entity_registry: [],
       message: "Entity registry unavailable. Use 'hassio entities' for state-based queries.",
-    }, format));
+    }, error);
   }
 }
 
 async function outputDeviceRegistry(
   wsClient: WebSocketRegistryClient,
   options: RegistryOptions,
-  format: OutputFormat
+  format: OutputFormat,
+  reportFailure: RegistryFailureReporter,
 ): Promise<void> {
   try {
     let devices = await wsClient.getDeviceRegistry();
@@ -141,8 +146,8 @@ async function outputDeviceRegistry(
     const key = options.count ? "device_registry_count" : "device_registry";
     const value = options.count ? devices.length : devices;
     console.log(formatOutput({ [key]: value }, format));
-  } catch {
-    console.log(formatOutput({ device_registry: [], message: "Device registry unavailable." }, format));
+  } catch (error) {
+    reportFailure({ device_registry: [], message: "Device registry unavailable." }, error);
   }
 }
 
@@ -150,15 +155,16 @@ async function outputAreaRegistry(
   wsClient: WebSocketRegistryClient,
   config: { url: string; token: string; outputFormat: OutputFormat; timeout: number; readOnly: boolean },
   options: RegistryOptions,
-  format: OutputFormat
+  format: OutputFormat,
+  reportFailure: RegistryFailureReporter,
 ): Promise<void> {
   try {
     const areas = await wsClient.getAreaRegistry();
     const key = options.count ? "area_registry_count" : "area_registry";
     const value = options.count ? areas.length : areas;
     console.log(formatOutput({ [key]: value }, format));
-  } catch {
-    // Fall back to state-based area discovery
+  } catch (error) {
+    // Retain the WebSocket failure even when state-based area discovery succeeds.
     try {
       const baseClient = new HomeAssistantClient(config);
       const states = await baseClient.getStates();
@@ -167,13 +173,14 @@ async function outputAreaRegistry(
           .filter((s: HaState) => s.attributes["area_id"])
           .map((s: HaState) => String(s.attributes["area_id"]))
       )];
-      console.log(formatOutput({
-        area_registry: areaIds.map(id => ({ area_id: id })),
+      const key = options.count ? "area_registry_count" : "area_registry";
+      const value = options.count ? areaIds.length : areaIds.map(id => ({ area_id: id }));
+      reportFailure({
+        [key]: value,
         message: "Area registry from entity states (WebSocket unavailable)",
-      }, format));
-    } catch (e) {
-      if (e instanceof HomeAssistantApiError) throw e;
-      console.log(formatOutput({ area_registry: [], message: "Area registry unavailable." }, format));
+      }, error);
+    } catch (fallbackError) {
+      reportFailure({ area_registry: [], message: "Area registry unavailable." }, error, fallbackError);
     }
   }
 }
@@ -181,44 +188,47 @@ async function outputAreaRegistry(
 async function outputFloorRegistry(
   wsClient: WebSocketRegistryClient,
   options: RegistryOptions,
-  format: OutputFormat
+  format: OutputFormat,
+  reportFailure: RegistryFailureReporter,
 ): Promise<void> {
   try {
     const floors = await wsClient.getFloorRegistry();
     const key = options.count ? "floor_registry_count" : "floor_registry";
     const value = options.count ? floors.length : floors;
     console.log(formatOutput({ [key]: value }, format));
-  } catch {
-    console.log(formatOutput({ floor_registry: [], message: "Floor registry unavailable." }, format));
+  } catch (error) {
+    reportFailure({ floor_registry: [], message: "Floor registry unavailable." }, error);
   }
 }
 
 async function outputLabelRegistry(
   wsClient: WebSocketRegistryClient,
   options: RegistryOptions,
-  format: OutputFormat
+  format: OutputFormat,
+  reportFailure: RegistryFailureReporter,
 ): Promise<void> {
   try {
     const labels = await wsClient.getLabelRegistry();
     const key = options.count ? "label_registry_count" : "label_registry";
     const value = options.count ? labels.length : labels;
     console.log(formatOutput({ [key]: value }, format));
-  } catch {
-    console.log(formatOutput({ label_registry: [], message: "Label registry unavailable." }, format));
+  } catch (error) {
+    reportFailure({ label_registry: [], message: "Label registry unavailable." }, error);
   }
 }
 
 async function outputCategoryRegistry(
   wsClient: WebSocketRegistryClient,
   options: RegistryOptions,
-  format: OutputFormat
+  format: OutputFormat,
+  reportFailure: RegistryFailureReporter,
 ): Promise<void> {
   try {
     const categories = await wsClient.getCategoryRegistry();
     const key = options.count ? "category_registry_count" : "category_registry";
     const value = options.count ? categories.length : categories;
     console.log(formatOutput({ [key]: value }, format));
-  } catch {
-    console.log(formatOutput({ category_registry: [], message: "Category registry unavailable." }, format));
+  } catch (error) {
+    reportFailure({ category_registry: [], message: "Category registry unavailable." }, error);
   }
 }
