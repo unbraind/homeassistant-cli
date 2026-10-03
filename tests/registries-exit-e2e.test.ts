@@ -32,12 +32,29 @@ function runRegistryCli(url: string, configDirectory: string, options: string[])
   });
 }
 
+const failureCases = [
+  {
+    label: "proxy credentials",
+    message: "Rejected synthetic-registry-token via http://proxy-user:proxy-password@proxy.invalid:8080",
+    sanitized: "Rejected [redacted] via http://[redacted]@proxy.invalid:8080",
+    secrets: ["synthetic-registry-token", "proxy-user", "proxy-password"],
+  },
+  {
+    label: "quoted credentials",
+    message: 'Rejected {"password":"prefix,LEAK_COMMA space LEAK_SPACE\\\"LEAK_ESCAPE&?#;}"} secret=\'prefix\\\'LEAK_SINGLE\'',
+    sanitized: 'Rejected {"password":"[redacted]"} secret=\'[redacted]\'',
+    secrets: ["LEAK_COMMA", "LEAK_SPACE", "LEAK_ESCAPE", "LEAK_SINGLE"],
+  },
+];
+
 describe("registry CLI failure exit status", () => {
   it.each([
     { options: ["--entities"], expectedRequests: 1 },
     { options: ["--display"], expectedRequests: 1 },
     { options: ["--entities", "--devices"], expectedRequests: 2 },
-  ])("exits 1 for $options auth failures and redacts both output streams", async ({ options, expectedRequests }) => {
+  ].flatMap(options => failureCases.map(failure => ({ ...options, ...failure }))))(
+    "exits 1 for $options auth failures with $label and redacts both output streams",
+    async ({ options, expectedRequests, message, sanitized, secrets }) => {
     const directory = await mkdtemp(join(tmpdir(), "ha-registry-cli-test-"));
     const server = new WebSocketServer({ host: "127.0.0.1", port: 0 });
     const authenticatedWith: unknown[] = [];
@@ -48,7 +65,7 @@ describe("registry CLI failure exit status", () => {
         authenticatedWith.push(JSON.parse(data.toString()));
         socket.send(JSON.stringify({
           type: "auth_invalid",
-          message: "Rejected synthetic-registry-token via http://proxy-user:proxy-password@proxy.invalid:8080",
+          message,
         }));
       });
       socket.send(JSON.stringify({ type: "auth_required", ha_version: "2026.8.1" }));
@@ -69,13 +86,13 @@ describe("registry CLI failure exit status", () => {
       for (const record of records) {
         expect(record).toMatchObject({
           success: false,
-          error: "Rejected [redacted] via http://[redacted]@proxy.invalid:8080",
+          error: sanitized,
         });
       }
       expect(result.stderr).toContain("Error: Registry query failed:");
       for (const output of [result.stdout, result.stderr]) {
         expect(output).toContain("Rejected");
-        for (const secret of ["synthetic-registry-token", "proxy-user", "proxy-password"]) {
+        for (const secret of secrets) {
           expect(output).not.toContain(secret);
         }
       }

@@ -13,6 +13,9 @@ export type RegistryFailureReporter = (
 /** Remove credentials from diagnostics without hiding the underlying failure reason. */
 export function sanitizeRegistryError(error: unknown, token: string): string {
   let message = error instanceof Error ? error.message : String(error);
+  // Parse quoted assignments before any other redaction can remove their escape characters.
+  // Include delimiters, escaped/doubled quotes, and truncated values without a closing quote.
+  message = message.replace(/(["']?(?:access_token|token|api_key|password|secret)["']?\s*[:=]\s*)(["'])(?:\\[\s\S]|\2\2|(?!\2)[^\\])*(?:\2|\\?$)/gi, "$1$2[redacted]$2");
   if (token) {
     for (const secret of [token, encodeURIComponent(token)]) {
       message = message.replaceAll(secret, "[redacted]");
