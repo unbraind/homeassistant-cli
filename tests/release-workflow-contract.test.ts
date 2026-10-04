@@ -4,8 +4,14 @@ import { describe, expect, it } from "vitest";
 const workflow = readFileSync(".github/workflows/publish.yml", "utf8");
 const dryRunWorkflow = readFileSync(".github/workflows/release-dry-run.yml", "utf8");
 const packageJson = readFileSync("package.json", "utf8");
+const autoRelease = readFileSync("scripts/release/auto-release.mjs", "utf8");
 
 describe("tag publication workflow contract", () => {
+  it("uses the tested changelog generator when preparing an automatic release", () => {
+    expect(autoRelease).toContain('import { generateChangelog } from "./changelog.mjs";');
+    expect(autoRelease).toContain("generateChangelog(preview, version, run);");
+  });
+
   it("recreates ignored PM runtime directories in clean checkouts", () => {
     expect(packageJson).toContain(
       '"quality:pm": "mkdir -p .agents/pm/locks .agents/pm/search &&',

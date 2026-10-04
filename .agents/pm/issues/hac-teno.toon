@@ -1,0 +1,43 @@
+id: hac-teno
+title: Date pending automatic release changelog headings
+description: Auto Release run 37176589359 generated an undated 2026.10.4 heading and stopped before publication because its caller omitted the documented date-from-version flag.
+type: Issue
+status: closed
+priority: 0
+tags[3]: bug,changelog,release
+created_at: "2026-10-04T04:30:37.043Z"
+updated_at: "2026-10-04T04:32:55.970Z"
+closed_at: "2026-10-04T04:32:55.597Z"
+completed_at: "2026-10-04T04:32:55.597Z"
+author: dot-homeassistant-proxy
+parent: hac-4s9j
+severity: medium
+repro_steps: Generate a pending 2026.10.4 changelog using pm-changelog 2026.9.25 with release-version and all-release-tags but no date fallback; observe an undated heading and rejection by the auto-release dated-heading gate.
+resolution: "Auto Release supplies date-from-version to the installed changelog generator, preserving dated-heading validation, historical tag dates, and authoritative completion timestamps."
+expected_result: "Pending release headings contain the calendar version date, include prior-day work, and preserve historical tag dates without changing completion timestamps."
+actual_result: "1499 tests across 133 files and the full release verification aggregate pass with exact source coverage. Seven real-extension release regression tests pass, with 100% statement, branch, function, and line coverage of the extracted release changelog helper."
+affected_version: 2026.8.10
+component: release
+files[4]{path,scope,note}:
+  scripts/release/auto-release.mjs,project,Explicit pending-release date fallback and synthetic regression evidence
+  scripts/release/changelog.mjs,project,Explicit pending-release date fallback and synthetic regression evidence
+  tests/release-changelog.test.ts,project,Explicit pending-release date fallback and synthetic regression evidence
+  tests/release-workflow-contract.test.ts,project,Explicit pending-release date fallback and synthetic regression evidence
+tests[1]{command,scope,timeout_seconds,provenance{author,created_at,source_kind,source_ref}}:
+  bun run test -- tests/release-changelog.test.ts tests/release-workflow-contract.test.ts,project,120,dot-homeassistant-proxy,"2026-10-04T04:30:57.389Z",local_mutation,fix/cross-day-release-changelog
+test_runs[1]:
+  - run_id: test-local-mutbruy8-jldzl9
+    kind: test
+    status: passed
+    started_at: "2026-10-04T04:32:51.669Z"
+    finished_at: "2026-10-04T04:32:54.896Z"
+    recorded_at: "2026-10-04T04:32:54.896Z"
+    passed: 1
+    failed: 0
+    skipped: 0
+    executions[1]{command,requested_pm_context_mode,pm_context_mode,workspace_context_mode,trust_reason}:
+      bun run test -- tests/release-changelog.test.ts tests/release-workflow-contract.test.ts,schema,schema,source,local_source_ref
+docs[1]{path,scope,note}:
+  docs/RELEASING.md,project,Pending release date and historical timestamp contract
+close_reason: "Implemented and validated the release date fallback; reproduction and full checks pass. Parent-owned review, hosted checks, and publication remain pending."
+body: ""

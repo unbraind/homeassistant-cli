@@ -6,6 +6,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { generateChangelog } from "./changelog.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const args = new Set(process.argv.slice(2));
@@ -77,21 +78,6 @@ function installLatestChangelog() {
   run("bunx", ["@unbrained/pm-cli@latest", "install", "npm:pm-changelog", "--project"]);
 }
 
-function generateChangelog(output, version) {
-  run("bunx", [
-    "@unbrained/pm-cli@latest", "changelog", "generate",
-    "--output", output,
-    "--title", "Changelog",
-    "--mode", "replace",
-    "--release-version", version,
-    "--all-release-tags",
-    "--status", "closed",
-    "--item-url-base", "https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm",
-  ]);
-  const changelog = readFileSync(output, "utf8");
-  if (!changelog.includes(`## ${version} -`)) throw new Error(`Generated changelog has no ${version} release section.`);
-}
-
 function gitIdentity(author) {
   const slug = author.toLowerCase().replace(/[^a-z0-9._-]/g, "-") || "release-automation";
   return {
@@ -136,7 +122,7 @@ function main() {
   const preview = path.join(temp, "CHANGELOG.md");
   try {
     installLatestChangelog();
-    generateChangelog(preview, version);
+    generateChangelog(preview, version, run);
     if (!dryRun) {
       run(process.execPath, ["scripts/release/version.mjs", "apply", "--version", version]);
       writeFileSync(path.join(root, "CHANGELOG.md"), readFileSync(preview));
