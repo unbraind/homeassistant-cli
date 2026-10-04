@@ -42,6 +42,14 @@ bun run changelog:pm:check
 
 Full-history generation requires all release tags (`actions/checkout` uses `fetch-depth: 0`). Historical notes that predate repo-local pm tracking are represented by closed, explicitly release-assigned items under `hac-rdt1`; this is what prevents the March 2026 sections from disappearing when replace mode runs.
 
+Auto Release supplies `--date-from-version` with its pending `--release-version`.
+This dates the new heading from the UTC calendar version before its tag exists,
+including same-day `-N` releases. The pending window still includes all completed
+work after the previous release, even when that work finished on an earlier day.
+Existing tagged sections retain their tag-derived dates; item completion times
+are never rewritten to make them match the release day. The dated-heading check
+remains mandatory before release verification or version/tag publication.
+
 ## npm and Bun publication
 
 There is one package publication, not two registries. Bun installs JavaScript packages from npm-compatible registries, so `npm publish --access public --provenance` creates the artifact consumed by both ecosystems. Running `bun publish` after `npm publish` would target the same package/version and fail as a duplicate.

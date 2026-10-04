@@ -4,6 +4,7 @@
 
 ### Fixed
 
+- Date pending automatic release changelog headings ([hac-teno](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/issues/hac-teno.toon))
 - Honor environment proxies and report registry failures ([hac-6p17](https://github.com/unbraind/homeassistant-cli/blob/master/.agents/pm/issues/hac-6p17.toon))
 
 ## 2026.8.10 - 2026-08-10
